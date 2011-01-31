@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.31.1
+Version: 0.31.2
 
 Author: Andy Moyle
 
@@ -84,17 +84,17 @@ add_action('init', 'church_admin_init');
 
 
 //define paths
-define('CHURCH_ADMIN_DISPLAY_PATH', WP_PLUGIN_DIR . '/church_admin/display/');
+define('CHURCH_ADMIN_DISPLAY_PATH', WP_PLUGIN_DIR . '/church-admin/display/');
 define('CHURCH_ADMIN_URL',WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)));
-define('CHURCH_ADMIN_INCLUDE_PATH', WP_PLUGIN_DIR . '/church_admin/includes/');
+define('CHURCH_ADMIN_INCLUDE_PATH', WP_PLUGIN_DIR . '/church-admin/includes/');
 define('CHURCH_ADMIN_INCLUDE_URL', CHURCH_ADMIN_URL.'includes/');
-define('CHURCH_ADMIN_IMAGES_PATH', WP_PLUGIN_DIR . '/church_admin/images/');
-define('CHURCH_ADMIN_IMAGES_URL', WP_PLUGIN_URL . '/church_admin/images/');
-define('CHURCH_ADMIN_CACHE_PATH',WP_PLUGIN_DIR.'/church_admin/cache/');
-define('CHURCH_ADMIN_CACHE_URL',WP_PLUGIN_URL.'/church_admin/cache/');
-define('CHURCH_ADMIN_TEMP_PATH',WP_PLUGIN_DIR.'/church_admin/temp/');
+define('CHURCH_ADMIN_IMAGES_PATH', WP_PLUGIN_DIR . '/church-admin/images/');
+define('CHURCH_ADMIN_IMAGES_URL', WP_PLUGIN_URL . '/church-admin/images/');
+define('CHURCH_ADMIN_CACHE_PATH',WP_PLUGIN_DIR.'/church-admin/cache/');
+define('CHURCH_ADMIN_CACHE_URL',WP_PLUGIN_URL.'/church-admin/cache/');
+define('CHURCH_ADMIN_TEMP_PATH',WP_PLUGIN_DIR.'/church-admin/temp/');
 //Version Number
-$church_admin_version = '0.31.1';
+$church_admin_version = '0.31.2';
 
 //check install is uptodate 
 if (get_option("church_admin_version") != $church_admin_version ) 
