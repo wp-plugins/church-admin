@@ -63,6 +63,7 @@ Version History
 0.2 2011-01-05 Minor bug fixes for small groups
 0.3 2011-01-24 Added calendar
 0.31.2 2011-01-31 Fixed install roblems from svn
+0.31.3 2011-01-31 Order calendar widget by start date
 
 -------------------------------------------------
 To Do
