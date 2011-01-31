@@ -1,0 +1,388 @@
+<?php
+
+/*
+
+Plugin Name: church_admin
+Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
+Description: A church admin system with address book, small groups, rotas, bulk email  and sms
+Version: 0.31
+
+Author: Andy Moyle
+
+
+Author URI:http://www.themoyles.co.uk
+
+License:
+----------------------------------------
+
+    
+Copyright (C) 2010 Andy Moyle
+
+
+
+    This program is free software: you can redistribute it and/or modify
+
+    it under the terms of the GNU General Public License as published by
+
+    the Free Software Foundation, either version 3 of the License, or
+
+    (at your option) any later version.
+
+
+
+    This program is distributed in the hope that it will be useful,
+
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+
+    GNU General Public License for more details.
+
+
+
+	http://www.gnu.org/licenses/
+
+----------------------------------------
+
+The structure of this plugin is as follows:
+
+===========================================
+MAIN FILES
+----------
+index.php - main plugin file
+
+INCLUDES
+---------
+
+------------------------------------------------
+
+
+Version History
+================================================
+0.1 2010-11-31 Initial Release
+0.2 2011-01-05 Minor bug fixes for small groups
+0.3 2011-01-24 Added calendar
+
+-------------------------------------------------
+To Do
+=================================================
+1) Separate out the sms and email in communications settings page
+2) Allow use of native wp_mail() function for bulk email
+3) Add year planner to calendar
+*/
+
+function church_admin_init()
+{
+wp_deregister_script('jquery');
+wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js', false, '1.3.2');
+wp_enqueue_script('jquery');
+if (!session_id())
+session_start();
+}
+
+add_action('init', 'church_admin_init');
+
+
+//define paths
+define('CHURCH_ADMIN_DISPLAY_PATH', WP_PLUGIN_DIR . '/church_admin/display/');
+define('CHURCH_ADMIN_URL',WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)));
+define('CHURCH_ADMIN_INCLUDE_PATH', WP_PLUGIN_DIR . '/church_admin/includes/');
+define('CHURCH_ADMIN_INCLUDE_URL', CHURCH_ADMIN_URL.'includes/');
+define('CHURCH_ADMIN_IMAGES_PATH', WP_PLUGIN_DIR . '/church_admin/images/');
+define('CHURCH_ADMIN_IMAGES_URL', WP_PLUGIN_URL . '/church_admin/images/');
+define('CHURCH_ADMIN_CACHE_PATH',WP_PLUGIN_DIR.'/church_admin/cache/');
+define('CHURCH_ADMIN_CACHE_URL',WP_PLUGIN_URL.'/church_admin/cache/');
+define('CHURCH_ADMIN_TEMP_PATH',WP_PLUGIN_DIR.'/church_admin/temp/');
+//Version Number
+$church_admin_version = '0.31';
+
+//check install is uptodate 
+if (get_option("church_admin_version") != $church_admin_version ) 
+{
+    require(CHURCH_ADMIN_INCLUDE_PATH."install.php");
+    church_admin_install();
+}
+
+
+//grab includes
+require(CHURCH_ADMIN_INCLUDE_PATH.'header.inc.php');
+require(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
+if($_GET['page']=='church_admin_main')require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
+if($_GET['page']=='church_admin_small_groups')require(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php');
+if($_GET['page']=='church_admin_rota_list')require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');
+if($_GET['page']=='church_admin_rota_list')require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');
+if($_GET['page']=='church_admin_visitor_list')require(CHURCH_ADMIN_INCLUDE_PATH.'visitor.php');
+if($_GET['page']=='church_admin_communication_settings')require(CHURCH_ADMIN_INCLUDE_PATH.'communication_settings.php');
+if($_GET['page']=='church_admin_send_email')require(CHURCH_ADMIN_INCLUDE_PATH.'email.php');
+if($_GET['page']=='church_admin_send_sms')require(CHURCH_ADMIN_INCLUDE_PATH.'sms.php');
+if($_GET['page']=='church_admin_add_attendance') require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');
+if($_GET['page']=='church_admin_calendar')require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+//Build Admin Menus
+add_action('admin_menu', 'church_admin_menus');
+function church_admin_menus() 
+
+{
+    add_menu_page('church_admin:Administration', 'Church Admin', 4, 'church_admin/index.php', 'church_admin_main');
+    add_submenu_page('church_admin/index.php', 'Directory List', 'Directory List', 'administrator', 'church_admin/index.php', 'church_admin_main');
+    add_submenu_page('church_admin/index.php', 'Small Group List', 'Small Group List', 'administrator', 'church_admin_small_groups', 'church_admin_small_groups');
+    add_submenu_page('church_admin/index.php', 'Rota List', 'Rota List', 'administrator', 'church_admin_rota_list', 'church_admin_rota_list');
+    add_submenu_page('church_admin/index.php', 'Visitor List', 'Visitor List', 'administrator', 'church_admin_visitor_list', 'church_admin_visitor_list');
+    add_submenu_page('church_admin/index.php', 'Calendar', 'Calendar', 'administrator', 'church_admin_calendar', 'church_admin_calendar');
+add_submenu_page('church_admin/index.php', 'Attendance', 'Attendance', 'administrator', 'church_admin_add_attendance', 'church_admin_add_attendance');
+ 
+ if(get_option('church_admin_sms_username'))add_submenu_page('church_admin/index.php', 'Send Bulk SMS', 'Send Bulk SMS', 'administrator', 'church_admin_send_sms', 'church_admin_send_sms');
+    if(file_exists(CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php')) add_submenu_page('church_admin/index.php', 'Send Bulk Email', 'Send Bulk Email', 'administrator', 'church_admin_send_email', 'church_admin_send_email');    
+    add_submenu_page('church_admin/index.php', 'Communication Settings', 'Communication Settings', 'administrator', 'church_admin_communication_settings', 'church_admin_communication_settings');
+}
+
+ function church_admin_cron()
+    {
+        // Do something regularly.
+        require(CHURCH_ADMIN_INCLUDE_PATH."cronemail.php");
+    }
+//end of cron stuff
+
+
+if($_GET['page']=='church_admin_send_email') add_filter('admin_head','show_tinyMCE');
+ 
+function show_tinyMCE() {
+    wp_enqueue_script( 'common' );
+    wp_enqueue_script( 'jquery-color' );
+    wp_enqueue_scripts('editor');
+    if (function_exists('add_thickbox')) add_thickbox();
+    wp_print_scripts('media-upload');
+    if (function_exists('wp_tiny_mce')) wp_tiny_mce();
+    wp_admin_css();
+    wp_enqueue_script('utils');
+    do_action("admin_print_styles-post-php");
+    do_action('admin_print_styles');
+    remove_all_filters('mce_external_plugins');
+}
+
+//main admin page function
+
+
+function church_admin_main() 
+{
+    global $wpdb,$church_admin_version;
+    switch($_GET['action'])
+    {
+        case 'church_admin_add_category':
+            if(check_admin_referer('add_category'))
+            {
+                require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+                church_admin_add_category();
+            }
+        break;         
+        case 'church_admin_edit_category':
+            if(check_admin_referer('edit_category'))
+            {
+                require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+                church_admin_edit_category($_GET['id']);
+            }
+        break;
+        case 'church_admin_delete_category':
+            if(check_admin_referer('delete_category'))
+            {
+                require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+                church_admin_delete_category($_GET['id']);
+                
+            }
+        break;    
+        case 'church_admin_category_list':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+            church_admin_category_list();
+        break;    
+        case 'church_admin_series_event_edit':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+            church_admin_series_event($_GET['date_id'],$_GET['event_id']);
+        break;          
+        case 'church_admin_single_event_edit':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+            church_admin_single_event_edit($_GET['date_id'],$_GET['event_id']);
+        break;    
+        case 'church_admin_add_calendar':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+            church_admin_add_calendar();
+        break;    
+        case 'church_admin_add_address':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
+            church_admin_add_address();
+        break;
+        case 'church_admin_edit_address':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
+            if(check_admin_referer('edit_address'))church_admin_edit_address($_GET['id']);
+        break;
+        case 'church_admin_delete_address':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
+            if(check_admin_referer('delete_address'))church_admin_delete_address($_GET['id']);
+        break;
+        case 'church_admin_rota_settings_list':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');
+            if(check_admin_referer('rota_settings_list'))church_admin_rota_settings_list();
+        break;
+        case 'church_admin_add_rota_settings':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');
+            if(check_admin_referer('add_rota_settings'))church_admin_add_rota_settings();
+        break;    
+        case 'church_admin_edit_rota_settings':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');
+            if(check_admin_referer('edit_rota_settings'))church_admin_edit_rota_settings($_GET['id']);
+        break;
+            case 'church_admin_delete_rota_settings':
+                require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');
+            if(check_admin_referer('delete_rota_settings'))church_admin_delete_rota_settings($_GET['id']);
+        break;
+        case 'church_admin_add_to_rota':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');
+            if(check_admin_referer('add_to_rota'))church_admin_add_to_rota();
+        break;
+        case 'church_admin_edit_rota':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');
+            if(check_admin_referer('edit_rota'))church_admin_edit_rota($_GET['date']);
+        break;
+        case 'church_admin_delete_rota':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');
+            if(check_admin_referer('delete_rota'))church_admin_delete_rota($_GET['date']);
+        break;
+        case 'church_admin_add_visitor':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'visitor.php');
+            if(check_admin_referer('add_visitor'))church_admin_add_visitor();
+        break;
+        case 'church_admin_edit_visitor':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'visitor.php');
+            if(check_admin_referer('edit_visitor'))church_admin_edit_visitor($_GET['id']);
+        break;
+        case 'church_admin_delete_visitor':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'visitor.php');
+            if(check_admin_referer('delete_visitor'))church_admin_delete_visitor($_GET['id']);
+        break;
+        case 'church_admin_move_visitor':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'visitor.php');
+            if(check_admin_referer('move_visitor'))church_admin_move_visitor($_GET['id']);
+        break;
+        case  'church_admin_add_small_group':
+                require(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php');
+                if(check_admin_referer('add small group')) church_admin_add_small_group();
+        break;
+        case  'church_admin_edit_small_group':
+                require(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php');
+                if(check_admin_referer('edit small group')) church_admin_edit_small_group($_GET['id']);
+        break;
+        case  'church_admin_delete_small_group':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php');
+                if(check_admin_referer('delete small group')) church_admin_delete_small_group($_GET['id']);
+        break;
+        case'refreshcache':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
+            require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
+            church_admin_directory();
+        break;
+        case 'church_admin_communication_settings':
+            require(CHURCH_ADMIN_INCLUDE_PATH.'communication_settings.php');
+            
+            church_admin_communication_settings();
+        break;    
+        default:
+                require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
+                if(file_exists(WP_PLUGIN_DIR.'/church-directory/index.php')) echo"<h2>Don't forget to delete the old Church-directory plugin</h2>";
+                church_admin_directory();
+        break;
+        
+    }
+}
+
+function church_admin_shortcode($atts, $content = null) 
+	{
+	
+		extract(shortcode_atts(array(
+		"type" => 'address-list'
+	), $atts));
+    cd_posts_logout();
+    global $wpdb;
+    $wpdb->show_errors();
+    global $wp_query;
+    /*
+    //look to see if church directory is o/p on a password protected page	
+    $pageinfo=get_page($wp_query->post->ID);	
+    //grab page info
+    //check to see if on a password protected page
+    if(($pageinfo->post_password!='')&&isset( $_COOKIE['wp-postpass_' . COOKIEHASH] )) 
+    {
+	$text = 'Log out of password protected posts';
+	//text for link
+	$link = get_bloginfo(url).'?cd_logout=posts_logout';
+	$out= '<p><a href="' . wp_nonce_url($link, 'posts logout') .'">' . $text . '</a></p>';
+	//output logoutlink
+    }
+    //end of password protected page
+    */
+    //grab content
+    switch($type)
+    {
+        case 'calendar':
+            $out.='<script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'jquery.wtooltip.min.js"></script>';
+            include(CHURCH_ADMIN_DISPLAY_PATH.'calendar.php');
+            
+        break;
+        case 'calendar-list':
+            include(CHURCH_ADMIN_DISPLAY_PATH.'calendar-list.php');
+        break;
+        case 'address-list':
+            $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">PDF version</a></p>';
+            include(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
+        break;
+	case 'small-groups-list':
+            include(CHURCH_ADMIN_DISPLAY_PATH."small-group-list.php");
+        break;
+	case 'small-groups':
+            $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/sg.pdf">PDF version</a></p>';
+            include(CHURCH_ADMIN_DISPLAY_PATH."small-groups.php");
+        break;
+	case 'rota':
+            include(CHURCH_ADMIN_DISPLAY_PATH."rota.php");
+        break;
+        default:
+            require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
+        break;
+    }
+//output content instead of shortcode!
+return $out; 
+}
+add_shortcode("church_admin", "church_admin_shortcode");
+
+function cd_posts_logout() 
+{
+    if ( isset( $_GET['cd_logout'] ) && ( 'posts_logout' == $_GET['cd_logout'] ) &&check_admin_referer( 'posts logout' )) 
+    {
+	setcookie( 'wp-postpass_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH );
+	wp_redirect( wp_get_referer() );
+	die();
+    }
+}
+
+
+add_action( 'init', 'cd_posts_logout' );
+
+//end of logout functions
+
+function church_admin_calendar_widget($args=array())
+{
+    global $wpdb;
+    $wpdb->show_errors();
+    extract($args);
+    $options=get_option('church_admin_widget');
+    $title=$options['title'];
+    //echo $before_widget;
+    
+    echo church_admin_calendar_widget_output($options['events'],$options['postit'],$title);
+    //echo $after_widget;
+}
+function church_admin_widget_init()
+{
+    register_sidebar_widget('Church Admin Calendar','church_admin_calendar_widget');
+    require(CHURCH_ADMIN_INCLUDE_PATH.'calendar_widget.php');
+    register_widget_control('Church Admin Calendar','church_admin_widget_control');
+}
+add_action('init',church_admin_widget_init);
+?>
