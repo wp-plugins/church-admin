@@ -127,6 +127,4 @@ $wpdb->query ($sql);
 $wpdb->query("INSERT INTO $table_name (category,bgcolor,cat_id) VALUES('Unused','#FFFFFF','0')");
 }
 
-
-
 update_option('church_admin_version',$church_admin_version);}			?>
