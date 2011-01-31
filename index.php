@@ -62,6 +62,7 @@ Version History
 0.1 2010-11-31 Initial Release
 0.2 2011-01-05 Minor bug fixes for small groups
 0.3 2011-01-24 Added calendar
+0.31.2 2011-01-31 Fixed install roblems from svn
 
 -------------------------------------------------
 To Do
