@@ -124,7 +124,7 @@ function church_admin_public_header()
 .Postit h1,.Postit h2{padding:0 0px;text-transform:uppercase;font-size: 1.2em;}
 .Postit ul{margin:0;font-size:0.75em;list-style:none;padding:0em;}
 .Postit a {text-indent:0;padding:0;}
-.Postit li {text-indent:0;padding:0;list-style:none;border-bottom:none !important;}
+.Postit li {text-indent:0;padding:0 0 10px 0;margin:0!important;list-style:none;border-bottom:none !important;}
 </style>
      ';
 
