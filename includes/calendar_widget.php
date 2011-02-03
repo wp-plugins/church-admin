@@ -1,4 +1,7 @@
 <?php
+/*
+ 2011-02-03 Fixed widget display so multiple events per day
+*/
 function church_admin_widget_control()
 {
     //get saved options
@@ -45,16 +48,42 @@ $numdaysinmonth = cal_days_in_month( CAL_GREGORIAN, $thismonth, $thisyear );
 // create a calendar object
 $jd = cal_to_jd( CAL_GREGORIAN, $thismonth,date( 1 ), $thisyear );
 
-$sql="SELECT ".$wpdb->prefix."church_admin_calendar_category.category AS category, ".$wpdb->prefix."church_admin_calendar_category.cat_id,".$wpdb->prefix."church_admin_calendar_event.cat_id,TIME_FORMAT(".$wpdb->prefix."church_admin_calendar_date.start_time,'%h:%i%p')AS start_time,".$wpdb->prefix."church_admin_calendar_date.end_time, ".$wpdb->prefix."church_admin_calendar_date.start_date,".$wpdb->prefix."church_admin_calendar_date.event_id, ".$wpdb->prefix."church_admin_calendar_event.event_id,".$wpdb->prefix."church_admin_calendar_event.title AS title, ".$wpdb->prefix."church_admin_calendar_event.description, ".$wpdb->prefix."church_admin_calendar_event.location  FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_event WHERE ".$wpdb->prefix."church_admin_calendar_date.start_date>'$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.start_date<'$sqlnext'  AND ".$wpdb->prefix."church_admin_calendar_date.event_id=".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date LIMIT 1,".$limit;
-
-    
-$result=$wpdb->get_results($sql);
+//prepare output
 if($postit)$out='<div class="Postit">';
 $out.='<h1>'.$title.'</h1><ul>';
-foreach($result AS $row)
+
+//grab next $limit days events
+for($x=0;$x<=$limit;$x++)
 {
-    $out.="<li>".mysql2date('D j M Y',$row->start_date).'<br/>'.strtolower($row->start_time)." <strong>".$row->title."</strong><br/></li>";
-}
+    //date
+    $sqlnow=date('Y-m-d',$current+($x*60*60*24));
+ 
+    //query
+$sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.start_date, TIME_FORMAT(".$wpdb->prefix."church_admin_calendar_date.start_time,'%h:%i%p')AS start_time, ".$wpdb->prefix."church_admin_calendar_date.end_time, ".$wpdb->prefix."church_admin_calendar_event.title, ".$wpdb->prefix."church_admin_calendar_event.description,".$wpdb->prefix."church_admin_calendar_category.category
+FROM ".$wpdb->prefix."church_admin_calendar_date, ".$wpdb->prefix."church_admin_calendar_event,".$wpdb->prefix."church_admin_calendar_category
+WHERE ".$wpdb->prefix."church_admin_calendar_date.start_date='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.event_id = ".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_event.cat_id=wp_church_admin_calendar_category.cat_id
+ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date,".$wpdb->prefix."church_admin_calendar_date.start_time
+LIMIT 0 ,".$limit;
+
+$result=$wpdb->get_results($sql);
+if(!empty($result))
+{
+  foreach($result AS $row)
+    {
+    $date=mysql2date('D j M Y',$row->start_date);
+    $thisday.='<br/>'.strtolower($row->start_time)." <strong>".$row->title."</strong>";
+    }
+    $out.='<li><strong>'.$date.'</strong>'.$thisday.'</li>';
+    unset($date,$thisday);
+    
+}//end of non empty result
+else{
+    $limit++;//nothing for that day, so increase no of days
+    }
+}//end of for loop
+
+
+
 $out.="</ul>";
 if($postit)$out.='</div>';
 return $out;

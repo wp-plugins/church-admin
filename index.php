@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.31.2
+Version: 0.31.3
 
 Author: Andy Moyle
 
@@ -63,7 +63,7 @@ Version History
 0.2 2011-01-05 Minor bug fixes for small groups
 0.3 2011-01-24 Added calendar
 0.31.2 2011-01-31 Fixed install roblems from svn
-0.31.3 2011-01-31 Order calendar widget by start date
+0.31.3 2011-01-31 Order calendar widget by start date and multiple events per day allowed
 
 -------------------------------------------------
 To Do
@@ -96,7 +96,7 @@ define('CHURCH_ADMIN_CACHE_PATH',WP_PLUGIN_DIR.'/church-admin/cache/');
 define('CHURCH_ADMIN_CACHE_URL',WP_PLUGIN_URL.'/church-admin/cache/');
 define('CHURCH_ADMIN_TEMP_PATH',WP_PLUGIN_DIR.'/church-admin/temp/');
 //Version Number
-$church_admin_version = '0.31.2';
+$church_admin_version = '0.31.3';
 
 //check install is uptodate 
 if (get_option("church_admin_version") != $church_admin_version ) 
