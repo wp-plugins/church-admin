@@ -64,6 +64,7 @@ Version History
 0.3 2011-01-24 Added calendar
 0.31.2 2011-01-31 Fixed install roblems from svn
 0.31.3 2011-01-31 Order calendar widget by start date and multiple events per day allowed
+0.31.4 2011-02-04 Calendar Event deletes added, fixed jquery conflict on admin pages, rota for today on a sunday
 
 -------------------------------------------------
 To Do
@@ -72,14 +73,18 @@ To Do
 2) Allow use of native wp_mail() function for bulk email
 3) Add year planner to calendar
 */
-
+//Version Number
+$church_admin_version = '0.31.4';
 function church_admin_init()
 {
-wp_deregister_script('jquery');
-wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js', false, '1.3.2');
-wp_enqueue_script('jquery');
-if (!session_id())
-session_start();
+if ($_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'||!is_admin())
+{
+    //Only fire up jquery on the add and edit category pages within admin.php to avoid conflicts
+    wp_deregister_script('jquery');
+    wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js', false, '1.3.2');
+    wp_enqueue_script('jquery');
+}
+if (!session_id())session_start();
 }
 
 add_action('init', 'church_admin_init');
@@ -95,8 +100,7 @@ define('CHURCH_ADMIN_IMAGES_URL', WP_PLUGIN_URL . '/church-admin/images/');
 define('CHURCH_ADMIN_CACHE_PATH',WP_PLUGIN_DIR.'/church-admin/cache/');
 define('CHURCH_ADMIN_CACHE_URL',WP_PLUGIN_URL.'/church-admin/cache/');
 define('CHURCH_ADMIN_TEMP_PATH',WP_PLUGIN_DIR.'/church-admin/temp/');
-//Version Number
-$church_admin_version = '0.31.3';
+
 
 //check install is uptodate 
 if (get_option("church_admin_version") != $church_admin_version ) 
@@ -190,7 +194,21 @@ function church_admin_main()
                 church_admin_delete_category($_GET['id']);
                 
             }
-        break;    
+        break;
+        case 'church_admin_single_event_delete':
+            if(check_admin_referer('single_event_delete'))
+            {
+                require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+                church_admin_single_event_delete($_GET['date_id'],$_GET['event_id']);    
+            }
+        break;
+        case 'church_admin_series_event_delete':
+            if(check_admin_referer('series_event_delete'))
+            {
+                require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
+                church_admin_series_event_delete($_GET['date_id'],$_GET['event_id']);
+            }
+        break;     
         case 'church_admin_category_list':
             require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');
             church_admin_category_list();

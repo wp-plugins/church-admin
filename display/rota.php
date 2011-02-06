@@ -4,7 +4,7 @@ $wpdb->show_errors();
 $nonce=$_POST['_wpnonce'];
 
 
-if(isset($_POST['date'])&&wp_verify_nonce($nonce,'rota list') && checkDateFormat($_POST['date'])) {$date=$_POST['date'];}else{$date=date('Y-m-d',strtotime("next Sunday"));}
+if(isset($_POST['date'])&&wp_verify_nonce($nonce,'rota list') && checkDateFormat($_POST['date'])) {$date=$_POST['date'];}else{$date=date('Y-m-d',strtotime("this Sunday"));}
 $htmldate=mysql2date('d-m-Y', $date, $translate = true);
 
 $results=$wpdb->get_results("SELECT ".$wpdb->prefix."church_admin_rota.*,".$wpdb->prefix."church_admin_rota_settings.rota_task FROM ".$wpdb->prefix."church_admin_rota,".$wpdb->prefix."church_admin_rota_settings WHERE ".$wpdb->prefix."church_admin_rota.rota_date='".esc_sql($date)."' AND ".$wpdb->prefix."church_admin_rota.rota_option_id=".$wpdb->prefix."church_admin_rota_settings.rota_id");

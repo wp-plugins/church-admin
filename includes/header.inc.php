@@ -75,6 +75,8 @@ function toggle(obj){
 add_action('wp_head', 'church_admin_public_header');
 function church_admin_public_header()
 {echo'<style type="text/css">
+.church_admin_calendar table{width:700px;}
+.church_admin_calendar td{border:1px solid grey;}
 .calendar-date-switcher {
         height:25px;
         text-align:center;

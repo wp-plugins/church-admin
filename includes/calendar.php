@@ -1,9 +1,6 @@
 <?php
 /*
- Calendar Functions
- church_admin_calendar() outputs dates stored
- church_admin_add_calendar() adds an event
- church_admin_calendar_form($data) - calendar event form
+2011-02-04 added calendar single and series delete; fixed slashes problem
 
  
  
@@ -48,6 +45,7 @@ function church_admin_add_category()
     }
     
 }
+
 function church_admin_delete_category($id)
 {
     global $wpdb;
@@ -131,6 +129,7 @@ function church_admin_series_event($date_id,$event_id)
         $check=$wpdb->get_row("SELECT * FROM ".$wpdb->prefix."church_admin_calendar_event WHERE title='{$sqlsafe['title']}' AND description='{$sqlsafe['description']}' AND location='{$sqlsafe['location']}' AND cat_id='{$sqlsafe['category']}' AND year_planner='{$sqlsafe['year_planner']}'");
         if(!$check)
         {
+            
         //put event details into church_admin_calender_event table
         $sql="INSERT INTO ".$wpdb->prefix."church_admin_calendar_event (title,description,location,cat_id,year_planner,recurring)VALUES('{$sqlsafe['title']}','{$sqlsafe['description']}','{$sqlsafe['location']}','{$sqlsafe['category']}','{$sqlsafe['year_planner']}','{$sqlsafe['recurring']}')";
         $wpdb->query($sql);
@@ -196,8 +195,28 @@ function church_admin_series_event($date_id,$event_id)
     echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form>';    
     }//end form
 }
-
-
+function church_admin_single_event_delete($date_id,$event_id)
+{
+    global $wpdb;
+    $count=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_date WHERE event_id='".esc_sql($event_id)."'");
+    if($count==0){$wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_event WHERE event_id='".esc_sql($event_id)."'");}
+    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_date WHERE date_id='".esc_sql($date_id)."'");
+    echo '<div id="message" class="updated fade">';
+    echo '<p><strong>Calendar Event deleted.</strong></p>';
+    echo '</div>';
+    church_admin_calendar_list();
+}
+function church_admin_series_event_delete($date_id,$event_id)
+{
+    global $wpdb;
+    $count=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_date WHERE event_id='".esc_sql($event_id)."'");
+    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_event WHERE event_id='".esc_sql($event_id)."'");
+    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_date WHERE date_id='".esc_sql($date_id)."'");
+    echo '<div id="message" class="updated fade">';
+    echo '<p><strong>Calendar Events deleted.</strong></p>';
+    echo '</div>';
+    church_admin_calendar_list();
+}
 function church_admin_single_event_edit($date_id,$event_id)
 {
     //This function is to edit a single event (in a single or recurring sequence)
@@ -258,7 +277,7 @@ function church_admin_single_event_edit($date_id,$event_id)
 function church_admin_add_calendar()
 {
     global $wpdb,$errors,$sqlsafe;
-    
+    foreach($_POST AS $key=>$value){$_POST[$key]=stripslashes($value);}
     $wpdb->show_errors();
     
     if(isset($_POST['add_event']))
@@ -389,7 +408,7 @@ function church_admin_calendar_error_check($data)
             }
         }
        if(!empty($data['title'])){ $sqlsafe['title']= esc_sql($data['title']);}else{$error['title']=1;}
-       if(!empty($data['description'])){ $sqlsafe['description']= esc_sql($data['description']);}else{$error['description']=1;}
+       if(!empty($data['description'])){ $sqlsafe['description']= esc_sql(nl2br($data['description']));}else{$error['description']=1;}
       $sqlsafe['location']=esc_sql($data['location']);
       if(!empty($_POST['category'])&&ctype_digit($data['category'])){$sqlsafe['category']=$data['category'];}else{$error['category']=1;}
       if($data['year_planner']=='1'){$sqlsafe['year_planner']=1;}else{$sqlsafe['year_planner']=0;}
@@ -433,9 +452,9 @@ if(document.getElementById(\'recurring\').value==\'a\'){
 		}
 }
 </script>
-<p><label>Event Title</label><input type="text" name="title" value="'.$data->title.'" '.$errors['title'].'></p>
-<p><label>Event Description</label><textarea name="description" '.$errors['description'].'>'.$data->description.'</textarea></p>
-<p><label>Event Location</label><textarea name="location" '.$errors['location'].'>'.$data->location.'</textarea></p>
+<p><label>Event Title</label><input type="text" name="title" value="'.stripslashes($data->title).'" '.$errors['title'].'></p>
+<p><label>Event Description</label><textarea name="description" '.$errors['description'].'>'.stripslashes($data->description).'</textarea></p>
+<p><label>Event Location</label><textarea name="location" '.$errors['location'].'>'.stripslashes($data->location).'</textarea></p>
 <p><label> Category</label><select name="category" '.$errors['category'].'>';
 
 $sql="SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category";
@@ -506,11 +525,11 @@ $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calen
 {
      //which month to view
     $current=(isset($_GET['date'])) ? intval($_GET['date']) : time(); //get user date or use today
-    $next = strtotime("+1 month",$current);
+    $next = strtotime("last day");
     $previous = strtotime("-1 month",$current);
     $now=date("M Y",$current);
     $sqlnow=date("Y-m-01", $current);
-    $sqlnext=date("Y-m-01",$next);
+    $sqlnext=date("Y-m-d",$next);
     
     echo '<p><a href="admin.php?page=church_admin_calendar&amp;date='.$previous.'">Prev</a> '.$now.' <a href="admin.php?page=church_admin_calendar&amp;date='.$next.'">Next</a></p>'; 
 
@@ -518,15 +537,17 @@ $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calen
     //initialise table
     $table='<table class="widefat"><thead><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></thead>';
     $sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.*,".$wpdb->prefix."church_admin_calendar_event.*,".$wpdb->prefix."church_admin_calendar_category.* FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_event WHERE ".$wpdb->prefix."church_admin_calendar_date.event_id=".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date>='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date< '$sqlnext' ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date";
-   
+  
    $result=$wpdb->get_results($sql);
     foreach($result AS $row)
     {
     //create links
     $single_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'church admin single event edit').'">Edit</a>';
-    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'church admin series event edit').'">Edit</a>';}
-    $single_delete_url='delete';
-    if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='';}
+    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'church admin series event edit').'">Edit Series</a>';}
+    $single_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'single_event_delete').'">Delete this one</a>';
+
+    if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'series_event_delete').'">Delete Series</a>';}
+    
     //sort out category
     
      $table.='<tr><td>'.$single_edit_url.'</td><td>'.$series_edit_url.'</td><td>'.$single_delete_url.'</td><td>'.$series_delete_url.'</td><td>'.mysql2date('j F Y',$row->start_date).'</td><td>'.$row->start_time.'</td><td>'.$row->end_time.'</td><td>'.$row->title.'</td><td style="background:'.$row->bgcolor.'">'.$row->category.'</td><td>';
