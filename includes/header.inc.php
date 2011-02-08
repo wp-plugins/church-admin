@@ -77,6 +77,7 @@ function church_admin_public_header()
 {echo'<style type="text/css">
 .church_admin_calendar table{width:700px;}
 .church_admin_calendar td{border:1px solid grey;}
+.church_admin_popup{width:250px;}
 .calendar-date-switcher {
         height:25px;
         text-align:center;
