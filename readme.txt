@@ -3,22 +3,32 @@ Contributors: andymoyle
 Donate link: http://www.themoyles.co.uk/
 Tags: church admin sms smallgroups rota email address list calendar
 Requires at least: 3.0.0
-Tested up to: 3.0.4
-Stable tag: 0.31.4
+Tested up to: 3.0.5
+Stable tag: 0.32
 
 church_admin is a church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
 == Description ==
 
 This plugin is for church wordpress site - it adds an easy to use address directory and you can email different groups of people.
+
 Small Groups - add, edit and delete
+
 Members - add, edit and delete
+
 Email- send an email to members, parents or small group leaders
+
 SMS - send bulk sms to members using www.bulksms.co.uk account
+
 Sunday Rota - create and show rotas for your volunteers.
+
 Attendance tracking and graphs
+
 Visitor tracking and follow up
+
 Calendar - month to view, agenda view and nth day recurring events (eg 3rd Sunday)
+
+The calendar now includes that most powerful of planning tools - the year planner!
 
 == Installation ==
 
@@ -40,8 +50,13 @@ We recommend password protecting the pages - if it is password protected a link 
 http://www.themoyles.co.uk/church-admin-wordpress-plugin/
 
 == Screenshots ==
-
-
+http://www.themoyles/wp-content/uploads/2011/02/add_address-550x160.jpg
+http://www.themoyles/wp-content/uploads/2011/02/admin_calendar-960x160.jpg
+http://www.themoyles/wp-content/uploads/2011/02/admin_categories-559x160.jpg
+http://www.themoyles/wp-content/uploads/2011/02/admin_send_sms-348x160.jpg
+http://www.themoyles/wp-content/uploads/2011/02/admin_email_settings-885x160.jpg
+http://www.themoyles/wp-content/uploads/2011/02/admin_rolling_average-960x160.jpg
+http://www.themoyles/wp-content/uploads/2011/02/admin_visitor.jpg
 
 == Changelog ==
 = 0.1 =

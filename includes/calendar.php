@@ -6,7 +6,7 @@
  
  
 */
-
+require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
 function church_admin_category_list()
 {
     global $wpdb;
@@ -94,6 +94,7 @@ echo '<script src="'.CHURCH_ADMIN_INCLUDE_URL.'farbtastic.js" type="text/javascr
     
     $(\'#picker\').farbtastic(\'#color\');
     $(\'#picker\').setColor(\''.$data->bgcolor.'\');
+    
   });
  </script>  
  <p><label for="category">Category Name</label><input type="text" name="category" value="'.$data->category.'"/></p>
@@ -171,6 +172,7 @@ function church_admin_series_event($date_id,$event_id)
         echo '<div id="message" class="updated fade">';
         echo '<p><strong>Calendar Event Series Edited.</strong></p>';
         echo '</div>';
+        church_admin_cache_year_planner();
         church_admin_calendar_list();
         }//end of event not already in db
         }
@@ -204,6 +206,7 @@ function church_admin_single_event_delete($date_id,$event_id)
     echo '<div id="message" class="updated fade">';
     echo '<p><strong>Calendar Event deleted.</strong></p>';
     echo '</div>';
+    church_admin_cache_year_planner();
     church_admin_calendar_list();
 }
 function church_admin_series_event_delete($date_id,$event_id)
@@ -215,6 +218,7 @@ function church_admin_series_event_delete($date_id,$event_id)
     echo '<div id="message" class="updated fade">';
     echo '<p><strong>Calendar Events deleted.</strong></p>';
     echo '</div>';
+    church_admin_cache_year_planner();
     church_admin_calendar_list();
 }
 function church_admin_single_event_edit($date_id,$event_id)
@@ -252,6 +256,7 @@ function church_admin_single_event_edit($date_id,$event_id)
           echo '<div id="message" class="updated fade">';
         echo '<p><strong>Calendar Event edited.</strong></p>';
         echo '</div>';
+        church_admin_cache_year_planner();
         church_admin_calendar_list();
       }//end no errors
       else
@@ -336,6 +341,7 @@ function church_admin_add_calendar()
         echo '<div id="message" class="updated fade">';
         echo '<p><strong>Calendar Event added.</strong></p>';
         echo '</div>';
+        church_admin_cache_year_planner();
         church_admin_calendar_list();
         }//end of event not already in db
       }//end of no errors

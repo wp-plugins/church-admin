@@ -105,7 +105,7 @@ if(file_exists(CHURCH_ADMIN_CACHE_PATH.'addresslist.pdf'))
 $directory.='<td> <form name="guideform"><select name="guidelinks" onChange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">-- Choose a pdf --
 <option value="'.CHURCH_ADMIN_URL.'cache/mailinglabel.pdf">Church - Avery L7163 Mailing Labels</option><option value="'.CHURCH_ADMIN_URL.'cache/visitor_mailing_label.pdf">Visitors - Avery L7163 Mailing Labels</option>
 <option value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">Address List PDF</option><option value="'.CHURCH_ADMIN_URL.'cache/sg.pdf">Small Group List PDF</option>
-<option value="'.CHURCH_ADMIN_URL.'cache/rota.pdf">Sunday Rota List PDF</option></select></form></td>';
+<option value="'.CHURCH_ADMIN_URL.'cache/rota.pdf">Sunday Rota List PDF</option><option value="'.CHURCH_ADMIN_URL.'cache/year_planner.pdf">A4 Year Planner PDF</option></select></form></td>';
 }
 $directory.='</tr></table>';
 //table header

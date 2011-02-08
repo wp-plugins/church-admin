@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.31.4
+Version: 0.32
 
 Author: Andy Moyle
 
@@ -65,7 +65,7 @@ Version History
 0.31.2 2011-01-31 Fixed install roblems from svn
 0.31.3 2011-01-31 Order calendar widget by start date and multiple events per day allowed
 0.31.4 2011-02-04 Calendar Event deletes added, fixed jquery conflict on admin pages, rota for today on a sunday
-
+0.32    2011-02-08  A4 year planner added
 -------------------------------------------------
 To Do
 =================================================
@@ -74,7 +74,7 @@ To Do
 3) Add year planner to calendar
 */
 //Version Number
-$church_admin_version = '0.31.4';
+$church_admin_version = '0.32';
 function church_admin_init()
 {
 if ($_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'||!is_admin())
@@ -295,6 +295,8 @@ function church_admin_main()
         break;
         case'refreshcache':
             require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
+            require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
+            church_admin_cache_year_planner();
             require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
             church_admin_directory();
         break;
@@ -341,6 +343,7 @@ function church_admin_shortcode($atts, $content = null)
     switch($type)
     {
         case 'calendar':
+            $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/year_planner.pdf">A4 Year Planner PDF</a></p>';
             $out.='<script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'jquery.wtooltip.min.js"></script>';
             include(CHURCH_ADMIN_DISPLAY_PATH.'calendar.php');
             
@@ -362,6 +365,7 @@ function church_admin_shortcode($atts, $content = null)
 	case 'rota':
             include(CHURCH_ADMIN_DISPLAY_PATH."rota.php");
         break;
+    
         default:
             require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
         break;
