@@ -525,16 +525,16 @@ return $out;
 function church_admin_calendar_list()
 {
     global $wpdb;
-   echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_calendar">Add calendar Event</a></p>';
+   echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_calendar&amp;date='.$_GET['date'].'">Add calendar Event</a></p>';
 $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_event"); 
  if(!empty($events))
 {
      //which month to view
     $current=(isset($_GET['date'])) ? intval($_GET['date']) : time(); //get user date or use today
-    $next = strtotime("last day");
+    $next = strtotime("+1 month",$current);
     $previous = strtotime("-1 month",$current);
     $now=date("M Y",$current);
-    $sqlnow=date("Y-m-01", $current);
+    $sqlnow=date("Y-m%", $current);
     $sqlnext=date("Y-m-d",$next);
     
     echo '<p><a href="admin.php?page=church_admin_calendar&amp;date='.$previous.'">Prev</a> '.$now.' <a href="admin.php?page=church_admin_calendar&amp;date='.$next.'">Next</a></p>'; 
@@ -542,17 +542,17 @@ $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calen
 
     //initialise table
     $table='<table class="widefat"><thead><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></thead>';
-    $sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.*,".$wpdb->prefix."church_admin_calendar_event.*,".$wpdb->prefix."church_admin_calendar_category.* FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_event WHERE ".$wpdb->prefix."church_admin_calendar_date.event_id=".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date>='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date< '$sqlnext' ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date";
+    $sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.*,".$wpdb->prefix."church_admin_calendar_event.*,".$wpdb->prefix."church_admin_calendar_category.* FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_event WHERE ".$wpdb->prefix."church_admin_calendar_date.event_id=".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date LIKE '$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date";
   
    $result=$wpdb->get_results($sql);
     foreach($result AS $row)
     {
     //create links
-    $single_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'church admin single event edit').'">Edit</a>';
-    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'church admin series event edit').'">Edit Series</a>';}
-    $single_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'single_event_delete').'">Delete this one</a>';
+    $single_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'church admin single event edit').'">Edit</a>';
+    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'church admin series event edit').'">Edit Series</a>';}
+    $single_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'single_event_delete').'">Delete this one</a>';
 
-    if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}",'series_event_delete').'">Delete Series</a>';}
+    if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'series_event_delete').'">Delete Series</a>';}
     
     //sort out category
     
