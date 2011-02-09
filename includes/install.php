@@ -1,130 +1,222 @@
 <?php
-function church_admin_install() {global $wpdb,$church_admin_version;
-$wpdb->show_errors();
-//migrate the old church_directory plugin
-$old_table_name=$wpdb->prefix."church_directory";
-$new_table_name=$wpdb->prefix."church_admin_directory";
-if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-$old_table_name=$wpdb->prefix."church_directory_smallgroup";
-$new_table_name=$wpdb->prefix."church_admin_smallgroup";
-if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-$old_table_name=$wpdb->prefix."church_directory_attendance";
-$new_table_name=$wpdb->prefix."church_admin_attendance";
-if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-$old_table_name=$wpdb->prefix."church_directory_visitors";
-$new_table_name=$wpdb->prefix."church_admin_visitors";
-if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-$old_table_name=$wpdb->prefix."church_directory_rota";
-$new_table_name=$wpdb->prefix."church_admin_rota";
-if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-$old_table_name=$wpdb->prefix."church_directory_rota_settings";
-$new_table_name=$wpdb->prefix."church_admin_rota_settings";
-if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
+function church_admin_install()
+{
+    global $wpdb,$church_admin_version;
+    $wpdb->show_errors();
+    //migrate church_directory plugin
+    //database tables
+    //addresslist
+    $old_table_name=$wpdb->prefix."church_directory";
+    $new_table_name=$wpdb->prefix."church_admin_directory";
+    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
+    
+    //small groups
+    $old_table_name=$wpdb->prefix."church_directory_smallgroup";
+    $new_table_name=$wpdb->prefix."church_admin_smallgroup";
+    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
+    
+    //attendance
+    $old_table_name=$wpdb->prefix."church_directory_attendance";
+    $new_table_name=$wpdb->prefix."church_admin_attendance";
+    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
+    
+    //visitors
+    $old_table_name=$wpdb->prefix."church_directory_visitors";
+    $new_table_name=$wpdb->prefix."church_admin_visitors";
+    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
+    
+    //rota
+    $old_table_name=$wpdb->prefix."church_directory_rota";
+    $new_table_name=$wpdb->prefix."church_admin_rota";
+    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
 
-if(get_option('church_directory_version'))
-{	update_option('mailserver_url',get_option('church_directory_mail_host'));
+    //rota settings
+    $old_table_name=$wpdb->prefix."church_directory_rota_settings";
+    $new_table_name=$wpdb->prefix."church_admin_rota_settings";
+    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
+    
+    if(get_option('church_directory_version'))
+    {
+        update_option('mailserver_url',get_option('church_directory_mail_host'));
         update_option('mailserver_login',get_option('church_directory_mail_user_name'));
         update_option('mailserver_password',get_option('church_directory_mail_password'));
         update_option('mailserver_port','110');
-	update_option('church_admin_sms_username',get_option('church_directory_sms_username'));
-        update_option('church_admin_sms_password',get_option('church_directory_sms_password'));
-        update_option('church_admin_sms_reply',get_option('church_directory_sms_reply'));
-        update_option('church_admin_sms_iso',$_POST['sms_iso']);
+	if(get_option('church_directory_sms_username'))update_option('church_admin_sms_username',get_option('church_directory_sms_username'));
+        if(get_option('church_directory_sms_password'))update_option('church_admin_sms_password',get_option('church_directory_sms_password'));
+        if(get_option('church_directory_sms_reply'))update_option('church_admin_sms_reply',get_option('church_directory_sms_reply'));
+        if(get_option('church_directory_sms_iso'))update_option('church_admin_sms_iso',$_POST['sms_iso']);
 	delete_option('church_directory_version');
-	delete_option('church_directory_mail_host');	delete_option('church_directory_mail_user_name');
+	delete_option('church_directory_mail_host');
+        delete_option('church_directory_mail_user_name');
 	delete_option('church_directory_password');
-	delete_option('church_directory_sms_username');
+    	delete_option('church_directory_sms_username');
 	delete_option('church_directory_sms_password');
 	delete_option('church_directory_sms_reply');
+    }
+    
+    //end of migrate over church_directory plugin
+    //address book table    
+    $table_name = $wpdb->prefix."church_admin_directory";
+    if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name)
+    {
+        $sql = "CREATE TABLE ". $table_name ." (id int(11) NOT NULL AUTO_INCREMENT, ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, address_line1 varchar(255) NOT NULL,  address_line2 varchar(255) DEFAULT NULL,  city varchar(255) NOT NULL  ,  state varchar(255) NOT NULL ,  zipcode varchar(8) NOT NULL,  homephone varchar(15) NOT NULL,  cellphone varchar(12) NOT NULL,
+first_name varchar(255) NOT NULL, last_name varchar(255) CHARACTER SET utf8 NOT NULL, children text NOT NULL, email varchar(255) NOT NULL, email2 varchar(255) NOT NULL, website tinytext NOT NULL, small_group int(11) NOT NULL , PRIMARY KEY (id));";
+        $wpdb->query($sql);
+    }
+    
+    //install small group table
+    $table_name = $wpdb->prefix."church_admin_smallgroup";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
+    {
+	$sql="CREATE TABLE  ". $table_name ." (leader int(11) NOT NULL,group_name varchar(255) NOT NULL,whenwhere tinytext NOT NULL,id int(11) NOT NULL AUTO_INCREMENT,PRIMARY KEY (id));";
+        $wpdb->query ($sql);
+	$wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_smallgroup (leader,group_name,whenwhere,id)VALUES ('0', 'Unattached', '', '1');");
+    }
 
-}
-//end of migrate church_directory to church_admin
-
-//install address book table
-$table_name = $wpdb->prefix."church_admin_directory";if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name)
-{            	$sql = "CREATE TABLE ". $table_name ." (id int(11) NOT NULL AUTO_INCREMENT, ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  address_line1 varchar(255) NOT NULL,  address_line2 varchar(255) DEFAULT NULL,  city varchar(255) NOT NULL  ,  state varchar(255) NOT NULL ,  zipcode varchar(8) NOT NULL,  homephone varchar(15) NOT NULL,  cellphone varchar(12) NOT NULL,first_name varchar(255) NOT NULL, last_name varchar(255) CHARACTER SET utf8 NOT NULL, children text NOT NULL, email varchar(255) NOT NULL, email2 varchar(255) NOT NULL,website tinytext NOT NULL, small_group int(11) NOT NULL , PRIMARY KEY (id));";$wpdb->query ($sql);}
-//install small group table$table_name = $wpdb->prefix."church_admin_smallgroup";if($wpdb->get_var("show tables like '$table_name'") != $table_name) {	$sql="CREATE TABLE  ". $table_name ." (leader int(11) NOT NULL,group_name varchar(255) NOT NULL,whenwhere tinytext NOT NULL,id int(11) NOT NULL AUTO_INCREMENT,PRIMARY KEY (id));";
-	$wpdb->query ($sql);	$wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_smallgroup (leader,group_name,whenwhere,id)VALUES ('0', 'Unattached', '', '1');");}	
-//install rota settings table
-$table_name = $wpdb->prefix."church_admin_rota_settings";if($wpdb->get_var("show tables like '$table_name'") != $table_name) {	$sql="CREATE TABLE  ". $table_name ."  (rota_task TEXT NOT NULL ,rota_id INT( 11 ) NOT NULL AUTO_INCREMENT ,PRIMARY KEY (  rota_id ));";	$wpdb->query ($sql);}
-//install rota table$table_name = $wpdb->prefix."church_admin_rota";if($wpdb->get_var("show tables like '$table_name'") != $table_name) {	$sql="CREATE TABLE  ". $table_name ."  (  rota_date date NOT NULL,  rota_option_id int(11) NOT NULL,  who text NOT NULL,  rota_id int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (rota_id));";	$wpdb->query ($sql);}
-
-//install visitors table
-$table_name = $wpdb->prefix."church_admin_visitors";
-if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
-{
-	$sql="CREATE TABLE ". $table_name ."  (first_name TEXT NOT NULL ,last_name TEXT NOT NULL ,address_line1 TEXT NOT NULL ,address_line2 TEXT NOT NULL ,city TEXT NOT NULL ,state TEXT NOT NULL ,zipcode VARCHAR( 20 ) NOT NULL ,email TEXT NOT NULL ,homephone VARCHAR( 20 ) NOT NULL ,cellphone VARCHAR( 20 ) NOT NULL ,first_sunday DATE NOT NULL ,contacted DATE NOT NULL ,contacted_by VARCHAR( 255 ) NOT NULL ,returned DATE NOT NULL ,
+    //install rota settings table
+    $table_name = $wpdb->prefix."church_admin_rota_settings";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
+    {
+	$sql="CREATE TABLE  ". $table_name ."  (rota_task TEXT NOT NULL ,rota_id INT( 11 ) NOT NULL AUTO_INCREMENT ,PRIMARY KEY (  rota_id ));";
+	$wpdb->query ($sql);
+    }
+    
+    //install rota table
+    $table_name = $wpdb->prefix."church_admin_rota";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
+    {
+	$sql="CREATE TABLE  ". $table_name ."  (  rota_date date NOT NULL,  rota_option_id int(11) NOT NULL,  who text NOT NULL,  rota_id int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (rota_id));";
+	$wpdb->query ($sql);
+    }
+    
+    //install visitors table
+    $table_name = $wpdb->prefix."church_admin_visitors";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
+    {
+    	$sql="CREATE TABLE ". $table_name ."  (first_name TEXT NOT NULL ,last_name TEXT NOT NULL ,address_line1 TEXT NOT NULL ,address_line2 TEXT NOT NULL ,city TEXT NOT NULL ,state TEXT NOT NULL ,zipcode VARCHAR( 20 ) NOT NULL ,email TEXT NOT NULL ,homephone VARCHAR( 20 ) NOT NULL ,cellphone VARCHAR( 20 ) NOT NULL ,first_sunday DATE NOT NULL ,contacted DATE NOT NULL ,contacted_by VARCHAR( 255 ) NOT NULL ,returned DATE NOT NULL ,
 regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT NOT NULL ,children TEXT NOT NULL ,id INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY );";
-	$wpdb->query($sql);
-}
+    $wpdb->query($sql);
+    }
+    
+    
+    //install attendance table
+    $table_name = $wpdb->prefix."church_admin_attendance";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+    {
 
-//install attendance table
-$table_name = $wpdb->prefix."church_admin_attendance";
-if($wpdb->get_var("show tables like '$table_name'") != $table_name)
-{
 	$sql="CREATE TABLE   IF NOT EXISTS  ". $table_name ."  (date DATE NOT NULL ,adults INT(11) NOT NULL,children INT(11)NOT NULL,rolling_adults INT(11) NOT NULL,rolling_children INT(11)NOT NULL,attendance_id INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY );";
 	$wpdb->query ($sql);
-}
-//install email table
-$table_name = $wpdb->prefix."church_admin_email";
-if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
+    }
+    
+    //install email table
+    $table_name = $wpdb->prefix."church_admin_email";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
+    {
+        $sql="CREATE TABLE IF NOT EXISTS ". $table_name ." (recipient varchar(500) NOT NULL,  from_name text NOT NULL,  from_email text NOT NULL,  copy text NOT NULL, subject varchar(500) NOT NULL, message text NOT NULL,attachment text NOT NULL,sent datetime NOT NULL,email_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (email_id)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+        $wpdb->query ($sql);
+    }
+
+    //install calendar table1
+    $table_name = $wpdb->prefix."church_admin_calendar_event";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+    {
+        $sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (recurring VARCHAR(3),title text NOT NULL, description text  NOT NULL, location text NOT NULL, year_planner INT(1),cat_id INT(11) NOT NULL, event_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (event_id)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+        $wpdb->query ($sql);
+    }
+    
+    //install calendar table2
+    $table_name = $wpdb->prefix."church_admin_calendar_date";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+    {
+
+	$sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (start_date date NOT NULL DEFAULT '0000-00-00', start_time time NOT NULL DEFAULT '00:00:00', end_time time NOT NULL DEFAULT '00:00:00', event_id int(11) NOT NULL DEFAULT '0',date_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (date_id)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci AUTO_INCREMENT=1" ;
+        $wpdb->query ($sql);
+    }
+    
+    //install calendar table2
+    $table_name = $wpdb->prefix."church_admin_calendar_category";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+    {
+        $sql="CREATE TABLE IF NOT EXISTS ". $table_name ."  (category varchar(255)  NOT NULL DEFAULT '',  fgcolor varchar(7)  NOT NULL DEFAULT '', bgcolor varchar(7)  NOT NULL DEFAULT '', cat_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`cat_id`)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci AUTO_INCREMENT=1" ;
+        $wpdb->query ($sql);
+        $wpdb->query("INSERT INTO $table_name (category,bgcolor,cat_id) VALUES('Unused','#FFFFFF','0')");
+    }
+//update pdf cache
+require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
+require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
+church_admin_cache_year_planner();
+if(get_option('church_admin_cron')=='cron')
 {
-$sql="	CREATE TABLE IF NOT EXISTS ". $table_name ." (
-  recipient varchar(500) NOT NULL,
-  from_name text NOT NULL,
-  from_email text NOT NULL,
-  copy text NOT NULL,
-  subject varchar(500) NOT NULL,
-  message text NOT NULL,
-  attachment text NOT NULL,
-  sent datetime NOT NULL,
-  email_id int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (email_id)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+    $filecontents='<?php
+define(\'DB_NAME\', \''.DB_NAME.'\');
+/** MySQL database username */
+define(\'DB_USER\', \''.DB_USER.'\');
+/** MySQL database password */
+define(\'DB_PASSWORD\', \''.DB_PASSWORD.'\');
+/** MySQL hostname */
+define(\'DB_HOST\', \''.DB_HOST.'\');
 
-	$wpdb->query ($sql);
+$attachment=array();
+// connect to database
+$db=mysql_connect(DB_HOST,DB_USER,DB_PASSWORD);
+mysql_select_db(DB_NAME);
+
+//initialise phpmailer script
+require("class.phpmailer.php");
+$mail = new PHPMailer();
+//Grab messages
+$sql="SELECT * FROM '.$wpdb->prefix.'church_admin_email ORDER BY email_id ';
+if(get_option('church_admin_bulk_email')>0) $filecontents.='LIMIT 0,'.get_option('church_admin_bulk_email');
+$filecontents.='";
+$result=mysql_query($sql);
+if(mysql_num_rows($result)>0)
+{//only proceed if emails queued in db 
+    while($row=mysql_fetch_assoc($result))
+    {
+        $mail->From     = $row[\'from_email\'];
+        $mail->FromName = "{$row[\'from_name\']}";
+        
+        $mail->IsHTML(true); 
+        $mail->AddAddress($row[\'recipient\']);
+        if(!empty($row[\'copy\']))$mail->AddAddress($row[\'copy\']);
+        if(!empty($row[\'attachment\']))
+        {
+         $path=$row[\'attachment\'];
+         
+            $mail->AddAttachment($path, $name = "", $encoding = "base64",$type = "application/octet-stream");
+            $attachment[]=$path;
+        }
+        $mail->Subject = $row[\'subject\'] ;
+        $mail->Body=$row[\'message\'];
+        if($mail->Send())
+            {
+                //successful send, so delete from DB
+                $sql="DELETE FROM '.$wpdb->prefix.'church_admin_email WHERE email_id=\'".mysql_real_escape_string($row[\'email_id\'])."\'";
+
+                mysql_query($sql)or die(mysql_error());
+            }
+        echo     $mail->ErrorInfo;
+        $mail->ClearAllRecipients();//clears all recipients
+        $mail->ClearCustomHeaders();//clears headers for next message
+    }
 }
 
-//install calendar table1
-$table_name = $wpdb->prefix."church_admin_calendar_event";
-if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+
+?>';
+$fp=fopen(CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php','w');
+fwrite($fp,$filecontents);
+fclose($fp);
+    }
+//end of sort out cronemail.php        
+//sort out wp-cron
+if(get_option('church_admin_cron')=='wp-cron')
 {
-	$sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (recurring VARCHAR(3),title text NOT NULL, description text  NOT NULL, location text NOT NULL, year_planner INT(1),cat_id INT(11) NOT NULL, event_id int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (event_id)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-	$wpdb->query ($sql);
-}
-//install calendar table2
-
- $table_name = $wpdb->prefix."church_admin_calendar_date";
-if($wpdb->get_var("show tables like '$table_name'") != $table_name)
-{
-	$sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (
-  start_date date NOT NULL DEFAULT '0000-00-00',
-  start_time time NOT NULL DEFAULT '00:00:00',
-  end_time time NOT NULL DEFAULT '00:00:00',
-  event_id int(11) NOT NULL DEFAULT '0',
-  date_id int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (date_id)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci AUTO_INCREMENT=1" ;
-$wpdb->query ($sql);
+    add_action('church_admin_bulk_email','church_admin_cron');
+   $timestamp=mktime();
+    wp_schedule_event($timestamp, 'hourly', 'church_admin_bulk_email');
 }
 
-//install calendar table2
-$table_name = $wpdb->prefix."church_admin_calendar_category";
-if($wpdb->get_var("show tables like '$table_name'") != $table_name)
-{
-$sql="CREATE TABLE IF NOT EXISTS ". $table_name ."  (
-  category varchar(255)  NOT NULL DEFAULT '',
-  fgcolor varchar(7)  NOT NULL DEFAULT '',
-  bgcolor varchar(7)  NOT NULL DEFAULT '',
-  cat_id int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`cat_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci AUTO_INCREMENT=1" ;
-
-$wpdb->query ($sql);
-$wpdb->query("INSERT INTO $table_name (category,bgcolor,cat_id) VALUES('Unused','#FFFFFF','0')");
+//update version
+update_option('church_admin_version',$church_admin_version);
 }
-
-update_option('church_admin_version',$church_admin_version);}			?>
+?>

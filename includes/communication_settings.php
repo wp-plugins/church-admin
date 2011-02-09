@@ -83,7 +83,7 @@ function church_admin_email_settings()
     if(!empty($_POST['username']))
     {
         if(!empty($_POST['quantity'])){update_option('church_admin_bulk_email',$_POST['quantity']);}else{delete_option('church_admin_bulk_email');}
-        update_option('mailserver_url',$_POST['host']);
+        update_option('c',$_POST['host']);
         update_option('mailserver_login',$_POST['username']);
         update_option('mailserver_password',$_POST['password']);
         update_option('mailserver_port',$_POST['port']);
@@ -201,7 +201,7 @@ function church_admin_email_settings_form()
 }   
 function church_admin_sms_settings_form(){    
     echo'<ul>   
-    <li><h2>SMS Settings</h2></li><li><label for="sms">Enable Bulk sms?</label><input type="checkbox" name="sms"/></li><li>Set up an account with <a href="www.bulksms.co.uk">www.bulksms.co.uk</a> - prices start at 3.9 per sms</li><li>Once you have registered fill out the form below</li><li><label for="SMS username">SMS username</label><input type="text" name="sms_username" value="'.get_option('church_directory_sms_username').'" /></li><li><label for="SMS password">SMS password</label><input type="text" name="sms_password" value="'.get_option('church_directory_sms_password').'" /></li><li><label for="SMS reply">SMS reply eg:447777123456</label><input type="text" name="sms_reply" value="'.get_option('church_directory_sms_reply').'" /></li><li><label for="SMS country code">Country code eg 44</label><input type="text" name="sms_iso" value="'.get_option('church_directory_sms_iso').'" /></li></ul>';
+    <li><h2>SMS Settings</h2></li><li><label for="sms">Enable Bulk sms?</label><input type="checkbox" name="sms"/></li><li>Set up an account with <a href="www.bulksms.co.uk">www.bulksms.co.uk</a> - prices start at 3.9 per sms</li><li>Once you have registered fill out the form below</li><li><label for="SMS username">SMS username</label><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></li><li><label for="SMS password">SMS password</label><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></li><li><label for="SMS reply">SMS reply eg:447777123456</label><input type="text" name="sms_reply" value="'.get_option('church_admin_sms_reply').'" /></li><li><label for="SMS country code">Country code eg 44</label><input type="text" name="sms_iso" value="'.get_option('church_admin_sms_iso').'" /></li></ul>';
 }
 
 function church_admin_cron_job_instructions()

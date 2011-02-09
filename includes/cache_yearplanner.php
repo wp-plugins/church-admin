@@ -21,7 +21,7 @@ $y=5;
 //Title
 $pdf->SetXY($x,$y);
 $pdf->SetFont('Arial','B',18);
-$title="The Gateway Church Year Planner";
+$title=get_option('blogname');
 $pdf->Cell(0,8,$title,0,0,C);
 $pdf->SetFont('Arial','B',10);
 

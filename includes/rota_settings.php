@@ -31,7 +31,7 @@ function church_admin_edit_rota_settings($id)
 {
 global $wpdb;
 $wpdb->show_errors();
-if(isset($_POST['edit_rota_setting'])&&check_admin_referer('edit_rota_settings'))
+if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
 {
     //form submitted
     $wpdb->query("UPDATE ".$wpdb->prefix."church_admin_rota_settings SET rota_task='".esc_sql(stripslashes($_POST['rota_task']))."' WHERE rota_id='".esc_sql($id)."'");
