@@ -6,7 +6,7 @@ function church_admin_cache_year_planner()
 $dir=CHURCH_ADMIN_CACHE_PATH;
 if(!(is_dir($dir)))
 {
-  if(!mkdir(CHURCH_ADMIN_CACHE_PATH,0755))die("There's no cache admin on the server and one couldn't be created. Please create a \"cache\" dircetory under the church_admin admin");
+  if(!mkdir(CHURCH_ADMIN_CACHE_PATH,0755))die("There's no cache admin on the server and one couldn't be created. Please create a \"cache\" directory under the church_admin admin");
    
 }
 

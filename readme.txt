@@ -50,13 +50,9 @@ We recommend password protecting the pages - if it is password protected a link 
 http://www.themoyles.co.uk/church-admin-wordpress-plugin/
 
 == Screenshots ==
-http://www.themoyles/wp-content/uploads/2011/02/add_address-550x160.jpg
-http://www.themoyles/wp-content/uploads/2011/02/admin_calendar-960x160.jpg
-http://www.themoyles/wp-content/uploads/2011/02/admin_categories-559x160.jpg
-http://www.themoyles/wp-content/uploads/2011/02/admin_send_sms-348x160.jpg
-http://www.themoyles/wp-content/uploads/2011/02/admin_email_settings-885x160.jpg
-http://www.themoyles/wp-content/uploads/2011/02/admin_rolling_average-960x160.jpg
-http://www.themoyles/wp-content/uploads/2011/02/admin_visitor.jpg
+admin_categories.jpg
+admin_rolling_average.jpg
+admin_send_sms.jpg
 
 == Changelog ==
 = 0.1 =
@@ -76,6 +72,8 @@ http://www.themoyles/wp-content/uploads/2011/02/admin_visitor.jpg
 * Improved calendar table
 * Fixed jquery conflict bug on admin page
 * Rota shows this Sunday rather than next Sunday
+= 0.32.1 =
+* A4 Calendar added
 
 == Upgrade Notice ==
 * 0.2 required

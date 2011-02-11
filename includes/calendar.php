@@ -267,7 +267,7 @@ function church_admin_single_event_edit($date_id,$event_id)
     }//end process 
     else
     {// form not submitted
-    $sql="SELECT ".$wpdb->prefix."church_admin_calendar_event.*,".$wpdb->prefix."church_admin_calendar_date.*,".$wpdb->prefix."church_admin_calendar_category.* FROM ".$wpdb->prefix."church_admin_calendar_event,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_category WHERE ".$wpdb->prefix."church_admin_calendar_event.event_id=".$wpdb->prefix."church_admin_calendar_date.event_id AND ".$wpdb->prefix."church_admin_calendar_date.date_id='".esc_sql($date_id)."' AND ".$wpdb->prefix."church_admin_calendar_date.event_id='".esc_sql($event_id)."'";
+    $sql="SELECT ".$wpdb->prefix."church_admin_calendar_event.*,".$wpdb->prefix."church_admin_calendar_date.*,".$wpdb->prefix."church_admin_calendar_category.* FROM ".$wpdb->prefix."church_admin_calendar_event,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_category WHERE ".$wpdb->prefix."church_admin_calendar_event.event_id=".$wpdb->prefix."church_admin_calendar_date.event_id AND ".$wpdb->prefix."church_admin_calendar_date.date_id='".esc_sql($date_id)."' AND ".$wpdb->prefix."church_admin_calendar_date.event_id='".esc_sql($event_id)."' AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id";
     
     $data=$wpdb->get_row($sql);
     $data->start_date=mysql2date('d/m/Y',$data->start_date);
@@ -425,7 +425,7 @@ function church_admin_calendar_form($data,$errors,$recurring=1)
 {
     
     global $wpdb;
-    
+  
     $wpdb->show_errors();
     $out='  <script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script>
 <script type="text/javascript">document.write(getCalendarStyles());</script>
@@ -462,21 +462,22 @@ if(document.getElementById(\'recurring\').value==\'a\'){
 <p><label>Event Description</label><textarea name="description" '.$errors['description'].'>'.stripslashes($data->description).'</textarea></p>
 <p><label>Event Location</label><textarea name="location" '.$errors['location'].'>'.stripslashes($data->location).'</textarea></p>
 <p><label> Category</label><select name="category" '.$errors['category'].'>';
-
+$first='<option value="">Please select...</option>';
 $sql="SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category";
 $result3=$wpdb->get_results($sql);
 foreach($result3 AS $row)
 {
     if($data->cat_id==$row->cat_id)
     {
-        $first='<option value="'.$row->cat_id.'" style="background:'.$row->bgcolor.'">'.$row->category.'</option>';
+        
+        $first='<option value="'.$data->cat_id.'" style="background:'.$data->bgcolor.'">'.$data->category.'</option>';
     }
     else
     {
         $select.='<option value="'.$row->cat_id.'" style="background:'.$row->bgcolor.'">'.$row->category.'</option>';
     }
 }
-if(empty($first))$first='<option value="">Please select...</option>';
+
 $out.=$first.$select;//have original value first!
 $out.='</select></p>
 <p><label for="start_date">Start Date</label><input name="start_date" type="text" '.$errors['start_date'].' value="'.$data->start_date.'" size="25"><a href="#" onClick="cal_begin.select(document.forms[\'calendar\'].start_date,\'date_anchor1\',\'dd/MM/yyyy\'); return false;" name="date_anchor1" id="date_anchor1"><img src="'.CHURCH_ADMIN_IMAGES_URL.'cal.gif" width="16" height="16" border="0" alt="Pick a date"/></a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div></p>';
@@ -525,21 +526,29 @@ return $out;
 function church_admin_calendar_list()
 {
     global $wpdb;
+    if(empty($_REQUEST['date']))$_REQUEST['date']=time();
    echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_calendar&amp;date='.$_GET['date'].'">Add calendar Event</a></p>';
 $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_event"); 
  if(!empty($events))
 {
      //which month to view
-    $current=(isset($_GET['date'])) ? intval($_GET['date']) : time(); //get user date or use today
+    $current=(isset($_REQUEST['date'])) ? intval($_REQUEST['date']) : time(); //get user date or use today
     $next = strtotime("+1 month",$current);
     $previous = strtotime("-1 month",$current);
     $now=date("M Y",$current);
     $sqlnow=date("Y-m%", $current);
     $sqlnext=date("Y-m-d",$next);
     
-    echo '<p><a href="admin.php?page=church_admin_calendar&amp;date='.$previous.'">Prev</a> '.$now.' <a href="admin.php?page=church_admin_calendar&amp;date='.$next.'">Next</a></p>'; 
-
-
+    echo '<table><tr><td><a href="admin.php?page=church_admin_calendar&amp;date='.$previous.'">Prev</a> '.$now.' <a href="admin.php?page=church_admin_calendar&amp;date='.$next.'">Next</a></td><td>';
+    echo'<form action="" method="POST"><select name="date">';
+    if(isset($_REQUEST['date']))echo '<option value="'.$_REQUEST['date'].'">'.date('M Y',$_REQUEST['date']).'</option>';
+//generate a form to access calendar
+for($x=0;$x<12;$x++)
+{
+    $date=strtotime("+ $x month",time());
+    echo '<option value="'.$date.'">'.date('M Y',$date).'</option>';
+}
+echo '</select><input type="submit" value="Go to date"/></form</td></tr></table>';
     //initialise table
     $table='<table class="widefat"><thead><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></thead>';
     $sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.*,".$wpdb->prefix."church_admin_calendar_event.*,".$wpdb->prefix."church_admin_calendar_category.* FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_event WHERE ".$wpdb->prefix."church_admin_calendar_date.event_id=".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date LIKE '$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date";
