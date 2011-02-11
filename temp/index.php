@@ -1,0 +1,3 @@
+<?php
+//Jesus is Lord!
+?>
