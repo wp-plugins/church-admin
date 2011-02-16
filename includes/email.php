@@ -58,14 +58,14 @@ if((get_option('church_admin_bulk_email'))){echo '<div id="message" class="updat
 else
 {
     //form not yet submitted
-    echo'<div class="wrap"><h2>Send email</h2><form action="" enctype="multipart/form-data" method="post" ><input type="hidden" name="MAX_FILE_SIZE" value="1000000" />';
+    echo'<div class="wrap church_admin"><h2>Send email</h2><form action="" enctype="multipart/form-data" method="post" ><input type="hidden" name="MAX_FILE_SIZE" value="1000000" />';
     if ( function_exists('wp_nonce_field') ) wp_nonce_field('send email');
     echo'<ul><li><label for="subject">Subject:</label><input type="text" name="subject" id="subject" maxlength="45" size="100"/></li><li><label for="reply_name">Reply to name:</label><input id="reply_name" type="text" name="from_name"/></li><li><label for="reply_email">Email address for replies:</label><input id="reply_email" type="text" name="from_email"/></li><li><label for="attachment">Attachment (max 1MB):</label><input id="attachment" type="file" name="userfile"/></li></ul>';
     echo'<h2>The Message</h2>';
     echo'<div id="poststuff">';
     the_editor("", "content", "", true);
     echo'</div>';
-    echo'<p><input type="submit" class="secondary-button" value="Send Email"/></div>';    
+    echo'<p><input type="submit" class="secondary-button" value="Send Email"/></p></form></div>';    
     }
     
 }

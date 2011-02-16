@@ -12,14 +12,14 @@ if($rota_jobs>0&&$rota_list>0)
 {
     echo '<h2>Rota List</h2>
     <p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list","rota_settings_list").'">View/Edit Rota Jobs</a></p>
-    <p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_rota_settings",'add_rota_settings').'" >Add more rota jobs<a/></p>
+    <p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_rota_settings",'add_rota_settings').'" >Add more rota jobs</a></p>
     <p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_to_rota",'add_to_rota').'">Add to rota</a></p>';
 //grab rota tasks
 $taskresult=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings  ORDER by rota_id");
 if(!empty($taskresult))
 {
     //build rota tableheader
-    echo '<table class="widefat"><thead>';
+    echo '<table class="widefat">';
     $thead='<tr><th>Edit</th><th>Delete</th><th width="100">Date</th>';
     foreach($taskresult AS $taskrow)
     {
@@ -27,7 +27,7 @@ if(!empty($taskresult))
     }
     $thead.='</tr>';
     
-    echo'<thead>'.$thead.'</thead>';
+    echo'<thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
     //end rota table header
     	
     //grab already set dates from db after today
@@ -38,7 +38,7 @@ if(!empty($taskresult))
         $edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota&date='.$daterows->rota_date;
         $delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_rota&date='.$daterows->rota_date;
         //start building row
-        echo '<tr><tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">[Edit]</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">[Delete]</a></td><td>'.mysql2date('jS M Y',$daterows->rota_date).'</td>';
+        echo '<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">[Edit]</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">[Delete]</a></td><td>'.mysql2date('jS M Y',$daterows->rota_date).'</td>';
         //get rota task people for that date
         $dateresults=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota WHERE rota_date='".$daterows->rota_date."' ORDER by rota_option_id");
         foreach ($dateresults AS $daterow)
@@ -47,7 +47,7 @@ if(!empty($taskresult))
         }
         echo'</tr>';//finish building row	
         }
-	echo'<tfoot>'.$thead.'</tfoot>';
+	echo'</tbody>';
         echo'</table>';
 }//end of non empty rota tasks.			
 }
@@ -134,12 +134,12 @@ function church_admin_rota_task_form($data='null')
 
 //datepicker js
 echo'<script type="text/javascript">var cal_begin = new CalendarPopup(\'pop_up_cal\');function unifydates() {document.forms[\'event_add\'].event_end.value = document.forms[\'quoteform\'].rota_date.value;}</script>
-<ul><li><label for="subject">Rota Date (yyyy-mm-dd):</label><input type="text" name="rota_date" class="input" size="12" value="'.date('Y-m-d',strtotime("next Sunday")).'" /><a href="#" onClick="cal_begin.select(document.forms[\'event_add\'].rota_date,\'rota_date_anchor\',\'yyyy-MM-dd\'); return false;" name="rota_date_anchor" id="rota_date_anchor">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></li>';
+<ul><li><label>Rota Date (yyyy-mm-dd):</label><input type="text" name="rota_date" class="input" size="12" value="'.date('Y-m-d',strtotime("next Sunday")).'" /><a href="#" onClick="cal_begin.select(document.forms[\'event_add\'].rota_date,\'rota_date_anchor\',\'yyyy-MM-dd\'); return false;" name="rota_date_anchor" id="rota_date_anchor">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></li>';
 //grab different jobs
 $task_result=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings");
 foreach($task_result as $task_row)
 {
-    echo '<li><label for="'.$task_row->rota_task.'">'.$task_row->rota_task.':</label><input type="text" name='.$task_row->rota_id.' value=""/></li>';
+    echo '<li><label>'.$task_row->rota_task.':</label><input type="text" name='.$task_row->rota_id.' value=""/></li>';
 }
 }
 
@@ -175,7 +175,7 @@ echo' <h2>Edit rota for '.$htmldate.'</h2><div id="wrap"><form name="rota_edit" 
     $task_result=$wpdb->get_results("SELECT ".$wpdb->prefix."church_admin_rota.*,".$wpdb->prefix."church_admin_rota_settings.rota_task FROM ".$wpdb->prefix."church_admin_rota,".$wpdb->prefix."church_admin_rota_settings WHERE rota_date='".$date."' AND ".$wpdb->prefix."church_admin_rota.rota_option_id=".$wpdb->prefix."church_admin_rota_settings.rota_id");
 foreach($task_result as $task_row)
 {
-echo '<ul><li><label for="'.$task_row->rota_task.'">'.$task_row->rota_task.':</label><input type="text" name="'.$task_row->rota_option_id.'" value="'.esc_html($task_row->who).'"/></li></ul>';
+echo '<ul><li><label>'.$task_row->rota_task.':</label><input type="text" name="'.$task_row->rota_option_id.'" value="'.esc_html($task_row->who).'"/></li></ul>';
 }
 echo'<p class="submit"><input type="hidden" value="y" name="rota_edited"><input type="submit" value="Update Rota for  '.$htmldate.' &raquo;" /></p></form></div>';
 }//end print editing form

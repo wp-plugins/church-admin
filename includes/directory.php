@@ -37,7 +37,7 @@ church_admin_directory();
 }
 else
 { 
-    echo'<div class="wrap"><h2>Edit Address</h2><form action="" method="post">';
+    echo'<div class="wrap church_admin"><h2>Edit Address</h2><form action="" method="post">';
    if ( function_exists('wp_nonce_field') ) wp_nonce_field('edit_address');
     echo church_admin_directory_form($data); 
     echo '<p class="submit"><input type="submit" name="save" value="Save &raquo;" /></p></form></div>';
@@ -59,16 +59,16 @@ function church_admin_directory_form($data='null')
 if (!$data) {$website = 'http://'; }else{ $website = $data->website;}
 $out = '
 <ul>
-<li><label for="first_name">Address name:</label><input type="text" name="first_name" value="'.esc_html(stripslashes($data->first_name)).'" /></li>
-<li><label for="last_name">Last name:</label><input type="text" name="last_name" value="'.esc_html(stripslashes($data->last_name)).'" /></li>
-<li><label for="last_name">Children:</label><input type="text" name="children" value="'.esc_html(stripslashes($data->children)).'" /></li>
-<li><label for="email">Email Address:</label><input type="text" name="email" value="'.esc_html(stripslashes($data->email)).'" /></li>
-<li><label for="email2">Email Address 2:</label><input type="text" name="email2" value="'.esc_html(stripslashes($data->email2)).'" /></li>
-<li><label for="homephone">Home phone:</label><input type="text" name="homephone" value="'.esc_html(stripslashes($data->homephone)).'" /></li>
-<li><label for="cellphone">Cell phone:</label><input type="text" name="cellphone" value="'.esc_html(stripslashes($data->cellphone)).'" /></li>
+<li><label>Address name:</label><input type="text" name="first_name" value="'.esc_html(stripslashes($data->first_name)).'" /></li>
+<li><label >Last name:</label><input type="text" name="last_name" value="'.esc_html(stripslashes($data->last_name)).'" /></li>
+<li><label >Children:</label><input type="text" name="children" value="'.esc_html(stripslashes($data->children)).'" /></li>
+<li><label >Email Address:</label><input type="text" name="email" value="'.esc_html(stripslashes($data->email)).'" /></li>
+<li><label>Email Address 2:</label><input type="text" name="email2" value="'.esc_html(stripslashes($data->email2)).'" /></li>
+<li><label >Home phone:</label><input type="text" name="homephone" value="'.esc_html(stripslashes($data->homephone)).'" /></li>
+<li><label >Cell phone:</label><input type="text" name="cellphone" value="'.esc_html(stripslashes($data->cellphone)).'" /></li>
 ';
 //get life groups
-$out.='<li><label for="small_group">Small Group:</label><select name="small_group">';$lgsql="SELECT * FROM ".$wpdb->prefix."church_admin_smallgroup";
+$out.='<li><label >Small Group:</label><select name="small_group">';$lgsql="SELECT * FROM ".$wpdb->prefix."church_admin_smallgroup";
 $lgresults = $wpdb->get_results($lgsql);
 foreach ($lgresults as $row) 
 {
@@ -76,7 +76,7 @@ $out.='<option value="'.absint($row->id).'">'.esc_html(stripslashes($row->group_
 }				
 $out.='	</select></li>';
 			
-$out.='<li><label for="address_line1">Address Line 1:</label><input type="text" name="address_line1" value="'.esc_html(stripslashes($data->address_line1)).'" /></li><li><label for="address_line2">Address Line 2:</label><input type="text" name="address_line2" value="'.esc_html(stripslashes($data->address_line2)).'" /></li><li><label for="city">Town:</label><input type="text" name="city" value="'.esc_html(stripslashes($data->city)).'" /></li></li><label for="state">County/State:</label><input type="text" name="state" value="'.esc_html(stripslashes($data->state)).'" /></li><li><label for="zipcode">Postcode:</label><input type="text" name="zipcode" value="'.esc_html(stripslashes($data->zipcode)).'" /></li><li><label for="website">Website:</label><input type="text" name="website" value="'.esc_html(stripslashes($website)).'" /></li></ul>
+$out.='<li><label >Address Line 1:</label><input type="text" name="address_line1" value="'.esc_html(stripslashes($data->address_line1)).'" /></li><li><label >Address Line 2:</label><input type="text" name="address_line2" value="'.esc_html(stripslashes($data->address_line2)).'" /></li><li><label>Town:</label><input type="text" name="city" value="'.esc_html(stripslashes($data->city)).'" /></li><li><label >County/State:</label><input type="text" name="state" value="'.esc_html(stripslashes($data->state)).'" /></li><li><label >Postcode:</label><input type="text" name="zipcode" value="'.esc_html(stripslashes($data->zipcode)).'" /></li><li><label>Website:</label><input type="text" name="website" value="'.esc_html(stripslashes($website)).'" /></li></ul>
 ';
 
 return $out;
@@ -87,7 +87,7 @@ function church_admin_directory()
 {
     global $wpdb;
 //header
-    $directory='<div class="wrap"><h2>Church Admin - Main Address List</h2>';
+    $directory='<div class="wrap church_admin"><h2>Church Admin - Main Address List</h2>';
 
 //link to add an address
 $directory.='<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_address">Add Address</a></p>';
@@ -97,19 +97,19 @@ $sql = "SELECT * FROM ".$wpdb->prefix."church_admin_directory ORDER BY last_name
 $results = $wpdb->get_results($sql);
 if(!empty($results))
 {
-    $directory.='<table width="50%"><tr><td><a href="admin.php?page=church_admin/index.php&amp;action=refreshcache">Refresh PDF cache</a></td>';     
+    $directory.='<p><a href="admin.php?page=church_admin/index.php&amp;action=refreshcache">Refresh PDF cache</a></p>';     
 
 //only output pdf links if already created
 if(file_exists(CHURCH_ADMIN_CACHE_PATH.'addresslist.pdf'))
 {
-$directory.='<td> <form name="guideform"><select name="guidelinks" onChange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">-- Choose a pdf --
+$directory.='<form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">-- Choose a pdf --</option>
 <option value="'.CHURCH_ADMIN_URL.'cache/mailinglabel.pdf">Church - Avery L7163 Mailing Labels</option><option value="'.CHURCH_ADMIN_URL.'cache/visitor_mailing_label.pdf">Visitors - Avery L7163 Mailing Labels</option>
 <option value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">Address List PDF</option><option value="'.CHURCH_ADMIN_URL.'cache/sg.pdf">Small Group List PDF</option>
-<option value="'.CHURCH_ADMIN_URL.'cache/rota.pdf">Sunday Rota List PDF</option><option value="'.CHURCH_ADMIN_URL.'cache/year_planner.pdf">A4 Year Planner PDF</option></select></form></td>';
+<option value="'.CHURCH_ADMIN_URL.'cache/rota.pdf">Sunday Rota List PDF</option><option value="'.CHURCH_ADMIN_URL.'cache/year_planner.pdf">A4 Year Planner PDF</option></select></form>';
 }
-$directory.='</tr></table>';
+
 //table header
-$directory.='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Email address</th><th>Home phone</th><th>Cell phone</th><th>Last update</th></tr></thead>';
+$directory.='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Email address</th><th>Home phone</th><th>Cell phone</th><th>Last update</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Email address</th><th>Home phone</th><th>Cell phone</th><th>Last update</th></tr></tfoot><tbody>';
 $counter=1;
 foreach ($results as $row)
 {
@@ -117,20 +117,20 @@ foreach ($results as $row)
     $delete_url="admin.php?page=church_admin/index.php&action=church_admin_delete_address&id=".$row->id;
     //put entry into session array for vcards
     $_SESSION['address'.$counter]=array();
-    $_SESSION['address'.$counter]['name']=html_entity_decode($row->first_name)." ".$row->last_name;
+    $_SESSION['address'.$counter]['name']=htmlentities($row->first_name)." ".$row->last_name;
     $_SESSION['address'.$counter]['address']=stripslashes($row->address_line1).",\r\n" ;
     if(!empty($row->address_line2))$_SESSION['address'.$counter]['address'].=stripslashes($row->address_line2).",\r\n" ;
     if(!empty($row->city))$_SESSION['address'.$counter]['address'].=stripslashes($row->city).",\r\n" ;
     if(!empty($row->state))$_SESSION['address'.$counter]['address'].=stripslashes($row->state).",\r\n" ;
     if(!empty($row->zipcode))$_SESSION['address'.$counter]['address'].=stripslashes($row->zipcode).'.';
     //table row for directory
-    $directory.="<tr><td><a href=\"".wp_nonce_url($edit_url,'edit_address')."\">[Edit]</a></td><td><a href=\"".wp_nonce_url($delete_url,'delete_address')."\">[Delete]</a></td><td>".$row->last_name.", ".$row->first_name."</td>
+    $directory.="<tr><td><a href=\"".wp_nonce_url($edit_url,'edit_address')."\">[Edit]</a></td><td><a href=\"".wp_nonce_url($delete_url,'delete_address')."\">[Delete]</a></td><td>".htmlentities($row->last_name).", ".htmlentities($row->first_name)."</td>
 <td>".$row->email."</td><td>".$row->homephone."</td><td>".$row->cellphone."</td><td>".$row->ts."</td></tr>";
     $counter++;
 }
-$directory.='<tfoot><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Email address</th><th>Home phone</th><th>Cell phone</th><th>Last update</th></tr></tfoot></table><p style="font-size:smaller; text-align:center">This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.<br/><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="7WVG45H6YAQLW"><input type="submit" name="sg_save" value="If you like this plugin, please donate to the author\'s Church Plant using Paypal &raquo;" />
-<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form> </p>';
+$directory.='</tbody></table><p style="font-size:smaller; text-align:center">This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.</p><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick"/><input type="hidden" name="hosted_button_id" value="7WVG45H6YAQLW"/><input type="submit" name="sg_save" value="If you like this plugin, please donate to the author\'s Church Plant using Paypal &raquo;" />
+<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"/></form> ';
 
 
 }//if results

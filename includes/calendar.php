@@ -12,7 +12,7 @@ function church_admin_category_list()
     global $wpdb;
     //build category tableheader
         $thead='<tr><th>Edit</th><th>Delete</th><th width="100">Category</th></tr>';
-    $table= '<table class="widefat" style="width:30%"><thead>'.$thead.'</thead>';
+    $table= '<table class="widefat" style="width:30%"><thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
         //grab categories
     $results=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category");
     foreach($results AS $row)
@@ -21,7 +21,7 @@ function church_admin_category_list()
         $delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_category&amp;id='.$row->cat_id,'delete_category').'">Delete</a>';
         $table.='<tr><td>'.$edit_url.'</td><td>'.$delete_url.'</td><td style="background:'.$row->bgcolor.'">'.esc_html($row->category).'</td></tr>';
     }
-    $table.='<tfoot>'.$thead.'</tfoot></table>';
+    $table.='</tbody></table>';
     echo '<h2>Calendar Categories</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_add_category','add_category').'">Add a category</a></p>'.$table;
 }
 
@@ -97,8 +97,8 @@ echo '<script src="'.CHURCH_ADMIN_INCLUDE_URL.'farbtastic.js" type="text/javascr
     
   });
  </script>  
- <p><label for="category">Category Name</label><input type="text" name="category" value="'.$data->category.'"/></p>
-  <p><label for="color">Background Colour</label><input type="text" id="color" name="color" value="'.$data->bgcolor.'" /><div id="picker"></div></p> 
+ <p><label >Category Name</label><input type="text" name="category" value="'.$data->category.'"/></p>
+  <p><label >Background Colour</label><input type="text" id="color" name="color" value="'.$data->bgcolor.'" /></p><div id="picker"></div> 
  ';
 }
 
@@ -192,7 +192,7 @@ function church_admin_series_event($date_id,$event_id)
     $data=$wpdb->get_row($sql);
     $data->start_date=mysql2date('d/m/Y',$data->start_date);
      $data->how_many=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_date WHERE event_id='".esc_sql($event_id)."'");
-    echo'<h2>Edit a Series Calendar Item</h2><form action="" id="calendar" method="POST">';
+    echo'<h2>Edit a Series Calendar Item</h2><form action="" id="calendar" method="post">';
     echo church_admin_calendar_form($data,$errors,1);
     echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form>';    
     }//end form
@@ -272,7 +272,7 @@ function church_admin_single_event_edit($date_id,$event_id)
     $data=$wpdb->get_row($sql);
     $data->start_date=mysql2date('d/m/Y',$data->start_date);
     
-    echo'<h2>Edit a Single Calendar Item</h2><form action="" id="calendar" method="POST">';
+    echo'<h2>Edit a Single Calendar Item</h2><form action="" id="calendar" method="post">';
     echo church_admin_calendar_form($data,$errors,0);
     echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form>';
     }//end form not submitted
@@ -355,7 +355,7 @@ function church_admin_add_calendar()
         }
         
         $data=array_to_object($_POST);
-      echo'<h2>Add a Calendar Item</h2><p><em>There were some errors, marked in red</em></p><form action="" id="calendar" method="POST">';
+      echo'<h2>Add a Calendar Item</h2><p><em>There were some errors, marked in red</em></p><form action="" id="calendar" method="post">';
         echo church_admin_calendar_form($data,$errors,1);
         echo '<p><label>&nbsp;</label><input type="submit" name="add_event" value="Add Event"/></form>';
         
@@ -365,9 +365,9 @@ function church_admin_add_calendar()
     else
     {
       
-        echo'<h2>Add a Calendar Item</h2><form action="" id="calendar" method="POST">';
+        echo'<h2>Add a Calendar Item</h2><form action="" id="calendar" method="post">';
         echo church_admin_calendar_form($data,$errors,1);
-        echo '<p><label>&nbsp;</label><input type="submit" name="add_event" value="Add Event"/></form>';
+        echo '<p><label>&nbsp;</label><input type="submit" name="add_event" value="Add Event"/></p></form>';
         
     }
     
@@ -458,10 +458,10 @@ if(document.getElementById(\'recurring\').value==\'a\'){
 		}
 }
 </script>
-<p><label>Event Title</label><input type="text" name="title" value="'.stripslashes($data->title).'" '.$errors['title'].'></p>
-<p><label>Event Description</label><textarea name="description" '.$errors['description'].'>'.stripslashes($data->description).'</textarea></p>
-<p><label>Event Location</label><textarea name="location" '.$errors['location'].'>'.stripslashes($data->location).'</textarea></p>
-<p><label> Category</label><select name="category" '.$errors['category'].'>';
+<p><label>Event Title</label><input type="text" name="title" value="'.stripslashes($data->title).'" '.$errors['title'].' /></p>
+<p><label>Event Description</label><textarea rows="5" cols="50" name="description" '.$errors['description'].'>'.stripslashes($data->description).'</textarea></p>
+<p><label>Event Location</label><textarea rows="5" cols="50" name="location" '.$errors['location'].'>'.stripslashes($data->location).'</textarea></p>
+<p><label> Category</label><select name="category" '.$errors['category'].' >';
 $first='<option value="">Please select...</option>';
 $sql="SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category";
 $result3=$wpdb->get_results($sql);
@@ -480,7 +480,7 @@ foreach($result3 AS $row)
 
 $out.=$first.$select;//have original value first!
 $out.='</select></p>
-<p><label for="start_date">Start Date</label><input name="start_date" type="text" '.$errors['start_date'].' value="'.$data->start_date.'" size="25"><a href="#" onClick="cal_begin.select(document.forms[\'calendar\'].start_date,\'date_anchor1\',\'dd/MM/yyyy\'); return false;" name="date_anchor1" id="date_anchor1"><img src="'.CHURCH_ADMIN_IMAGES_URL.'cal.gif" width="16" height="16" border="0" alt="Pick a date"/></a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div></p>';
+<p><label >Start Date</label><input name="start_date" type="text" '.$errors['start_date'].' value="'.$data->start_date.'" size="25" /><a href="#" onclick="cal_begin.select(document.forms[\'calendar\'].start_date,\'date_anchor1\',\'dd/MM/yyyy\'); return false;" name="date_anchor1" id="date_anchor1"><img src="'.CHURCH_ADMIN_IMAGES_URL.'cal.gif" width="16" height="16" border="0" alt="Pick a date"/></a></p><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>';
 if($recurring==1){
     $out.='
 <p><label>Recurring</label>
@@ -492,18 +492,18 @@ if(!empty($data->recurring))
     $out.= '<option value="'.$data->recurring.'">'.$option[$data->recurring].'</option>';
 }
 $out.='
-<option value="s" />Once</option>
+<option value="s">Once</option>
 <option value="1">Daily</option>
 <option value="7">Weekly</option>
 <option value="n">nth day (eg 1st Friday)</option>
 <option value="m">Monthly on same date</option>
 <option value="a">Annually</option>
 </select></p>
-<div id="nth"';
+<div id="nth" ';
 if($data->recurring=='n'){$out.='style="display:block"';}else{$out.='style="display:none"';}
 $out.='><p><label>Recurring on </label><select '.$errors['nth'].' name="nth">';
 if(!empty($data->nth)) $out.='<option value="'.$data->nth.'">'.$data->nth.'</option>';
-$out.='<option value="1">1st<option value="2">2nd<option value="3">3rd<option value="4">4th</select>&nbsp;<select name="day"><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select></p></div>
+$out.='<option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option></select>&nbsp;<select name="day"><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select></p></div>
 <div id="howmany" ';
 if(!empty($data->recurring) && $data->recurring!='s'){$out.='style="display:block"';}else{$out.='style="display:none"';}
 $out.='><p><label>How many times in all?</label><input type="text" '.$errors['how_many'].' name="how_many" value="'.$data->how_many.'"/></p></div>';
@@ -540,7 +540,7 @@ $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calen
     $sqlnext=date("Y-m-d",$next);
     
     echo '<table><tr><td><a href="admin.php?page=church_admin_calendar&amp;date='.$previous.'">Prev</a> '.$now.' <a href="admin.php?page=church_admin_calendar&amp;date='.$next.'">Next</a></td><td>';
-    echo'<form action="" method="POST"><select name="date">';
+    echo'<form action="" method="post"><select name="date">';
     if(isset($_REQUEST['date']))echo '<option value="'.$_REQUEST['date'].'">'.date('M Y',$_REQUEST['date']).'</option>';
 //generate a form to access calendar
 for($x=0;$x<12;$x++)
@@ -548,9 +548,9 @@ for($x=0;$x<12;$x++)
     $date=strtotime("+ $x month",time());
     echo '<option value="'.$date.'">'.date('M Y',$date).'</option>';
 }
-echo '</select><input type="submit" value="Go to date"/></form</td></tr></table>';
+echo '</select><input type="submit" value="Go to date"/></form></td></tr></table>';
     //initialise table
-    $table='<table class="widefat"><thead><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></thead>';
+    $table='<table class="widefat"><thead><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></thead><tfoot><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></tfoot><tbody>';
     $sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.*,".$wpdb->prefix."church_admin_calendar_event.*,".$wpdb->prefix."church_admin_calendar_category.* FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_event WHERE ".$wpdb->prefix."church_admin_calendar_date.event_id=".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date LIKE '$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date";
   
    $result=$wpdb->get_results($sql);
@@ -565,11 +565,11 @@ echo '</select><input type="submit" value="Go to date"/></form</td></tr></table>
     
     //sort out category
     
-     $table.='<tr><td>'.$single_edit_url.'</td><td>'.$series_edit_url.'</td><td>'.$single_delete_url.'</td><td>'.$series_delete_url.'</td><td>'.mysql2date('j F Y',$row->start_date).'</td><td>'.$row->start_time.'</td><td>'.$row->end_time.'</td><td>'.$row->title.'</td><td style="background:'.$row->bgcolor.'">'.$row->category.'</td><td>';
+     $table.='<tr><td>'.$single_edit_url.'</td><td>'.$series_edit_url.'</td><td>'.$single_delete_url.'</td><td>'.$series_delete_url.'</td><td>'.mysql2date('j F Y',$row->start_date).'</td><td>'.$row->start_time.'</td><td>'.$row->end_time.'</td><td>'.htmlentities($row->title).'</td><td style="background:'.$row->bgcolor.'">'.htmlentities($row->category).'</td><td>';
      if($row->year_planner){$table.='Yes';}else{$table.='&nbsp;';}
-     $table.='</tr>';
+     $table.='</td></tr>';
     }
-    $table.='<tfoot><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></tfoot></table>';
+    $table.='</tbody></table>';
     echo$table;
 }//end of non empty calendar table
 

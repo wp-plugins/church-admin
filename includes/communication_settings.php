@@ -6,8 +6,10 @@
 function church_admin_communication_settings()
 {
     //only output other setting if opposite form not submitted!
+    echo '<div class="wrap church_admin">';
     if(!isset($_POST['sms_username'])) church_admin_email_settings();
     if(!isset($_POST['username'])) church_admin_sms_settings();    
+    echo '</div>';
 }
 
 function church_admin_sms_settings()
@@ -72,9 +74,9 @@ function church_admin_sms_settings()
     else
     {
          echo'<form action="" method="post">';
-        if ( function_exists('wp_nonce_field') )wp_nonce_field('sms_settings');
+        
         church_admin_sms_settings_form();
-        echo'<p class="submit"><input type="submit" name="communication_settings" value="Edit SMS Settings &raquo;" /></p></form></div>';
+        echo'<p class="submit"><input type="submit" name="communication_settings" value="Edit SMS Settings &raquo;" /></p></form>';
     }
 }
 function church_admin_email_settings()
@@ -176,9 +178,9 @@ if(empty($_POST['queue'])) wp_clear_scheduled_hook('church_admin_bulk_email');
     {
         echo'<h2>Email Settings</h2><p>Many hosts limit how many email you are allowed to send an hour. If you want emails to be sent in batches, check "Queue Email" below.</p>';
         echo'<form action="" method="post">';
-        if ( function_exists('wp_nonce_field') )wp_nonce_field('email_settings');
+        
         church_admin_email_settings_form();
-        echo'<p class="submit"><input type="submit" name="communication_settings" value="Edit Settings &raquo;" /></p></form></div>';
+        echo'<p class="submit"><input type="submit" name="communication_settings" value="Edit Settings &raquo;" /></p></form>';
 
         
     }
@@ -186,22 +188,22 @@ if(empty($_POST['queue'])) wp_clear_scheduled_hook('church_admin_bulk_email');
 
 function church_admin_email_settings_form()
 {
-    echo '<ul><li><label for="queue">Do you want to queue email?</label>';
+    echo '<ul><li><label >Do you want to queue email?</label>';
    echo'<input type="checkbox" name="queue" ';
     if(get_option('church_admin_bulk_email')) {echo 'checked="checked" ';}//if already opted display checked
-    echo'onClick="javascript:toggle(\'quantity\')" /> </li><div id="quantity"';//allow toggle
+    echo'onclick="javascript:toggle(\'quantity\')" /> </li></ul><div id="quantity"';//allow toggle
     if(!get_option('church_admin_bulk_email'))echo ' style="display:none" ';//don't display if not queued already
-    echo '><li><li><label for="quantity">Max emails per hour?</label><input type="text" name="quantity" value="'.get_option('church_admin_bulk_email').'"/></li><li> There are two ways to set up sending emails in batches</li><li><strong>Using cron</strong> the best method if you are on a Linux based host. There server checks and sends any emails queued every hour in batches set by you.</li><li><strong>Using wp_cron</strong> - wp-cron works by scheduling every hour, but relies on people visiting your site regularly to do it in the background. (only option on windows hosts!)</li><li><label>I want to use cron:</label><input type="radio" name="cron" value="cron" ';
+    echo '><ul><li><label>Max emails per hour?</label><input type="text" name="quantity" value="'.get_option('church_admin_bulk_email').'"/></li><li> There are two ways to set up sending emails in batches</li><li><strong>Using cron</strong> the best method if you are on a Linux based host. There server checks and sends any emails queued every hour in batches set by you.</li><li><strong>Using wp_cron</strong> - wp-cron works by scheduling every hour, but relies on people visiting your site regularly to do it in the background. (only option on windows hosts!)</li><li><label>I want to use cron:</label><input type="radio" name="cron" value="cron" ';
         if (get_option('church_admin_cron')=='cron') echo 'checked="checked"';
         echo'/></li><li><label>I want to use wp-cron:</label><input type="radio" name="cron" value="wp-cron"';
         if (get_option('church_admin_cron')=='wp-cron') echo 'checked="checked"';
-        echo'/></li></div>';
+        echo'/></li></ul></div>';
 
-    echo'<li><label for="mailhost">Your mail host:</label><input type="text" name="host" value="'.get_option('mailserver_url').'"/></li><li><label for="username">Your mail username:</label><input type="text" name="username" value="'.get_option('mailserver_login').'"/></li><li><label for="password">Your mail password:</label><input type="text" name="password" value="'.get_option('mailserver_password').'"/></li><li><label for="port">Your mail host port:</label><input type="text" name="port" value="'.get_option('mailserver_port').'"/></li></ul>';
+    echo'<ul><li><label >Your mail host:</label><input type="text" name="host" value="'.get_option('mailserver_url').'"/></li><li><label >Your mail username:</label><input type="text" name="username" value="'.get_option('mailserver_login').'"/></li><li><label>Your mail password:</label><input type="text" name="password" value="'.get_option('mailserver_password').'"/></li><li><label>Your mail host port:</label><input type="text" name="port" value="'.get_option('mailserver_port').'"/></li></ul>';
 }   
 function church_admin_sms_settings_form(){    
     echo'<ul>   
-    <li><h2>SMS Settings</h2></li><li><label for="sms">Enable Bulk sms?</label><input type="checkbox" name="sms"/></li><li>Set up an account with <a href="www.bulksms.co.uk">www.bulksms.co.uk</a> - prices start at 3.9 per sms</li><li>Once you have registered fill out the form below</li><li><label for="SMS username">SMS username</label><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></li><li><label for="SMS password">SMS password</label><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></li><li><label for="SMS reply">SMS reply eg:447777123456</label><input type="text" name="sms_reply" value="'.get_option('church_admin_sms_reply').'" /></li><li><label for="SMS country code">Country code eg 44</label><input type="text" name="sms_iso" value="'.get_option('church_admin_sms_iso').'" /></li></ul>';
+    <li><h2>SMS Settings</h2></li><li><label>Enable Bulk sms?</label><input type="checkbox" name="sms"/></li><li>Set up an account with <a href="www.bulksms.co.uk">www.bulksms.co.uk</a> - prices start at 3.9 per sms</li><li>Once you have registered fill out the form below</li><li><label >SMS username</label><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></li><li><label>SMS password</label><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></li><li><label >SMS reply eg:447777123456</label><input type="text" name="sms_reply" value="'.get_option('church_admin_sms_reply').'" /></li><li><label >Country code eg 44</label><input type="text" name="sms_iso" value="'.get_option('church_admin_sms_iso').'" /></li></ul>';
 }
 
 function church_admin_cron_job_instructions()

@@ -26,7 +26,7 @@ $out.='<tr><td width="150">Date</td><td width="150">Time</td><td width="400" >Ev
 foreach($result AS $row)
 {
     
-    $out.="<tr><td>".mysql2date('D j M Y',$row->start_date)."</td><td>".$row->start_time." - ".$row->end_time."</td><td><strong>".$row->title."</strong><br> ".$row->description."</td></tr>";
+    $out.="<tr><td>".mysql2date('D j M Y',$row->start_date)."</td><td>".$row->start_time." - ".$row->end_time."</td><td><strong>".htmlentities($row->title)."</strong><br> ".htmlentities($row->description)."</td></tr>";
 }
 $out.="</table>";
 	

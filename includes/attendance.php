@@ -9,14 +9,14 @@ church_admin_add_attendance()
 function church_admin_show_rolling_average()
 {   global $wpdb;
      include(CHURCH_ADMIN_INCLUDE_PATH."rolling-average-graph.php");
-    echo '<p><img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png" alt="rolling_average_attendance graph"/></p>';
+    echo '<p><img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png"  width="1000" height="500" alt="Rolling Average Graph"/></p>';
 
 }
 
 function church_admin_show_graph()
 {   global $wpdb;
     include(CHURCH_ADMIN_INCLUDE_PATH."attendance-graph.php");
-    echo '<p><img src="'.CHURCH_ADMIN_CACHE_URL.'attendance-graph.png" alt="attendance graph"/></p>';
+    echo '<p><img src="'.CHURCH_ADMIN_CACHE_URL.'attendance-graph.png" alt="attendance graph" width="1000" height="500" /></p>';
 
 }
 
@@ -48,7 +48,7 @@ church_admin_show_graph();
 }
 else
 {
-echo'<div class="wrap"><h2>Attendance</h2>';
+echo'<div class="wrap church_admin"><h2>Attendance</h2>';
 echo '<form action="" method="post" name="add_attendance" id="add_attendance">';
 
 echo '<script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script>
@@ -63,10 +63,10 @@ function unifydates() {
 document.forms[\'add_attendance\'].add_date.value = document.forms[\'add_attendance\'].add_date.value;
 }
 					</script>
-<ul><li><label for="subject">Date (yyyy-mm-dd):</label><input type="text" name="add_date" class="input" size="12" value="'.date('Y-m-d',strtotime("last Sunday")).'" /><a href="#" onClick="cal_begin.select(document.forms[\'add_attendance\'].add_date,\'attendance\',\'yyyy-MM-dd\'); return false;" name="attendance" id="attendance">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div></li>
-<li><label for="adults">Adults</label><input type="text" name="adults" value=""/></li>
+<ul><li><label >Date (yyyy-mm-dd):</label><input type="text" name="add_date" class="input" size="12" value="'.date('Y-m-d',strtotime("last Sunday")).'" /><a href="#" onclick="cal_begin.select(document.forms[\'add_attendance\'].add_date,\'attendance\',\'yyyy-MM-dd\'); return false;" name="attendance" id="attendance">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div></li>
+<li><label >Adults</label><input type="text" name="adults" value=""/></li>
 
-<li><label for="children">Children</label><input type="text" name="children" value=""/></li>
+<li><label >Children</label><input type="text" name="children" value=""/></li>
 </ul>
 <p class="submit"><input type="submit" value="Add attendance for that date &raquo;" /></p></form></div>
 ';

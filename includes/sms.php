@@ -132,7 +132,9 @@ else{echo'Not enough credits - please <a href="http://www.bulksms.co.uk">Top up<
 function church_admin_send_sms_form()
 {
 echo'
-<script language="Javascript">
+<script type="text/javascript">
+/* <![CDATA[ */
+
 function counterUpdate(opt_countedTextBox, opt_countBody, opt_maxSize) {
         var countedTextBox = opt_countedTextBox ? opt_countedTextBox : "counttxt";
         var countBody = opt_countBody ? opt_countBody : "countBody";
@@ -148,6 +150,7 @@ function counterUpdate(opt_countedTextBox, opt_countBody, opt_maxSize) {
                 txtField.innerHTML = field.value.length;
         }
 }
+/* ]]> */
 
 </script>
 <h1>Send a text message</h1>
@@ -157,7 +160,7 @@ function counterUpdate(opt_countedTextBox, opt_countBody, opt_maxSize) {
 if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
 echo'
 <div id="church_admin_whoto">Who to?<br/><select name="who"><option value="church">Everyone</option><option value="parents">Parents</option><option value="test">Test</option></select></div>
- <div id="church_admin_message"><span id="countBody">&nbsp;&nbsp;0</span>/160 characters</label><br/><textarea id="counttxt" name="counttxt"  onkeyup="counterUpdate(\'counttxt\', \'countBody\',\'160\');"></textarea></div>
+ <div id="church_admin_message"><span id="countBody">&nbsp;&nbsp;0</span>/160 characters<br/><textarea id="counttxt" rows="4" cols="50" name="counttxt"  onkeyup="counterUpdate(\'counttxt\', \'countBody\',\'160\');"></textarea></div>
  
  
   <div id="church_admin_submit"><input type="submit" name="submitted" value="Send Message"/></div>

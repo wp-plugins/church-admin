@@ -70,23 +70,29 @@ echo '<p class="submit"><input type="submit" name="edit_visitor" value="Edit Vis
 function church_admin_visitor_form($visitordata)
 {
     global $wpdb;
-echo'
+echo'<script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script>
+<script type="text/javascript">document.write(getCalendarStyles());</script>
+<script type="text/javascript">
+var cal_begin = new CalendarPopup(\'pop_up_cal1\');
+var cal_begin = new CalendarPopup(\'pop_up_cal2\');
+var cal_begin = new CalendarPopup(\'pop_up_cal3\');
+</script>
 <ul>
-<li><label for="first_name">Address name:</label><input type="text" name="first_name" value="'.esc_html(stripslashes($visitordata->first_name)).'" /></li>
-<li><label for="last_name">Last name:</label><input type="text" name="last_name" value="'.esc_html(stripslashes($visitordata->last_name)).'" /></li>
-<li><label for="email">Email Address:</label><input type="text" name="email" value="'.esc_html(stripslashes($visitordata->email)).'" /></li>
-<li><label for="children">Children:</label><input type="text" name="children" value="'.esc_html(stripslashes($visitordata->children)).'"/></li>
-<li><label for="address_line1">Address Line 1:</label><input type="text" name="address_line1" value="'.esc_html(stripslashes($visitordata->address_line1)).'" /></li>
-<li><label for="address_line2">Address Line 2:</label><input type="text" name="address_line2" value="'.esc_html(stripslashes($visitordata->address_line2)).'" /></li>
-<li><label for="city">Town:</label><input type="text" name="city" value="'.esc_html(stripslashes($visitordata->city)).'" /></li>
-<li><label for="state">County/State:</label><input type="text" name="state" value="'.esc_html(stripslashes($visitordata->state)).'" /></li>
-<li><label for="zipcode">Postcode:</label><input type="text" name="zipcode" value="'.esc_html(stripslashes($visitordata->zipcode)).'" /></li>
-<li><label for="phone">Phone:</label><input type="text" name="homephone" value="'.esc_html(stripslashes($visitordata->homephone)).'" /></li>
-<li><label for="cellphone">Mobile:</label><input type="text" name="cellphone" value="'.esc_html(stripslashes($visitordata->cellphone)).'" /></li>
+<li><label >Address name:</label><input type="text" name="first_name" value="'.esc_html(stripslashes($visitordata->first_name)).'" /></li>
+<li><label >Last name:</label><input type="text" name="last_name" value="'.esc_html(stripslashes($visitordata->last_name)).'" /></li>
+<li><label>Email Address:</label><input type="text" name="email" value="'.esc_html(stripslashes($visitordata->email)).'" /></li>
+<li><label>Children:</label><input type="text" name="children" value="'.esc_html(stripslashes($visitordata->children)).'"/></li>
+<li><label>Address Line 1:</label><input type="text" name="address_line1" value="'.esc_html(stripslashes($visitordata->address_line1)).'" /></li>
+<li><label>Address Line 2:</label><input type="text" name="address_line2" value="'.esc_html(stripslashes($visitordata->address_line2)).'" /></li>
+<li><label>Town:</label><input type="text" name="city" value="'.esc_html(stripslashes($visitordata->city)).'" /></li>
+<li><label>County/State:</label><input type="text" name="state" value="'.esc_html(stripslashes($visitordata->state)).'" /></li>
+<li><label>Postcode:</label><input type="text" name="zipcode" value="'.esc_html(stripslashes($visitordata->zipcode)).'" /></li>
+<li><label>Phone:</label><input type="text" name="homephone" value="'.esc_html(stripslashes($visitordata->homephone)).'" /></li>
+<li><label>Mobile:</label><input type="text" name="cellphone" value="'.esc_html(stripslashes($visitordata->cellphone)).'" /></li>
 </ul>  
 <h3>Visit Details</h3>
 <ul>
-<li><label for="why">Reason for visit</label><select name="why">
+<li><label>Reason for visit</label><select name="why">
 ';
 if(isset($visitordata->why))
 {
@@ -103,12 +109,8 @@ if(isset($visitordata->why))
 echo '</option>';
 }        
 echo '<option value="1">Just Visiting</option><option value="2">Non Christian</option><option value="3">Moved to Area</option><option value="4">Moving Church</option><option value="5">Lost to the Church</option><option value="6">Pioneer</option></select></li>    
-<script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script>
-<script type="text/javascript">document.write(getCalendarStyles());</script>
-<script type="text/javascript">
-var cal_begin = new CalendarPopup(\'pop_up_cal\');
-</script>
-<li><label for="subject">Date of visit (yyyy-mm-dd):</label><input type="text" name="first_sunday" class="input" size="12" value="';
+
+<li><label>Date of visit (yyyy-mm-dd):</label><input type="text" name="first_sunday" class="input" size="12" value="';
 if(empty($visitordata->first_sunday))
 {
     echo date('Y-m-d',strtotime("last Sunday"));
@@ -118,13 +120,13 @@ else
     echo $visitordata->first_sunday;
 }
 echo'" />
-<a href="#" onClick="cal_begin.select(document.forms[\'visitor\'].first_sunday,\'date_anchor1\',\'yyyy-MM-dd\'); return false;" name="date_anchor1" id="date_anchor1">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>
+<a href="#" onclick="cal_begin.select(document.forms[\'visitor\'].first_sunday,\'date_anchor1\',\'yyyy-MM-dd\'); return false;" name="date_anchor1" id="date_anchor1">Select date</a><div id="pop_up_cal1" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>
 </li>
-<li><label for="subject">Contacted (yyyy-mm-dd):</label><input type="text" name="contacted" class="input" size="12" value="'.esc_html($visitordata->contacted).'" /><a href="#" onClick="cal_begin.select(document.forms[\'visitor\'].contacted,\'date_anchor2\',\'yyyy-MM-dd\'); return false;" name="date_anchor2" id="date_anchor2">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>
+<li><label>Contacted (yyyy-mm-dd):</label><input type="text" name="contacted" class="input" size="12" value="'.esc_html($visitordata->contacted).'" /><a href="#" onclick="cal_begin.select(document.forms[\'visitor\'].contacted,\'date_anchor2\',\'yyyy-MM-dd\'); return false;" name="date_anchor2" id="date_anchor2">Select date</a><div id="pop_up_cal2" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>
 </li>
-<li><label for="contacted_by">Contacted by:</label><input type="text" name="contacted_by" value="'.esc_html(stripslashes($visitordata->contacted_by)).'" /></li>
-<li><label for="subject">Returned (yyyy-mm-dd):</label><input type="text" name="returned" class="input" size="12" value="'.esc_html(stripslashes($visitordata->returned)).'" /><a href="#" onClick="cal_begin.select(document.forms[\'visitor\'].returned,\'date_anchor3\',\'yyyy-MM-dd\'); return false;" name="date_anchor3" id="date_anchor3">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>
-<li><label for="small_group">Small Group:</label><select name="small_group"><option value="0">Not yet</option>';
+<li><label>Contacted by:</label><input type="text" name="contacted_by" value="'.esc_html(stripslashes($visitordata->contacted_by)).'" /></li>
+<li><label>Returned (yyyy-mm-dd):</label><input type="text" name="returned" class="input" size="12" value="'.esc_html(stripslashes($visitordata->returned)).'" /><a href="#" onclick="cal_begin.select(document.forms[\'visitor\'].returned,\'date_anchor3\',\'yyyy-MM-dd\'); return false;" name="date_anchor3" id="date_anchor3">Select date</a><div id="pop_up_cal3" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div></li>
+<li><label>Small Group:</label><select name="small_group"><option value="0">Not yet</option>';
 $lgsql="SELECT * FROM ".$wpdb->prefix."church_admin_smallgroup";
 $lgresults = $wpdb->get_results($lgsql);
 foreach ($lgresults as $row) 
@@ -132,7 +134,7 @@ foreach ($lgresults as $row)
     echo '<option value="'.absint($row->id).'">'.esc_html(stripslashes($row->group_name)).'</option>';
 }				
 echo'</select></li>
-<li><label for="regular">Regular attender?</label><input type="checkbox" name="regular" value="1"/></li>
+<li><label>Regular attender?</label><input type="checkbox" name="regular" value="1"/></li>
 </ul>
 ';    
 }
@@ -159,24 +161,24 @@ function church_admin_visitor_list()
 {
     global$wpdb;
     $wpdb->show_errors();
-echo '<div class="wrap"><h2>Visitor List</h2><p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_visitor",'add_visitor').'">Add a visitor</a></p>';
+echo '<div class="wrap church_admin"><h2>Visitor List</h2><p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_visitor",'add_visitor').'">Add a visitor</a></p>';
 //only output pie chart if there are visitors stored
 $visitorcount=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_visitors");
 if(!empty($visitorcount)&&$visitorcount>0)
 {
 
 if(!file_exists(CHURCH_ADMIN_CACHE_PATH.'visitorpiechart.png')){church_admin_visitor_pie_chart();}
-echo'<p><img src="'.CHURCH_ADMIN_CACHE_URL.'visitorpiechart.png"></p>';
-echo'<table class="widefat" ><thead><tr><th>Edit</th><th>Delete</th><th>Move</th><th>Visited</th><th>Name</th><th>Home phone</th><th>Cell phone</th><th>Contacted</th><th>Contacted by</th><th>Returned</th></tr></thead><tbody>';
+echo'<p><img src="'.CHURCH_ADMIN_CACHE_URL.'visitorpiechart.png" alt="Visitor Pie Chart" width="420" height="200" /></p>';
+echo'<table class="widefat" ><thead><tr><th>Edit</th><th>Delete</th><th>Move</th><th>Visited</th><th>Name</th><th>Home phone</th><th>Cell phone</th><th>Contacted</th><th>Contacted by</th><th>Returned</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Move</th><th>Visited</th><th>Name</th><th>Home phone</th><th>Cell phone</th><th>Contacted</th><th>Contacted by</th><th>Returned</th></tr></tfoot><tbody>';
 $results = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_visitors ORDER BY first_sunday DESC");
 $counter=1;
 foreach ($results as $row)
 {
-    if($row->regular==1) $class='class=regular ';
+    if($row->regular==1) $class='class="regular" ';
     if($row->contacted=='0000-00-00') $row->contacted='';
     if($row->returned=='0000-00-00') $row->returned='';
     $_SESSION['address'.$counter]=array();
-    $_SESSION['address'.$counter]['name']=html_entity_decode($row->first_name)." ".$row->last_name;
+    $_SESSION['address'.$counter]['name']=htmlentities($row->first_name)." ".$row->last_name;
     $_SESSION['address'.$counter]['address']=stripslashes($row->address_line1).",\r\n" ;
     if(!empty($row->address_line2))$_SESSION['address'.$counter]['address'].=stripslashes($row->address_line2).",\r\n" ;
     if(!empty($row->city))$_SESSION['address'.$counter]['address'].=stripslashes($row->city).",\r\n" ;
@@ -185,13 +187,13 @@ foreach ($results as $row)
     echo '<tr '.$class.'><td><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&action=church_admin_edit_visitor&id=".$row->id,'edit_visitor').'">[Edit]</a></td><td><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_delete_visitor&id=".$row->id,'delete_visitor').'">[Delete]</a></td><td><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&action=church_admin_move_visitor&id=".$row->id,'move_visitor').'" title="Move to main address list" >[Add]</a></td><td>'.mysql2date('d/m/Y',$row->first_sunday).'</td><td>';
     if(!empty ($row->email))echo "<a href=\"mailto:{$row->email}\">";
     if(!empty($row->last_name)) echo $row->last_name.", ";
-    echo $row->first_name;
+    echo htmlentities($row->first_name);
     if(!empty ($row->email))echo "</a>";
     echo "</td><td>".$row->homephone."</td><td>".$row->cellphone."</td><td>".$row->contacted."</td><td>".$row->contacted_by."</td><td>".$row->returned."</td></tr>";
     $counter++;
     $class='';
 }
-echo'</tbody><tfoot><tr><th>Edit</th><th>Delete</th><th>Move</th><th>Visited</th><th>Name</th><th>Home phone</th><th>Cell phone</th><th>Contacted</th><th>Contacted by</th><th>Returned</th></tr></tfoot></table>';
+echo'</tbody></table></div>';
 
 }
 }//end of result

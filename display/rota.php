@@ -15,7 +15,7 @@ $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/rota.pdf">PDF Version of the rota</
 	
 	//grab dates in db
 $dateresults=$wpdb->get_results("SELECT DISTINCT rota_date FROM ".$wpdb->prefix."church_admin_rota WHERE rota_date>'".date('Y-m-d')."'");
-$out.='<form action="" method="POST">';
+$out.='<form action="" method="post">';
 if ( function_exists('wp_nonce_field') )$out.=wp_nonce_field('rota list');
 $out.='<select name="date">';
 if(isset($date)) $out.=	'<option value="'.$date.'">'.mysql2date('l, F j, Y', $date, $translate = true).'</option>';	

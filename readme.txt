@@ -1,34 +1,25 @@
 === church_admin ===
 Contributors: andymoyle
 Donate link: http://www.themoyles.co.uk/
-Tags: church admin sms smallgroups rota email address list calendar
+Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 3.0.0
 Tested up to: 3.0.5
-Stable tag: 0.32
+Stable tag: 0.32.2
 
-church_admin is a church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
+A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
 == Description ==
 
 This plugin is for church wordpress site - it adds an easy to use address directory and you can email different groups of people.
-
-Small Groups - add, edit and delete
-
-Members - add, edit and delete
-
-Email- send an email to members, parents or small group leaders
-
-SMS - send bulk sms to members using www.bulksms.co.uk account
-
-Sunday Rota - create and show rotas for your volunteers.
-
-Attendance tracking and graphs
-
-Visitor tracking and follow up
-
-Calendar - month to view, agenda view and nth day recurring events (eg 3rd Sunday)
-
-The calendar now includes that most powerful of planning tools - the year planner!
+* Small Groups - add, edit and delete
+* Members - add, edit and delete
+* Email- send an email to members, parents or small group leaders
+* SMS - send bulk sms to members using www.bulksms.co.uk account
+* Sunday Rota - create and show rotas for your volunteers.
+* Attendance tracking and graphs
+* Visitor tracking and follow up
+* Calendar - month to view, agenda view and nth day recurring events (eg 3rd Sunday)
+* The calendar now includes that most powerful of planning tools - the year planner!
 
 == Installation ==
 
@@ -50,9 +41,9 @@ We recommend password protecting the pages - if it is password protected a link 
 http://www.themoyles.co.uk/church-admin-wordpress-plugin/
 
 == Screenshots ==
-admin_categories.jpg
-admin_rolling_average.jpg
-admin_send_sms.jpg
+screenshot1.png
+screenshot2.png
+screenshot3.png
 
 == Changelog ==
 = 0.1 =
@@ -74,8 +65,10 @@ admin_send_sms.jpg
 * Rota shows this Sunday rather than next Sunday
 = 0.32.1 =
 * A4 Calendar added
+= 0.32.2 =
+* Admin pages now all valid XHTML, and external CSS
 
 == Upgrade Notice ==
-* 0.2 required
+* 0.32.2 required
 
 == Credits: ==
