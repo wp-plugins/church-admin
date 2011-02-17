@@ -11,15 +11,24 @@ A church admin plugin with calendar,address book, small group categories,sunday 
 == Description ==
 
 This plugin is for church wordpress site - it adds an easy to use address directory and you can email different groups of people.
-* Small Groups - add, edit and delete
-* Members - add, edit and delete
-* Email- send an email to members, parents or small group leaders
-* SMS - send bulk sms to members using www.bulksms.co.uk account
-* Sunday Rota - create and show rotas for your volunteers.
-* Attendance tracking and graphs
-* Visitor tracking and follow up
-* Calendar - month to view, agenda view and nth day recurring events (eg 3rd Sunday)
-* The calendar now includes that most powerful of planning tools - the year planner!
+
+*   Small Groups - add, edit and delete
+
+*   Members - add, edit and delete
+
+*   Email- send an email to members, parents or small group leaders
+
+*   SMS - send bulk sms to members using www.bulksms.co.uk account
+
+*   Sunday Rota - create and show rotas for your volunteers.
+
+*   Attendance tracking and graphs
+
+*   Visitor tracking and follow up
+
+*   Calendar - month to view, agenda view and nth day recurring events (eg 3rd Sunday)
+
+*   The calendar now includes that most powerful of planning tools - the year planner!
 
 == Installation ==
 
@@ -41,9 +50,10 @@ We recommend password protecting the pages - if it is password protected a link 
 http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 == Screenshots ==
-screenshot1.png
-screenshot2.png
-screenshot3.png
+1. Adding a category to the calendar section
+2. Rolling average attendance graph
+3. Send a text message
+
 
 == Changelog ==
 = 0.1 =
