@@ -75,7 +75,7 @@ To Do
 3) Add year planner to calendar
 */
 //Version Number
-$church_admin_version = '0.32.1';
+$church_admin_version = '0.32.2';
 function church_admin_init()
 {
 if ($_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'||!is_admin())

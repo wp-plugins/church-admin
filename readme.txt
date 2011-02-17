@@ -38,7 +38,7 @@ We recommend password protecting the pages - if it is password protected a link 
 
 == Frequently Asked Questions ==
 
-http://www.themoyles.co.uk/church-admin-wordpress-plugin/
+http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 == Screenshots ==
 screenshot1.png

@@ -128,7 +128,7 @@ foreach ($results as $row)
 <td>".$row->email."</td><td>".$row->homephone."</td><td>".$row->cellphone."</td><td>".$row->ts."</td></tr>";
     $counter++;
 }
-$directory.='</tbody></table><p style="font-size:smaller; text-align:center">This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.</p><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+$directory.='</tbody></table><p style="font-size:smaller; text-align:center">This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.<br/><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support/sites-using-the-church-admin-plugin-group3/showcase-forum10">Please add your site to our show case of this plugins users!</a></p><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_s-xclick"/><input type="hidden" name="hosted_button_id" value="7WVG45H6YAQLW"/><input type="submit" name="sg_save" value="If you like this plugin, please donate to the author\'s Church Plant using Paypal &raquo;" />
 <img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"/></form> ';
 
