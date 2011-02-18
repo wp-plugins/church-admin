@@ -18,7 +18,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 
 *   Email- send an email to members, parents or small group leaders
 
-*   SMS - send bulk sms to members using www.bulksms.co.uk account
+*   SMS - send bulk sms to members using www.bulksms.co.uk account (not just UK!)
 
 *   Sunday Rota - create and show rotas for your volunteers.
 

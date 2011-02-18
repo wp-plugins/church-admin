@@ -134,13 +134,14 @@ function church_admin_rota_task_form($data='null')
 
 //datepicker js
 echo'<script type="text/javascript">var cal_begin = new CalendarPopup(\'pop_up_cal\');function unifydates() {document.forms[\'event_add\'].event_end.value = document.forms[\'quoteform\'].rota_date.value;}</script>
-<ul><li><label>Rota Date (yyyy-mm-dd):</label><input type="text" name="rota_date" class="input" size="12" value="'.date('Y-m-d',strtotime("next Sunday")).'" /><a href="#" onClick="cal_begin.select(document.forms[\'event_add\'].rota_date,\'rota_date_anchor\',\'yyyy-MM-dd\'); return false;" name="rota_date_anchor" id="rota_date_anchor">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></li>';
+<ul><li><label>Rota Date (yyyy-mm-dd):</label><input type="text" name="rota_date" class="input" size="12" value="'.date('Y-m-d',strtotime("next Sunday")).'" /><a href="#" onclick="cal_begin.select(document.forms[\'event_add\'].rota_date,\'rota_date_anchor\',\'yyyy-MM-dd\'); return false;" name="rota_date_anchor" id="rota_date_anchor">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div></li>';
 //grab different jobs
 $task_result=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings");
 foreach($task_result as $task_row)
 {
-    echo '<li><label>'.$task_row->rota_task.':</label><input type="text" name='.$task_row->rota_id.' value=""/></li>';
+    echo '<li><label>'.$task_row->rota_task.':</label><input type="text" name="'.$task_row->rota_id.'" value=""/></li>';
 }
+echo'</ul>';
 }
 
 function church_admin_delete_rota($date)
