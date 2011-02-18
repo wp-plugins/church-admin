@@ -15,14 +15,15 @@ if(check_admin_referer( 'add_visitor') &&!empty($_POST['first_name'])&&!empty($_
     if(!checkDateFormat($_POST['contacted'])) $_POST['contacted']='0000-00-00';
     if(!checkDateFormat($_POST['returned']))$_POST['returned']='0000-00-00';
     if(!checkDateFormat($_POST['first_sunday'])) $_POST['first_sunday']='0000-00-00';
-    $sql = "INSERT INTO ".$wpdb->prefix."church_admin_visitors SET first_sunday='".$wpdb->escape($_POST['first_sunday'])."',contacted='".$wpdb->escape($_POST['contacted'])."',contacted_by='".$wpdb->escape($_POST['contacted_by'])."', returned='".$wpdb->escape($_POST['returned'])."', first_name = '".$wpdb->escape($_POST['first_name'])."',last_name     = '".$wpdb->escape($_POST['last_name'])."', email= '".$wpdb->escape($_POST['email'])."', small_group= '".$wpdb->escape($_POST['small_group'])."', address_line1 = '".$wpdb->escape($_POST['address_line1'])."',          address_line2 = '".$wpdb->escape($_POST['address_line2'])."', city = '".$wpdb->escape($_POST['city'])."',state= '".$wpdb->escape($_POST['state'])."',zipcode       = '".$wpdb->escape($_POST['zipcode'])."', homephone     = '".$wpdb->escape($_POST['homephone'])."',cellphone     = '".$wpdb->escape($_POST['cellphone'])."',children = '".$wpdb->escape($_POST['children'])."'";
+    if(isset($_POST['regular'])&&$_POST['regular']=='1') {$sqlsafe['regular']=1;}else{$sqlsafe['regular']=0;}
+    $sql = "INSERT INTO ".$wpdb->prefix."church_admin_visitors SET first_sunday='".$wpdb->escape($_POST['first_sunday'])."',contacted='".$wpdb->escape($_POST['contacted'])."',contacted_by='".$wpdb->escape($_POST['contacted_by'])."', returned='".$wpdb->escape($_POST['returned'])."', first_name = '".$wpdb->escape($_POST['first_name'])."',last_name     = '".$wpdb->escape($_POST['last_name'])."', email= '".$wpdb->escape($_POST['email'])."', small_group= '".$wpdb->escape($_POST['small_group'])."', address_line1 = '".$wpdb->escape($_POST['address_line1'])."',          address_line2 = '".$wpdb->escape($_POST['address_line2'])."', city = '".$wpdb->escape($_POST['city'])."',state= '".$wpdb->escape($_POST['state'])."',zipcode       = '".$wpdb->escape($_POST['zipcode'])."', homephone     = '".$wpdb->escape($_POST['homephone'])."',cellphone     = '".$wpdb->escape($_POST['cellphone'])."',children = '".$wpdb->escape($_POST['children'])."',regular='".$wpdb->escape($_POST['regular'])."'";
     $wpdb->query($sql)  ;
     require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
     church_admin_visitor_list();
 }
 else
 {
-    echo'<div id="wrap"><h2>Add Visitor</h2><form action="" name="visitor" method="post">';
+    echo'<div class="wrap church_admin"><h2>Add Visitor</h2><form action="" name="visitor" method="post">';
         if ( function_exists('wp_nonce_field') )wp_nonce_field('add_visitor');
         echo church_admin_visitor_form(NULL);
         echo'<p class="submit"><input type="submit" name="add_visitor" value="Add Visitor &raquo;" /></p></form></div>';
@@ -48,7 +49,7 @@ foreach($_POST AS $key=>$value)
  $sqlsafe[$key]=esc_sql($value);   
 }
 if(isset($_POST['regular'])&&$_POST['regular']=='1') {$sqlsafe['regular']=1;}else{$sqlsafe['regular']=0;}
-$sql="UPDATE ".$wpdb->prefix."church_admin_visitors SET first_name='{$sqlsafe['first_name']}',last_name='{$sqlsafe['last_name']}',address_line1='{$sqlsafe['address_line1']}',address_line2='{$sqlsafe['address_line2']}',city='{$sqlsafe['city']}',state='{$sqlsafe['state']}',zipcode='{$sqlsafe['zipcode']}',email='{$sqlsafe['email']}',homephone='{$sqlsafe['homephone']}',cellphone='{$sqlsafe['cellphone']}',children='{$sqlsafe['children']}',first_sunday='{$sqlsafe['first_sunday']}',contacted='{$sqlsafe['contacted']}',contacted_by='{$sqlsafe['contacted_by']}',returned='{$sqlsafe['returned']}',small_group='{$sqlsafe['small_group']}', why='{$sqlsafe['why']}' WHERE id='".esc_sql($id)."'";
+$sql="UPDATE ".$wpdb->prefix."church_admin_visitors SET first_name='{$sqlsafe['first_name']}',last_name='{$sqlsafe['last_name']}',address_line1='{$sqlsafe['address_line1']}',address_line2='{$sqlsafe['address_line2']}',city='{$sqlsafe['city']}',state='{$sqlsafe['state']}',zipcode='{$sqlsafe['zipcode']}',email='{$sqlsafe['email']}',homephone='{$sqlsafe['homephone']}',cellphone='{$sqlsafe['cellphone']}',children='{$sqlsafe['children']}',first_sunday='{$sqlsafe['first_sunday']}',contacted='{$sqlsafe['contacted']}',contacted_by='{$sqlsafe['contacted_by']}',returned='{$sqlsafe['returned']}',small_group='{$sqlsafe['small_group']}', why='{$sqlsafe['why']}',regular='{$sqlsafe['regular']}' WHERE id='".esc_sql($id)."'";
 
     $wpdb->query($sql);
     echo '<div id="message" class="updated fade"><p>Visitor edited</p></div>';
@@ -57,7 +58,7 @@ church_admin_visitor_list();
 else
 {
 $visitordata=$wpdb->get_row("SELECT * FROM ".$wpdb->prefix."church_admin_visitors WHERE id=$id");
-echo '<h2>Edit Visitor</h2><form action="" id="add_visitor" name="visitor" method="post">';
+echo '<div class="wrap church_admin"><h2>Edit Visitor</h2><form action="" id="add_visitor" name="visitor" method="post">';
 if ( function_exists('wp_nonce_field') ) wp_nonce_field('edit_visitor');
 echo church_admin_visitor_form($visitordata);
 echo '<p class="submit"><input type="submit" name="edit_visitor" value="Edit Visitor &raquo;" /></p></form></div>';
@@ -174,7 +175,7 @@ $results = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_visit
 $counter=1;
 foreach ($results as $row)
 {
-    if($row->regular==1) $class='class="regular" ';
+    if($row->regular==1) $class='class="church_admin_regular" ';
     if($row->contacted=='0000-00-00') $row->contacted='';
     if($row->returned=='0000-00-00') $row->returned='';
     $_SESSION['address'.$counter]=array();

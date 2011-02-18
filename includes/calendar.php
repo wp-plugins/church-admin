@@ -22,7 +22,7 @@ function church_admin_category_list()
         $table.='<tr><td>'.$edit_url.'</td><td>'.$delete_url.'</td><td style="background:'.$row->bgcolor.'">'.esc_html($row->category).'</td></tr>';
     }
     $table.='</tbody></table>';
-    echo '<h2>Calendar Categories</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_add_category','add_category').'">Add a category</a></p>'.$table;
+    echo '<div class="wrap"><h2>Calendar Categories</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_add_category','add_category').'">Add a category</a></p>'.$table.'</div>';
 }
 
 function church_admin_add_category()
@@ -39,9 +39,9 @@ function church_admin_add_category()
     }
     else
     {
-        echo'<h2>Add Category</h2><form action="" method="post">';
+        echo'<div class="wrap church_admin"><h2>Add Category</h2><form action="" method="post">';
         church_admin_category_form('');
-        echo'<p><label>&nbsp;</label><input type="submit" name="add_category" value="Add Category"/></p></form>';  
+        echo'<p><label>&nbsp;</label><input type="submit" name="add_category" value="Add Category"/></p></form></div>';  
     }
     
 }
@@ -78,12 +78,13 @@ function church_admin_edit_category($id)
     }
     else
     {
-    echo'<h2>Edit Category</h2><form action="" method="post">';
+    echo'<div class="wrap church_admin"><h2>Edit Category</h2><form action="" method="post">';
     //grab current data
     $row=$wpdb->get_row("SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category WHERE cat_id='".esc_sql($id)."'");
     church_admin_category_form($row);
     echo'<p><label>&nbsp;</label><input type="submit" name="edit_category" value="Edit Category"/></p></form>';
     church_admin_category_list();
+    echo'</div>';
     }
 }
 function church_admin_category_form($data)
@@ -105,8 +106,9 @@ echo '<script src="'.CHURCH_ADMIN_INCLUDE_URL.'farbtastic.js" type="text/javascr
 function church_admin_calendar()
 {
     global $wpdb;
-    echo'<h2>Calendar</h2><p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_category_list">Category List</a></p>';
+    echo'<div class="wrap church_admin"><h2>Calendar</h2><p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_category_list">Category List</a></p>';
     church_admin_calendar_list();
+    echo'</div>';
 }
 
 function church_admin_series_event($date_id,$event_id)
@@ -193,9 +195,9 @@ function church_admin_series_event($date_id,$event_id)
     $data=$wpdb->get_row($sql);
     $data->start_date=mysql2date('d/m/Y',$data->start_date);
      $data->how_many=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_date WHERE event_id='".esc_sql($event_id)."'");
-    echo'<h2>Edit a Series Calendar Item</h2><form action="" id="calendar" method="post">';
+    echo'<div class="wrap church_admin"><h2>Edit a Series Calendar Item</h2><form action="" id="calendar" method="post">';
     echo church_admin_calendar_form($data,$errors,1);
-    echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form>';    
+    echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form></div>';    
     }//end form
 }
 function church_admin_single_event_delete($date_id,$event_id)
@@ -273,9 +275,9 @@ function church_admin_single_event_edit($date_id,$event_id)
     $data=$wpdb->get_row($sql);
     $data->start_date=mysql2date('d/m/Y',$data->start_date);
     
-    echo'<h2>Edit a Single Calendar Item</h2><form action="" id="calendar" method="post">';
+    echo'<div class="wrap church_admin"><h2>Edit a Single Calendar Item</h2><form action="" id="calendar" method="post">';
     echo church_admin_calendar_form($data,$errors,0);
-    echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form>';
+    echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form></div>';
     }//end form not submitted
 }
 
@@ -367,9 +369,9 @@ function church_admin_add_calendar()
     else
     {
       
-        echo'<h2>Add a Calendar Item</h2><form action="" id="calendar" method="post">';
+        echo'<div class="wrap church_admin"><h2>Add a Calendar Item</h2><form action="" id="calendar" method="post">';
         echo church_admin_calendar_form($data,$errors,1);
-        echo '<p><label>&nbsp;</label><input type="submit" name="add_event" value="Add Event"/></p></form>';
+        echo '<p><label>&nbsp;</label><input type="submit" name="add_event" value="Add Event"/></p></form></div>';
         
     }
     
@@ -534,7 +536,7 @@ function church_admin_calendar_list()
 {
     global $wpdb;
     if(empty($_REQUEST['date']))$_REQUEST['date']=time();
-   echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_calendar&amp;date='.$_GET['date'].'">Add calendar Event</a></p>';
+   echo'<div class="wrap church_admin"><p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_calendar&amp;date='.$_GET['date'].'">Add calendar Event</a></p>';
 $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_event"); 
  if(!empty($events))
 {
@@ -577,7 +579,7 @@ echo '</select><input type="submit" value="Go to date"/></form></td></tr></table
      $table.='</td></tr>';
     }
     $table.='</tbody></table>';
-    echo$table;
+    echo $table.'</div>';
 }//end of non empty calendar table
 
 }

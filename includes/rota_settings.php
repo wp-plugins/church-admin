@@ -12,7 +12,7 @@ if(!empty($_POST['rota_task']) )
     church_admin_rota_settings_list();
 }
 else{
-echo'<h1>Set up Rotas</h1><h2>Add a Rota Job</h2><div id="wrap"><form action="" method="post">';
+echo'<h1>Set up Rotas</h1><h2>Add a Rota Job</h2><div class="wrap church_admin"><form action="" method="post">';
 echo'<ul><label>Rota Job:</label><input type="text" name="rota_task" /></li></ul>';
 echo'<p class="submit"><input type="submit" name="add_rota_setting" value="Add Rota Job &raquo;" /></p></form>
 </div>';
@@ -39,7 +39,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
 }
 else
 {
-echo'<h1>Set up Rotas</h1><h2>Edit a Rota Job</h2><div id="wrap"><form action="" method="post">';
+echo'<h1>Set up Rotas</h1><h2>Edit a Rota Job</h2><div class="wrap church_admin"><form action="" method="post">';
 if ( function_exists('wp_nonce_field') ) wp_nonce_field('edit_rota_settings');
 $rota_task=$wpdb->get_var("SELECT rota_task FROM ".$wpdb->prefix."church_admin_rota_settings WHERE rota_id='".esc_sql($id)."'");
 echo'<ul><label>Rota Job:</label><input type="text" name="rota_task" value="'.esc_sql($rota_task).'" /></li></ul>';
@@ -52,7 +52,7 @@ function church_admin_rota_settings_list()
 {
     //outputs the list of rota jobs
 global$wpdb;
-echo '<div id="wrap"><h2>Rota Jobs</h2>';
+echo '<div class="wrap church_admin"><h2>Rota Jobs</h2>';
 echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_rota_settings",'add_rota_settings').'">Add a rota job</a></p>';
 $rota_results=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings");
 if(!empty($rota_results))

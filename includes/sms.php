@@ -152,7 +152,7 @@ function counterUpdate(opt_countedTextBox, opt_countBody, opt_maxSize) {
 }
 /* ]]> */
 
-</script>
+</script><div class="wrap church_admin">
 <h1>Send a text message</h1>
 <form action="" method="post" name="SMS" id="SMS">
 <div id="church_admin_phone">
@@ -164,6 +164,7 @@ echo'
  
  
   <div id="church_admin_submit"><input type="submit" name="submitted" value="Send Message"/></div>
+</div>
 </div>
  </form>
   

@@ -12,7 +12,7 @@
     }
     
     #church_admin_whoto {position:relative; top:55px;left:10px;width:130px;}
-
+.church_admin_regular{background:#E6E6E6;}
 #church_admin_message{position:relative;top:60px;left:10px; }
 #church_admin_message textarea{width:135px; height:100px;background:transparent;border:1px solid orange;}
 #church_admin_number {position:relative;top:35px;left:10px;}

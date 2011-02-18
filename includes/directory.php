@@ -15,7 +15,7 @@ church_admin_directory();
 }
 else
 {
-    echo '<div id="wrap"><h2>Add Address</h2>';
+    echo '<div class="wrap church_admin"><h2>Add Address</h2>';
     echo '<form action="" method="post">';
     if ( function_exists('wp_nonce_field') ) wp_nonce_field('church_admin_add_address');
     echo church_admin_directory_form(); 

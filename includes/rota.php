@@ -111,7 +111,7 @@ else
 //only proceed if there are some rota tasks		
 if(!empty($check))
 {
-        echo '<div id="wrap"><script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script><script type="text/javascript">document.write(getCalendarStyles());</script>';
+        echo '<div class="wrap church_admin"><script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script><script type="text/javascript">document.write(getCalendarStyles());</script>';
 echo'<h2>Rota add</h2><p>Select a date to add to the rota...</p><form name="event_add" id="event_add" action="" method="post">';
 if ( function_exists('wp_nonce_field') ) wp_nonce_field('add_to_rota');
     church_admin_rota_task_form();
@@ -170,7 +170,7 @@ church_admin_rota_list();
 }//end of already edited
 else
 {//print editing form
-echo' <h2>Edit rota for '.$htmldate.'</h2><div id="wrap"><form name="rota_edit" id="rota_edit" action="" method="post">';
+echo'<div class="wrap church_admin"> <h2>Edit rota for '.$htmldate.'</h2><form name="rota_edit" id="rota_edit" action="" method="post">';
 //grab different jobs
     $task_result=$wpdb->get_results("SELECT ".$wpdb->prefix."church_admin_rota.*,".$wpdb->prefix."church_admin_rota_settings.rota_task FROM ".$wpdb->prefix."church_admin_rota,".$wpdb->prefix."church_admin_rota_settings WHERE rota_date='".$date."' AND ".$wpdb->prefix."church_admin_rota.rota_option_id=".$wpdb->prefix."church_admin_rota_settings.rota_id");
 foreach($task_result as $task_row)
