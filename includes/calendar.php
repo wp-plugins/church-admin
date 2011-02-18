@@ -93,7 +93,7 @@ echo '<script src="'.CHURCH_ADMIN_INCLUDE_URL.'farbtastic.js" type="text/javascr
   $(document).ready(function() {
     
     $(\'#picker\').farbtastic(\'#color\');
-    $(\'#picker\').setColor(\''.$data->bgcolor.'\');
+    
     
   });
  </script>  
@@ -154,6 +154,7 @@ function church_admin_series_event($date_id,$event_id)
         else
         {
         if( $sqlsafe['recurring']=='1') $int='day';
+        if($sqlsafe['recurring']=='14') $int='fortnight';
         if( $sqlsafe['recurring']=='7') $int='week';
         if( $sqlsafe['recurring']=='m') $int='month';
         if( $sqlsafe['recurring']=='a') $int='year';    
@@ -323,6 +324,7 @@ function church_admin_add_calendar()
         {
         if( $sqlsafe['recurring']=='1') $int='day';
         if( $sqlsafe['recurring']=='7') $int='week';
+        if($sqlsafe['recurring']=='14') $int='fortnight';
         if( $sqlsafe['recurring']=='m') $int='month';
         if( $sqlsafe['recurring']=='a') $int='year';    
         $values[]="('{$sqlsafe['start_date']}','{$sqlsafe['start_time']}','{$sqlsafe['end_time']}','$event_id')";
@@ -388,7 +390,7 @@ function church_admin_calendar_error_check($data)
   if (preg_match("/([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1})/", $data['end_time'])){$sqlsafe['end_time']=$data['end_time'];}else{$error['end_time']='1';}
  
       //check recurring
-      if($data['recurring']=='s'||$data['recurring']=='1'||$data['recurring']=='7'||$data['recurring']=='n'||$data['recurring']=='m'||$data['recurring']=='a'){$sqlsafe['recurring']=$data['recurring'];}else{$error['recurring']=1;}
+      if($data['recurring']=='s'||$data['recurring']=='1'||$data['recurring']=='7'||$data['recurring']=='14'||$data['recurring']=='n'||$data['recurring']=='m'||$data['recurring']=='a'){$sqlsafe['recurring']=$data['recurring'];}else{$error['recurring']=1;}
       //check how many
       if($data['recurring']!='s')
       {
@@ -444,6 +446,10 @@ if(document.getElementById(\'recurring\').value==\'7\'){
 		document.getElementById(\'nth\').style.display = \'none\';
 		document.getElementById(\'howmany\').style.display = \'block\';;
 		}
+if(document.getElementById(\'recurring\').value==\'14\'){
+		document.getElementById(\'nth\').style.display = \'none\';
+		document.getElementById(\'howmany\').style.display = \'block\';;
+		}                
 if(document.getElementById(\'recurring\').value==\'n\'){
 		document.getElementById(\'nth\').style.display = \'block\';
 		document.getElementById(\'howmany\').style.display = \'block\';
@@ -495,6 +501,7 @@ $out.='
 <option value="s">Once</option>
 <option value="1">Daily</option>
 <option value="7">Weekly</option>
+<option value="14">Fortnightly</option>
 <option value="n">nth day (eg 1st Friday)</option>
 <option value="m">Monthly on same date</option>
 <option value="a">Annually</option>

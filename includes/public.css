@@ -1,0 +1,53 @@
+.church_admin_calendar table{width:700px;}
+.church_admin_calendar td{border:1px solid gray;}
+.church_admin_popup{width:250px;}
+.calendar-date-switcher {
+        height:25px;
+        text-align:center;
+        border:1px solid #D6DED5;
+        background-color:#E4EBE3;
+     }
+     .calendar-date-switcher form {
+        margin:0;
+        padding:0;
+     }
+     .calendar-date-switcher input {
+        border:1px #D6DED5 solid;
+     }
+     .calendar-date-switcher select {
+        border:1px #D6DED5 solid;
+     }
+    .calendar-heading {
+        height:25px;
+        text-align:center;
+        border:1px solid #D6DED5;
+        background-color:#E4EBE3;
+     }
+     .calendar-next {
+        width:25%;
+        text-align:center;
+     }
+     .calendar-prev {
+        width:25%;
+        text-align:center;
+     } 
+    .tooltip{
+   position: absolute;
+   padding: 10px 13px;
+   z-index: 2;
+   
+   color: #303030;
+   background-color: #f5f5b5;
+   border: 1px solid #DECA7E;
+   
+   font-family: sans-serif;
+   font-size: 12px;
+   line-height: 18px;
+   text-align: center;
+}     
+/*Post it note*/
+.Postit{font-size:1.2em !important;width: 250px;background-color: #FFFFB3;border-right: 3px solid #BBBBBB;border-bottom: 3px solid #BBBBBB;border-left: 1px solid #DDDDDD;border-top: 1px solid #DDDDDD;color: #666666;padding: 5px;margin: 5px;}
+.Postit h1,.Postit h2{padding:0 0px;text-transform:uppercase;font-size: 1.2em;}
+.Postit ul{margin:0;font-size:0.75em;list-style:none;padding:0em;}
+.Postit a {text-indent:0;padding:0;}
+.Postit li {text-indent:0;padding:0 0 10px 0;margin:0!important;list-style:none;border-bottom:none !important;}

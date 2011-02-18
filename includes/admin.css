@@ -1,0 +1,54 @@
+.church_admin .red{border:1px solid #f00!important;}
+.church_admin form li {width:700px;}
+.church_admin label{width:200px; float:left;font-weight:bold;}
+.church_admin input[type="text"]{width:300px;}
+.note{display:inline-block;height: 100%;}
+#church_admin_phone
+    {
+        background:url("../images/mobilephone.png") no-repeat;
+        width:156px;
+        height:295px;
+        font-size:10pt;
+    }
+    
+    #church_admin_whoto {position:relative; top:55px;left:10px;width:130px;}
+
+#church_admin_message{position:relative;top:60px;left:10px; }
+#church_admin_message textarea{width:135px; height:100px;background:transparent;border:1px solid orange;}
+#church_admin_number {position:relative;top:35px;left:10px;}
+#church_admin_number input{width:135px;background:transparent;border:1px solid orange;}
+#church_admin_submit{position:relative;top:95px;left:20px;}  
+.farbtastic {
+  position: relative;
+  top:0px;left:200px;
+  border:1px solid gray;
+}
+.farbtastic * {
+  position: absolute;
+  cursor: crosshair;
+}
+.farbtastic, .farbtastic .wheel {
+  width: 195px;
+  height: 195px;
+}
+.farbtastic .color, .farbtastic .overlay {
+  top: 47px;
+  left: 47px;
+  width: 101px;
+  height: 101px;
+}
+.farbtastic .wheel {
+  background: url(wheel.png) no-repeat;
+  width: 195px;
+  height: 195px;
+}
+.farbtastic .overlay {
+  background: url(mask.png) no-repeat;
+}
+.farbtastic .marker {
+  width: 17px;
+  height: 17px;
+  margin: -8px 0 0 -8px;
+  overflow: hidden; 
+  background: url(marker.png) no-repeat;
+}
