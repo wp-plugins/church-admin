@@ -122,6 +122,7 @@ function church_admin_series_event($date_id,$event_id)
         $error=church_admin_calendar_error_check($_POST);
         if(empty($error))
         {
+            foreach($_POST AS $key=>$value)$_POST[$key]=stripslashes($value);
         //delete current event_id
         $sql="DELETE FROM ".$wpdb->prefix."church_admin_calendar_event WHERE event_id='".esc_sql($event_id)."'";
         $wpdb->query($sql);
@@ -231,7 +232,7 @@ function church_admin_single_event_edit($date_id,$event_id)
     
     if(!empty($_POST['edit_event']))
     {//process
-        
+        foreach($_POST AS $key=>$value)$_POST[$key]=stripslashes($value);
         $how_many=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_date WHERE ".$wpdb->prefix."church_admin_calendar_date.event_id='".esc_sql($event_id)."'");
          $error=church_admin_calendar_error_check($_POST);
     
@@ -288,8 +289,9 @@ function church_admin_add_calendar()
     foreach($_POST AS $key=>$value){$_POST[$key]=stripslashes($value);}
     $wpdb->show_errors();
     
-    if(isset($_POST['add_event']))
+    if(!empty($_POST['add_event']))
     {
+    foreach($_POST AS $key=>$value){$_POST[$key]=stripslashes($value);}
       $error=array(); //initialise error array
       $sqlsafe=array();//initialise mysqlsafe array
       $error=church_admin_calendar_error_check($_POST);
@@ -361,7 +363,7 @@ function church_admin_add_calendar()
         $data=array_to_object($_POST);
       echo'<h2>Add a Calendar Item</h2><p><em>There were some errors, marked in red</em></p><form action="" id="calendar" method="post">';
         echo church_admin_calendar_form($data,$errors,1);
-        echo '<p><label>&nbsp;</label><input type="submit" name="add_event" value="Add Event"/></form>';
+        echo '<p><label>&nbsp;</label><input type="hidden" name="add_event"  value="y"/><input type="submit" value="Add Event"/></form>';
         
       }//end of error handling
       
@@ -371,7 +373,7 @@ function church_admin_add_calendar()
       
         echo'<div class="wrap church_admin"><h2>Add a Calendar Item</h2><form action="" id="calendar" method="post">';
         echo church_admin_calendar_form($data,$errors,1);
-        echo '<p><label>&nbsp;</label><input type="submit" name="add_event" value="Add Event"/></p></form></div>';
+        echo '<p><label>&nbsp;</label><input name="add_event" type="hidden" value="y"/> <input type="submit"  value="Add Event"/></p></form></div>';
         
     }
     
@@ -419,6 +421,7 @@ function church_admin_calendar_error_check($data)
         }
        if(!empty($data['title'])){ $sqlsafe['title']= esc_sql($data['title']);}else{$error['title']=1;}
        if(!empty($data['description'])){ $sqlsafe['description']= esc_sql(nl2br($data['description']));}else{$error['description']=1;}
+       $sqlsafe['description']=strip_tags($sqlsafe['description']);
       $sqlsafe['location']=esc_sql($data['location']);
       if(!empty($_POST['category'])&&ctype_digit($data['category'])){$sqlsafe['category']=$data['category'];}else{$error['category']=1;}
       if($data['year_planner']=='1'){$sqlsafe['year_planner']=1;}else{$sqlsafe['year_planner']=0;}

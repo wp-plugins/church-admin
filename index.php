@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.32.3
+Version: 0.32.4
 
 Author: Andy Moyle
 
@@ -68,6 +68,7 @@ Version History
 0.32.1    2011-02-08  A4 year planner added,rebuilds cronemail.php on upgrade
 0.32.2 2011-02-16 Valid XHTML on admin pages
 0.32.3 2011-02-18 Minor formatting fixes on admin pages
+0.32.4 20110-03-06 Various fixes
 -------------------------------------------------
 To Do
 =================================================
@@ -76,7 +77,9 @@ To Do
 3) Add year planner to calendar
 */
 //Version Number
-$church_admin_version = '0.32.3';
+$church_admin_version = '0.32.4';
+$church_admin_db_version='2';
+
 function church_admin_init()
 {
 if ($_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'||!is_admin())
@@ -139,7 +142,7 @@ function church_admin_menus()
 add_submenu_page('church_admin/index.php', 'Attendance', 'Attendance', 'administrator', 'church_admin_add_attendance', 'church_admin_add_attendance');
  
  if(get_option('church_admin_sms_username'))add_submenu_page('church_admin/index.php', 'Send Bulk SMS', 'Send Bulk SMS', 'administrator', 'church_admin_send_sms', 'church_admin_send_sms');
-    if(file_exists(CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php')) add_submenu_page('church_admin/index.php', 'Send Bulk Email', 'Send Bulk Email', 'administrator', 'church_admin_send_email', 'church_admin_send_email');    
+    if(get_option('church_admin_cron')=='wp-cron'||file_exists(CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php')) add_submenu_page('church_admin/index.php', 'Send Bulk Email', 'Send Bulk Email', 'administrator', 'church_admin_send_email', 'church_admin_send_email');    
     add_submenu_page('church_admin/index.php', 'Communication Settings', 'Communication Settings', 'administrator', 'church_admin_communication_settings', 'church_admin_communication_settings');
 }
 
@@ -346,7 +349,7 @@ function church_admin_shortcode($atts, $content = null)
     {
         case 'calendar':
             $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/year_planner.pdf">A4 Year Planner PDF</a></p>';
-            $out.='<script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'jquery.wtooltip.min.js"></script>';
+
             include(CHURCH_ADMIN_DISPLAY_PATH.'calendar.php');
             
         break;
@@ -399,10 +402,10 @@ function church_admin_calendar_widget($args=array())
     extract($args);
     $options=get_option('church_admin_widget');
     $title=$options['title'];
-    //echo $before_widget;
+    echo $before_widget;
     
     echo church_admin_calendar_widget_output($options['events'],$options['postit'],$title);
-    //echo $after_widget;
+    echo $after_widget;
 }
 function church_admin_widget_init()
 {

@@ -89,13 +89,8 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
     {
         foreach($result AS $row)
         {
-            $popup=addslashes("<p><strong>".htmlentities($row->title)."</strong><br/>".htmlentities($row->description)."<br/>".htmlentities($row->location)."<br/>{$row->start_time} - {$row->end_time}<br/>".htmlentities($row->category)." Event</p>");
-            $out.= '<div class="calitem'.$row->date_id.'" style="background-color:'.$row->bgcolor.'" >'.htmlentities($row->title).' </div> <br/><script type="text/javascript">
-<!--
-$(".calitem'.$row->date_id.'").wTooltip({content: "'.$popup.'",className:"church_admin_popup"});
--->
-</script>
-';
+            $popup="<p><strong>".$row->title."</strong><br/>".$row->description."<br/>".$row->location."<br/>{$row->start_time} - {$row->end_time}<br/>".$row->category." Event</p>";
+            $out.= '<div onmouseover="toggle(\'div'.$row->date_id.'\');" onmouseout="toggle(\'div'.$row->date_id.'\');" style="background-color:'.$row->bgcolor.'" >'.htmlentities($row->title).'</div><div id="div'.$row->date_id.'" class="church_admin_tooltip" style="display:none;" >'.$popup.'</div><br/>';
         }
     }    
     $out.="</td>\n";

@@ -49,7 +49,7 @@ $numdaysinmonth = cal_days_in_month( CAL_GREGORIAN, $thismonth, $thisyear );
 $jd = cal_to_jd( CAL_GREGORIAN, $thismonth,date( 1 ), $thisyear );
 
 //prepare output
-if($postit)$out='<div class="Postit">';
+if($postit)$out.='<div class="Postit">';
 $out.='<h1>'.$title.'</h1><ul>';
 
 //grab next $limit days events
@@ -61,7 +61,7 @@ for($x=0;$x<=$limit;$x++)
     //query
 $sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.start_date, TIME_FORMAT(".$wpdb->prefix."church_admin_calendar_date.start_time,'%h:%i%p')AS start_time, ".$wpdb->prefix."church_admin_calendar_date.end_time, ".$wpdb->prefix."church_admin_calendar_event.title, ".$wpdb->prefix."church_admin_calendar_event.description,".$wpdb->prefix."church_admin_calendar_category.category
 FROM ".$wpdb->prefix."church_admin_calendar_date, ".$wpdb->prefix."church_admin_calendar_event,".$wpdb->prefix."church_admin_calendar_category
-WHERE ".$wpdb->prefix."church_admin_calendar_date.start_date='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.event_id = ".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_event.cat_id=wp_church_admin_calendar_category.cat_id
+WHERE ".$wpdb->prefix."church_admin_calendar_date.start_date='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.event_id = ".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_event.cat_id=".$wpdb->prefix."church_admin_calendar_category.cat_id
 ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date,".$wpdb->prefix."church_admin_calendar_date.start_time
 LIMIT 0 ,".$limit;
 

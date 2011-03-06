@@ -34,7 +34,7 @@ $avesql="SELECT FORMAT(AVG(adults),0) AS rolling_adults,FORMAT(AVG(children),0) 
     $averow=$wpdb->get_row($avesql);
 
 //update table with rolling average
-    $up="UPDATE wp_church_admin_attendance SET rolling_adults='{$averow->rolling_adults}', rolling_children='{$averow->rolling_children}' WHERE `date`='{$_POST['add_date']}'";
+    $up="UPDATE ".$wpdb->prefix."church_admin_attendance SET rolling_adults='{$averow->rolling_adults}', rolling_children='{$averow->rolling_children}' WHERE `date`='{$_POST['add_date']}'";
 
     $wpdb->query($up);
 
