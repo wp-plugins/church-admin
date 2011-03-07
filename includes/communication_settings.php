@@ -5,13 +5,31 @@
 */
 function church_admin_communication_settings()
 {
-    //only output other setting if opposite form not submitted!
+   //only output other setting if opposite form not submitted!
     echo '<div class="wrap church_admin">';
-    if(!isset($_POST['sms_username'])) church_admin_email_settings();
-    if(!isset($_POST['username'])) church_admin_sms_settings();    
+    if(!isset($_POST['username'])&&!isset($_POST['sms_username'])) church_admin_settings();
+    if(!isset($_POST['sms_username'])&&!isset($_POST['settings'])) church_admin_email_settings();
+    if(!isset($_POST['username'])&&!isset($_POST['settings'])) church_admin_sms_settings();    
     echo '</div>';
 }
-
+function church_admin_settings()
+{
+    if(isset($_POST['settings']))
+    {
+	if(isset($_POST['church_admin_calendar_width']) && ctype_digit($_POST['church_admin_calendar_width']))update_option('church_admin_calendar_width',$_POST['church_admin_calendar_width']);	
+	echo '<div id="message" class="updated fade"><p><strong>General Options Updated</strong></p></div>';
+	unset($_POST);
+	church_admin_communication_settings();
+    }
+    else
+    {
+	echo'<h2>General Options</h2><form action="" method="post">';
+	echo '<p><label>Calendar width in pixels</label><input type="text" name="church_admin_calendar_width" value="'.get_option('church_admin_calendar_width').'"/></p>';
+	echo'<p class="submit"><input type="hidden" name="settings" value="1"/><input type="submit" name="communication_settings" value="Save Settings &raquo;" /></p></form>';
+    }
+    
+    
+}
 function church_admin_sms_settings()
 {
     if(!empty($_POST['sms_username']))

@@ -15,7 +15,8 @@ church_admin_directory();
 }
 else
 {
-    echo '<div class="wrap church_admin"><h2>Add Address</h2>';
+    echo '<div class="wrap church_admin">';
+    echo'<h2>Add Address</h2>';
     echo '<form action="" method="post">';
     if ( function_exists('wp_nonce_field') ) wp_nonce_field('church_admin_add_address');
     echo church_admin_directory_form(); 
@@ -87,7 +88,12 @@ function church_admin_directory()
 {
     global $wpdb;
 //header
-    $directory='<div class="wrap church_admin"><h2>Church Admin - Main Address List</h2>';
+    $directory='<div class="wrap church_admin"><h2>Church Admin - Main Address List</h2><div style="float:right"> <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52">
+<input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
+<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+</form></div>';
 
 //link to add an address
 $directory.='<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_address">Add Address</a></p>';
@@ -128,13 +134,11 @@ foreach ($results as $row)
 <td>".$row->email."</td><td>".$row->homephone."</td><td>".$row->cellphone."</td><td>".$row->ts."</td></tr>";
     $counter++;
 }
-$directory.='</tbody></table><p style="font-size:smaller; text-align:center">This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.<br/><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support/sites-using-the-church-admin-plugin-group3/showcase-forum10">Please add your site to our show case of this plugins users!</a></p><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick"/><input type="hidden" name="hosted_button_id" value="7WVG45H6YAQLW"/><input type="submit" name="sg_save" value="If you like this plugin, please donate to the author\'s Church Plant using Paypal &raquo;" />
-<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"/></form> ';
+$directory.='</tbody></table> ';
 
 
 }//if results
-$directory.='</div>';
+$directory.='<div class="updated fade"><p>This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.</p><p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support/sites-using-the-church-admin-plugin-group3/showcase-forum10"><strong>Please add your site to our show case of this plugins users!</strong></a></p></div></div>';
 echo $directory;
 }
 ?>

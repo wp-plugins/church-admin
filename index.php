@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.32.4
+Version: 0.32.5
 
 Author: Andy Moyle
 
@@ -77,7 +77,7 @@ To Do
 3) Add year planner to calendar
 */
 //Version Number
-$church_admin_version = '0.32.4';
+$church_admin_version = '0.32.5';
 $church_admin_db_version='2';
 
 function church_admin_init()
@@ -143,7 +143,7 @@ add_submenu_page('church_admin/index.php', 'Attendance', 'Attendance', 'administ
  
  if(get_option('church_admin_sms_username'))add_submenu_page('church_admin/index.php', 'Send Bulk SMS', 'Send Bulk SMS', 'administrator', 'church_admin_send_sms', 'church_admin_send_sms');
     if(get_option('church_admin_cron')=='wp-cron'||file_exists(CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php')) add_submenu_page('church_admin/index.php', 'Send Bulk Email', 'Send Bulk Email', 'administrator', 'church_admin_send_email', 'church_admin_send_email');    
-    add_submenu_page('church_admin/index.php', 'Communication Settings', 'Communication Settings', 'administrator', 'church_admin_communication_settings', 'church_admin_communication_settings');
+    add_submenu_page('church_admin/index.php', 'Settings', 'Settings', 'administrator', 'church_admin_communication_settings', 'church_admin_communication_settings');
 }
 
  function church_admin_cron()

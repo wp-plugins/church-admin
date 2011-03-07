@@ -19,7 +19,7 @@ if(isset($_POST['month']) && isset($_POST['year'])){ $current=mktime(12,0,0,$_PO
     // get the month as a name
     $monthname = jdmonthname( $jd, 1 );
 
-$out.='<table  class="church_admin_calendar">
+$out.='<table class="church_admin_calendar">
 <tr>
         <td colspan="7" class="calendar-date-switcher">
             <form method="post" action="'.get_permalink().'">
@@ -41,25 +41,24 @@ $out.='</select><input  type="submit" value="Submit"/></form></td></tr>
 ';
 $out.=
 '<tr>
-                <td colspan="7" class="calendar-date-switcher" >
-                    <table border="0" class="calendar-date-switcher" cellpadding="0" cellspacing="0" width="100%">
-                    <tr>
-                    <td class="calendar-prev">';
+               
+                    
+    <td colspan="3" class="calendar-date-switcher">';
 if($now==date('M Y')){$out.='&nbsp;';}else{$out.='<form action="'.get_permalink().'" name="previous" method="post"><input type="hidden" name="month" value="'.date('m',strtotime("$now -1 month")).'"/><input type="hidden" name="year" value="'.date('Y',strtotime("$now -1 month")).'"/><input type="submit" value="Previous" class="calendar-date-switcher"/></form>';}
 $out.='</td>
-                    <td class="calendar-month">'.$now.'</td>
-                    <td class="calendar-next"><form action="'.get_permalink().'" method="post"><input type="hidden" name="month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td>
-                    </tr>
-                    </table>
-                </td>
+                    <td class="calendar-date-switcher">'.$now.'</td>
+                    <td class="calendar-date-switcher" colspan="3"><form action="'.get_permalink().'" method="post"><input type="hidden" name="month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td>
+                
+                
 </tr>
 		
-    <tr><td width="100" align="center"><strong>Sunday</strong></td><td width="100" align="center"><strong>Monday</strong></td>
-        <td width="100" align="center"><strong>Tuesday</strong></td>
-        <td width="100" align="center"><strong>Wednesday</strong></td>
-        <td width="100" align="center"><strong>Thursday</strong></td>
-        <td width="100" align="center"><strong>Friday</strong></td>
-        <td width="100" align="center"><strong>Saturday</strong></td>
+    <tr><td  ><strong>Sunday</strong></td>
+    <td ><strong>Monday</strong></td>
+    <td ><strong>Tuesday</strong></td>
+    <td ><strong>Wednesday</strong></td>
+    <td ><strong>Thursday</strong></td>
+    <td ><strong>Friday</strong></td>
+    <td ><strong>Saturday</strong></td>
     </tr>
     <tr>';
 // put render empty cells
@@ -89,8 +88,8 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
     {
         foreach($result AS $row)
         {
-            $popup="<p><strong>".$row->title."</strong><br/>".$row->description."<br/>".$row->location."<br/>{$row->start_time} - {$row->end_time}<br/>".$row->category." Event</p>";
-            $out.= '<div onmouseover="toggle(\'div'.$row->date_id.'\');" onmouseout="toggle(\'div'.$row->date_id.'\');" style="background-color:'.$row->bgcolor.'" >'.htmlentities($row->title).'</div><div id="div'.$row->date_id.'" class="church_admin_tooltip" style="display:none;" >'.$popup.'</div><br/>';
+            $popup="<p><strong>".$row->title."</strong><br/>".$row->description."<br/>".$row->location."<br/>{$row->start_time} - {$row->end_time}<br/>".$row->category." Event";
+            $out.= '<div onmouseover="toggle(\'div'.$row->date_id.'\');" onmouseout="toggle(\'div'.$row->date_id.'\');" style="background-color:'.$row->bgcolor.'" >'.htmlentities($row->title).'</div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip" style="display:none;" >'.$popup.'</div><br/>';
         }
     }    
     $out.="</td>\n";
