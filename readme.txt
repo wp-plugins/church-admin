@@ -86,6 +86,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Calendar Widget compatable with most themes now!
 = 0.32.5 =
 * Adjustable width calendar table from settings page
+= 0.32.5.1 =
+* Calendar CSS tweak for WP20:20 theme
 
 == Upgrade Notice ==
 * 0.32.4 required

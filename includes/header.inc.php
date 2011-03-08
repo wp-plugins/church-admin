@@ -1,4 +1,5 @@
 <?php
+//2011-03-08 fixed calendar CSS for 20:20
 //Set up header for admin
 add_action('admin_head', 'church_admin_header');
 function church_admin_header()

@@ -1,4 +1,4 @@
-table.church_admin_calendar { empty-cells: show; table-layout:fixed; font-size:10pt}
+table.church_admin_calendar { empty-cells: show; table-layout:fixed; font-size:10pt;}
 .church_admin_calendar td{border:1px solid gray;border-collapse: collapse;font-size:10pt;padding:3px !important;}
 .church_admin_popup{width:250px;}
 
