@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.32.6
+Version: 0.32.7
 
 Author: Andy Moyle
 
@@ -70,6 +70,7 @@ Version History
 0.32.3 2011-02-18 Minor formatting fixes on admin pages
 0.32.4 20110-03-06 Various fixes
 0.32.6 2011-03-08 Calendar CSS fixed
+0.32.7 2011-03-14 Calendar fix on error in form - not showing in red
 -------------------------------------------------
 To Do
 =================================================

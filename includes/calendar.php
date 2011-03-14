@@ -1,7 +1,7 @@
 <?php
 /*
 2011-02-04 added calendar single and series delete; fixed slashes problem
-
+2011-03-14 fixed errors not sowing as red since 0.32.4
  
  
  
@@ -197,7 +197,7 @@ function church_admin_series_event($date_id,$event_id)
     $data->start_date=mysql2date('d/m/Y',$data->start_date);
      $data->how_many=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_date WHERE event_id='".esc_sql($event_id)."'");
     echo'<div class="wrap church_admin"><h2>Edit a Series Calendar Item</h2><form action="" id="calendar" method="post">';
-    echo church_admin_calendar_form($data,$errors,1);
+    echo church_admin_calendar_form($data,$error,1);
     echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form></div>';    
     }//end form
 }
@@ -277,7 +277,7 @@ function church_admin_single_event_edit($date_id,$event_id)
     $data->start_date=mysql2date('d/m/Y',$data->start_date);
     
     echo'<div class="wrap church_admin"><h2>Edit a Single Calendar Item</h2><form action="" id="calendar" method="post">';
-    echo church_admin_calendar_form($data,$errors,0);
+    echo church_admin_calendar_form($data,$error,0);
     echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form></div>';
     }//end form not submitted
 }
@@ -285,7 +285,7 @@ function church_admin_single_event_edit($date_id,$event_id)
 
 function church_admin_add_calendar()
 {
-    global $wpdb,$errors,$sqlsafe;
+    global $wpdb,$error,$sqlsafe;
     foreach($_POST AS $key=>$value){$_POST[$key]=stripslashes($value);}
     $wpdb->show_errors();
     
@@ -357,12 +357,12 @@ function church_admin_add_calendar()
         //convert $_POST to $data object
           foreach($error AS $key=>$value)
         {
-            if($value==1){$errors[$key]=' class="red"';}else{$errors[$key]=NULL;}
+            if($value==1){$error[$key]=' class="red"';}else{$error[$key]=NULL;}
         }
         
         $data=array_to_object($_POST);
-      echo'<h2>Add a Calendar Item</h2><p><em>There were some errors, marked in red</em></p><form action="" id="calendar" method="post">';
-        echo church_admin_calendar_form($data,$errors,1);
+      echo'<div class="wrap church_admin"><h2>Add a Calendar Item</h2><p><em>There were some errors, marked in red</em></p><form action="" id="calendar" method="post">';
+        echo church_admin_calendar_form($data,$error,1);
         echo '<p><label>&nbsp;</label><input type="hidden" name="add_event"  value="y"/><input type="submit" value="Add Event"/></form>';
         
       }//end of error handling
@@ -372,7 +372,7 @@ function church_admin_add_calendar()
     {
       
         echo'<div class="wrap church_admin"><h2>Add a Calendar Item</h2><form action="" id="calendar" method="post">';
-        echo church_admin_calendar_form($data,$errors,1);
+        echo church_admin_calendar_form($data,$error,1);
         echo '<p><label>&nbsp;</label><input name="add_event" type="hidden" value="y"/> <input type="submit"  value="Add Event"/></p></form></div>';
         
     }
@@ -428,7 +428,7 @@ function church_admin_calendar_error_check($data)
       
     return $error;  
 }
-function church_admin_calendar_form($data,$errors,$recurring=1)
+function church_admin_calendar_form($data,$error,$recurring=1)
 {
     
     global $wpdb;
@@ -469,10 +469,10 @@ if(document.getElementById(\'recurring\').value==\'a\'){
 		}
 }
 </script>
-<p><label>Event Title</label><input type="text" name="title" value="'.stripslashes($data->title).'" '.$errors['title'].' /></p>
-<p><label>Event Description</label><textarea rows="5" cols="50" name="description" '.$errors['description'].'>'.stripslashes($data->description).'</textarea></p>
-<p><label>Event Location</label><textarea rows="5" cols="50" name="location" '.$errors['location'].'>'.stripslashes($data->location).'</textarea></p>
-<p><label> Category</label><select name="category" '.$errors['category'].' >';
+<p><label>Event Title</label><input type="text" name="title" value="'.stripslashes($data->title).'" '.$error['title'].' /></p>
+<p><label>Event Description</label><textarea rows="5" cols="50" name="description" '.$error['description'].'>'.stripslashes($data->description).'</textarea></p>
+<p><label>Event Location</label><textarea rows="5" cols="50" name="location" '.$error['location'].'>'.stripslashes($data->location).'</textarea></p>
+<p><label> Category</label><select name="category" '.$error['category'].' >';
 $first='<option value="">Please select...</option>';
 $sql="SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category";
 $result3=$wpdb->get_results($sql);
@@ -491,11 +491,11 @@ foreach($result3 AS $row)
 
 $out.=$first.$select;//have original value first!
 $out.='</select></p>
-<p><label >Start Date</label><input name="start_date" type="text" '.$errors['start_date'].' value="'.$data->start_date.'" size="25" /><a href="#" onclick="cal_begin.select(document.forms[\'calendar\'].start_date,\'date_anchor1\',\'dd/MM/yyyy\'); return false;" name="date_anchor1" id="date_anchor1"><img src="'.CHURCH_ADMIN_IMAGES_URL.'cal.gif" width="16" height="16" border="0" alt="Pick a date"/></a></p><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>';
+<p><label >Start Date</label><input name="start_date" type="text" '.$error['start_date'].' value="'.$data->start_date.'" size="25" /><a href="#" onclick="cal_begin.select(document.forms[\'calendar\'].start_date,\'date_anchor1\',\'dd/MM/yyyy\'); return false;" name="date_anchor1" id="date_anchor1"><img src="'.CHURCH_ADMIN_IMAGES_URL.'cal.gif" width="16" height="16" border="0" alt="Pick a date"/></a></p><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>';
 if($recurring==1){
     $out.='
 <p><label>Recurring</label>
-<select name="recurring" '.$errors['recurring'].' id="recurring" onchange="OnChange(\'recurring\')">
+<select name="recurring" '.$error['recurring'].' id="recurring" onchange="OnChange(\'recurring\')">
 ';
 if(!empty($data->recurring))
 {
@@ -513,12 +513,12 @@ $out.='
 </select></p>
 <div id="nth" ';
 if($data->recurring=='n'){$out.='style="display:block"';}else{$out.='style="display:none"';}
-$out.='><p><label>Recurring on </label><select '.$errors['nth'].' name="nth">';
+$out.='><p><label>Recurring on </label><select '.$error['nth'].' name="nth">';
 if(!empty($data->nth)) $out.='<option value="'.$data->nth.'">'.$data->nth.'</option>';
 $out.='<option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option></select>&nbsp;<select name="day"><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select></p></div>
 <div id="howmany" ';
 if(!empty($data->recurring) && $data->recurring!='s'){$out.='style="display:block"';}else{$out.='style="display:none"';}
-$out.='><p><label>How many times in all?</label><input type="text" '.$errors['how_many'].' name="how_many" value="'.$data->how_many.'"/></p></div>';
+$out.='><p><label>How many times in all?</label><input type="text" '.$error['how_many'].' name="how_many" value="'.$data->how_many.'"/></p></div>';
 }//end recurring
 else
 {
@@ -526,8 +526,8 @@ else
 }
 $data->start_time=substr($data->start_time,0,5);//remove seconds
 $data->end_time=substr($data->end_time,0,5);//remove seconds
-$out.='<p><label>Start Time of form HH:MM</label><input type="text" name="start_time" '.$errors['start_time'].' value="'.$data->start_time.'"/></p>
-<p><label>End Time of form HH:MM</label><input type="text" name="end_time" '.$errors['end_time'].' value="'.$data->end_time.'" /></p>
+$out.='<p><label>Start Time of form HH:MM</label><input type="text" name="start_time" '.$error['start_time'].' value="'.$data->start_time.'"/></p>
+<p><label>End Time of form HH:MM</label><input type="text" name="end_time" '.$error['end_time'].' value="'.$data->end_time.'" /></p>
 <p><label>Appear on Year Planner?</label><input type="checkbox" name="year_planner" value="1"';
 if($data->year_planner) $out.=' checked="checked"';
 $out.='/></p>
