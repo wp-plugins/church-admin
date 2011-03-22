@@ -41,7 +41,7 @@ width: 250px; /*width of tooltip*/
     
 /*Post it note*/
 .Postit{font-size:1.2em !important;width: 250px;background-color: #FFFFB3;border-right: 3px solid #BBBBBB;border-bottom: 3px solid #BBBBBB;border-left: 1px solid #DDDDDD;border-top: 1px solid #DDDDDD;color: #666666;padding: 5px;margin: 5px;}
-.Postit h1,.Postit h2{padding:0 0px;text-transform:uppercase;font-size: 1.2em;}
+.Postit h1,.Postit h2{padding:0 0px;font-style:bold;font-size: 1.2em;}
 .Postit ul{margin:0;font-size:0.75em;list-style:none;padding:0em;}
 .Postit a {text-indent:0;padding:0;}
 .Postit li {text-indent:0;padding:0 0 10px 0;margin:0!important;list-style:none;border-bottom:none !important;}

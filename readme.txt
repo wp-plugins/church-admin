@@ -35,7 +35,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 1. Upload the `church_admin` directory to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Place [church_admin type="address-list"] on the page you want the address book displayed. 
-4. Place [church_admin type="small-group-list"] on the page you want the small group list displayed
+4. Place [church_admin type="small-groups-list"] on the page you want the small group list displayed
 5. Place [church_admin type="small-groups"] on the page you want the list of small groups and their members displayed
 6. Place [church_admin type="rota"] on the page you want the rota displayed
 7. Place [church_admin type="calendar"] on the page you want a page per month calendar displayed
