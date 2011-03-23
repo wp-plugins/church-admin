@@ -127,7 +127,8 @@ $x=10;
 $y=30;
 $width=55;
 global $pageno;
-function newpage($pdf)
+if(!function_exists('newpage'))
+{function newpage($pdf)
 {
 $pdf->AddPage('P',get_option('church_admin_pdf_size'));
 $pdf->SetFont('Arial','B',24);
@@ -135,6 +136,7 @@ $text='Address List '.date("d-m-Y");
 $pdf->Cell(0,20,$text,0,2,C);
 $pdf->SetFont('Arial','',12);
 $pageno+=1;
+}
 }
 newpage($pdf);
 for($z=0;$z<=$counter-1;$z++)
