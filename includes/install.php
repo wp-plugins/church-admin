@@ -142,6 +142,7 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
         $wpdb->query("INSERT INTO $table_name (category,bgcolor,cat_id) VALUES('Unused','#FFFFFF','0')");
     }
 //update pdf cache
+update_option('church_admin_calendar_width','630');
 update_option('church_admin_pdf_size','A4');
 update_option('church_admin_label','L7163');
 require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
