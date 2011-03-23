@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 3.0.0
 Tested up to: 3.1
-Stable tag: 0.32.7
+Stable tag: 0.32.8
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -34,12 +34,12 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 
 1. Upload the `church_admin` directory to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Place [church_admin type="address-list"] on the page you want the address book displayed. 
-4. Place [church_admin type="small-groups-list"] on the page you want the small group list displayed
-5. Place [church_admin type="small-groups"] on the page you want the list of small groups and their members displayed
-6. Place [church_admin type="rota"] on the page you want the rota displayed
-7. Place [church_admin type="calendar"] on the page you want a page per month calendar displayed
-8. Place [church_admin type="calendar-list"] on the page you want a agenda view calendar
+3. Place [church_admin type=address-list] on the page you want the address book displayed. 
+4. Place [church_admin type=small-groups-list] on the page you want the small group list displayed
+5. Place [church_admin type=small-groups] on the page you want the list of small groups and their members displayed
+6. Place [church_admin type=rota] on the page you want the rota displayed
+7. Place [church_admin type=calendar] on the page you want a page per month calendar displayed
+8. Place [church_admin type=calendar-list] on the page you want a agenda view calendar
 9. There is a calendar widget with customisable title, how many events you want to show and an option for it to look like a post-it note
 
 We recommend password protecting the pages - if it is password protected a link is provided to logout
@@ -90,8 +90,13 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Calendar CSS tweak for WP20:20 theme
 = 0.32.7
 * Calendar errors showing again in red
+= 0.32.8 =
+* Calendar times use Wordpress Format Settings
+* Calendar list view times and dates use Wordpress Format Settings
+* PDF's now available in A4, Letter and Legal sizes
+* Label options available
 
 == Upgrade Notice ==
-* 0.32.4 required
+* 0.32.8 required
 
 == Credits: ==

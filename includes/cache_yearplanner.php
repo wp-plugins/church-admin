@@ -11,9 +11,9 @@ if(!(is_dir($dir)))
 }
 
 //initialise pdf
-require("fpdf.php");
+require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
 $pdf=new FPDF();
-$pdf->AddPage('L','mm','A4');
+$pdf->AddPage('L','A4');
 
 $pageno=0;
 $x=10;

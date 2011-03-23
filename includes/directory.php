@@ -88,12 +88,12 @@ function church_admin_directory()
 {
     global $wpdb;
 //header
-    $directory='<div class="wrap church_admin"><h2>Church Admin - Main Address List</h2><div style="float:right"> <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+    $directory='<div class="wrap church_admin"><div id="donatebox"><p>This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.</p><p>Please add your site to our <a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support/sites-using-the-church-admin-plugin-group3/showcase-forum10">show case</a> of this plugins users!</p><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_s-xclick">
 <input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52">
 <input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
 <img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
-</form></div>';
+</form><p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">Get Support</a></p></div><h2>Church Admin - Main Address List</h2>';
 
 //link to add an address
 $directory.='<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_address">Add Address</a></p>';
@@ -109,7 +109,7 @@ if(!empty($results))
 if(file_exists(CHURCH_ADMIN_CACHE_PATH.'addresslist.pdf'))
 {
 $directory.='<form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">-- Choose a pdf --</option>
-<option value="'.CHURCH_ADMIN_URL.'cache/mailinglabel.pdf">Church - Avery L7163 Mailing Labels</option><option value="'.CHURCH_ADMIN_URL.'cache/visitor_mailing_label.pdf">Visitors - Avery L7163 Mailing Labels</option>
+<option value="'.CHURCH_ADMIN_URL.'cache/mailinglabel.pdf">Church - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</option><option value="'.CHURCH_ADMIN_URL.'cache/visitor_mailing_label.pdf">Visitors - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</option>
 <option value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">Address List PDF</option><option value="'.CHURCH_ADMIN_URL.'cache/sg.pdf">Small Group List PDF</option>
 <option value="'.CHURCH_ADMIN_URL.'cache/rota.pdf">Sunday Rota List PDF</option><option value="'.CHURCH_ADMIN_URL.'cache/year_planner.pdf">A4 Year Planner PDF</option></select></form>';
 }
@@ -138,7 +138,6 @@ $directory.='</tbody></table> ';
 
 
 }//if results
-$directory.='<div class="updated fade"><p>This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.</p><p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support/sites-using-the-church-admin-plugin-group3/showcase-forum10"><strong>Please add your site to our show case of this plugins users!</strong></a></p></div></div>';
 echo $directory;
 }
 ?>

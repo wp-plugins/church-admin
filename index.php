@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.32.7
+Version: 0.32.8
 
 Author: Andy Moyle
 
@@ -71,16 +71,11 @@ Version History
 0.32.4 20110-03-06 Various fixes
 0.32.6 2011-03-08 Calendar CSS fixed
 0.32.7 2011-03-14 Calendar fix on error in form - not showing in red
--------------------------------------------------
-To Do
-=================================================
-1) Separate out the sms and email in communications settings page
-2) Allow use of native wp_mail() function for bulk email
-3) Add year planner to calendar
+0.32.8 2011-03-23 Calendar times and dates use Wordpress format settings, pdf's adjustable for different sizes
+
 */
 //Version Number
-$church_admin_version = '0.32.6';
-$church_admin_db_version='2';
+$church_admin_version = '0.32.8';
 
 function church_admin_init()
 {

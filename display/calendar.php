@@ -88,7 +88,7 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
     {
         foreach($result AS $row)
         {
-            $popup="<p><strong>".$row->title."</strong><br/>".$row->description."<br/>".$row->location."<br/>{$row->start_time} - {$row->end_time}<br/>".$row->category." Event";
+            $popup=stripslashes("<p><strong>".$row->title."</strong><br/>".$row->description."<br/>".$row->location."<br/>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."<br/>".$row->category." Event");
             $out.= '<div onmouseover="toggle(\'div'.$row->date_id.'\');" onmouseout="toggle(\'div'.$row->date_id.'\');" style="background-color:'.$row->bgcolor.'" >'.htmlentities($row->title).'</div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip" style="display:none;" >'.$popup.'</div><br/>';
         }
     }    

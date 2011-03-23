@@ -14,9 +14,36 @@ function church_admin_communication_settings()
 }
 function church_admin_settings()
 {
+   global $wpdb;
     if(isset($_POST['settings']))
     {
 	if(isset($_POST['church_admin_calendar_width']) && ctype_digit($_POST['church_admin_calendar_width']))update_option('church_admin_calendar_width',$_POST['church_admin_calendar_width']);	
+	if(isset($_POST['church_admin_pdf_size']) && ($_POST['church_admin_pdf_size']=='Legal'||$_POST['church_admin_pdf_size']=='Letter'||$_POST['church_admin_pdf_size']=='A4'))
+	{
+	 update_option('church_admin_pdf_size',$_POST['church_admin_pdf_size']);
+
+	}
+	if(isset($_POST['church_admin_label']))
+	{
+	 switch($_POST['church_admin_label'])
+	 {
+	    case 'L7163': $option='L7163';break;
+	    case '5160': $option='5160';break;
+	    case '5161': $option='5161';break;
+	    case '5162': $option='5162';break;
+	    case '5163': $option='5163';break;
+	    case '5164': $option='5164';break;
+	    case '8600': $option='8600';break;
+	    case '3422': $option='3422';break;
+	    default :$option='L7163';break;
+	 }
+	 update_option('church_admin_label',$option);
+	
+	}
+	 //update pdfs
+	 require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
+	 church_admin_cache_year_planner();   
+	 require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
 	echo '<div id="message" class="updated fade"><p><strong>General Options Updated</strong></p></div>';
 	unset($_POST);
 	church_admin_communication_settings();
@@ -25,6 +52,42 @@ function church_admin_settings()
     {
 	echo'<h2>General Options</h2><form action="" method="post">';
 	echo '<p><label>Calendar width in pixels</label><input type="text" name="church_admin_calendar_width" value="'.get_option('church_admin_calendar_width').'"/></p>';
+	echo '<p><label>PDF Page Size</label><select name="church_admin_pdf_size">';
+	if(get_option('church_admin_pdf_size')=='Letter')
+	{echo '<option value="">Letter</option><option value="A4">A4</option><option value="Legal">Legal</option>';}
+	elseif(get_option('church_admin_pdf_size')=='Legal')
+	{echo '<option value="Legal">Legal</option><option value="A4">A4</option><option value="">Letter</option>';}
+	else
+	{echo '<option value="A4">A4</option><option value="Legal">Legal</option><option value="">Letter</option>';}
+	echo'</select></p>';
+	//mailing label size
+	echo '<p><label>Avery &#174; Label</label><select name="church_admin_label">';
+
+	$l=get_option('church_admin_label');
+	echo'<option value="L7163"';
+	if($l=='L7163') echo' selected="selected" ';
+	echo'>L7163</option>';
+	echo'<option value="5160"';
+	if($l=='5160') echo' selected="selected" ';
+	echo'>5160</option>';
+	echo'<option value="5161';
+	if($l=='5161') echo' selected="selected" ';
+	echo'>5161</option>';
+	echo'<option value="5162"';
+	if($l=='5162') echo' selected="selected" ';
+	echo'>5162</option>';
+	echo'<option value="5163"';
+	if($l=='5163') echo' selected="selected" ';
+	echo'>5163</option>';
+	echo'<option value="5164"';
+	if($l=='5164') echo' selected="selected" ';
+	echo'>5164</option>';
+	echo'<option value="8600"';
+	if($l=='8600') echo' selected="selected" ';
+	echo'>8600</option>';
+	echo'<option value="3422"';
+	if($l=='3422') echo' selected="selected" ';
+	echo'>3422</option></select>';
 	echo'<p class="submit"><input type="hidden" name="settings" value="1"/><input type="submit" name="communication_settings" value="Save Settings &raquo;" /></p></form>';
     }
     
@@ -165,9 +228,9 @@ function church_admin_sms_settings_form(){
 function church_admin_cron_job_instructions()
 {
     //setup pdf
-    require("fpdf.php");
+    require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
     $pdf=new FPDF();
-    $pdf->AddPage('P','mm','A4');
+    $pdf->AddPage('P','A4');
     $pdf->SetFont('Arial','B',24);
     $text='How to set up Bulk Email Queuing';
     $pdf->Cell(0,10,$text,0,2,L);

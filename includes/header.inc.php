@@ -1,5 +1,6 @@
 <?php
 //2011-03-08 fixed calendar CSS for 20:20
+//2011-03-22 fixed toggle on calendar pages
 //Set up header for admin
 add_action('admin_head', 'church_admin_header');
 function church_admin_header()
@@ -27,6 +28,19 @@ function church_admin_public_header()
     <style>table.church_admin_calendar{width:';
     if(get_option('church_admin_calendar_width')){echo get_option('church_admin_calendar_width');}else {echo'700';}
     echo 'px !important;}</style>
-    <script type="text/javascript">function toggle(obj){var div1 = document.getElementById(obj)	if (div1.style.display == \'none\') {		div1.style.display = \'block\'} else {div1.style.display = \'none\'}};</script>';
+    <script type="text/javascript">
+    function toggle(obj)
+    {
+    var div1 = document.getElementById(obj)
+    if (div1.style.display == \'none\')
+    {
+    div1.style.display = \'block\'
+    }
+    else
+    {
+    div1.style.display = \'none\'
+    }
+    };
+    </script>';
 }
 ?>

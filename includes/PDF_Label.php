@@ -37,7 +37,7 @@
  * @copyright 2003 Laurent PASSEBECQ
 **/
 
-require_once('fpdf.php');
+if(!class_exists('FPDF')) require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
 
 class PDF_Label extends FPDF {
 

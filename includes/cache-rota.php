@@ -29,9 +29,9 @@ if(!empty($results))
     }
 //print_r($percent);
 
-require(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
+require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
 $pdf=new FPDF();
-$pdf->AddPage('L','mm','A4');
+$pdf->AddPage('L',get_option('church_admin_pdf_size'));
 $pdf->SetFont('Arial','B',16);
 $text='Sunday Rota '.date("d-m-Y");
 $pdf->Cell(0,10,$text,0,2,C);

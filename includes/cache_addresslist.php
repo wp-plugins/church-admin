@@ -8,7 +8,7 @@ if(!(is_dir($dir)))
 }
 
 
-require("fpdf.php");
+if(!class_exists('FPDF')) require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
 //cache small group pdf
 $wpdb->show_errors();
 $smallgroups=array();
@@ -35,7 +35,7 @@ $x=10;
 $y=30;
 $w=1;
 $width=55;
-$pdf->AddPage('L','mm','A4');
+$pdf->AddPage('L',get_option('church_admin_pdf_size'));
 $pdf->SetFont('Arial','B',16);
 $next_sunday=strtotime("this sunday");
 $text='Small Group List '.date("d-m-Y",$next_sunday);
@@ -48,7 +48,7 @@ for($z=0;$z<=$counter-1;$z++)
 	{
 	if($w==6)
 	{
-	  $pdf->AddPage('L','mm','A4');
+	  $pdf->AddPage('L','A4');
 	  $pdf->SetFont('Arial','B',16);
 	  $next_sunday=strtotime("this sunday");
 	  $text='Small Group List '.date("d-m-Y",$next_sunday);
@@ -71,7 +71,7 @@ $pdf->Output(CHURCH_ADMIN_CACHE_PATH.'sg.pdf',F);
 
 
 
-
+//address book cache
 
 
 //grab addresses
@@ -129,7 +129,7 @@ $width=55;
 global $pageno;
 function newpage($pdf)
 {
-$pdf->AddPage('P','mm','A4');
+$pdf->AddPage('P',get_option('church_admin_pdf_size'));
 $pdf->SetFont('Arial','B',24);
 $text='Address List '.date("d-m-Y");
 $pdf->Cell(0,20,$text,0,2,C);
@@ -162,21 +162,20 @@ $pdf->Output(CHURCH_ADMIN_CACHE_PATH.'addresslist.pdf',F);
 //end of cache address list
 
 //start of cache mailing labels!
-
-
-
 require_once('PDF_Label.php');
-$pdf = new PDF_Label('L7163', 'mm', 1, 2);
-$pdf->Open();
-$pdf->AddPage();
+$pdflabel = new PDF_Label(get_option('church_admin_label'), 'mm', 1, 2);
+$pdflabel->Open();
+$pdflabel->AddPage();
 
 for($z=0;$z<=$counter-1;$z++)
 {
     $add=$addresses['address'.$z][name]."\n".$addresses['label'.$z];
-    $pdf->Add_Label($add);
+    $pdflabel->Add_Label($add);
 }
-$pdf->Output(CHURCH_ADMIN_CACHE_PATH.'mailinglabel.pdf',F);
+$pdflabel->Output(CHURCH_ADMIN_CACHE_PATH.'mailinglabel.pdf',F);
 include(CHURCH_ADMIN_INCLUDE_PATH.'cache-rota.php');
+//end of mailing labels
+
 
 //create visitor mailing labels
 $results = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_visitors WHERE address_line1!='' AND regular!='1' ORDER BY last_name, first_name");    
@@ -194,15 +193,15 @@ if(!empty($row->state)){$addresses['address'.$counter]['address'].=stripslashes(
 if(!empty($row->zipcode)){$addresses['address'.$counter]['address'].=stripslashes($row->zipcode).'.';$addresses['label'.$counter].=",\n".stripslashes($row->zipcode);}
   $counter+=1;
     }
-$pdf = new PDF_Label('L7163', 'mm', 1, 2);
-$pdf->Open();
-$pdf->AddPage();
+$pdfvisitor = new PDF_Label(get_option('church_admin_label'), 'mm', 1, 2);
+$pdfvisitor->Open();
+$pdfvisitor->AddPage();
 
 for($z=0;$z<=$counter-1;$z++)
 {
     $add=$addresses['address'.$z][name]."\n".$addresses['label'.$z];
-    $pdf->Add_Label($add);
+    $pdfvisitor->Add_Label($add);
 }
-$pdf->Output(CHURCH_ADMIN_CACHE_PATH.'visitor_mailing_label.pdf',F);
+$pdfvisitor->Output(CHURCH_ADMIN_CACHE_PATH.'visitor_mailing_label.pdf',F);
 
 ?>
