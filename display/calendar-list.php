@@ -1,6 +1,5 @@
 <?php
-$current=(isset($_GET['m'])) ? intval($_GET['m']) : time(); //get user date or use today
-if(isset($_POST['month']) && isset($_POST['year'])) $current=mktime(12,0,0,$_POST['month'],14,$_POST['year']);
+if(isset($_POST['month']) && isset($_POST['year'])){ $current=mktime(12,0,0,$_POST['month'],14,$_POST['year']);}else{$current=time();}
 $thismonth = (int)date("m",$current);
 $thisyear = date( "Y",$current );
 $actualyear=date("Y");
@@ -20,8 +19,14 @@ $sql="SELECT ".$wpdb->prefix."church_admin_calendar_category.fgcolor AS fgcolor,
     
 $result=$wpdb->get_results($sql);
 
-$out.='<table >';
-$out.='<tr><td colspan="3"><a href="'.get_permalink().'&amp;m='.$previous.'">Previous</a> '.$now.' <a href="'.get_permalink().'&amp;m='.$next.'">Next</a></td></tr>';
+$out.='<table><tr><td>';
+if($now==date('M Y')){$out.='&nbsp;';}else{$out.='<form action="'.get_permalink().'" name="previous" method="post"><input type="hidden" name="month" value="'.date('m',strtotime("$now -1 month")).'"/><input type="hidden" name="year" value="'.date('Y',strtotime("$now -1 month")).'"/><input type="submit" value="Previous" /></form>';}
+$out.='</td>
+                    <td >'.$now.'</td>
+                    <td ><form action="'.get_permalink().'" method="post"><input type="hidden" name="month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td>
+                
+                
+</tr></table><table>';
 $out.='<tr><td width="150">Date</td><td width="150">Time</td><td width="400" >Event</td></tr>';
 foreach($result AS $row)
 {
