@@ -89,7 +89,7 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
         foreach($result AS $row)
         {
             $popup=stripslashes("<p><strong>".$row->title."</strong><br/>".$row->description."<br/>".$row->location."<br/>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."<br/>".$row->category." Event");
-            $out.= '<div onmouseover="toggle(\'div'.$row->date_id.'\');" onmouseout="toggle(\'div'.$row->date_id.'\');" style="background-color:'.$row->bgcolor.'" >'.htmlentities($row->title).'</div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip" style="display:none;" >'.$popup.'</div><br/>';
+            $out.= '<div class="church_admin_cal_item" id="ca'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.htmlentities($row->title).'... </div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip"  >'.$popup.'</div><br/>';
         }
     }    
     $out.="</td>\n";
@@ -117,3 +117,16 @@ if( $numcellsleft != $numinrow )
 
 $out.='</tr>
 </table>';
+$out.="
+<script type=\"text/javascript\">$(document).ready(function(){
+      $('.church_admin_cal_item').live('click', function() {
+      $('.church_admin_tooltip').hide();//get rid of other ones
+  // Live handler called.
+	var hideNo=this.id.substr(2);
+
+	$('#div'+hideNo).toggle('25');
+
+});
+    
+});</script>
+";
