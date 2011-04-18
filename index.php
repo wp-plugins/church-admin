@@ -73,9 +73,10 @@ Version History
 0.32.7 2011-03-14 Calendar fix on error in form - not showing in red
 0.32.8 2011-03-23 Calendar times and dates use Wordpress format settings, pdf's adjustable for different sizes
 0.32.9 2011-03-25 Agenda view date select fixed
+0.32.9.1 2011-04-18 Fixed cron issue
 */
 //Version Number
-$church_admin_version = '0.32.9';
+$church_admin_version = '0.32.9.1';
 
 function church_admin_init()
 {

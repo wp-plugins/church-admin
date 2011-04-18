@@ -1,5 +1,9 @@
 <?php
-require('../../../../wp-config.php');
+//cron needs the current working directory setting
+chdir(dirname(__FILE__));
+//work back to the root directory in anormal wp installation
+$file='../../../../wp-config.php';
+require($file);
 $attachment=array();
 // connect to database
 $db=mysql_connect(DB_HOST,DB_USER,DB_PASSWORD);

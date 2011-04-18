@@ -6,7 +6,7 @@ $headers=array();
 $totalcharas=12;//allow for date in output
 //grab character count from largest results
 $now=date('Y-m-d');
-$threemonths=date('Y-m-d',strtotime('+3 months'));
+$threemonths=date('Y-m-d',strtotime('+6 months'));
 $sql="SELECT ".$wpdb->prefix."church_admin_rota.rota_option_id, MAX( LENGTH( ".$wpdb->prefix."church_admin_rota.who ) )AS whocount,LENGTH(".$wpdb->prefix."church_admin_rota_settings.rota_task) AS title,".$wpdb->prefix."church_admin_rota.rota_option_id FROM  ".$wpdb->prefix."church_admin_rota,".$wpdb->prefix."church_admin_rota_settings WHERE ".$wpdb->prefix."church_admin_rota.rota_date>='$now' AND ".$wpdb->prefix."church_admin_rota.rota_date<'$threemonths' AND ".$wpdb->prefix."church_admin_rota.rota_option_id=".$wpdb->prefix."church_admin_rota_settings.rota_id  GROUP BY ".$wpdb->prefix."church_admin_rota.rota_option_id ";
 //echo $sql;
 $results=$wpdb->get_results($sql);
