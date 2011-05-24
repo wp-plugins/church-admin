@@ -99,8 +99,10 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Agenda View fix
 = 0.32.9.1 =
 * Fixed cron email issue
+= 0.32.9.2 =
+* Jquery conflict mode fix
 
 == Upgrade Notice ==
-* 0.32.8 required
+* 0.32.9.2 required
 
 == Credits: ==
