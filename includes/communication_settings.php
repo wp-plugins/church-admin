@@ -23,6 +23,15 @@ function church_admin_settings()
 	 update_option('church_admin_pdf_size',$_POST['church_admin_pdf_size']);
 
 	}
+	if(isset($_POST['church_admin_email_image']))
+	{
+	 $img=@getimagesize($_POST['church_admin_email_image']);
+	 if(!empty($img))
+	 {
+	    update_option('church_admin_email_image',str_replace('http://','',$_POST['church_admin_email_image']));   
+	 }
+	 
+	}
 	if(isset($_POST['church_admin_label']))
 	{
 	 switch($_POST['church_admin_label'])
@@ -60,6 +69,9 @@ function church_admin_settings()
 	else
 	{echo '<option value="A4">A4</option><option value="Legal">Legal</option><option value="">Letter</option>';}
 	echo'</select></p>';
+	//email template top image
+	echo'<p><label>Email template header image url</label><input type="text" name="church_admin_email_image" value="'.get_option('church_admin_email_image').'"/></p>';
+	//end email template top image
 	//mailing label size
 	echo '<p><label>Avery &#174; Label</label><select name="church_admin_label">';
 

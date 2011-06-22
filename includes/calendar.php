@@ -11,15 +11,16 @@ function church_admin_category_list()
 {
     global $wpdb;
     //build category tableheader
-        $thead='<tr><th>Edit</th><th>Delete</th><th width="100">Category</th></tr>';
-    $table= '<table class="widefat" style="width:30%"><thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
+        $thead='<tr><th>Edit</th><th>Delete</th><th width="100">Category</th><th>Shortcode</th></tr>';
+    $table= '<table class="widefat" ><thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
         //grab categories
     $results=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category");
     foreach($results AS $row)
     {
         $edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_category&amp;id='.$row->cat_id,'edit_category').'">Edit</a>';;
         $delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_category&amp;id='.$row->cat_id,'delete_category').'">Delete</a>';
-        $table.='<tr><td>'.$edit_url.'</td><td>'.$delete_url.'</td><td style="background:'.$row->bgcolor.'">'.esc_html($row->category).'</td></tr>';
+        $shortcode='[church_admin type=calendar-list category='.$row->cat_id.' weeks=4]';
+        $table.='<tr><td>'.$edit_url.'</td><td>'.$delete_url.'</td><td style="background:'.$row->bgcolor.'">'.esc_html($row->category).'</td><td>'.$shortcode.'</td></tr>';
     }
     $table.='</tbody></table>';
     echo '<div class="wrap"><h2>Calendar Categories</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_add_category','add_category').'">Add a category</a></p>'.$table.'</div>';

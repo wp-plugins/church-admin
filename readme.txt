@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 3.0.0
 Tested up to: 3.1
-Stable tag: 0.32.9.1
+Stable tag: 0.32.9.3
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -39,7 +39,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 5. Place [church_admin type=small-groups] on the page you want the list of small groups and their members displayed
 6. Place [church_admin type=rota] on the page you want the rota displayed
 7. Place [church_admin type=calendar] on the page you want a page per month calendar displayed
-8. Place [church_admin type=calendar-list] on the page you want a agenda view calendar
+8. Place [church_admin type=calendar-list] on the page you want a agenda view calendar - option category and weeks options pastable from category admin page
 9. There is a calendar widget with customisable title, how many events you want to show and an option for it to look like a post-it note
 
 We recommend password protecting the pages - if it is password protected a link is provided to logout
@@ -101,6 +101,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Fixed cron email issue
 = 0.32.9.2 =
 * Jquery conflict mode fix
+= 0.32.9.3 =
+* Added category & weeks to calendar-list shortcode - copy and paste from Category subpage of Calendar menu
 
 == Upgrade Notice ==
 * 0.32.9.2 required
