@@ -342,7 +342,8 @@ function church_admin_add_calendar()
         }
         $sql="INSERT INTO ".$wpdb->prefix."church_admin_calendar_date (start_date,start_time,end_time,event_id) VALUES".implode(',',$values);
         
-        $wpdb->query($sql);
+       if( $wpdb->query($sql))
+       {
       
       //end of process
         echo '<div id="message" class="updated fade">';
@@ -350,6 +351,13 @@ function church_admin_add_calendar()
         echo '</div>';
         church_admin_cache_year_planner();
         church_admin_calendar_list();
+       }
+       else
+       {
+        echo '<div id="message" class="updated fade">';
+        echo '<p><strong>Calendar Event was not saved for some reason, sorry.</strong></p>';
+        echo '</div>';
+       }
         }//end of event not already in db
       }//end of no errors
       else
@@ -553,7 +561,7 @@ $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calen
     $sqlnext=date("Y-m-d",$next);
     
     echo '<table><tr><td><a href="admin.php?page=church_admin_calendar&amp;date='.$previous.'">Prev</a> '.$now.' <a href="admin.php?page=church_admin_calendar&amp;date='.$next.'">Next</a></td><td>';
-    echo'<form action="" method="post"><select name="date">';
+    echo'<form action="admin.php?page=church_admin_calendar" method="post"><select name="date">';
     if(isset($_REQUEST['date']))echo '<option value="'.$_REQUEST['date'].'">'.date('M Y',$_REQUEST['date']).'</option>';
 //generate a form to access calendar
 for($x=0;$x<12;$x++)
