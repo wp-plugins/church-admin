@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.32.9.5
+Version: 0.32.9.6
 
 Author: Andy Moyle
 
@@ -77,9 +77,10 @@ Version History
 0.32.9.2 2011-05-24 Fixed jquery conflict issue in Calendar tooltip display
 0.32.9.3 2011-06-22 Added category shortcode to calendar-list & basic email template to bulk email
 0.32.9.5 2011-07-20 Error message if calendar event not saved!
+0.32.9.6 2011-08-25 Minor CSS tweak for address list display on non white backgrounds
 */
 //Version Number
-$church_admin_version = '0.32.9.5';
+$church_admin_version = '0.32.9.6';
 
 function church_admin_init()
 {
@@ -134,7 +135,7 @@ add_action('admin_menu', 'church_admin_menus');
 function church_admin_menus() 
 
 {
-    add_menu_page('church_admin:Administration', 'Church Admin', 4, 'church_admin/index.php', 'church_admin_main');
+    add_menu_page('church_admin:Administration', 'Church Admin',  'administrator', 'church_admin/index.php', 'church_admin_main');
     add_submenu_page('church_admin/index.php', 'Directory List', 'Directory List', 'administrator', 'church_admin/index.php', 'church_admin_main');
     add_submenu_page('church_admin/index.php', 'Small Group List', 'Small Group List', 'administrator', 'church_admin_small_groups', 'church_admin_small_groups');
     add_submenu_page('church_admin/index.php', 'Rota List', 'Rota List', 'administrator', 'church_admin_rota_list', 'church_admin_rota_list');

@@ -48,7 +48,7 @@ $counter=1; //the identifier for each record for the vcard and pdf
 
 
 
-        $out .= '<div  style="-moz-border-radius:4px; background-color:#FFFFFF; border:1px solid #E3E3E3; margin:8px 0px; padding:6px; position: relative;">
+        $out .= '<div  class="church_admin_address">
 	<div style="width:49%; float:left">
 		<div style="clear:both;"></div>
 		<div style="margin-bottom: 10px;">

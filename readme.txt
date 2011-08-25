@@ -107,6 +107,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Fixed calendar admin drop down menu bug
 =0.32.9.5
 * Error message if calendar event not saved!
+=0.32.9.6
+* Minor CSS tweak on address-list display for non white backgrounds
 == Upgrade Notice ==
 * 0.32.9.5 required
 
