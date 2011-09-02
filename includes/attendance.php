@@ -91,18 +91,42 @@ function church_admin_attendance_metrics()
     
      for($year=$first_year;$year<=$last_year;$year++){$thead.="<th>$year</th>";}
     
-     $table='<table class="widefat"><thead><tr><th>Month</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
-     for($x=1;$x<=12;$x++)
-     {
-	  $results=$wpdb->get_results('SELECT YEAR(`date`),CEILING(AVG(adults)) AS adults,CEILING(AVG(children)) AS children FROM '.$wpdb->prefix.'church_admin_attendance WHERE MONTH(`date`)="'.$x.'" ORDER BY YEAR(`date`) ASC');
-	  print_r($results);
-	  $table.='<tr><td>'.$x.'</td>';
+     $aggtable=$totaltable=$adulttable=$childtable='<table class="widefat"><thead><tr><th>Month</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
+    
+	  $results=$wpdb->get_results('SELECT ROUND( AVG( adults ) ) AS adults, ROUND( AVG( children ) ) AS children, YEAR( `date` ) AS year, MONTH( `date` ) AS month FROM '.$wpdb->prefix.'church_admin_attendance GROUP BY YEAR( `date` ) , MONTH( `date` )');
+	  
+	 
 	  foreach($results AS $row)
 	  {
-	       $table.='<td>'.$row->adults.'('.$row->children.')</td>';
+	       
+	       $adults[$row->month][$row->year]=$row->adults;
+	       $children[$row->month][$row->year]=$row->children;
 	  }
-	  $table.='</tr>';
+	  
+     for($month=1;$month<=12;$month++)
+     {
+	  $aggtable.='<tr><td>'.$month.'</td>';
+	  $totaltable.='<tr><td>'.$month.'</td>';
+	  $adulttable.='<tr><td>'.$month.'</td>';
+	  $childtable.='<tr><td>'.$month.'</td>';
+	  for($year=$first_year;$year<=$last_year;$year++)
+	  {
+	       if(empty($adults[$month][$year])){$adulttable.='<td>&nbsp;</td>';}else{$adulttable.='<td>'.$adults[$month][$year].'</td>';}
+	       if(empty($children[$month][$year])){$childtable.='<td>&nbsp;</td>';}else{$childtable.='<td>'.$children[$month][$year].'</td>';}
+	       $total=$adults[$month][$year]+$children[$month][$year];
+	       if($adults[$month][$year]+$children[$month][$year]>0){$totaltable.='<td>'.$total.'</td>';}else{$totaltable.='<td>&nbsp;</td>';}
+	       if($adults[$month][$year]+$children[$month][$year]>0){$aggtable.='<td><span class="adults">'.$adults[$month][$year].'</span>, <span class="children">'.$children[$month][$year].'</span> (<span class="total">'.$total.')</span></td>';}else{$aggtable.='<td>&nbsp;</td>';}
+	       
+	  }
+	  $aggtable.='</tr>';
+	  $totaltable.='</tr>';
+	  $adulttable.='</tr>';
+	  $childtable.='</tr>';
      }
-     echo $table.'<tbody></table>';
+	  
+     echo '<h2>Attendance Adults,Children (Total)</h2>'.$aggtable.'<tbody></table>';
+     echo '<h2>Total Attendance</h2>'.$totaltable.'<tbody></table>';
+     echo '<h2>Adults Attendance</h2>'.$adulttable.'<tbody></table>';
+     echo '<h2>Children Attendance</h2>'.$childtable.'<tbody></table>';
 }
 ?>

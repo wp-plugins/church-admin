@@ -16,7 +16,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 
 *   Members - add, edit and delete
 
-*   Email- send an email to members, parents or small group leaders
+*   Email- send an email to members, parents or small group leaders. Now has a template - make sureyou update your settings to include Facebook page and twitter if you use them!
 
 *   SMS - send bulk sms to members using www.bulksms.co.uk account (not just UK!)
 
