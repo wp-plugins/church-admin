@@ -5,6 +5,7 @@
 add_action('admin_head', 'church_admin_header');
 function church_admin_header()
 {
+
 echo'<link rel="stylesheet" href="'.CHURCH_ADMIN_INCLUDE_URL.'admin.css" type="text/css" media="all" />
 
 <script type="text/javascript">

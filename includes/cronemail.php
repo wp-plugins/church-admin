@@ -1,4 +1,6 @@
 <?php
+if(!defined(DB_NAME)){$output=1;}else{$output=0;}
+
 //cron needs the current working directory setting
 chdir(dirname(__FILE__));
 //work back to the root directory in anormal wp installation
@@ -13,9 +15,9 @@ mysql_select_db(DB_NAME);
 $sql="SELECT option_value FROM ".$table_prefix."options WHERE option_name='church_admin_bulk_email'";
 
 $result=mysql_query($sql);
-if(mysql_num_rows($result)==0)exit("no result");
 $row=mysql_fetch_assoc($result);
-$max_email=$row['option_value'];
+if(!empty($row['option_value'])){$max_email=$row['option_value'];}else{$max_email=100;}
+if($output==1)echo '<p>Attempting to sending '.$max_email.' emails on this run</p>';
 //initialise phpmailer script
 require("class.phpmailer.php");
 $mail = new PHPMailer();
@@ -35,10 +37,12 @@ if(mysql_num_rows($result)>0)
         if(!empty($row['copy']))$mail->AddAddress($row['copy']);
         if(!empty($row['attachment']))
         {
-         $path=$row['attachment'];
-         
-            $mail->AddAttachment($path, $name = "", $encoding = "base64",$type = "application/octet-stream");
-            $attachment[]=$path;
+            $attachments=unserialize($row['attachment']);
+            foreach($attachments AS $key=>$path)
+                {
+                    $mail->AddAttachment($path, $name = "", $encoding = "base64",$type = "application/octet-stream");
+                }
+           
         }
         $mail->Subject = $row['subject'] ;
         $mail->Body=$row['message'];
@@ -48,12 +52,13 @@ if(mysql_num_rows($result)>0)
                 $sql="DELETE FROM ".$table_prefix."church_admin_email WHERE email_id='".mysql_real_escape_string($row['email_id'])."'";
 
                 mysql_query($sql)or die(mysql_error());
-            }
-        echo     $mail->ErrorInfo;
+                if($output==1)echo'<p>Email sent to '.$row['recipient'].'</p>';
+            }else{if($output==1)echo'<p>Email NOT sent to '.$row['recipient'].'</p>';}
+        if($output==1)echo     $mail->ErrorInfo;
         $mail->ClearAllRecipients();//clears all recipients
         $mail->ClearCustomHeaders();//clears headers for next message
     }
-}
+}else{if($output==1)echo'<p>No emails in queue</p>';}
 
 
 ?>

@@ -71,10 +71,16 @@ $out = '
 //get life groups
 $out.='<li><label >Small Group:</label><select name="small_group">';$lgsql="SELECT * FROM ".$wpdb->prefix."church_admin_smallgroup";
 $lgresults = $wpdb->get_results($lgsql);
+$option='';
 foreach ($lgresults as $row) 
 {
-$out.='<option value="'.absint($row->id).'">'.esc_html(stripslashes($row->group_name)).'</option>';
-}				
+    if($data->small_group==$row->id)
+    {
+	$first='<option value="'.absint($row->id).'" selected="selected">'.esc_html(stripslashes($row->group_name)).'</option>';
+    }
+    else $option.='<option value="'.absint($row->id).'">'.esc_html(stripslashes($row->group_name)).'</option>';
+}
+$out.=$first.$option;
 $out.='	</select></li>';
 			
 $out.='<li><label >Address Line 1:</label><input type="text" name="address_line1" value="'.esc_html(stripslashes($data->address_line1)).'" /></li><li><label >Address Line 2:</label><input type="text" name="address_line2" value="'.esc_html(stripslashes($data->address_line2)).'" /></li><li><label>Town:</label><input type="text" name="city" value="'.esc_html(stripslashes($data->city)).'" /></li><li><label >County/State:</label><input type="text" name="state" value="'.esc_html(stripslashes($data->state)).'" /></li><li><label >Postcode:</label><input type="text" name="zipcode" value="'.esc_html(stripslashes($data->zipcode)).'" /></li><li><label>Website:</label><input type="text" name="website" value="'.esc_html(stripslashes($website)).'" /></li></ul>
@@ -86,7 +92,7 @@ return $out;
 
 function church_admin_directory()
 {
-    global $wpdb;
+    global $wpdb,$church_admin_version;
 //header
     $directory='<div class="wrap church_admin"><div id="donatebox"><p>This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.</p><p>Please add your site to our <a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support/sites-using-the-church-admin-plugin-group3/showcase-forum10">show case</a> of this plugins users!</p><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_s-xclick">
@@ -94,7 +100,7 @@ function church_admin_directory()
 <input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
 <img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
 </form><p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">Get Support</a></p></div><h2>Church Admin - Main Address List</h2>';
-
+if(OLD_CHURCH_ADMIN_VERSION!=$church_admin_version) echo '<div class="updated fade"><p><strong>'.CHURCH_ADMIN_LATEST_MESSAGE.'</strong></p></div>';
 //link to add an address
 $directory.='<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_address">Add Address</a></p>';
 

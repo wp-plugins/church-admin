@@ -73,9 +73,36 @@ document.forms[\'add_attendance\'].add_date.value = document.forms[\'add_attenda
 $attendance=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_attendance");
 if($attendance>0)
 {
-  church_admin_show_rolling_average();
-  church_admin_show_graph();
+    echo'<h2>Attendance by Month</h2>';
+    church_admin_attendance_metrics();
+  //church_admin_show_rolling_average();
+  //church_admin_show_graph();
 }//end check for values before trying to produce graphs
 }//end of attendance form
 }//end funtion
+
+
+function church_admin_attendance_metrics()
+{
+     global $wpdb;
+     $wpdb->show_errors;
+     $first_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.$wpdb->prefix.'church_admin_attendance ORDER BY `date` ASC LIMIT 1');
+     $last_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.$wpdb->prefix.'church_admin_attendance ORDER BY `date` DESC LIMIT 1');
+    
+     for($year=$first_year;$year<=$last_year;$year++){$thead.="<th>$year</th>";}
+    
+     $table='<table class="widefat"><thead><tr><th>Month</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
+     for($x=1;$x<=12;$x++)
+     {
+	  $results=$wpdb->get_results('SELECT YEAR(`date`),CEILING(AVG(adults)) AS adults,CEILING(AVG(children)) AS children FROM '.$wpdb->prefix.'church_admin_attendance WHERE MONTH(`date`)="'.$x.'" ORDER BY YEAR(`date`) ASC');
+	  print_r($results);
+	  $table.='<tr><td>'.$x.'</td>';
+	  foreach($results AS $row)
+	  {
+	       $table.='<td>'.$row->adults.'('.$row->children.')</td>';
+	  }
+	  $table.='</tr>';
+     }
+     echo $table.'<tbody></table>';
+}
 ?>

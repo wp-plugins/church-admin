@@ -73,6 +73,15 @@ first_name varchar(255) NOT NULL, last_name varchar(255) CHARACTER SET utf8 NOT 
 	$wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_smallgroup (leader,group_name,whenwhere,id)VALUES ('0', 'Unattached', '', '1');");
     }
 
+//install emails sent table
+    $table_name = $wpdb->prefix."church_admin_email_build";
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
+    {
+$sql='CREATE TABLE IF NOT EXISTS '.$wpdb->prefix.'church_admin_email_build (  recipients text NOT NULL,  subject text NOT NULL,  message text NOT NULL,  send_date date NOT NULL,  filename text NOT NULL,  from_name varchar(500) NOT NULL,  from_email varchar(500) NOT NULL,  email_id int(11) NOT NULL auto_increment,  PRIMARY KEY  (email_id)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;';
+$wpdb->query ($sql);
+}
+
+
     //install rota settings table
     $table_name = $wpdb->prefix."church_admin_rota_settings";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 

@@ -1,3 +1,5 @@
+ #smallgroup{display:none;}
+ #individuals{display:none;}
 .church_admin .red{border:1px solid #f00!important;}
 .church_admin form li {width:700px;}
 .church_admin label{width:200px; float:left;font-weight:bold;}

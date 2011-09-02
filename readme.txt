@@ -109,6 +109,11 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Error message if calendar event not saved!
 =0.32.9.6
 * Minor CSS tweak on address-list display for non white backgrounds
+=0.33.1
+* Non queued emails not being sent fixed
+* Email template and view before sending
+* Small group now shows current group on directory editing
+
 == Upgrade Notice ==
 * 0.32.9.5 required
 

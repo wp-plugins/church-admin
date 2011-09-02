@@ -17,6 +17,8 @@ function church_admin_settings()
    global $wpdb;
     if(isset($_POST['settings']))
     {
+	if(isset($_POST['church_admin_facebook']))update_option('church_admin_facebook',$_POST['church_admin_facebook']);
+	if(isset($_POST['church_admin_twitter']))update_option('church_admin_twitter',$_POST['church_admin_twitter']);
 	if(isset($_POST['church_admin_calendar_width']) && ctype_digit($_POST['church_admin_calendar_width']))update_option('church_admin_calendar_width',$_POST['church_admin_calendar_width']);	
 	if(isset($_POST['church_admin_pdf_size']) && ($_POST['church_admin_pdf_size']=='Legal'||$_POST['church_admin_pdf_size']=='Letter'||$_POST['church_admin_pdf_size']=='A4'))
 	{
@@ -28,7 +30,7 @@ function church_admin_settings()
 	 $img=@getimagesize($_POST['church_admin_email_image']);
 	 if(!empty($img))
 	 {
-	    update_option('church_admin_email_image',str_replace('http://','',$_POST['church_admin_email_image']));   
+	    update_option('church_admin_email_image',$_POST['church_admin_email_image']);   
 	 }
 	 
 	}
@@ -72,6 +74,8 @@ function church_admin_settings()
 	//email template top image
 	echo'<p><label>Email template header image url</label><input type="text" name="church_admin_email_image" value="'.get_option('church_admin_email_image').'"/></p>';
 	//end email template top image
+	echo'<p><label>Facebook page URL</label><input type="text" name="church_admin_facebook" value="'.get_option('church_admin_facebook').'"/></p>';
+	echo'<p><label>Twitter Username</label><input type="text" name="church_admin_twitter" value="'.get_option('church_admin_twitter').'"/></p>';
 	//mailing label size
 	echo '<p><label>Avery &#174; Label</label><select name="church_admin_label">';
 
@@ -172,66 +176,47 @@ function church_admin_sms_settings()
         echo'<p class="submit"><input type="submit" name="communication_settings" value="Edit SMS Settings &raquo;" /></p></form>';
     }
 }
+
+
 function church_admin_email_settings()
 {
     global $wpdb;
-    if(!empty($_POST['username']))
-    {
-        if(!empty($_POST['quantity'])){update_option('church_admin_bulk_email',$_POST['quantity']);}else{delete_option('church_admin_bulk_email');}
-        update_option('c',$_POST['host']);
-        update_option('mailserver_login',$_POST['username']);
-        update_option('mailserver_password',$_POST['password']);
-        update_option('mailserver_port',$_POST['port']);
-        if(!empty($_POST['queue'])) {update_option('church_admin_cron',$_POST['cron']);}else{update_option('church_admin_cron','');delete_option('church_admin_bulk_email');}
-       
-      
-//sort out wp-cron
-if(get_option('church_admin_cron')=='wp-cron')
-{
-    add_action('church_admin_bulk_email','church_admin_cron');
-   $timestamp=mktime();
-    wp_schedule_event($timestamp, 'hourly', 'church_admin_bulk_email');
-}
-if(get_option('church_admin_cron')=='cron')wp_clear_scheduled_hook('church_admin_bulk_email');
-if(empty($_POST['queue'])) wp_clear_scheduled_hook('church_admin_bulk_email');
-        //add test email
-        
-        //add test sms
-        
-        
-        echo '<div id="message" class="updated fade"><p><strong>Email settings updated</strong></p>';
-        if (get_option('church_admin_cron')=='cron')
-        {//if queue explain how to set up cron!
-        echo '<p>'.church_admin_cron_job_instructions().' for setting up email queuing on your Linux or Unix webserver</p></strong><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_communication_settings">Back to communication Settings &raquo;<a/></p></div>';
-        }
-    }
+    
+    if(isset($_POST['quantity']))
+    {//process
+	update_option('church_admin_bulk_email',$_POST['quantity']);
+	update_option('church_admin_cron',$_POST['cron']);
+	echo '<div id="message" class="updated fade"><p><strong>Email settings updated</strong></p>';
+	switch($_POST['cron'])
+	{
+	    case'wp-cron':
+		add_action('church_admin_bulk_email','church_admin_cron');
+		$timestamp=mktime();
+		wp_schedule_event($timestamp, 'hourly', 'church_admin_bulk_email');
+		echo'</div>';//end message
+	    break;
+	    case 'cron':
+		wp_clear_scheduled_hook('church_admin_bulk_email');
+		echo '<p>'.church_admin_cron_job_instructions().' for setting up email queuing on your Linux or Unix webserver</p></strong></p></div>';
+	    break;
+	}
+    }//end process
     else
     {
-        echo'<h2>Email Settings</h2><p>Many hosts limit how many email you are allowed to send an hour. If you want emails to be sent in batches, check "Queue Email" below.</p>';
+	echo'<h2>Email Settings</h2><p>Many hosts limit how many email you are allowed to send an hour. Typically that can be as little as 100.</p>';
         echo'<form action="" method="post">';
-        
-        church_admin_email_settings_form();
-        echo'<p class="submit"><input type="submit" name="communication_settings" value="Edit Settings &raquo;" /></p></form>';
-
-        
-    }
-}
-
-function church_admin_email_settings_form()
-{
-    echo '<ul><li><label >Do you want to queue email?</label>';
-   echo'<input type="checkbox" name="queue" ';
-    if(get_option('church_admin_bulk_email')) {echo 'checked="checked" ';}//if already opted display checked
-    echo'onclick="javascript:toggle(\'quantity\')" /> </li></ul><div id="quantity"';//allow toggle
-    if(!get_option('church_admin_bulk_email'))echo ' style="display:none" ';//don't display if not queued already
-    echo '><ul><li><label>Max emails per hour?</label><input type="text" name="quantity" value="'.get_option('church_admin_bulk_email').'"/></li><li> There are two ways to set up sending emails in batches</li><li><strong>Using cron</strong> the best method if you are on a Linux based host. There server checks and sends any emails queued every hour in batches set by you.</li><li><strong>Using wp_cron</strong> - wp-cron works by scheduling every hour, but relies on people visiting your site regularly to do it in the background. (only option on windows hosts!)</li><li><label>I want to use cron:</label><input type="radio" name="cron" value="cron" ';
+	echo '<div id="quantity"><ul><li><label>Max emails per hour? (required)</label><input type="text" name="quantity" value="'.get_option('church_admin_bulk_email').'"/></li><li> There are two ways to set up sending emails in batches</li><li><strong>Using cron</strong> the best method if you are on a Linux based host. There server checks and sends any emails queued every hour in batches set by you.</li><li><strong>Using wp_cron</strong> - wp-cron works by scheduling every hour, but relies on people visiting your site regularly to do it in the background. (only option on windows hosts!)</li><li><label>I want to use cron:</label><input type="radio" name="cron" value="cron" ';
         if (get_option('church_admin_cron')=='cron') echo 'checked="checked"';
         echo'/></li><li><label>I want to use wp-cron:</label><input type="radio" name="cron" value="wp-cron"';
         if (get_option('church_admin_cron')=='wp-cron') echo 'checked="checked"';
         echo'/></li></ul></div>';
+	echo'<p class="submit"><input type="submit" name="email_settings" value="Edit Settings &raquo;" /></p></form>';
+	
+    }
+}
 
-    echo'<ul><li><label >Your mail host:</label><input type="text" name="host" value="'.get_option('mailserver_url').'"/></li><li><label >Your mail username:</label><input type="text" name="username" value="'.get_option('mailserver_login').'"/></li><li><label>Your mail password:</label><input type="text" name="password" value="'.get_option('mailserver_password').'"/></li><li><label>Your mail host port:</label><input type="text" name="port" value="'.get_option('mailserver_port').'"/></li></ul>';
-}   
+
+ 
 function church_admin_sms_settings_form(){    
     echo'<ul>   
     <li><h2>SMS Settings</h2></li><li><label>Enable Bulk sms?</label><input type="checkbox" name="sms"/></li><li>Set up an account with <a href="www.bulksms.co.uk">www.bulksms.co.uk</a> - prices start at 3.9 per sms</li><li>Once you have registered fill out the form below</li><li><label >SMS username</label><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></li><li><label>SMS password</label><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></li><li><label >SMS reply eg:447777123456</label><input type="text" name="sms_reply" value="'.get_option('church_admin_sms_reply').'" /></li><li><label >Country code eg 44</label><input type="text" name="sms_iso" value="'.get_option('church_admin_sms_iso').'" /></li></ul>';
@@ -248,7 +233,7 @@ function church_admin_cron_job_instructions()
     $pdf->Cell(0,10,$text,0,2,L);
     if (PHP_OS=='Linux')
     {
-    $phppath='/usr/local/bin/php -f';
+    $phppath='/usr/local/bin/php -f ';
     $cronpath=CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php';
     $command=$phppath.$cronpath;
     
