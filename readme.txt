@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 3.0.0
 Tested up to: 3.2.1
-Stable tag: 0.33.0
+Stable tag: 0.33.2
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -113,8 +113,10 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Non queued emails not being sent fixed
 * Email template and view before sending
 * Small group now shows current group on directory editing
+= 0.33.2
+* Missing template file added
 
 == Upgrade Notice ==
-* 0.33.1 required
+* 0.33.2 required
 
 == Credits: ==
