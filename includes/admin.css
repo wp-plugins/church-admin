@@ -55,4 +55,5 @@
   background: url(marker.png) no-repeat;
 }
 #donatebox
-{width:250px;float:right;background:#FFFBCC;border:1px solid #E6DB55;padding: 0 5px 0 5px;margin-bottom:3px;font-size:10pt;}
+{width:250px;height:180px; overflow:hidden;float:right;background:#FFFBCC;border:1px solid #E6DB55;padding: 0 5px 0 5px;margin-bottom:3px;font-size:10pt;}
+#donatebox2{float:right;margin-right:5px;}

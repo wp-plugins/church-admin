@@ -22,7 +22,7 @@ $y=5;
 $pdf->SetXY($x,$y);
 $pdf->SetFont('Arial','B',18);
 $title=get_option('blogname');
-$pdf->Cell(0,8,$title,0,0,C);
+$pdf->Cell(0,8,$title,0,0,'C');
 $pdf->SetFont('Arial','B',10);
 
 //Get initial Values
@@ -54,7 +54,7 @@ for($column=0;$column<=2;$column++)
     $monthname = jdmonthname( $jd, 1 );
     $month++;//increment month for next iteration
     $pdf->SetFont('Arial','B',10);
-    $pdf->Cell(70,7,$monthname.' '.$this_year,0,0,C);
+    $pdf->Cell(70,7,$monthname.' '.$this_year,0,0,'C');
     //position to top left corner of calendar month 
     $y+=7;
     $pdf->SetXY($x,$y);
@@ -62,7 +62,7 @@ for($column=0;$column<=2;$column++)
     //print daylegend
     for($legend=0;$legend<=6;$legend++)
     {
-        $pdf->Cell(10,5,$days[$legend],1,0,C);
+        $pdf->Cell(10,5,$days[$legend],1,0,'C');
     }
     $y+=5;
     $pdf->SetXY($x,$y);
@@ -76,7 +76,7 @@ for($column=0;$column<=2;$column++)
             {
                 //empty cells before start of month, so fill with grey colour
                 $pdf->SetFillColor('192','192','192');
-                $pdf->Cell(10,5,'',1,0,L,TRUE);
+                $pdf->Cell(10,5,'',1,0,'L',TRUE);
             }
             else
             {
@@ -95,14 +95,14 @@ for($column=0;$column<=2;$column++)
                  if($counter <= $numdaysinmonth)
                 {
                     //duringmonth so print a date
-                    $pdf->Cell(10,5,$counter,1,0,L,TRUE);
+                    $pdf->Cell(10,5,$counter,1,0,'L',TRUE);
                     $counter++;
                 }
                 else
                 {
                 //end of month, so back to grey background
                 $pdf->SetFillColor('192','192','192');
-                $pdf->Cell(10,5,'',1,0,C,TRUE);
+                $pdf->Cell(10,5,'',1,0,'C',TRUE);
                 }
             }
             
@@ -128,14 +128,14 @@ foreach ($result AS $row)
     $pdf->SetXY($x,$y);
     $colour=html2rgb($row->bgcolor);
     $pdf->SetFillColor($colour[0],$colour[1],$colour[2]);
-    $pdf->Cell(15,5,' ',0,0,L,1);
+    $pdf->Cell(15,5,' ',0,0,'L',1);
     $pdf->SetFillColor(255,255,255);
-    $pdf->Cell(15,5,$row->category,0,0,L);
+    $pdf->Cell(15,5,$row->category,0,0,'L');
     $pdf->SetXY($x,$y);
     $pdf->Cell(45,5,'',1);
     $y+=6;
 }
-$pdf->Output(CHURCH_ADMIN_CACHE_PATH.'year_planner.pdf',F);
+$pdf->Output(CHURCH_ADMIN_CACHE_PATH.'year_planner.pdf','F');
 
 }
 
@@ -157,4 +157,4 @@ function html2rgb($color)
     $r = hexdec($r); $g = hexdec($g); $b = hexdec($b);
 
     return array($r, $g, $b);
-}
+}?>

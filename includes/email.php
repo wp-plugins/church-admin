@@ -125,12 +125,19 @@ if  ($_FILES['userfile3']['size']>0)
             $excerpt = strip_only(strip_shortcodes($row->post_content),'<img>');
             $words = explode(' ', $excerpt, 51);
             if(count($words)==51)$words[50]='<a href="'.get_permalink($row->ID).'">&laquo; Read More &raquo;</a>';
-            $post_title=explode(' ', strip_shortcodes($row->post_title),5); 
-            $title=$post_title[0].' '.$post_title[1].' '.$post_title[2].' '.$post_title[3];
+            
+            
             $post_excerpt = implode(' ', $words);
             $post_section.='<tr><td>';
-            if (function_exists(get_the_post_thumbnail))$post_section.= get_the_post_thumbnail( $row->ID, 'email-thumb');
-            $post_section.='</td><td style="vertical-align:top;padding-left:5px;"><h2 style="padding_top:5px;">'.$title.'</h2><p>'.strip_only(trim($post_excerpt),'<img>').'</p></td></tr>';
+            if (function_exists(get_the_post_thumbnail)&& get_the_post_thumbnail( $row->ID, 'email-thumb')!='')
+            {
+                $post_section.= get_the_post_thumbnail( $row->ID, 'email-thumb');
+            }
+            else
+            {
+                $post_section.='<img src="http://dummyimage.com/300x200/000/fff.jpg&text='.str_replace(' ', '+', $row->post_title).'" class="apc_thumb" title="'.$row->post_title.'" alt="'. $row->post_title.'" width="300" height="200">';
+            }
+            $post_section.='</td><td style="vertical-align:top;"><h2 style="margin-top:25px;">'.$row->post_title.'</h2><p>'.strip_only(trim($post_excerpt),'<img>').'</p></td></tr>';
         }
         $post_section.='</table>';
     }//latest news section
@@ -268,18 +275,36 @@ function church_admin_send_message($email_id)
             $addresses=array();
             foreach($results AS $row)
             {
-              
-                
-                if(!empty($row->email))
-                {if(QueueEmail($row->email,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
+                if(get_option('church_admin_cron')!='immediate')
+                {//queue the emails
+                    if(!empty($row->email))
+                    {
+                        if(QueueEmail($row->email,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
+                    }
+                    if(!empty($row->email2))
+                    {
+                        if(QueueEmail($row->email2,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email2.' queued</p>';
+                    }
                 }
-                 if(!empty($row->email2))
-                {if(QueueEmail($row->email2,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email2.' queued</p>';
-                }             
+                else{//send immediately using wp_email()
+                        add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
+
+                        $headers="From: ".$email_data->from_name." <".$email_data->from_email.">\n";
+                        if(!empty($row->email))
+                        {
+                            if(wp_mail($row->email,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),$headers,$email_data->filename)) echo'<p>'.$row->email.' sent immediately</p>';
+                        }
+                        if(!empty($row->email2))
+                        {
+                            if(wp_mail($row->email2,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),$headers,$email_data->filename)) echo'<p>'.$row->email2.' sent immediately</p>';
+                        }
+                    }
             }
             $wpdb->query('UPDATE wp_church_admin_email_build SET recipients="'.esc_sql(maybe_serialize($addresses)).'" WHERE email_id="'.esc_sql($email_id).'"');
         }
         
     }
 }
+
+
 ?>

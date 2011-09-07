@@ -99,7 +99,9 @@ function church_admin_directory()
 <input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52">
 <input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
 <img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
-</form><p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">Get Support</a></p></div><h2>Church Admin - Main Address List</h2>';
+</form><p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">Get Support</a></p></div>
+<div id="donatebox2"><img src="'.CHURCH_ADMIN_IMAGES_URL.'Banner_216x180.jpg" width="216" height="180" alt="Just Text Giving"/></div>
+<h2>Church Admin - Main Address List</h2>';
 if(OLD_CHURCH_ADMIN_VERSION!=$church_admin_version) echo '<div class="updated fade"><p><strong>'.CHURCH_ADMIN_LATEST_MESSAGE.'</strong></p></div>';
 //link to add an address
 $directory.='<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_address">Add Address</a></p>';

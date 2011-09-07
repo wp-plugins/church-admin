@@ -113,10 +113,11 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Non queued emails not being sent fixed
 * Email template and view before sending
 * Small group now shows current group on directory editing
-= 0.33.2
+= 0.33.2.1
 * Missing template file added
+* Added ability to send immediately
 
 == Upgrade Notice ==
-* 0.33.2 required
+* 0.33.2.1 required
 
 == Credits: ==

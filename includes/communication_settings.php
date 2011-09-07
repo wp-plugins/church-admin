@@ -199,17 +199,28 @@ function church_admin_email_settings()
 		wp_clear_scheduled_hook('church_admin_bulk_email');
 		echo '<p>'.church_admin_cron_job_instructions().' for setting up email queuing on your Linux or Unix webserver</p></strong></p></div>';
 	    break;
+	    default:
+	       wp_clear_scheduled_hook('church_admin_bulk_email');
+	       update_option('church_admin_cron','immediate');
+	       echo'</div>';
+	    break;
 	}
     }//end process
     else
     {
-	echo'<h2>Email Settings</h2><p>Many hosts limit how many email you are allowed to send an hour. Typically that can be as little as 100.</p>';
+	echo'<h2>Email Settings</h2>';
+	echo'<p>Emails can be sent immediately or in batches. If you are on a shared host, many hosts limit how many email you are allowed to send an hour. Typically that can be as little as 100. Please choose the appropriate option for your setup.</p>';
         echo'<form action="" method="post">';
-	echo '<div id="quantity"><ul><li><label>Max emails per hour? (required)</label><input type="text" name="quantity" value="'.get_option('church_admin_bulk_email').'"/></li><li> There are two ways to set up sending emails in batches</li><li><strong>Using cron</strong> the best method if you are on a Linux based host. There server checks and sends any emails queued every hour in batches set by you.</li><li><strong>Using wp_cron</strong> - wp-cron works by scheduling every hour, but relies on people visiting your site regularly to do it in the background. (only option on windows hosts!)</li><li><label>I want to use cron:</label><input type="radio" name="cron" value="cron" ';
+	echo'<p><label>Send Emails Immediately</label><input type="radio" name="cron" value="immediate" ';
+	if (get_option('church_admin_cron')=='immediate') echo 'checked="checked"';
+	echo'/></p><p> Or if on a share host, please setup queueing below...';
+	echo '<p><label>Max emails per hour? (required)</label><input type="text" name="quantity" value="'.get_option('church_admin_bulk_email').'"/></p><p> There are two ways to set up sending emails in batches</p><p><strong>Using cron</strong> the best method if you are on a Linux based host. The server checks and sends any emails queued every hour in batches set by you.</p><p><strong>Using wp_cron</strong> - wp-cron works by scheduling every hour, but relies on people visiting your site regularly to do it in the background. (only option on windows hosts!)</p><p><label>I want to use cron:</label><input type="radio" name="cron" value="cron" ';
         if (get_option('church_admin_cron')=='cron') echo 'checked="checked"';
-        echo'/></li><li><label>I want to use wp-cron:</label><input type="radio" name="cron" value="wp-cron"';
+        echo'/></p><p><label>I want to use wp-cron:</label><input type="radio" name="cron" value="wp-cron"';
         if (get_option('church_admin_cron')=='wp-cron') echo 'checked="checked"';
-        echo'/></li></ul></div>';
+        echo'/></p>';
+	
+	
 	echo'<p class="submit"><input type="submit" name="email_settings" value="Edit Settings &raquo;" /></p></form>';
 	
     }
