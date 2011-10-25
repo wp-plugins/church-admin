@@ -50,7 +50,7 @@ $jd = cal_to_jd( CAL_GREGORIAN, $thismonth,date( 1 ), $thisyear );
 
 //prepare output
 if($postit)$out.='<div class="Postit">';
-$out.='<h1>'.$title.'</h1><ul>';
+$out.='<ul>';
 
 //grab next $limit days events
 for($x=0;$x<=$limit;$x++)

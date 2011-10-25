@@ -160,7 +160,7 @@ function counterUpdate(opt_countedTextBox, opt_countBody, opt_maxSize) {
 if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
 echo'
 <div id="church_admin_whoto">Who to?<br/><select name="who"><option value="church">Everyone</option><option value="parents">Parents</option><option value="test">Test</option></select></div>
- <div id="church_admin_message"><span id="countBody">&nbsp;&nbsp;0</span>/160 characters<br/><textarea id="counttxt" rows="4" cols="50" name="counttxt"  onkeyup="counterUpdate(\'counttxt\', \'countBody\',\'160\');"></textarea></div>
+ <div id="church_admin_message"><span id="countBody">&nbsp;&nbsp;0</span>/160 characters<br/><textarea class="sms" id="counttxt" rows="4" cols="50" name="counttxt"  onkeyup="counterUpdate(\'counttxt\', \'countBody\',\'160\');"></textarea></div>
  
  
   <div id="church_admin_submit"><input type="submit" name="submitted" value="Send Message"/></div>

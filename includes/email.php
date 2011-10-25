@@ -137,7 +137,7 @@ if  ($_FILES['userfile3']['size']>0)
             {
                 $post_section.='<img src="http://dummyimage.com/300x200/000/fff.jpg&text='.str_replace(' ', '+', $row->post_title).'" class="apc_thumb" title="'.$row->post_title.'" alt="'. $row->post_title.'" width="300" height="200">';
             }
-            $post_section.='</td><td style="vertical-align:top;"><h2 style="margin-top:25px;">'.$row->post_title.'</h2><p>'.strip_only(trim($post_excerpt),'<img>').'</p></td></tr>';
+            $post_section.='</td><td style="vertical-align:top;"><h2 style="margin-top:25px;"><a href="'.get_permalink($row->ID).'">'.$row->post_title.'</a></h2><p>'.strip_only(trim($post_excerpt),'<img>').'</p><p><a href="'.get_permalink($row->ID).'">Read the whole article here</a></p></td></tr>';
         }
         $post_section.='</table>';
     }//latest news section
@@ -173,11 +173,11 @@ if  ($_FILES['userfile3']['size']>0)
     //copyright year
     $message=str_replace('[year]',date('Y'),$message);
     $filename='Email-'.date('Y-m-d-H-i-s').'.html';
-    $message=str_replace('[cache]','<p style="font-size:smaller;text-align:center;margin:0 auto;">Having trouble reading this? - <a href="'.CHURCH_ADMIN_CACHE_URL.$filename.'">view in your web browser</a></p>',$message);
+    $message=str_replace('[cache]','<p style="font-size:smaller;text-align:center;margin:0 auto;">Having trouble reading this? - <a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">view in your web browser</a></p>',$message);
     //james contact details
     
     
-    $handle=fopen(CHURCH_ADMIN_CACHE_PATH.$filename,"w")OR DIE("Couldn't open");
+    $handle=fopen(CHURCH_ADMIN_EMAIL_CACHE.$filename,"w")OR DIE("Couldn't open");
     fwrite($handle, $message);  
     fclose($handle);
     //write to database
@@ -201,9 +201,11 @@ if  ($_FILES['userfile3']['size']>0)
     
     //output message to screen
     echo'<h3>This is how the message will look...</h3>';
-    echo'<p>[salutation] will be replaced by Dear First Name, when it is sent out!</p>';
-    echo '<iframe width="700" border="1" height="450" src="'.CHURCH_ADMIN_CACHE_URL.$filename.'">Please upgrade your browser to display the email!</iframe>';
-        
+    echo'<p>The email will have Dear First Name, when it is sent out!</p>';
+    echo '<iframe width="700" border="1" height="450" src="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">Please upgrade your browser to display the email!</iframe>';
+    echo'<h3>Use these social media buttons to post the email url...</h3><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=118790464849935&amp;xfbml=1"></script><fb:like href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'" send="false" width="450" show_faces="false" font="lucida grande"></fb:like></p>';
+echo '<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-text="'.$_POST['subject'].'" data-url="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script> '  ;
+    
     if($email_id){return $email_id;}else{return FALSE;}
 }
 
@@ -279,24 +281,25 @@ function church_admin_send_message($email_id)
                 {//queue the emails
                     if(!empty($row->email))
                     {
-                        if(QueueEmail($row->email,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
+                        if(QueueEmail($row->email,$email_data->subject,str_replace('<!--salutation-->','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
                     }
                     if(!empty($row->email2))
                     {
-                        if(QueueEmail($row->email2,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email2.' queued</p>';
+                        if(QueueEmail($row->email2,$email_data->subject,str_replace('<!--salutation-->','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email2.' queued</p>';
                     }
                 }
                 else{//send immediately using wp_email()
+		  
                         add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
 
                         $headers="From: ".$email_data->from_name." <".$email_data->from_email.">\n";
                         if(!empty($row->email))
                         {
-                            if(wp_mail($row->email,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),$headers,$email_data->filename)) echo'<p>'.$row->email.' sent immediately</p>';
+                            if(wp_mail($row->email,$email_data->subject,str_replace('<!--salutation-->]','Dear '.$row->first_name.',',$email_data->message),$headers,unserialize($email_data->filename))) echo'<p>'.$row->email.' sent immediately</p>';
                         }
                         if(!empty($row->email2))
                         {
-                            if(wp_mail($row->email2,$email_data->subject,str_replace('[salutation]','Dear '.$row->first_name.',',$email_data->message),$headers,$email_data->filename)) echo'<p>'.$row->email2.' sent immediately</p>';
+                            if(wp_mail($row->email2,$email_data->subject,str_replace('<!--salutation-->','Dear '.$row->first_name.',',$email_data->message),$headers,unserialize($email_data->filename))) echo'<p>'.$row->email2.' sent immediately</p>';
                         }
                     }
             }
@@ -306,5 +309,15 @@ function church_admin_send_message($email_id)
     }
 }
 
-
+function getTweetUrl($url, $text)
+{
+$maxTitleLength = 120 ;
+if (strlen($text) > $maxTitleLength) {
+$text = substr($text, 0, ($maxTitleLength-3)).'...';
+}
+$text=str_replace('"','',$text);
+$outputurl='http://twitter.com/share?wrap_links=true&amp;url='.urlencode($url).'&amp;text='.urlencode($text);
+$output='<a href="http://twitter.com/share" class="twitter-share-button" data-url="'.$outputurl.'" data-text="'.$text.'" data-count="horizontal">Tweet</a>';
+return $output;
+}
 ?>

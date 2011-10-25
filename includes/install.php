@@ -166,7 +166,10 @@ if(get_option('church_admin_cron')=='wp-cron')
     wp_schedule_event($timestamp, 'hourly', 'church_admin_bulk_email');
 }
 
+if(!is_dir(CHURCH_ADMIN_EMAIL_CACHE)){mkdir(CHURCH_ADMIN_EMAIL_CACHE);chmod(CHURCH_ADMIN_EMAIL_CACHE, 0755);}
 //update version
 update_option('church_admin_version',$church_admin_version);
 }
+
+ 
 ?>
