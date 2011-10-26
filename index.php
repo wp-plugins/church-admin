@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/church_admin_wordpress_plugin/
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.33.2.1
+Version: 0.33.2.2
 
 Author: Andy Moyle
 
@@ -80,11 +80,11 @@ Version History
 0.32.9.6 2011-08-25 Minor CSS tweak for address list display on non white backgrounds
 0.33.0 2011-08-26 Fixes for non queued emails, removed redundant email settings and added templating to Email generation and small group fix for directory
 0.33.1 2011-09-02 Attendance tables
-0.33.2.1 2011-9-04 Added missing files and ability to send email immediately
+0.33.2.2 2011-9-04 Added missing files and ability to send email immediately
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.2.1';
+$church_admin_version = '0.33.2.2';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
@@ -119,8 +119,8 @@ define('CHURCH_ADMIN_IMAGES_URL', WP_PLUGIN_URL . '/church-admin/images/');
 define('CHURCH_ADMIN_CACHE_PATH',WP_PLUGIN_DIR.'/church-admin/cache/');
 define('CHURCH_ADMIN_CACHE_URL',WP_PLUGIN_URL.'/church-admin/cache/');
 define('CHURCH_ADMIN_TEMP_PATH',WP_PLUGIN_DIR.'/church-admin/temp/');
-
-
+define('CHURCH_ADMIN_EMAIL_CACHE',WP_PLUGIN_DIR.'/church-admin-cache/');
+define('CHURCH_ADMIN_EMAIL_CACHE_URL',WP_PLUGIN_URL.'/church-admin-cache/');
 //check install is uptodate 
 if (get_option("church_admin_version") != $church_admin_version ) 
 {
@@ -172,6 +172,7 @@ add_submenu_page('church_admin/index.php', 'Attendance', 'Attendance', 'administ
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_send_email') add_filter('admin_head','show_tinyMCE');
  
 function show_tinyMCE() {
+
     wp_enqueue_script( 'common' );
     wp_enqueue_script( 'jquery-color' );
     wp_enqueue_scripts('editor');
@@ -183,6 +184,7 @@ function show_tinyMCE() {
     do_action("admin_print_styles-post-php");
     do_action('admin_print_styles');
     remove_all_filters('mce_external_plugins');
+    	
 }
 
 //main admin page function
@@ -410,15 +412,17 @@ add_action( 'init', 'cd_posts_logout' );
 
 //end of logout functions
 
-function church_admin_calendar_widget($args=array())
+function church_admin_calendar_widget($args)
 {
     global $wpdb;
     $wpdb->show_errors();
     extract($args);
     $options=get_option('church_admin_widget');
     $title=$options['title'];
+   
     echo $before_widget;
-    
+    if ( $title )echo $before_title . $title . $after_title;
+   
     echo church_admin_calendar_widget_output($options['events'],$options['postit'],$title);
     echo $after_widget;
 }
