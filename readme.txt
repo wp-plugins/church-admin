@@ -88,7 +88,7 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Adjustable width calendar table from settings page
 = 0.32.5.1 =
 * Calendar CSS tweak for WP20:20 theme
-= 0.32.7
+= 0.32.7 =
 * Calendar errors showing again in red
 = 0.32.8 =
 * Calendar times use Wordpress Format Settings
