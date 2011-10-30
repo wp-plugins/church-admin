@@ -80,11 +80,13 @@ Version History
 0.32.9.6 2011-08-25 Minor CSS tweak for address list display on non white backgrounds
 0.33.0 2011-08-26 Fixes for non queued emails, removed redundant email settings and added templating to Email generation and small group fix for directory
 0.33.1 2011-09-02 Attendance tables
-0.33.2.2 2011-9-04 Added missing files and ability to send email immediately
+0.33.2.1 2011-09-04 Added missing files and ability to send email immediately
+0.33.2.2 2011-10-26 MOved emailing cahcing out of plugin
+0.33.2.3 2011-10-30 Attendance graph Shortcodes
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.2.2';
+$church_admin_version = '0.33.2.3';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
@@ -387,8 +389,13 @@ function church_admin_shortcode($atts, $content = null)
 	case 'rota':
             include(CHURCH_ADMIN_DISPLAY_PATH."rota.php");
         break;
-    
-        default:
+	case 'monthly-average':
+	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'attendance-graph.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'attendance-graph.png" alt="Average Attendance Graph"/>';
+        break;
+	case 'rolling-average':
+	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'rolling_average_attendance.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png" alt="Average Attendance Graph"/>';
+        break;
+	default:
             require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
         break;
     }

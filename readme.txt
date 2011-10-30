@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 3.0.0
 Tested up to: 3.2.1
-Stable tag: 0.33.2.2
+Stable tag: 0.33.2.3
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -38,9 +38,11 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 4. Place [church_admin type=small-groups-list] on the page you want the small group list displayed
 5. Place [church_admin type=small-groups] on the page you want the list of small groups and their members displayed
 6. Place [church_admin type=rota] on the page you want the rota displayed
-7. Place [church_admin type=calendar] on the page you want a page per month calendar displayed
+7. Place [church_admin type=calendar category=# weeks=#] on the page you want a page per month calendar displayed
 8. Place [church_admin type=calendar-list] on the page you want a agenda view calendar - option category and weeks options pastable from category admin page
-9. There is a calendar widget with customisable title, how many events you want to show and an option for it to look like a post-it note
+9. Place [church_admin type=rolling-average] on the page you want a rolling average attendance graph
+10.Place [church_admin type=monthly-average] on the page you want a monthly average attendance graph
+11. There is a calendar widget with customisable title, how many events you want to show and an option for it to look like a post-it note
 
 We recommend password protecting the pages - if it is password protected a link is provided to logout
 
@@ -118,7 +120,9 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Added ability to send immediately
 = 0.33.2.2 =
 * Email cache directory change
+= 0.33.2.3 =
+* Attendance Graph Shortcodes
 == Upgrade Notice ==
-* 0.33.2.2 required
+* 0.33.2.3 required
 
 == Credits: ==
