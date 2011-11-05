@@ -129,13 +129,14 @@ if  ($_FILES['userfile3']['size']>0)
             
             $post_excerpt = implode(' ', $words);
             $post_section.='<tr><td>';
-            if (function_exists(get_the_post_thumbnail)&& get_the_post_thumbnail( $row->ID, 'email-thumb')!='')
+            if (function_exists(get_the_post_thumbnail)&& get_the_post_thumbnail( $row->ID, 'ca-email-thumb')!='')
             {
-                $post_section.= get_the_post_thumbnail( $row->ID, 'email-thumb');
+	       
+                $post_section.= get_the_post_thumbnail($row->ID,'ca-email-thumb').get_the_post_thumbnail($row->ID,'ca-120-thumb',array('style'=>"display:none;"));
             }
             else
             {
-                $post_section.='<img src="http://dummyimage.com/300x200/000/fff.jpg&text='.str_replace(' ', '+', $row->post_title).'" class="apc_thumb" title="'.$row->post_title.'" alt="'. $row->post_title.'" width="300" height="200">';
+                $post_section.='<img src="http://dummyimage.com/300x200/000/fff.jpg&text='.str_replace(' ', '+', $row->post_title).'" class="attachment-ca-email-thumb" title="'.$row->post_title.'" alt="'. $row->post_title.'"  ><img src="http://dummyimage.com/120x90/000/fff.jpg&text='.str_replace(' ', '+', $row->post_title).'" class="attachment-ca-120-thumb" style="display:none" title="'.$row->post_title.'" alt="'. $row->post_title.'"  >';
             }
             $post_section.='</td><td style="vertical-align:top;"><h2 style="margin-top:25px;"><a href="'.get_permalink($row->ID).'">'.$row->post_title.'</a></h2><p>'.strip_only(trim($post_excerpt),'<img>').'</p><p><a href="'.get_permalink($row->ID).'">Read the whole article here</a></p></td></tr>';
         }
@@ -168,7 +169,7 @@ if  ($_FILES['userfile3']['size']>0)
      if(get_option('church_admin_facebook')){$facebook='<a href="'.get_option('church_admin_facebook').'" style="text_decoration:none" title="Follow us on Facebook"><img src="'.CHURCH_ADMIN_IMAGES_URL.'facebook.png" width="128" height="128"  style="border:none" alt="Contact"/></a>';}else{$facebook='';}
     $message=str_replace('[FACEBOOK]',$facebook,$message);
     $message=str_replace('[BLOGINFO]','<a href="'.get_bloginfo('url').'">'.get_bloginfo('url').'</a>',$message);
-    $message=str_replace('[HEADER_IMAGE]','<img src="'.get_option('church_admin_email_image').'" alt="" >',$message);
+    $message=str_replace('[HEADER_IMAGE]','<img class="header_image" src="'.get_option('church_admin_email_image').'" alt="" >',$message);
     
     //copyright year
     $message=str_replace('[year]',date('Y'),$message);

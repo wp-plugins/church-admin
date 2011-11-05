@@ -22,4 +22,6 @@
 #church_admin_submit{position:relative;top:95px;left:20px;}  
 
 #donatebox
-{width:250px;height:200px; overflow:auto;float:right;background:#FFFBCC;border:1px solid #E6DB55;padding: 0 5px 0 5px;margin-bottom:3px;font-size:10pt;}
+{width:500px;height:205px; float:right;background:#FFFBCC;border:1px solid #E6DB55;padding: 0 5px 0 5px;margin-bottom:3px;font-size:10pt;}
+#donatebox img{text-decoration:none!important;}
+#donatebox .right{float:right;}

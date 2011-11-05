@@ -90,6 +90,7 @@ $church_admin_version = '0.33.2.3';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
+    ca_thumbnails();
 if ((isset($_GET['action'])&&($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'))||!is_admin())
 {
     //Only fire up jquery on the add and edit category pages within admin.php to avoid conflicts
@@ -109,7 +110,19 @@ if(isset($_GET['page']) && $_GET['page']=='church_admin_send_email')
 }
 
 add_action('init', 'church_admin_init');
-
+/* Thumbnails */
+function ca_thumbnails()
+{
+    add_theme_support( 'post-thumbnails' );
+    if ( function_exists( 'add_image_size' ) )
+    { 
+	add_image_size( 'ca-email-thumb', 300, 200 ); //300 pixels wide (and unlimited height)
+	add_image_size('ca-120-thumb',120,90);
+	add_image_size('ca-240-thumb',240,180);
+    }
+    
+}
+/* Thumbnails */
 
 //define paths
 define('CHURCH_ADMIN_DISPLAY_PATH', WP_PLUGIN_DIR . '/church-admin/display/');
