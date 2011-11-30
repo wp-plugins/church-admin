@@ -39,8 +39,8 @@ function church_admin_email_form()
     echo'<input type="hidden" name="MAX_FILE_SIZE" value="1000000" />';
     echo'<input type="hidden" name="build_message" value="1"/>';
     echo'<p><label for="subject"><strong>Subject:</strong></label><input type="text" name="subject" id="subject" maxlength="100" size="100"/></p>
-    <p><label for="reply_name"><strong>Reply to name:</strong></label><input id="reply_name" type="text" name="from_name"/></p>
-    <p><label for="reply_email"><strong>Email address for replies:</strong></label><input id="reply_email" type="text" name="from_email"/></p> 
+    <p><label for="reply_name"><strong>Reply to name:</strong></label><input id="reply_name" type="text" name="from_name" value="'.get_option('blogname').'"/></p>
+    <p><label for="reply_email"><strong>Email address for replies:</strong></label><input id="reply_email" type="text" name="from_email" value="'.get_option('admin_email').'"/></p> 
     <p><label>Attachment 1 (max 500KB):</label>
 			<input type="file" name="userfile1"/>
 	</p>
