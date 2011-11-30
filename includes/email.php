@@ -282,11 +282,11 @@ function church_admin_send_message($email_id)
                 {//queue the emails
                     if(!empty($row->email))
                     {
-                        if(QueueEmail($row->email,$email_data->subject,str_replace('<!--salutation-->','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
+                        if(QueueEmail($row->email,$email_data->subject,str_replace("<!--salutation-->",'Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
                     }
                     if(!empty($row->email2))
                     {
-                        if(QueueEmail($row->email2,$email_data->subject,str_replace('<!--salutation-->','Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email2.' queued</p>';
+                        if(QueueEmail($row->email2,$email_data->subject,str_replace("<!--salutation-->",'Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email2.' queued</p>';
                     }
                 }
                 else{//send immediately using wp_email()
@@ -296,7 +296,7 @@ function church_admin_send_message($email_id)
                         $headers="From: ".$email_data->from_name." <".$email_data->from_email.">\n";
                         if(!empty($row->email))
                         {
-                            if(wp_mail($row->email,$email_data->subject,str_replace('<!--salutation-->]','Dear '.$row->first_name.',',$email_data->message),$headers,unserialize($email_data->filename))) echo'<p>'.$row->email.' sent immediately</p>';
+                            if(wp_mail($row->email,$email_data->subject,str_replace('<!--salutation-->','Dear '.$row->first_name.',',$email_data->message),$headers,unserialize($email_data->filename))) echo'<p>'.$row->email.' sent immediately</p>';
                         }
                         if(!empty($row->email2))
                         {

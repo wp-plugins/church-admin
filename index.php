@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.33.2.3
+Version: 0.33.2.4
 
 Author: Andy Moyle
 
@@ -83,10 +83,11 @@ Version History
 0.33.2.1 2011-09-04 Added missing files and ability to send email immediately
 0.33.2.2 2011-10-26 MOved emailing cahcing out of plugin
 0.33.2.3 2011-10-30 Attendance graph Shortcodes
+0.33.2.4 2011-11-30 Fixed Salutation missing from 1st email sent instantly
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.2.3';
+$church_admin_version = '0.33.2.4';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
