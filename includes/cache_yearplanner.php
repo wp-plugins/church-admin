@@ -1,5 +1,5 @@
 <?php
-function church_admin_cache_year_planner()
+function church_admin_cache_year_planner($initial_year)
 {
     global $wpdb;
 //check cache admin exists
@@ -27,7 +27,7 @@ $pdf->SetFont('Arial','B',10);
 
 //Get initial Values
 $initial_month='01';
-$initial_year='2011';
+if(empty($initial_year))$initial_year=date('Y');
 $month=0;
 $days=array('Sun','Mon','Tues','Weds','Thurs','Fri','Sat');
 $row=0;
@@ -135,7 +135,7 @@ foreach ($result AS $row)
     $pdf->Cell(45,5,'',1);
     $y+=6;
 }
-$pdf->Output(CHURCH_ADMIN_CACHE_PATH.'year_planner.pdf','F');
+$pdf->Output(CHURCH_ADMIN_CACHE_PATH.'year_planner_'.$initial_year.'.pdf','F');
 
 }
 

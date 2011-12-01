@@ -155,7 +155,13 @@ update_option('church_admin_calendar_width','630');
 update_option('church_admin_pdf_size','A4');
 update_option('church_admin_label','L7163');
 require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
-church_admin_cache_year_planner();   
+$y=date('Y');
+	    church_admin_cache_year_planner($y);
+	    church_admin_cache_year_planner($y+1);
+	    church_admin_cache_year_planner($y+2);
+	    church_admin_cache_year_planner($y+3);
+	    church_admin_cache_year_planner($y+4);
+
 require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
      
 //sort out wp-cron

@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.33.2.4
+Version: 0.33.2.5
 
 Author: Andy Moyle
 
@@ -84,10 +84,11 @@ Version History
 0.33.2.2 2011-10-26 MOved emailing cahcing out of plugin
 0.33.2.3 2011-10-30 Attendance graph Shortcodes
 0.33.2.4 2011-11-30 Fixed Salutation missing from 1st email sent instantly
+0.33.2.5 2011-12-01 Added 5 years of year planners to cache
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.2.4';
+$church_admin_version = '0.33.2.5';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
@@ -334,7 +335,12 @@ function church_admin_main()
         case'refreshcache':
             require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
             require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
-            church_admin_cache_year_planner();
+            $y=date('Y');
+	    church_admin_cache_year_planner($y);
+	    church_admin_cache_year_planner($y+1);
+	    church_admin_cache_year_planner($y+2);
+	    church_admin_cache_year_planner($y+3);
+	    church_admin_cache_year_planner($y+4);
             require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
             church_admin_directory();
         break;
@@ -381,7 +387,17 @@ function church_admin_shortcode($atts, $content = null)
     switch($type)
     {
         case 'calendar':
-            $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/year_planner.pdf">A4 Year Planner PDF</a></p>';
+	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'year_planner_'.date('Y').'.pdf'))
+	    {
+	    $out.='<table><tr><td>Year Planner pdfs </td><td>  <form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="">-- Choose a pdf --</option>';
+	    for($x=0;$x<5;$x++)
+	    {
+		$y=date('Y')+$x;
+		if(file_exists(CHURCH_ADMIN_CACHE_PATH.'year_planner_'.$y.'.pdf'))$out.='<option value="'.CHURCH_ADMIN_CACHE_URL.'year_planner_'.$y.'.pdf'.'">'.$y.' Year Planner</option>';
+	    }
+	    $out.='</select></form></td></tr></table>';
+	    }
+            
 
             include(CHURCH_ADMIN_DISPLAY_PATH.'calendar.php');
             
@@ -390,6 +406,7 @@ function church_admin_shortcode($atts, $content = null)
             include(CHURCH_ADMIN_DISPLAY_PATH.'calendar-list.php');
         break;
         case 'address-list':
+	   
             $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">PDF version</a></p>';
             include(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
         break;
