@@ -1,6 +1,6 @@
 <?php
 
-if(isset($_POST['month']) && isset($_POST['year'])){ $current=mktime(12,0,0,$_POST['month'],14,$_POST['year']);}else{$current=time();}
+if(isset($_POST['ca_month']) && isset($_POST['ca_year'])){ $current=mktime(12,0,0,$_POST['ca_month'],14,$_POST['ca_year']);}else{$current=time();}
 	$thismonth = (int)date("m",$current);
 	$thisyear = date( "Y",$current );
 	$actualyear=date("Y");
@@ -22,8 +22,8 @@ if(isset($_POST['month']) && isset($_POST['year'])){ $current=mktime(12,0,0,$_PO
 $out.='<table class="church_admin_calendar">
 <tr>
         <td colspan="7" class="calendar-date-switcher">
-            <form method="post" action="'.get_permalink().'">
-Month<select name="month">
+            <form method="post" action="">
+Month<select name="ca_month">
 ';
 for($q=0;$q<=12;$q++)
 {
@@ -31,7 +31,7 @@ for($q=0;$q<=12;$q++)
     $MON=date('M',($current+$q*(28*24*60*60)));
     $out.= "<option value=\"$mon\">$MON</option>";
 }
-$out.='</select>Year<select  name="year">';
+$out.='</select>Year<select  name="ca_year">';
 for ($x=$actualyear;$x<=$actualyear+15;$x++)
 {
     $out.= "<option value=\"$x\">$x</option>";
@@ -89,7 +89,7 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
         foreach($result AS $row)
         {
             $popup=stripslashes("<p><strong>".$row->title."</strong><br/>".$row->description."<br/>".$row->location."<br/>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."<br/>".$row->category." Event");
-            $out.= '<div class="church_admin_cal_item" id="ca'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.htmlentities($row->title).'... </div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip"  >'.$popup.'</div><br/>';
+            $out.= '<div class="church_admin_cal_item" id="ca'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.mysql2date(get_option('time_format'),$row->start_time).' '.htmlentities($row->title).'... </div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip"  >'.$popup.'</div><br/>';
         }
     }    
     $out.="</td>\n";

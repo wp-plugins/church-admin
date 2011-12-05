@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.33.2.5
+Version: 0.33.2.6
 
 Author: Andy Moyle
 
@@ -85,10 +85,11 @@ Version History
 0.33.2.3 2011-10-30 Attendance graph Shortcodes
 0.33.2.4 2011-11-30 Fixed Salutation missing from 1st email sent instantly
 0.33.2.5 2011-12-01 Added 5 years of year planners to cache
+0.33.2.6 2011-12-05 Fixed calendar bugs in display and editing
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.2.5';
+$church_admin_version = '0.33.2.6';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
@@ -96,15 +97,11 @@ function church_admin_init()
 if ((isset($_GET['action'])&&($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'))||!is_admin())
 {
     //Only fire up jquery on the add and edit category pages within admin.php to avoid conflicts
-    wp_deregister_script('jquery');
-    wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js', false, '1.3.2');
     wp_enqueue_script('jquery');
 }
 //if (!session_id())session_start();
 if(isset($_GET['page']) && $_GET['page']=='church_admin_send_email')
     {
-        wp_deregister_script('jquery');
-        wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js', false, '1.3.2');
         wp_enqueue_script('jquery');
         wp_register_script('ca_email', CHURCH_ADMIN_INCLUDE_URL.'email.js', false, '1.0');
         wp_enqueue_script('ca_email');

@@ -123,7 +123,7 @@ function church_admin_series_event($date_id,$event_id)
         $error=church_admin_calendar_error_check($_POST);
         if(empty($error))
         {
-            foreach($_POST AS $key=>$value)$_POST[$key]=stripslashes($value);
+            foreach($_POST AS $key=>$value)$sqlsafe[$key]=esc_sql(stripslashes($value));
         //delete current event_id
         $sql="DELETE FROM ".$wpdb->prefix."church_admin_calendar_event WHERE event_id='".esc_sql($event_id)."'";
         $wpdb->query($sql);
@@ -177,7 +177,7 @@ function church_admin_series_event($date_id,$event_id)
         echo '<div id="message" class="updated fade">';
         echo '<p><strong>Calendar Event Series Edited.</strong></p>';
         echo '</div>';
-        church_admin_cache_year_planner();
+       for($year=date('Y');$year<=date('Y')+5;$year++) church_admin_cache_year_planner($year);
         church_admin_calendar_list();
         }//end of event not already in db
         }
@@ -205,13 +205,14 @@ function church_admin_series_event($date_id,$event_id)
 function church_admin_single_event_delete($date_id,$event_id)
 {
     global $wpdb;
+    $year=$wpdb->get_var('SELECT date_format(start_date,"%Y") FROM '.$wpdb->prefix.'church_admin_calendar_date WHERE date_id="'.$date_id.'"');
     $count=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_date WHERE event_id='".esc_sql($event_id)."'");
     if($count==0){$wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_event WHERE event_id='".esc_sql($event_id)."'");}
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_date WHERE date_id='".esc_sql($date_id)."'");
     echo '<div id="message" class="updated fade">';
     echo '<p><strong>Calendar Event deleted.</strong></p>';
     echo '</div>';
-    church_admin_cache_year_planner();
+    church_admin_cache_year_planner($year);
     church_admin_calendar_list();
 }
 function church_admin_series_event_delete($date_id,$event_id)
@@ -223,8 +224,9 @@ function church_admin_series_event_delete($date_id,$event_id)
     echo '<div id="message" class="updated fade">';
     echo '<p><strong>Calendar Events deleted.</strong></p>';
     echo '</div>';
-    church_admin_cache_year_planner();
-    church_admin_calendar_list();
+    
+    for($year=date('Y');$year<=date('Y')+5;$year++) church_admin_cache_year_planner($year);
+    church_admin_calendar_list($year);
 }
 function church_admin_single_event_edit($date_id,$event_id)
 {
@@ -261,7 +263,7 @@ function church_admin_single_event_edit($date_id,$event_id)
           echo '<div id="message" class="updated fade">';
         echo '<p><strong>Calendar Event edited.</strong></p>';
         echo '</div>';
-        church_admin_cache_year_planner();
+        for($year=date('Y');$year<=date('Y')+5;$year++) church_admin_cache_year_planner($year);
         church_admin_calendar_list();
       }//end no errors
       else
@@ -349,7 +351,7 @@ function church_admin_add_calendar()
         echo '<div id="message" class="updated fade">';
         echo '<p><strong>Calendar Event added.</strong></p>';
         echo '</div>';
-        church_admin_cache_year_planner();
+       for($year=date('Y');$year<=date('Y')+5;$year++) church_admin_cache_year_planner($year);
         church_admin_calendar_list();
        }
        else
