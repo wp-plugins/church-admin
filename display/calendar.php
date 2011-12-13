@@ -25,17 +25,28 @@ $out.='<table class="church_admin_calendar">
             <form method="post" action="">
 Month<select name="ca_month">
 ';
+$first=$option='';
 for($q=0;$q<=12;$q++)
 {
     $mon=date('m',($current+$q*(28*24*60*60)));
     $MON=date('M',($current+$q*(28*24*60*60)));
-    $out.= "<option value=\"$mon\">$MON</option>";
+      if(isset($_POST['ca_month'])&&$_POST['ca_month']==$mon) {$first="<option value=\"$mon\" selected=\"selected\">$MON</option>";}else{$out.= "<option value=\"$mon\">$MON</option>";}
 }
-$out.='</select>Year<select  name="ca_year">';
+$out.=$first.$option;
+$out.='</select>Year<select name="ca_year">';
+$first=$option='';
 for ($x=$actualyear;$x<=$actualyear+15;$x++)
 {
-    $out.= "<option value=\"$x\">$x</option>";
+    if(isset($_POST['ca_year'])&&$_POST['ca_year']==$x)
+    {
+	$first="<option value=\"$x\" >$x</option>";
+    }
+    else
+    {
+	$option.= "<option value=\"$x\">$x</option>";
+    }
 }
+$out.=$first.$option;
 $out.='</select><input  type="submit" value="Submit"/></form></td></tr>            
             
 ';
