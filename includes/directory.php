@@ -96,7 +96,7 @@ function church_admin_directory()
 //header
     $directory='<div class="wrap church_admin"><div id="donatebox"><p>This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.';
   $directory.='<a href="http://twitter.com/#!/WP_Church_Adm" class="right"><img src="'.CHURCH_ADMIN_IMAGES_URL.'FollowOnTwitter.png" width="90" height="35"   alt="Twitter"/></a>';
-  $directory.='<p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">Get Support</a></p><strong>Latest News</strong></p>';
+  $directory.='<p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">Get Support</a><br/><strong>Latest News</strong></p>';
   require(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');
   $directory.=church_admin_news_feed();
 $directory.=' If you like the plugin, please buy me a cup of coffee!...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post">

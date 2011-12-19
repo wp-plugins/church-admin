@@ -3,8 +3,8 @@ Contributors: andymoyle
 Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 3.0.0
-Tested up to: 3.2.1
-Stable tag: 0.33.2.6
+Tested up to: 3.3
+Stable tag: 0.33.2.7
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -128,7 +128,11 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Added more years to year planner caching
 = 0.33.2.6 =
 * Fixed calendar display bug and calendar caching on editing or delete.
+= 0.33.2.7 =
+* Fixed calendar display dropdown menu year sticking.
+= 0.33.2.8
+* Fixed another calendar bug - next and previous
 == Upgrade Notice ==
-* 0.33.2.5 required
+* 0.33.2.7 required
 
 == Credits: ==

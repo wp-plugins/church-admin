@@ -13,7 +13,7 @@
         font-size:10pt;
     }
     
-    #church_admin_whoto {position:relative; top:55px;left:10px;width:130px;}
+#church_admin_whoto {position:relative; top:55px;left:10px;width:130px;}
 .church_admin_regular{background:#E6E6E6;}
 #church_admin_message{position:relative;top:60px;left:10px; }
 .sms {width:135px; height:100px;background:transparent;border:1px solid orange;}
@@ -22,6 +22,7 @@
 #church_admin_submit{position:relative;top:95px;left:20px;}  
 
 #donatebox
-{width:500px;height:205px; float:right;background:#FFFBCC;border:1px solid #E6DB55;padding: 0 5px 0 5px;margin-bottom:3px;font-size:10pt;}
+{width:500px;height:215px; float:right;background:#FFFBCC;border:1px solid #E6DB55;padding: 0 5px 0 5px;margin-bottom:3px;}
 #donatebox img{text-decoration:none!important;}
 #donatebox .right{float:right;}
+#donatebox li{padding:0}
