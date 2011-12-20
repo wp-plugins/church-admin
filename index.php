@@ -88,10 +88,11 @@ Version History
 0.33.2.6 2011-12-05 Fixed calendar bugs in display and editing
 0.33.2.7 2011-12-13 Calendar  display dropdown menu fix
 0.33.2.8 2011-12-19 Calendar previous and next bug fix
+0.33.2.3 2011-12-20 Calendar list format bug fix
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.2.8';
+$church_admin_version = '0.33.2.9';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {

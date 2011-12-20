@@ -1,5 +1,5 @@
 <?php
-if(isset($_POST['month']) && isset($_POST['year'])){ $current=mktime(12,0,0,$_POST['month'],14,$_POST['year']);}else{$current=time();}
+if(isset($_POST['ca_month']) && isset($_POST['ca_year'])){ $current=mktime(12,0,0,$_POST['ca_month'],14,$_POST['ca_year']);}else{$current=time();}
 if(isset($category)&&ctype_digit($category)) $catsql=' AND '.$wpdb->prefix."church_admin_calendar_event.cat_id=".$category;
 $thismonth = (int)date("m",$current);
 $thisyear = date( "Y",$current );
@@ -21,10 +21,10 @@ $sql="SELECT ".$wpdb->prefix."church_admin_calendar_category.fgcolor AS fgcolor,
 $result=$wpdb->get_results($sql);
 
 $out.='<table><tr><td>';
-if($now==date('M Y')){$out.='&nbsp;';}else{$out.='<form action="'.get_permalink().'" name="previous" method="post"><input type="hidden" name="month" value="'.date('m',strtotime("$now -1 month")).'"/><input type="hidden" name="year" value="'.date('Y',strtotime("$now -1 month")).'"/><input type="submit" value="Previous" /></form>';}
+if($now==date('M Y')){$out.='&nbsp;';}else{$out.='<form action="'.get_permalink().'" name="previous" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime("$now -1 month")).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime("$now -1 month")).'"/><input class="calendar-date-switcher" type="submit" value="Previous" /></form>';}
 $out.='</td>
                     <td >'.$now.'</td>
-                    <td ><form action="'.get_permalink().'" method="post"><input type="hidden" name="month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td>
+                    <td ><form action="'.get_permalink().'" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td>
                 
                 
 </tr></table><table>';
