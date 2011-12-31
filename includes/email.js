@@ -1,4 +1,4 @@
-
+jQuery(document).ready(function($) {
 $(document).ready(function() {
         $("input[name=type]:radio").click(function() { // attack a click event on all radio buttons with name 'type'
                 if($(this).val() == 'everyone') {//check which radio button is clicked 
@@ -63,3 +63,4 @@ $(document).ready(function() {
 
 
 
+});

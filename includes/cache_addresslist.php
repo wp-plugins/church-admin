@@ -22,7 +22,7 @@ $gp=0;
 foreach ($results as $row) 
     {
         $row->name=stripslashes($row->name);
-        $smallgroups[$row->group_name].=$row->name."\n";
+        $smallgroups["{$row->group_name}"].=$row->name."\n";
 
     }
 $groupname=array_keys($smallgroups);
