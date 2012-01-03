@@ -300,12 +300,9 @@ function church_admin_add_calendar()
       $error=church_admin_calendar_error_check($_POST);
       if(empty($error))
       {
-        //print_r($sqlsafe);
+        
         //process
-        //check not already done
-        $check=$wpdb->get_row("SELECT * FROM ".$wpdb->prefix."church_admin_calendar_event WHERE title='{$sqlsafe['title']}' AND description='{$sqlsafe['description']}' AND location='{$sqlsafe['location']}' AND cat_id='{$sqlsafe['category']}' AND year_planner='{$sqlsafe['year_planner']}'");
-        if(!$check)
-        {
+       
         //put event details into church_admin_calender_event table
         $sql="INSERT INTO ".$wpdb->prefix."church_admin_calendar_event (title,description,location,cat_id,year_planner,recurring)VALUES('{$sqlsafe['title']}','{$sqlsafe['description']}','{$sqlsafe['location']}','{$sqlsafe['category']}','{$sqlsafe['year_planner']}','{$sqlsafe['recurring']}')";
         
@@ -360,7 +357,7 @@ function church_admin_add_calendar()
         echo '<p><strong>Calendar Event was not saved for some reason, sorry.</strong></p>';
         echo '</div>';
        }
-        }//end of event not already in db
+        
       }//end of no errors
       else
       {

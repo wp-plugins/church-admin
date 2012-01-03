@@ -130,12 +130,14 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Fixed calendar display bug and calendar caching on editing or delete.
 = 0.33.2.7 =
 * Fixed calendar display dropdown menu year sticking.
-= 0.33.2.8
+= 0.33.2.8 =
 * Fixed another calendar bug - next and previous
-= 0.33.2.9
+= 0.33.2.9 =
 * calendar list format bug fix
-= 0.33.3.0
+= 0.33.3.0 =
 * Email jquery no conflict wrappers
+= 0.33.3.1 =
+* Fixed add calendar event bug where details same as previous event not being saved.
 == Upgrade Notice ==
 * 0.33.3.0 required
 
