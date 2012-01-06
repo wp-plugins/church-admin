@@ -7,7 +7,24 @@ $wpdb->show_errors();
 if(!empty($_POST['rota_task']) )
 {
     //form submitted
-    $wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_rota_settings (rota_task) VALUES('".esc_sql(stripslashes($_POST['rota_task']))."')");
+    //add new job to rota settings
+    $sql="INSERT INTO ".$wpdb->prefix."church_admin_rota_settings (rota_task) VALUES('".esc_sql(stripslashes($_POST['rota_task']))."')";
+    
+    $wpdb->query($sql);
+    $job_id=$wpdb->insert_id;
+    
+    //add new job to current rota dates
+    $result=$wpdb->get_results('SELECT DISTINCT rota_date FROM '.$wpdb->prefix.'church_admin_rota WHERE rota_option_id!="'.$job_id.'"' );
+    $dates=array();
+ 
+    foreach($result AS $row)
+    {
+        $dates[]= '("","'.$row->rota_date.'","'.$job_id.'")';
+    }
+    $sql='INSERT INTO '.$wpdb->prefix.'church_admin_rota (who,rota_date,rota_option_id)VALUES'.implode(',',$dates);
+   
+    $wpdb->query($sql);
+    
     echo'<div id="message" class="updated fade"><p><strong> Rota Job Added</strong></p></div>';
     church_admin_rota_settings_list();
 }
@@ -23,7 +40,7 @@ function church_admin_delete_rota_settings($id)
 {
     global $wpdb;
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota_settings WHERE rota_id='".esc_sql($id)."'");
- 
+    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota WHERE rota_option_id='".esc_sql($id)."'");
     church_admin_rota_settings_list();
 }
 

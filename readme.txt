@@ -138,7 +138,10 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Email jquery no conflict wrappers
 = 0.33.3.1 =
 * Fixed add calendar event bug where details same as previous event not being saved.
+= 0.33.3.2 =
+* Calendar Year planner added choices to main directory list
+
 == Upgrade Notice ==
-* 0.33.3.0 required
+* 0.33.3.2 required
 
 == Credits: ==
