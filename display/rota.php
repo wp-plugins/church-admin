@@ -9,7 +9,7 @@ $htmldate=mysql2date('d-m-Y', $date, $translate = true);
 
 $results=$wpdb->get_results("SELECT ".$wpdb->prefix."church_admin_rota.*,".$wpdb->prefix."church_admin_rota_settings.rota_task FROM ".$wpdb->prefix."church_admin_rota,".$wpdb->prefix."church_admin_rota_settings WHERE ".$wpdb->prefix."church_admin_rota.rota_date='".esc_sql($date)."' AND ".$wpdb->prefix."church_admin_rota.rota_option_id=".$wpdb->prefix."church_admin_rota_settings.rota_id");
 
-$out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/rota.pdf">PDF Version of the rota</a></p>';
+$out.='<p><a href="'.home_url().'/?download=rota">PDF Version of the rota</a></p>';
 
 	$out.= '<div id="wrap"><table><tr><th>Who\'s doing what on</th><th> ';
 	

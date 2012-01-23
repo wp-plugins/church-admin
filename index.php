@@ -5,8 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.33.3.2
-
+Version: 0.33.4.0
 Author: Andy Moyle
 
 
@@ -92,14 +91,17 @@ Version History
 0.33.3.0 2011-12-31 Jquery no conflict wrapper for email
 0.33.3.1 2012-01-03 Fixed bug where add calendar event with same details wasn't saved
 0.33.3.2 2012-01-06 Calendar Year planner added choices to main directory list & rota add job issue fixed
+0.33.3.3 2012-01-06 UTF8 character set for DB tables
+0.33.4.0 2012-01-23 PDFs created dynamically
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.3.2';
+$church_admin_version = '0.33.4.0';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
     ca_thumbnails();
+    if(isset($_GET['download'])){church_admin_download($_GET['download']);exit();}
 if ((isset($_GET['action'])&&($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'))||!is_admin())
 {
     //Only fire up jquery on the add and edit category pages within admin.php to avoid conflicts
@@ -136,8 +138,7 @@ define('CHURCH_ADMIN_INCLUDE_PATH', WP_PLUGIN_DIR . '/church-admin/includes/');
 define('CHURCH_ADMIN_INCLUDE_URL', CHURCH_ADMIN_URL.'includes/');
 define('CHURCH_ADMIN_IMAGES_PATH', WP_PLUGIN_DIR . '/church-admin/images/');
 define('CHURCH_ADMIN_IMAGES_URL', WP_PLUGIN_URL . '/church-admin/images/');
-define('CHURCH_ADMIN_CACHE_PATH',WP_PLUGIN_DIR.'/church-admin/cache/');
-define('CHURCH_ADMIN_CACHE_URL',WP_PLUGIN_URL.'/church-admin/cache/');
+
 define('CHURCH_ADMIN_TEMP_PATH',WP_PLUGIN_DIR.'/church-admin/temp/');
 define('CHURCH_ADMIN_EMAIL_CACHE',WP_PLUGIN_DIR.'/church-admin-cache/');
 define('CHURCH_ADMIN_EMAIL_CACHE_URL',WP_PLUGIN_URL.'/church-admin-cache/');
@@ -335,18 +336,7 @@ function church_admin_main()
             require(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php');
                 if(check_admin_referer('delete small group')) church_admin_delete_small_group($_GET['id']);
         break;
-        case'refreshcache':
-            require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
-            require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
-            $y=date('Y');
-	    church_admin_cache_year_planner($y);
-	    church_admin_cache_year_planner($y+1);
-	    church_admin_cache_year_planner($y+2);
-	    church_admin_cache_year_planner($y+3);
-	    church_admin_cache_year_planner($y+4);
-            require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
-            church_admin_directory();
-        break;
+        
         case 'church_admin_communication_settings':
             require(CHURCH_ADMIN_INCLUDE_PATH.'communication_settings.php');
             
@@ -390,16 +380,15 @@ function church_admin_shortcode($atts, $content = null)
     switch($type)
     {
         case 'calendar':
-	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'year_planner_'.date('Y').'.pdf'))
-	    {
+	    
 	    $out.='<table><tr><td>Year Planner pdfs </td><td>  <form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="">-- Choose a pdf --</option>';
 	    for($x=0;$x<5;$x++)
 	    {
 		$y=date('Y')+$x;
-		if(file_exists(CHURCH_ADMIN_CACHE_PATH.'year_planner_'.$y.'.pdf'))$out.='<option value="'.CHURCH_ADMIN_CACHE_URL.'year_planner_'.$y.'.pdf'.'">'.$y.' Year Planner</option>';
+		$out.='<option value="'.home_url().'/?download=yearplanner&amp;year='.$y.'">'.$y.' Year Planner</option>';
 	    }
 	    $out.='</select></form></td></tr></table>';
-	    }
+	    
             
 
             include(CHURCH_ADMIN_DISPLAY_PATH.'calendar.php');
@@ -410,14 +399,14 @@ function church_admin_shortcode($atts, $content = null)
         break;
         case 'address-list':
 	   
-            $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">PDF version</a></p>';
+            $out.='<p><a href="'.home_url().'/?download=addresslist">PDF version</a></p>';
             include(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
         break;
 	case 'small-groups-list':
             include(CHURCH_ADMIN_DISPLAY_PATH."small-group-list.php");
         break;
 	case 'small-groups':
-            $out.='<p><a href="'.CHURCH_ADMIN_URL.'cache/sg.pdf">PDF version</a></p>';
+            $out.='<p><a href="'.home_url().'/?download=smallgroup">PDF version</a></p>';
             include(CHURCH_ADMIN_DISPLAY_PATH."small-groups.php");
         break;
 	case 'rota':
@@ -474,4 +463,17 @@ function church_admin_widget_init()
     wp_register_widget_control('Church Admin Calendar','Church Admin Calendar','church_admin_widget_control');
 }
 add_action('init','church_admin_widget_init');
+function church_admin_download($file)
+{
+    switch($file)
+    {
+	case'rota':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_rota_pdf();break;
+        case'yearplanner':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_year_planner_pdf($_GET['year']);break;
+	case'smallgroup':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_smallgroup_pdf();break;
+	case'addresslist':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_pdf();break;
+	case'visitorlabel':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_label_pdf('visitor');break;
+	case'vcf':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');ca_vcard($_GET['id']);break;
+	case'mailinglabel':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_label_pdf('address');break;
+    }
+}
 ?>

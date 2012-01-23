@@ -140,8 +140,12 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * Fixed add calendar event bug where details same as previous event not being saved.
 = 0.33.3.2 =
 * Calendar Year planner added choices to main directory list
+= 0.33.3.3 =
+* UTF8 DB conversion
+= 0.33.4.0 =
+* PDFs created dynaically
 
 == Upgrade Notice ==
-* 0.33.3.2 required
+* 0.33.4.0 required
 
 == Credits: ==

@@ -115,18 +115,13 @@ $sql = "SELECT * FROM ".$wpdb->prefix."church_admin_directory ORDER BY last_name
 $results = $wpdb->get_results($sql);
 if(!empty($results))
 {
-    $directory.='<p><a href="admin.php?page=church_admin/index.php&amp;action=refreshcache">Refresh PDF cache</a></p>';     
-
-//only output pdf links if already created
-if(file_exists(CHURCH_ADMIN_CACHE_PATH.'addresslist.pdf'))
-{
-$directory.='<p><form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">-- Choose a pdf --</option>
-<option value="'.CHURCH_ADMIN_URL.'cache/mailinglabel.pdf">Church - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</option><option value="'.CHURCH_ADMIN_URL.'cache/visitor_mailing_label.pdf">Visitors - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</option>
-<option value="'.CHURCH_ADMIN_URL.'cache/addresslist.pdf">Address List PDF</option><option value="'.CHURCH_ADMIN_URL.'cache/sg.pdf">Small Group List PDF</option>';
+    $directory.='<p><form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="'.home_url().'/?download=addresslist">-- Choose a pdf --</option>
+<option value="'.home_url().'/?download=mailinglabel">Church - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</option><option value="'.home_url().'/?download=visitorlabel">Visitors - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</option>
+<option value="'.home_url().'/?download=addresslist">Address List PDF</option><option value="'.home_url().'/?download=smallgroup">Small Group List PDF</option>';
 for($x=0;$x<5;$x++)
 	    {
 		$y=date('Y')+$x;
-		if(file_exists(CHURCH_ADMIN_CACHE_PATH.'year_planner_'.$y.'.pdf'))$directory.='<option value="'.CHURCH_ADMIN_CACHE_URL.'year_planner_'.$y.'.pdf'.'">'.$y.' Year Planner</option>';
+		$directory.='<option value="'.home_url().'/?download=yearplanner&amp;year='.$y.'">'.$y.' Year Planner</option>';
 	    }
 	    $directory.='</select></form></p>';
 }
@@ -154,7 +149,7 @@ foreach ($results as $row)
 $directory.='</tbody></table> ';
 
 
-}//if results
+
 echo $directory;
 }
 ?>

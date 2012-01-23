@@ -68,7 +68,7 @@ if ($row->cellphone)$out.="Mobile:".esc_html($row->cellphone)."<br />\n";
 $out.='</div>	
 		<div style="clear:both"></div>
 	<div class="cn-meta" align="left" style="margin-top: 6px">
-		<span><a href="'.CHURCH_ADMIN_URL.'/includes/download_vcard.php?id='.$row->id.'">V-Card</a></span>'.
+		<span><a href="'.home_url().'/?download=vcf&amp;id='.$row->id.'">V-Card</a></span>'.
         '  <span style="'.$ageStyle.' font-size:x-small; font-variant: small-caps; position: absolute; right: 26px; bottom: 8px;">Updated '.human_time_diff( strtotime( $row->ts ) ).' ago</span><br />'.
 
        '<br />

@@ -77,7 +77,7 @@ first_name varchar(255) NOT NULL, last_name varchar(255) CHARACTER SET utf8 NOT 
     $table_name = $wpdb->prefix."church_admin_email_build";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
     {
-$sql='CREATE TABLE IF NOT EXISTS '.$wpdb->prefix.'church_admin_email_build (  recipients text NOT NULL,  subject text NOT NULL,  message text NOT NULL,  send_date date NOT NULL,  filename text NOT NULL,  from_name varchar(500) NOT NULL,  from_email varchar(500) NOT NULL,  email_id int(11) NOT NULL auto_increment,  PRIMARY KEY  (email_id)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;';
+$sql='CREATE TABLE IF NOT EXISTS '.$wpdb->prefix.'church_admin_email_build (  recipients text NOT NULL,  subject text NOT NULL,  message text NOT NULL,  send_date date NOT NULL,  filename text NOT NULL,  from_name varchar(500) NOT NULL,  from_email varchar(500) NOT NULL,  email_id int(11) NOT NULL auto_increment,  PRIMARY KEY  (email_id)) ;';
 $wpdb->query ($sql);
 }
 
@@ -121,7 +121,7 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
     $table_name = $wpdb->prefix."church_admin_email";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
     {
-        $sql="CREATE TABLE IF NOT EXISTS ". $table_name ." (recipient varchar(500) NOT NULL,  from_name text NOT NULL,  from_email text NOT NULL,  copy text NOT NULL, subject varchar(500) NOT NULL, message text NOT NULL,attachment text NOT NULL,sent datetime NOT NULL,email_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (email_id)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+        $sql="CREATE TABLE IF NOT EXISTS ". $table_name ." (recipient varchar(500) NOT NULL,  from_name text NOT NULL,  from_email text NOT NULL,  copy text NOT NULL, subject varchar(500) NOT NULL, message text NOT NULL,attachment text NOT NULL,sent datetime NOT NULL,email_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (email_id));";
         $wpdb->query ($sql);
     }
 
@@ -129,7 +129,7 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
     $table_name = $wpdb->prefix."church_admin_calendar_event";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
     {
-        $sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (recurring VARCHAR(3),title text NOT NULL, description text  NOT NULL, location text NOT NULL, year_planner INT(1),cat_id INT(11) NOT NULL, event_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (event_id)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+        $sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (recurring VARCHAR(3),title text NOT NULL, description text  NOT NULL, location text NOT NULL, year_planner INT(1),cat_id INT(11) NOT NULL, event_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (event_id)) ;";
         $wpdb->query ($sql);
     }
     
@@ -138,7 +138,7 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
     {
 
-	$sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (start_date date NOT NULL DEFAULT '0000-00-00', start_time time NOT NULL DEFAULT '00:00:00', end_time time NOT NULL DEFAULT '00:00:00', event_id int(11) NOT NULL DEFAULT '0',date_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (date_id)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci AUTO_INCREMENT=1" ;
+	$sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (start_date date NOT NULL DEFAULT '0000-00-00', start_time time NOT NULL DEFAULT '00:00:00', end_time time NOT NULL DEFAULT '00:00:00', event_id int(11) NOT NULL DEFAULT '0',date_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (date_id)) " ;
         $wpdb->query ($sql);
     }
     
@@ -146,24 +146,60 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
     $table_name = $wpdb->prefix."church_admin_calendar_category";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
     {
-        $sql="CREATE TABLE IF NOT EXISTS ". $table_name ."  (category varchar(255)  NOT NULL DEFAULT '',  fgcolor varchar(7)  NOT NULL DEFAULT '', bgcolor varchar(7)  NOT NULL DEFAULT '', cat_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`cat_id`)) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci AUTO_INCREMENT=1" ;
+        $sql="CREATE TABLE IF NOT EXISTS ". $table_name ."  (category varchar(255)  NOT NULL DEFAULT '',  fgcolor varchar(7)  NOT NULL DEFAULT '', bgcolor varchar(7)  NOT NULL DEFAULT '', cat_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`cat_id`))" ;
         $wpdb->query ($sql);
         $wpdb->query("INSERT INTO $table_name (category,bgcolor,cat_id) VALUES('Unused','#FFFFFF','0')");
     }
+  //make sure tables are UTF8  
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_attendance CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_directory CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+   $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_calendar_date CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_calendar_event CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_calendar_category CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_email CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_email_build CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_rota CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_rota_settings CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_smallgroup CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_visitors CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
 //update pdf cache
 update_option('church_admin_calendar_width','630');
 update_option('church_admin_pdf_size','A4');
 update_option('church_admin_label','L7163');
-require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
-$y=date('Y');
-	    church_admin_cache_year_planner($y);
-	    church_admin_cache_year_planner($y+1);
-	    church_admin_cache_year_planner($y+2);
-	    church_admin_cache_year_planner($y+3);
-	    church_admin_cache_year_planner($y+4);
 
-require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
-     
 //sort out wp-cron
 if(get_option('church_admin_cron')=='wp-cron')
 {
@@ -172,7 +208,7 @@ if(get_option('church_admin_cron')=='wp-cron')
     wp_schedule_event($timestamp, 'hourly', 'church_admin_bulk_email');
 }
 
-if(!is_dir(CHURCH_ADMIN_EMAIL_CACHE)){mkdir(CHURCH_ADMIN_EMAIL_CACHE);chmod(CHURCH_ADMIN_EMAIL_CACHE, 0755);}
+
 //update version
 update_option('church_admin_version',$church_admin_version);
 }
