@@ -90,12 +90,32 @@ $wpdb->query ($sql);
 	$wpdb->query ($sql);
     }
     
-    //install rota table
-    $table_name = $wpdb->prefix."church_admin_rota";
+    //install rotas table
+    $table_name = $wpdb->prefix."church_admin_rotas";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
     {
-	$sql="CREATE TABLE  ". $table_name ."  (  rota_date date NOT NULL,  rota_option_id int(11) NOT NULL,  who text NOT NULL,  rota_id int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (rota_id));";
+	$sql="CREATE TABLE  ". $table_name ."  (  rota_date date NOT NULL,  rota_jobs text NOT NULL, service_id int(11) NOT NULL, rota_id int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (rota_id));";
+	//echo $sql;
 	$wpdb->query ($sql);
+    }
+    //update rota table
+     $table_name = $wpdb->prefix."church_admin_rota";
+    if($wpdb->get_var("show tables like '$table_name'") == $table_name) 
+    {
+	//grab current jobs
+	$jobs=array();
+	$results=$wpdb->get_results('SELECT a.*,b.rota_task FROM '.$wpdb->prefix.'church_admin_rota a,'.$wpdb->prefix.'church_admin_rota_settings b WHERE a.rota_option_id=b.rota_id');
+	foreach($results AS $row)
+	{
+	    $jobs[$row->rota_date][$row->rota_task]=$row->who;
+	}
+	foreach($jobs AS $date=>$people)
+	{
+	    $day_jobs=esc_sql(serialize($people));
+	    $sql='INSERT INTO '.$wpdb->prefix.'church_admin_rotas (rota_date,rota_jobs,service_id)VALUES("'.esc_sql($date).'","'.$day_jobs.'","1")';
+	    $wpdb->query($sql);
+	}
+    
     }
     
     //install visitors table
@@ -150,6 +170,10 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
         $wpdb->query ($sql);
         $wpdb->query("INSERT INTO $table_name (category,bgcolor,cat_id) VALUES('Unused','#FFFFFF','0')");
     }
+    
+    
+    
+    
   //make sure tables are UTF8  
     $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_attendance CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';

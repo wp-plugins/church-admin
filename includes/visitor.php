@@ -161,6 +161,7 @@ church_admin_visitor_list();
 function church_admin_visitor_list()
 {
     global$wpdb;
+    $reason=array('1'=>'Just Visiting','2'=>'Non Christian','3'=>'Moved to Area','4'=>'Moved Church','5'=>'Lost To Church');
     $wpdb->show_errors();
 echo '<div class="wrap church_admin"><h2>Visitor List</h2><p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_visitor",'add_visitor').'">Add a visitor</a></p>';
 //only output pie chart if there are visitors stored
@@ -170,27 +171,30 @@ if(!empty($visitorcount)&&$visitorcount>0)
 
 if(!file_exists(CHURCH_ADMIN_CACHE_PATH.'visitorpiechart.png')){church_admin_visitor_pie_chart();}
 echo'<p><img src="'.CHURCH_ADMIN_CACHE_URL.'visitorpiechart.png" alt="Visitor Pie Chart" width="420" height="200" /></p>';
-echo'<table class="widefat" ><thead><tr><th>Edit</th><th>Delete</th><th>Move</th><th>Visited</th><th>Name</th><th>Home phone</th><th>Cell phone</th><th>Contacted</th><th>Contacted by</th><th>Returned</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Move</th><th>Visited</th><th>Name</th><th>Home phone</th><th>Cell phone</th><th>Contacted</th><th>Contacted by</th><th>Returned</th></tr></tfoot><tbody>';
+echo'<table class="widefat" ><thead><tr><th>Edit</th><th>Delete</th><th>Move</th><th>Visited</th><th>Name</th><th>Reason</th><th>Regular?</th><th>Home phone</th><th>Cell phone</th><th>Contacted</th><th>Contacted by</th><th>Returned</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Move</th><th>Visited</th><th>Name</th><th>Home phone</th><th>Cell phone</th><th>Contacted</th><th>Contacted by</th><th>Returned</th></tr></tfoot><tbody>';
 $results = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_visitors ORDER BY first_sunday DESC");
 $counter=1;
 foreach ($results as $row)
 {
-    if($row->regular==1) $class='class="church_admin_regular" ';
+    if($row->regular==1) {$class='class="church_admin_regular" ';$regular='Yes';}else{$class=$reg='';}
     if($row->contacted=='0000-00-00') $row->contacted='';
     if($row->returned=='0000-00-00') $row->returned='';
-    $_SESSION['address'.$counter]=array();
+    /*
+     $_SESSION['address'.$counter]=array();
     $_SESSION['address'.$counter]['name']=htmlentities($row->first_name)." ".$row->last_name;
     $_SESSION['address'.$counter]['address']=stripslashes($row->address_line1).",\r\n" ;
     if(!empty($row->address_line2))$_SESSION['address'.$counter]['address'].=stripslashes($row->address_line2).",\r\n" ;
     if(!empty($row->city))$_SESSION['address'.$counter]['address'].=stripslashes($row->city).",\r\n" ;
     if(!empty($row->state))$_SESSION['address'.$counter]['address'].=stripslashes($row->state).",\r\n" ;
     if(!empty($row->zipcode))$_SESSION['address'.$counter]['address'].=stripslashes($row->zipcode).'.';
+    */
     echo '<tr '.$class.'><td><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&action=church_admin_edit_visitor&id=".$row->id,'edit_visitor').'">[Edit]</a></td><td><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_delete_visitor&id=".$row->id,'delete_visitor').'">[Delete]</a></td><td><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&action=church_admin_move_visitor&id=".$row->id,'move_visitor').'" title="Move to main address list" >[Add]</a></td><td>'.mysql2date('d/m/Y',$row->first_sunday).'</td><td>';
     if(!empty ($row->email))echo "<a href=\"mailto:{$row->email}\">";
     if(!empty($row->last_name)) echo $row->last_name.", ";
     echo htmlentities($row->first_name);
-    if(!empty ($row->email))echo "</a>";
-    echo "</td><td>".$row->homephone."</td><td>".$row->cellphone."</td><td>".$row->contacted."</td><td>".$row->contacted_by."</td><td>".$row->returned."</td></tr>";
+    if(!empty ($row->email))echo "</a></td>";
+    echo'<td>'.$reason[$row->why].'</td><td>'.$regular.'</td>';
+    echo "<td>".$row->homephone."</td><td>".$row->cellphone."</td><td>".$row->contacted."</td><td>".$row->contacted_by."</td><td>".$row->returned."</td></tr>";
     $counter++;
     $class='';
 }

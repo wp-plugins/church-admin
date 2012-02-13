@@ -160,13 +160,13 @@ if  ($_FILES['userfile3']['size']>0)
     //add posts
     $message=str_replace('[posts]',$post_section,$message);
     //RSS URL
-    $RSS='<a href="'.get_bloginfo('rss2_url' ).'" style="text_decoration:none" title="RSS"><img src="'.CHURCH_ADMIN_IMAGES_URL.'/rss.png" width="128" height="128"  style="border:none" alt="RSS Feed"/></a>';
+    $RSS='<a href="'.get_bloginfo('rss2_url' ).'" style="text_decoration:none" title="RSS"><img src="'.CHURCH_ADMIN_IMAGES_URL.'/rss.png" width="32" height="32"  style="border:none" alt="RSS Feed"/></a>';
      $message=str_replace('[RSS]',$RSS,$message);
     //twitter url
-    if(get_option('church_admin_twitter')){$twitter='<a href="http://twitter.com/#!/'.get_option('church_admin_twitter').'" style="text_decoration:none" title="Follow us on Twitter"><img src="'.CHURCH_ADMIN_IMAGES_URL.'twitter.png" width="128" height="128"  style="border:none" alt="Contact"/></a> ';}else{$twitter='';}
+    if(get_option('church_admin_twitter')){$twitter='<a href="http://twitter.com/#!/'.get_option('church_admin_twitter').'" style="text_decoration:none" title="Follow us on Twitter"><img src="'.CHURCH_ADMIN_IMAGES_URL.'twitter.png" width="32" height="32"  style="border:none" alt="Twitter"/></a> ';}else{$twitter='';}
     $message=str_replace('[TWITTER]',$twitter,$message);
     //facebook url
-     if(get_option('church_admin_facebook')){$facebook='<a href="'.get_option('church_admin_facebook').'" style="text_decoration:none" title="Follow us on Facebook"><img src="'.CHURCH_ADMIN_IMAGES_URL.'facebook.png" width="128" height="128"  style="border:none" alt="Contact"/></a>';}else{$facebook='';}
+     if(get_option('church_admin_facebook')){$facebook='<a href="'.get_option('church_admin_facebook').'" style="text_decoration:none" title="Follow us on Facebook"><img src="'.CHURCH_ADMIN_IMAGES_URL.'facebook.png" width="32" height="32"  style="border:none" alt="Facebook"/></a>';}else{$facebook='';}
     $message=str_replace('[FACEBOOK]',$facebook,$message);
     $message=str_replace('[BLOGINFO]','<a href="'.get_bloginfo('url').'">'.get_bloginfo('url').'</a>',$message);
     $message=str_replace('[HEADER_IMAGE]','<img class="header_image" src="'.get_option('church_admin_email_image').'" alt="" >',$message);
@@ -175,7 +175,7 @@ if  ($_FILES['userfile3']['size']>0)
     $message=str_replace('[year]',date('Y'),$message);
     $filename='Email-'.date('Y-m-d-H-i-s').'.html';
     $message=str_replace('[cache]','<p style="font-size:smaller;text-align:center;margin:0 auto;">Having trouble reading this? - <a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">view in your web browser</a></p>',$message);
-    //james contact details
+
     
     
     $handle=fopen(CHURCH_ADMIN_EMAIL_CACHE.$filename,"w")OR DIE("Couldn't open");

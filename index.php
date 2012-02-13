@@ -96,7 +96,7 @@ Version History
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.4.0';
+$church_admin_version = '0.33.4.2';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
@@ -114,6 +114,8 @@ if(isset($_GET['page']) && $_GET['page']=='church_admin_send_email')
         wp_register_script('ca_email', CHURCH_ADMIN_INCLUDE_URL.'email.js', false, '1.0');
         wp_enqueue_script('ca_email');
     }
+    
+
 }
 
 add_action('init', 'church_admin_init');
@@ -295,10 +297,6 @@ function church_admin_main()
             case 'church_admin_delete_rota_settings':
                 require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');
             if(check_admin_referer('delete_rota_settings'))church_admin_delete_rota_settings($_GET['id']);
-        break;
-        case 'church_admin_add_to_rota':
-            require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');
-            if(check_admin_referer('add_to_rota'))church_admin_add_to_rota();
         break;
         case 'church_admin_edit_rota':
             require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');

@@ -131,13 +131,13 @@ $out.='</tr>
 $out.="
 <script type=\"text/javascript\">
 
-jQuery(document).ready(function(){
-       jQuery('.church_admin_cal_item').live('mouseover', function() {
-       jQuery('.church_admin_tooltip').hide();//get rid of other ones
+jQuery(document).ready(function($){
+       $('.church_admin_cal_item').live('mouseover', function() {
+       $('.church_admin_tooltip').hide();//get rid of other ones
   // Live handler called.
 	var hideNo=this.id.substr(2);
 
-	 jQuery('#div'+hideNo).toggle('25');
+	$('#div'+hideNo).toggle('25');
 
 });
     
