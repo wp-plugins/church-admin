@@ -127,23 +127,17 @@ for($x=0;$x<5;$x++)
 }
 
 //table header
-$directory.='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Email address</th><th>Home phone</th><th>Cell phone</th><th>Last update</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Email address</th><th>Home phone</th><th>Cell phone</th><th>Last update</th></tr></tfoot><tbody>';
+$directory.='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Email address</th><th>Home phone</th><th>Cell phone</th><th>VCF</th><th>Last update</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Email address</th><th>Home phone</th><th>Cell phone</th><th>VCF</th><th>Last update</th></tr></tfoot><tbody>';
 $counter=1;
 foreach ($results as $row)
 {
     $edit_url="admin.php?page=church_admin/index.php&action=church_admin_edit_address&id=".$row->id;
     $delete_url="admin.php?page=church_admin/index.php&action=church_admin_delete_address&id=".$row->id;
     //put entry into session array for vcards
-    $_SESSION['address'.$counter]=array();
-    $_SESSION['address'.$counter]['name']=htmlentities($row->first_name)." ".$row->last_name;
-    $_SESSION['address'.$counter]['address']=stripslashes($row->address_line1).",\r\n" ;
-    if(!empty($row->address_line2))$_SESSION['address'.$counter]['address'].=stripslashes($row->address_line2).",\r\n" ;
-    if(!empty($row->city))$_SESSION['address'.$counter]['address'].=stripslashes($row->city).",\r\n" ;
-    if(!empty($row->state))$_SESSION['address'.$counter]['address'].=stripslashes($row->state).",\r\n" ;
-    if(!empty($row->zipcode))$_SESSION['address'.$counter]['address'].=stripslashes($row->zipcode).'.';
+    
     //table row for directory
     $directory.="<tr><td><a href=\"".wp_nonce_url($edit_url,'edit_address')."\">[Edit]</a></td><td><a href=\"".wp_nonce_url($delete_url,'delete_address')."\">[Delete]</a></td><td>".htmlentities($row->last_name).", ".htmlentities($row->first_name)."</td>
-<td>".$row->email."</td><td>".$row->homephone."</td><td>".$row->cellphone."</td><td>".$row->ts."</td></tr>";
+<td>".$row->email."</td><td>".$row->homephone."</td><td>".$row->cellphone."</td><td><a href=\"admin.php?page=church-admin/index.php&amp;download=vcf&id=".$row->id."\">V-card</a></td><td>".$row->ts."</td></tr>";
     $counter++;
 }
 $directory.='</tbody></table> ';
