@@ -10,7 +10,7 @@ if(!empty($_POST['first_name'])&&!empty($_POST['last_name'])&&check_admin_refere
 if(empty($_POST['small_group']))$_POST['small_group']='0';
 $sql = "INSERT INTO ".$wpdb->prefix."church_admin_directory SET first_name    = '".$wpdb->escape($_POST['first_name'])."',last_name     = '".$wpdb->escape($_POST['last_name'])."',email= '".$wpdb->escape($_POST['email'])."',email2        = '".$wpdb->escape($_POST['email2'])."',website       = '".$wpdb->escape($_POST['website'])."',small_group       = '".$wpdb->escape($_POST['small_group'])."',address_line1 = '".$wpdb->escape($_POST['address_line1'])."', address_line2 = '".$wpdb->escape($_POST['address_line2'])."',city          = '".$wpdb->escape($_POST['city'])."', state         = '".$wpdb->escape($_POST['state'])."', zipcode       = '".$wpdb->escape($_POST['zipcode'])."', homephone     = '".$wpdb->escape($_POST['homephone'])."', cellphone     = '".$wpdb->escape($_POST['cellphone'])."', children         = '".$wpdb->escape($_POST['children'])."'";
 $wpdb->query($sql)  ;
-require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
+
 church_admin_directory();
 }
 else
@@ -33,7 +33,7 @@ $data = $wpdb->get_row($sql);
 if ($_POST['save']&&check_admin_referer('edit_address'))
 {
     $wpdb->query("UPDATE ".$wpdb->prefix."church_admin_directory SET first_name    = '".$wpdb->escape($_POST['first_name'])."', last_name     = '".$wpdb->escape($_POST['last_name'])."', children='".$wpdb->escape($_POST['children'])."',email = '".$wpdb->escape($_POST['email'])."', email2= '".$wpdb->escape($_POST['email2'])."',homephone     = '".$wpdb->escape($_POST['homephone'])."',cellphone     = '".$wpdb->escape($_POST['cellphone'])."',address_line1 = '".$wpdb->escape($_POST['address_line1'])."',address_line2 = '".$wpdb->escape($_POST['address_line2'])."',city = '".$wpdb->escape($_POST['city'])."',state         = '".$wpdb->escape($_POST['state'])."',zipcode       = '".$wpdb->escape($_POST['zipcode'])."',children         = '".$wpdb->escape($_POST['children'])."',website       = '".$wpdb->escape($_POST['website'])."',small_group       = '".$wpdb->escape($_POST['small_group'])."'WHERE id ='".$wpdb->escape($id)."'");
-require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
+
 church_admin_directory();
 }
 else

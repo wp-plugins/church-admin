@@ -18,7 +18,7 @@ if(check_admin_referer( 'add_visitor') &&!empty($_POST['first_name'])&&!empty($_
     if(isset($_POST['regular'])&&$_POST['regular']=='1') {$sqlsafe['regular']=1;}else{$sqlsafe['regular']=0;}
     $sql = "INSERT INTO ".$wpdb->prefix."church_admin_visitors SET first_sunday='".$wpdb->escape($_POST['first_sunday'])."',contacted='".$wpdb->escape($_POST['contacted'])."',contacted_by='".$wpdb->escape($_POST['contacted_by'])."', returned='".$wpdb->escape($_POST['returned'])."', first_name = '".$wpdb->escape($_POST['first_name'])."',last_name     = '".$wpdb->escape($_POST['last_name'])."', email= '".$wpdb->escape($_POST['email'])."', small_group= '".$wpdb->escape($_POST['small_group'])."', address_line1 = '".$wpdb->escape($_POST['address_line1'])."',          address_line2 = '".$wpdb->escape($_POST['address_line2'])."', city = '".$wpdb->escape($_POST['city'])."',state= '".$wpdb->escape($_POST['state'])."',zipcode       = '".$wpdb->escape($_POST['zipcode'])."', homephone     = '".$wpdb->escape($_POST['homephone'])."',cellphone     = '".$wpdb->escape($_POST['cellphone'])."',children = '".$wpdb->escape($_POST['children'])."',regular='".$wpdb->escape($_POST['regular'])."'";
     $wpdb->query($sql)  ;
-    require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
+
     church_admin_visitor_list();
 }
 else

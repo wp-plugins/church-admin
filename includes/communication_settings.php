@@ -51,10 +51,7 @@ function church_admin_settings()
 	 update_option('church_admin_label',$option);
 	
 	}
-	 //update pdfs
-	 require(CHURCH_ADMIN_INCLUDE_PATH.'cache_yearplanner.php');
-	 church_admin_cache_year_planner();   
-	 require(CHURCH_ADMIN_INCLUDE_PATH.'cache_addresslist.php');
+
 	echo '<div id="message" class="updated fade"><p><strong>General Options Updated</strong></p></div>';
 	unset($_POST);
 	church_admin_communication_settings();
