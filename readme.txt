@@ -144,8 +144,9 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * UTF8 DB conversion
 = 0.33.4.0 =
 * PDFs created dynaically
-
+= 0.33.4.3 =
+Clear out files
 == Upgrade Notice ==
-* 0.33.4.2 required
+* 0.33.4.3 required
 
 == Credits: ==
