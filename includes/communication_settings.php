@@ -64,9 +64,9 @@ function church_admin_settings()
 	if(get_option('church_admin_pdf_size')=='Letter')
 	{echo '<option value="">Letter</option><option value="A4">A4</option><option value="Legal">Legal</option>';}
 	elseif(get_option('church_admin_pdf_size')=='Legal')
-	{echo '<option value="Legal">Legal</option><option value="A4">A4</option><option value="">Letter</option>';}
+	{echo '<option value="Legal">Legal</option><option value="A4">A4</option><option value="Letter">Letter</option>';}
 	else
-	{echo '<option value="A4">A4</option><option value="Legal">Legal</option><option value="">Letter</option>';}
+	{echo '<option value="A4">A4</option><option value="Legal">Legal</option><option value="Letter">Letter</option>';}
 	echo'</select></p>';
 	//email template top image
 	echo'<p><label>Email template header image url</label><input type="text" name="church_admin_email_image" value="'.get_option('church_admin_email_image').'"/></p>';

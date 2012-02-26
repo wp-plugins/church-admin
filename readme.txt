@@ -146,7 +146,10 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 * PDFs created dynaically
 = 0.33.4.3 =
 Clear out files
+= 0.33.4.4 =
+* Apologies, your rota would have been duplicated. This fix  stops it happening on further upgrades.
+
 == Upgrade Notice ==
-* 0.33.4.3 required
+* 0.33.4.4 required
 
 == Credits: ==

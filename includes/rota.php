@@ -35,8 +35,8 @@ if(!empty($taskresult))
     //grab results for each date
     foreach($results AS $daterows)
     {
-        $edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota&date='.$daterows->rota_date;
-        $delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_rota&date='.$daterows->rota_date;
+        $edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota&id='.$daterows->rota_id;
+        $delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_rota&id='.$daterows->rota_id;
         //start building row
         echo '<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">[Edit]</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">[Delete]</a></td><td>'.mysql2date('jS M Y',$daterows->rota_date).'</td>';
         //get rota task people for that date
@@ -69,7 +69,7 @@ if ($rota_jobs>0 && $rota_list==0) {
 }
 
 
-function church_admin_edit_rota($date=NULL)
+function church_admin_edit_rota($id=NULL)
 {
     global $wpdb;
     
@@ -86,13 +86,14 @@ function church_admin_edit_rota($date=NULL)
 	
 	$jobs=array();
 	foreach($task_result AS $task){$jobs[$task->rota_task]=stripslashes($_POST[urlencode($task->rota_task)]);}
-	
-	$sql='SELECT rota_id FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date="'.esc_sql($date).'"';
-	
-	$rota_id=$wpdb->get_var($sql);
-	if(!empty($rota_id))
+	if(!$id)
+	{
+	    $sql='SELECT rota_id FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date="'.esc_sql($date).'"';
+	    $id=$wpdb->get_var($sql);
+	}
+	if(!empty($id))
 	{//update
-	    $sql='UPDATE '.$wpdb->prefix.'church_admin_rotas SET rota_jobs="'.esc_sql(serialize($jobs)).'" WHERE rota_id="'.esc_sql($rota_id).'"';
+	    $sql='UPDATE '.$wpdb->prefix.'church_admin_rotas SET rota_jobs="'.esc_sql(serialize($jobs)).'" WHERE rota_id="'.esc_sql($id).'"';
 	    
 	}//end rota update
 	else
@@ -106,7 +107,7 @@ function church_admin_edit_rota($date=NULL)
     }
     else
     {//form
-	$jobs=$wpdb->get_row('SELECT * FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date="'.esc_sql($date).'"');
+	$jobs=$wpdb->get_row('SELECT * FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_id="'.esc_sql($id).'"');
 	echo'<div class="wrap church_admin"><form id="rota" name="rota" action="" method="post">';
 	if(empty($jobs->rota_date))
 	{
@@ -137,10 +138,11 @@ function church_admin_edit_rota($date=NULL)
 
 
 
-function church_admin_delete_rota($date)
+function church_admin_delete_rota($id)
 {
     global $wpdb;
-    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota WHERE rota_date='".esc_sql($date)."'");
+    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_id='".esc_sql($id)."'");
+    echo'<div class="updated fade"><p>Rota Deleted</p></div>';
     church_admin_rota_list();
     
 }
