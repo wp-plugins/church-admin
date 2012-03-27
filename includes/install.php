@@ -101,15 +101,19 @@ $wpdb->query ($sql);
 	    //grab current jobs
 	    $jobs=array();
 	    $results=$wpdb->get_results('SELECT a.*,b.rota_task FROM '.$wpdb->prefix.'church_admin_rota a,'.$wpdb->prefix.'church_admin_rota_settings b WHERE a.rota_option_id=b.rota_id');
-	    foreach($results AS $row)
+	    if($results)
 	    {
-	        $jobs[$row->rota_date][$row->rota_task]=$row->who;
-	    }
-	    foreach($jobs AS $date=>$people)
-	    {
-	        $day_jobs=esc_sql(serialize($people));
-	        $sql='INSERT INTO '.$wpdb->prefix.'church_admin_rotas (rota_date,rota_jobs,service_id)VALUES("'.esc_sql($date).'","'.$day_jobs.'","1")';
-		$wpdb->query($sql);
+		foreach($results AS $row)
+		{
+		    $jobs[$row->rota_date][$row->rota_task]=$row->who;
+		}
+		foreach($jobs AS $date=>$people)
+		{
+		    $day_jobs=esc_sql(serialize($people));
+		    $sql='INSERT INTO '.$wpdb->prefix.'church_admin_rotas (rota_date,rota_jobs,service_id)VALUES("'.esc_sql($date).'","'.$day_jobs.'","1")';
+		    $wpdb->query($sql);
+		}
+	    $wpdb->query('DROP TABLE '.$wpdb->prefix.'church_admin_rota');
 	    }
 	
     }
@@ -199,7 +203,7 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
-    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_rota CONVERT TO CHARACTER SET '.DB_CHARSET;
+    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_rotas CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);

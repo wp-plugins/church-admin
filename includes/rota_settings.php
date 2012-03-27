@@ -8,24 +8,33 @@ if(!empty($_POST['rota_task']) )
 {
     //form submitted
     //add new job to rota settings
-    $sql="INSERT INTO ".$wpdb->prefix."church_admin_rota_settings (rota_task) VALUES('".esc_sql(stripslashes($_POST['rota_task']))."')";
-    
-    $wpdb->query($sql);
-    $job_id=$wpdb->insert_id;
-    
-    //add new job to current rota dates
-    $result=$wpdb->get_results('SELECT DISTINCT rota_date FROM '.$wpdb->prefix.'church_admin_rota WHERE rota_option_id!="'.$job_id.'"' );
-    $dates=array();
- 
-    foreach($result AS $row)
+    $rota_task=esc_sql(stripslashes($_POST['rota_task']));
+    $check=$wpdb->get_var('SELECT rota_id FROM '.$wpdb->prefix.'church_admin_rota_settings WHERE rota_task="'.$rota_task.'"' );
+    if(!$check)
     {
-        $dates[]= '("","'.$row->rota_date.'","'.$job_id.'")';
-    }
-    $sql='INSERT INTO '.$wpdb->prefix.'church_admin_rota (who,rota_date,rota_option_id)VALUES'.implode(',',$dates);
-   
-    $wpdb->query($sql);
+        $sql='INSERT INTO '.$wpdb->prefix.'church_admin_rota_settings (rota_task) VALUES("'.$rota_task.'")';
+       $wpdb->query($sql);
+        $job_id=$wpdb->insert_id;
     
-    echo'<div id="message" class="updated fade"><p><strong> Rota Job Added</strong></p></div>';
+        //add new job to current rota dates
+        $result=$wpdb->get_results('SELECT * FROM '.$wpdb->prefix.'church_admin_rotas ' );
+        if($result)
+        {
+            foreach($result AS $row)
+            {
+                $jobs=unserialize($row->rota_jobs);
+                $jobs["$rota_task"]='';
+                if(!array_key_exists($rota_task))$rota_jobs=esc_sql(serialize($jobs));
+                $wpdb->query('UPDATE '.$wpdb->prefix.'church_admin_rotas SET rota_jobs="'.$rota_jobs.'" WHERE rota_id="'.$row->rota_id.'"');
+            }
+        
+        }
+        echo'<div id="message" class="updated fade"><p><strong> Rota Job Added</strong></p></div>';
+    }
+    else
+    {
+         echo'<div id="message" class="updated fade"><p><strong> Rota Job NOT Added - it is a duplicate</strong></p></div>';
+    }
     church_admin_rota_settings_list();
 }
 else{
@@ -40,7 +49,7 @@ function church_admin_delete_rota_settings($id)
 {
     global $wpdb;
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota_settings WHERE rota_id='".esc_sql($id)."'");
-    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota WHERE rota_option_id='".esc_sql($id)."'");
+    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_option_id='".esc_sql($id)."'");
     church_admin_rota_settings_list();
 }
 

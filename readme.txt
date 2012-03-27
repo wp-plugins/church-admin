@@ -148,8 +148,9 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 Clear out files
 = 0.33.4.4 =
 * Apologies, your rota would have been duplicated. This fix  stops it happening on further upgrades.
-
+= 0.33.4.5 =
+* Rota Gremlins fixed
 == Upgrade Notice ==
-* 0.33.4.4 required
+* 0.33.4.5 required
 
 == Credits: ==

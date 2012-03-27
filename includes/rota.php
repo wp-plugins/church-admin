@@ -6,7 +6,7 @@ global$wpdb;
 //check rota settings!
 $rota_jobs=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_jobs FROM ".$wpdb->prefix."church_admin_rota_settings");
 
-$rota_list=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_list FROM ".$wpdb->prefix."church_admin_rota");
+$rota_list=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_list FROM ".$wpdb->prefix."church_admin_rotas");
 
 if($rota_jobs>0&&$rota_list>0)
 {
@@ -18,36 +18,42 @@ if($rota_jobs>0&&$rota_list>0)
 $taskresult=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings  ORDER by rota_id");
 if(!empty($taskresult))
 {
-    //build rota tableheader
-    echo '<table class="widefat">';
-    $thead='<tr><th>Edit</th><th>Delete</th><th width="100">Date</th>';
-    foreach($taskresult AS $taskrow)
-    {
-        $thead.='<th>'.esc_html($taskrow->rota_task).'</th>';
-    }
-    $thead.='</tr>';
     
-    echo'<thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
-    //end rota table header
-    	
     //grab already set dates from db after today
-    $results=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_date>='".date('Y-m-d')."' ORDER BY rota_date LIMIT 0,24 ");
-    //grab results for each date
-    foreach($results AS $daterows)
+    $sql="SELECT * FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_date>='".date('Y-m-d')."' ORDER BY rota_date LIMIT 0,52 ";
+   
+    $results=$wpdb->get_results($sql);
+    if($results)
     {
-        $edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota&id='.$daterows->rota_id;
-        $delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_rota&id='.$daterows->rota_id;
-        //start building row
-        echo '<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">[Edit]</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">[Delete]</a></td><td>'.mysql2date('jS M Y',$daterows->rota_date).'</td>';
-        //get rota task people for that date
-        
-        $jobs=unserialize($daterows->rota_jobs);
-	foreach($jobs AS $title=>$who)echo'<td>'.esc_html($who).'</td>';
-        
-        echo'</tr>';//finish building row	
-        }
+	//build rota tableheader
+	echo '<table class="widefat">';
+	$thead='<tr><th>Edit</th><th>Delete</th><th width="100">Date</th>';
+	foreach($taskresult AS $taskrow)
+	{
+	    $thead.='<th>'.esc_html($taskrow->rota_task).'</th>';
+	}
+	$thead.='</tr>';
+	
+	echo'<thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
+	//end rota table header
+    	
+	//grab results for each date
+	foreach($results AS $daterows)
+	{
+	    $edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota&id='.$daterows->rota_id;
+	    $delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_rota&id='.$daterows->rota_id;
+	    //start building row
+	    echo '<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">[Edit]</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">[Delete]</a></td><td>'.mysql2date('jS M Y',$daterows->rota_date).'</td>';
+	    //get rota task people for that date
+	    
+	    $jobs=unserialize($daterows->rota_jobs);
+	    foreach($jobs AS $title=>$who)echo'<td>'.esc_html($who).'</td>';
+	    
+	    echo'</tr>';//finish building row	
+	    }
 	echo'</tbody>';
         echo'</table>';
+    }
 }//end of non empty rota tasks.			
 }
 //end of check for rota settings
@@ -99,6 +105,7 @@ function church_admin_edit_rota($id=NULL)
 	else
 	{//insert
 	    $sql='INSERT INTO '.$wpdb->prefix.'church_admin_rotas (rota_jobs,rota_date,service_id)VALUES("'.esc_sql(serialize($jobs)).'","'.esc_sql($date).'","1")';
+	    
 	}//end insert
 	
 	$wpdb->query($sql);

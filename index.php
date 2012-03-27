@@ -95,10 +95,11 @@ Version History
 0.33.4.0 2012-01-23 PDFs created dynamically
 0.33.4.3 2012-02-21 Clear out filesfrom svn repository
 0.33.4.4 2012-02-26 Oops your rota would have been duplicated
+0.33.4.5 2012-03-27 Rota gremlins fixed
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.33.4.4';
+$church_admin_version = '0.33.4.5';
 define ('CHURCH_ADMIN_LATEST_MESSAGE','The send bulk email section is now a 2 part process. Please <a href="admin.php?page=church_admin_communication_settings">update</a> facebook,twitter and email header image settings');
 function church_admin_init()
 {
