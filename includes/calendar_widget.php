@@ -30,7 +30,7 @@ function church_admin_widget_control_form()
     echo'</select><input type="hidden" name="widget_submit" value="1"/>';
 }
 
-function church_admin_calendar_widget_output($limit,$postit,$title)
+function church_admin_calendar_widget_output($limit=5,$postit,$title)
 {
 global $wpdb;
 $wpdb->show_errors;
