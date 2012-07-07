@@ -1,6 +1,41 @@
 <?php
 
+function church_admin_cron_pdf()
+{
+    //setup pdf
+    require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
+    $pdf=new FPDF();
+    $pdf->AddPage('P','A4');
+    $pdf->SetFont('Arial','B',24);
+    $text='How to set up Bulk Email Queuing';
+    $pdf->Cell(0,10,$text,0,2,L);
+    if (PHP_OS=='Linux')
+    {
+    $phppath='/usr/local/bin/php -f ';
+    $cronpath=CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php';
+    $command=$phppath.$cronpath;
+    
+    
+    $pdf->SetFont('Arial','',10);
+    $text="Instructions for Linux servers and cpanel.\r\nLog into Cpanel which should be ".get_bloginfo('url')."/cpanel using your username and password. \r\nOne of the options will be Cron Jobs which is usually in 'Advanced Tools' at the bottom of the screen. Click on 'Standard' Experience level. that will bring up something like this... ";
+    
+    $pdf->MultiCell(0, 10, $text );
+ 
+    $pdf->Image(CHURCH_ADMIN_IMAGES_PATH.'cron-job1.jpg','10','65','','','jpg','');
+    $pdf->SetXY(10,180);
+    $text="In the common settings option - select 'Once an Hour'. \r\nIn 'Command to run' put this:\r\n".$command."\r\n and then click Add Cron Job. Job Done. Don't forget to test it by sending an email to yourself at a few minutes before the hour! ";
+    $pdf->MultiCell(0, 10, $text );
+    }
+    else
+    {
+         $pdf->SetFont('Arial','',10);
+        $text="Unfortunately setting up queuing for email using cron is not possible in Windows servers. Please go back to Communication settings and enable the wp-cron option for scheduling sending of queued emails";
+        $pdf->MultiCell(0, 10, $text );
+    }
+    $pdf->Output();
+    
 
+}
 
 function church_admin_smallgroup_pdf()
 {
@@ -13,17 +48,17 @@ $leader=array();
 
 //grab people
 
-$sql="SELECT CONCAT_WS(' ',".$wpdb->prefix."church_admin_directory.first_name,".$wpdb->prefix."church_admin_directory.last_name) AS name, ".$wpdb->prefix."church_admin_smallgroup.group_name FROM ".$wpdb->prefix."church_admin_directory,".$wpdb->prefix."church_admin_smallgroup WHERE ".$wpdb->prefix."church_admin_directory.small_group=".$wpdb->prefix."church_admin_smallgroup.id ORDER BY ".$wpdb->prefix."church_admin_directory.small_group";
+$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE a.smallgroup_id=b.id ORDER BY a.smallgroup_id ';
 $results = $wpdb->get_results($sql);
 $gp=0;
 foreach ($results as $row) 
     {
         $row->name=stripslashes($row->name);
-        $smallgroups["{$row->group_name}"].=$row->name."\n";
+        $smallgroups[$row->group_name].=$row->name."\n";
 
     }
 $groupname=array_keys($smallgroups);
-$noofgroups=$wpdb->get_row("SELECT COUNT(id) AS no FROM ".$wpdb->prefix."church_admin_smallgroup");
+$noofgroups=$wpdb->get_row('SELECT COUNT(id) AS no FROM '.CA_SMG_TBL);
 $counter=$noofgroups->no;
 
 $pdf=new FPDF();
@@ -68,41 +103,47 @@ $pdf->Output();
 }
 
 
-function church_admin_address_pdf()
+function church_admin_address_pdf($member_type_id=1)
 {
   global $wpdb;
 //address book cache
 require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
 
 //grab addresses
-$results = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_directory ORDER BY last_name, first_name");    
-$counter=1;
-$addresses=array();
-foreach ($results as $row) 
-    {
-$addresses['address'.$counter]=array();
-$addresses['address'.$counter]['name']=html_entity_decode($row->first_name)." ".$row->last_name;
-$addresses['address'.$counter]['kids']=$row->children;
-$addresses['address'.$counter]['address']=stripslashes($row->address_line1).', ';
-$addresses['label'.$counter]=$row->address_line1;
-if(!empty($row->address_line2)){$addresses['address'.$counter]['address'].=stripslashes($row->address_line2).', ';$addresses['label'.$counter].=",\n".stripslashes($row->address_line2);}
-if(!empty($row->city)){$addresses['address'.$counter]['address'].=stripslashes($row->city).', ';$addresses['label'.$counter].=",\n".stripslashes($row->city);}
-if(!empty($row->state)){$addresses['address'.$counter]['address'].=stripslashes($row->state).', ';$addresses['label'.$counter].=",\n".stripslashes($row->state);}
-if(!empty($row->zipcode)){$addresses['address'.$counter]['address'].=stripslashes($row->zipcode).'.';$addresses['label'.$counter].=",\n".stripslashes($row->zipcode);}
-if(!empty($row->email)){$addresses['address'.$counter]['email1']=$row->email;}else{$addresses['address'.$counter]['email1']='';}
-if(!empty($row->email2)){$addresses['address'.$counter]['email2']=$row->email2;}else{$addresses['address'.$counter]['email2']='';}
-if(!empty($row->homephone)){$addresses['address'.$counter]['phone']=$row->homephone;}else{$addresses['address'.$counter]['homephone']='';}
-if(!empty($row->cellphone)){$addresses['address'.$counter]['mobile']=$row->cellphone;}else{$addresses['address'.$counter]['mobile']='';}
-$counter++;
+$sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'"  GROUP BY household_id ORDER BY last_name ASC ';
+  $results=$wpdb->get_results($sql);
 
-
-
-
-
-    }
-    
-
-    
+  $counter=1;
+    $addresses=array();
+  foreach($results AS $ordered_row)
+  {
+      $address=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'"');
+      $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
+      $adults=$children=$emails=$mobiles=array();
+      foreach($people_results AS $people)
+	{
+	  if($people->people_type_id=='1')
+	  {
+	    $last_name=$people->last_name;
+	    $adults[]=$people->first_name;
+	    if($people->email!=end($emails)) $emails[]=$people->email;
+	    if($people->mobile!=end($mobiles))$mobiles[]=$people->mobile;
+	  }
+	  else
+	  {
+	    $children[]=$people->first_name;
+	  }
+	  
+	}
+	$addresses['address'.$counter]['name']=$last_name.' '.implode(" & ", $adults);
+	$addresses['address'.$counter]['kids']=implode(" , ", $children);
+	$addresses['address'.$counter]['address']=implode(", ",array_filter(unserialize($address->address)));
+	$addresses['address'.$counter]['email']=implode("\n",array_filter($emails));
+	$addresses['address'.$counter]['mobile']=implode("\n",array_filter($mobiles));
+	$addresses['address'.$counter]['phone']=$address->phone;
+	$counter++;
+  }
+  
 //start of cache address-list.pdf    
 $pdf=new FPDF();
 $pageno=0;
@@ -147,47 +188,49 @@ $pdf->Output();
 //end of cache address list
 }
 
-function church_admin_label_pdf($type)
+function church_admin_label_pdf($member_type_id)
 {
 global $wpdb;
+$wpdb->show_errors();
 //grab addresses
-switch($type)
+//get alphabetic order
+$sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'" GROUP BY last_name ORDER BY last_name';
+$results = $wpdb->get_results($sql);
+if($results)
 {
-    case'address':$tbl='church_admin_directory';break;
-    case'visitor':$tbl='church_admin_visitors';break;
-}
-	$sql="SELECT * FROM ".$wpdb->prefix.$tbl." ORDER BY last_name, first_name";
-    
-$results = $wpdb->get_results($sql);    
-$counter=1;
-$addresses=array();
-if(!$results)exit('DB query failure');
-foreach ($results as $row) 
+    $counter=1;
+    $addresses=array();
+    foreach ($results as $row) 
     {
-$addresses['address'.$counter]=array();
-$addresses['address'.$counter]['name']=html_entity_decode($row->first_name)." ".$row->last_name;
-$addresses['address'.$counter]['kids']=$row->children;
-$addresses['address'.$counter]['address']=stripslashes($row->address_line1).', ';
-$addresses['label'.$counter]=$row->address_line1;
-if(!empty($row->address_line2)){$addresses['address'.$counter]['address'].=stripslashes($row->address_line2).', ';$addresses['label'.$counter].=",\n".stripslashes($row->address_line2);}
-if(!empty($row->city)){$addresses['address'.$counter]['address'].=stripslashes($row->city).', ';$addresses['label'.$counter].=",\n".stripslashes($row->city);}
-if(!empty($row->state)){$addresses['address'.$counter]['address'].=stripslashes($row->state).', ';$addresses['label'.$counter].=",\n".stripslashes($row->state);}
-if(!empty($row->zipcode)){$addresses['address'.$counter]['address'].=stripslashes($row->zipcode).'.';$addresses['label'.$counter].=",\n".stripslashes($row->zipcode);}
-if(!empty($row->email)){$addresses['address'.$counter]['email1']=$row->email;}else{$addresses['address'.$counter]['email1']='';}
-if(!empty($row->email2)){$addresses['address'.$counter]['email2']=$row->email2;}else{$addresses['address'.$counter]['email2']='';}
-if(!empty($row->homephone)){$addresses['address'.$counter]['phone']=$row->homephone;}else{$addresses['address'.$counter]['homephone']='';}
-if(!empty($row->cellphone)){$addresses['address'.$counter]['mobile']=$row->cellphone;}else{$addresses['address'.$counter]['mobile']='';}
-$counter++;
-}
-//start of cache mailing labels!
-require_once('PDF_Label.php');
-$pdflabel = new PDF_Label(get_option('church_admin_label'), 'mm', 1, 2);
-$pdflabel->Open();
-$pdflabel->AddPage();
+	$address_row=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($row->household_id).'"');
+	$address=array_filter(unserialize($address_row->address));
+	$people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
+	$adults=array();
+	foreach($people_results AS $people)
+	{
+	  if($people->people_type_id=='1')
+	  {
+	    $last_name=$people->last_name;
+	    $adults[]=$people->first_name;
+	  
+	  }
+	}
+	$addresses['address'.$counter]=array();
+	$addresses['address'.$counter]['name']=html_entity_decode(implode(" & ",$adults))." ".$last_name;
+	
+	$addresses['label'.$counter]=$address->address_line1;
+	$addresses['address'.$counter]['address'].=stripslashes(implode(",\n",$address));}
+	$counter++;
+    }
+    //start of cache mailing labels!
+    require_once('PDF_Label.php');
+    $pdflabel = new PDF_Label(get_option('church_admin_label'), 'mm', 1, 2);
+    $pdflabel->Open();
+    $pdflabel->AddPage();
 
 for($z=0;$z<=$counter-1;$z++)
 {
-    $add=$addresses['address'.$z][name]."\n".$addresses['label'.$z];
+    $add=$addresses['address'.$z]['name']."\n".$addresses['address'.$z]['address'];
     $pdflabel->Add_Label($add);
 }
 $pdflabel->Output();
@@ -200,23 +243,40 @@ $pdflabel->Output();
 function ca_vcard($id)
 {
   global $wpdb;
- 
-  $sql='SELECT * FROM '.$wpdb->prefix.'church_admin_directory WHERE id="'.esc_sql($id).'"';
-
-  $row = $wpdb->get_row($sql);
-
+ $wpdb->show_errors();
+    $add_row = $wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($id).'"');
+    $address=unserialize($add_row->address);
+    
+    $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($id).'"');
+    $adults=$children=$emails=$mobiles=array();
+      foreach($people_results AS $people)
+	{
+	  if($people->people_type_id=='1')
+	  {
+	    $last_name=$people->last_name;
+	    $adults[]=$people->first_name;
+	    if($people->email!=end($emails)) $emails[]=$people->email;
+	    if($people->mobile!=end($mobiles))$mobiles[]=$people->mobile;
+	  }
+	  else
+	  {
+	    $children[]=$people->first_name;
+	  }
+	  
+	}
   //prepare vcard
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'vcf.php');
 $v = new vCard();
-if(!empty($row->homephone))$v->setPhoneNumber("{$row->homephone}", "PREF;HOME;VOICE");
-if(!empty($row->cellphone))$v->setPhoneNumber("{$row->cellphone}", "CELL;VOICE");
-$v->setName("{$row->last_name}", "{$row->first_name}", "", "");
-$v->setAddress("", stripslashes($row->address_line1), stripslashes($row->address_line2), stripslashes($row->city), stripslashes($row->state),stripslashes($row->zipcode) ,"");
-$v->setEmail("{$row->email}");
+if(!empty($add_row->homephone))$v->setPhoneNumber("{$add_row->phone}", "PREF;HOME;VOICE");
+if(!empty($mobiles))$v->setPhoneNumber("{$mobiles['0']}", "CELL;VOICE");
+$v->setName("{$last_name}", implode(" & ",$adults), "", "");
 
-if(!empty($row->children)){$v->setNote("Children: ".stripslashes($row->children));}
+$v->setAddress("", stripslashes($address['address_line1']), stripslashes($address['address_line2']), stripslashes($address['town']), stripslashes($address['county']),stripslashes($address['postcode']),'','HOME;POSTAL' );
+$v->setEmail("{$emails['0']}");
+
+if(!empty($children)){$v->setNote("Children: ".implode(", ",$children));}
 $output = $v->getVCard();
-$filename=$row->last_name.'.vcf';
+$filename=$last_name.'.vcf';
 
 
       header("Cache-Control: public");
@@ -385,7 +445,7 @@ function html2rgb($color)
     return array($r, $g, $b);
 }
 
-function church_admin_rota_pdf()
+function church_admin_rota_pdf($service_id=1)
 {
     
     global $wpdb;
@@ -413,7 +473,7 @@ $colres=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_set
 $size=array();
 foreach($colres AS $colrow)$size[$colrow->rota_task]=strlen($colrow->rota_task);
 //grab dates
-$sql='SELECT * FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date>"'.$now.'" AND rota_date<="'.$threemonths.'"';
+$sql='SELECT * FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date>"'.$now.'" AND rota_date<="'.$threemonths.'" AND service_id="'.esc_sql($service_id).'"';
 $results=$wpdb->get_results($sql);
 
 
@@ -481,5 +541,53 @@ $pdf->Output();
 
 }
 
+function church_admin_address_xml($member_type_id=1)
+{
+    global $wpdb;
+    $color_def = array
+	('1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",
+
+		8  => "FF7F00",	9  => "7F7F7F",	10 => "BFBFBF",	11 => "007F00",
+		12 => "7FFF00",	13 => "00007F",	14 => "7F0000",	15 => "7F4000",
+		16 => "FF9933",	17 => "007F7F",	18 => "7F007F",	19 => "007F7F",
+		20 => "7F00FF",	21 => "3399CC",	22 => "CCFFCC",	23 => "006633",
+		24 => "FF0033",	25 => "B21919",	26 => "993300",	27 => "CC9933",
+		28 => "999933",	29 => "FFFFBF",	30 => "FFFF7F",31  => "000000"
+	);
+	//foreach($color_def AS $color)echo'<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|'.$color.'"/>';
+    $wpdb->show_errors();
+    header("Content-type: text/xml;charset=utf-8");
+
+    
+    
+    // Select all the rows in the markers table
+    $sql = 'SELECT a.lat, a.lng,  b.smallgroup_id,c.group_name FROM '.CA_PEO_TBL.' b, '.CA_HOU_TBL.' a,'.CA_SMG_TBL.' c WHERE c.id=b.smallgroup_id AND b.smallgroup_id!="" AND b.member_type_id="'.esc_sql($member_type_id).'" AND a.household_id = b.household_id
+GROUP BY a.household_id, b.smallgroup_id';
+   
+    $result = $wpdb->get_results($sql);
+    // Iterate through the rows, adding XML nodes for each
+    if($result)
+    {
+	echo '<markers>';
+	foreach($result AS $row)
+	{
+
+	    // Iterate through the rows, printing XML nodes for each
+
+	  // ADD TO XML DOCUMENT NODE
+	    echo '<marker ';
+	    echo 'lat="' . $row->lat . '" ';
+	    echo 'lng="' . $row->lng . '" ';
+	    echo 'pinColor="'.$color_def[$row->smallgroup_id].'" ';
+	    echo 'smallgroup_id="'.$row->smallgroup_id.'" ';
+	    echo 'smallgroup_name="'.htmlentities($row->group_name).'" ';
+	    echo '/>';
+	}
+	// End XML file
+	echo '</markers>';
+    }
+    
+    exit();    
+}
 
 ?>

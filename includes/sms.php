@@ -25,38 +25,20 @@ $get_info=file_get_contents($url."?username=$username&password=$password");
     
 //grab recipients
 $mobiles=array();
-switch($_POST['who'])
-    {
-    case 'church':
-        $results=$wpdb->get_results("SELECT cellphone FROM ".$wpdb->prefix."church_admin_directory");
+
+        $results=$wpdb->get_results('SELECT DISTINCT mobile FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($_POST['who']).'"');
         $needed=count($results);
         foreach ($results AS $row)
             {
-                $row->cellphone=str_replace(' ','',$row->cellphone);
+                $row->mobile=str_replace(' ','',$row->mobile);
                 //if starts with 0 replace with 44
-		if($row->cellphone{0}=='0')
+		if($row->mobile{0}=='0')
 		{
-                    $row->cellphone=get_option(church_admin_sms_iso).substr($row->cellphone, 1); 
+                    $row->mobile=get_option(church_admin_sms_iso).substr($row->mobile, 1); 
                 }
-                $mobiles[]=$row->cellphone;
+                $mobiles[]=$row->mobile;
             }    
-    break;
-    case 'parents':
-        $results=$wpdb->get_results("SELECT cellphone FROM ".$wpdb->prefix."church_admin_directory WHERE children!=''");
-        $needed=count($results);
-        foreach ($results AS $row)
-            {
-                $row->cellphone=str_replace(' ','',$row->cellphone);
-                //if starts with 0 replace with 44
-		if($row->cellphone{0}=='0')
-		{
-                    $row->cellphone=get_option(church_admin_sms_iso).substr($row->cellphone, 1); 
-                }
-                $mobiles[]=$row->cellphone;
-            }
-    break; 
-    default: $mobiles[]=get_option(church_admin_sms_reply); $needed=1;break;   
-    }
+    
  echo"$needed credits required<br/>";   
 if($credits>$needed)
 {
@@ -131,6 +113,7 @@ else{echo'Not enough credits - please <a href="http://www.bulksms.co.uk">Top up<
 
 function church_admin_send_sms_form()
 {
+    global $member_type;
 echo'
 <script type="text/javascript">
 /* <![CDATA[ */
@@ -158,8 +141,14 @@ function counterUpdate(opt_countedTextBox, opt_countBody, opt_maxSize) {
 <div id="church_admin_phone">
 ';
 if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
-echo'
-<div id="church_admin_whoto">Who to?<br/><select name="who"><option value="church">Everyone</option><option value="parents">Parents</option><option value="test">Test</option></select></div>
+echo'<div id="church_admin_whoto">Who to?<br/><select name="who">';
+ foreach($member_type AS $key=>$value)
+ {
+   echo'<option  value="'.$key.'"/>'.$value.'</option>';
+ }
+
+
+echo'</select></div>
  <div id="church_admin_message"><span id="countBody">&nbsp;&nbsp;0</span>/160 characters<br/><textarea class="sms" id="counttxt" rows="4" cols="50" name="counttxt"  onkeyup="counterUpdate(\'counttxt\', \'countBody\',\'160\');"></textarea></div>
  
  

@@ -1,4 +1,12 @@
 <?php
+
+function church_admin_update_role($role_id,$people_id)
+{
+  global $wpdb;
+  $wpdb->show_errors;
+  $id=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND role_id="'.esc_sql($role_id).'"');
+  if(!$id){$wpdb->query('INSERT INTO '.CA_MET_TBL.'(people_id,role_id) VALUES("'.esc_sql($people_id).'","'.esc_sql($role_id).'")');}
+}
 function strip_only($str, $tags) {
     //this functions strips some tages, but not all
     if(!is_array($tags)) {

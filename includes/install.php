@@ -3,66 +3,157 @@ function church_admin_install()
 {
     global $wpdb,$church_admin_version;
     $wpdb->show_errors();
-    //migrate church_directory plugin
-    //database tables
-    //addresslist
-    $old_table_name=$wpdb->prefix."church_directory";
-    $new_table_name=$wpdb->prefix."church_admin_directory";
-    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
+    //household table    
     
-    //small groups
-    $old_table_name=$wpdb->prefix."church_directory_smallgroup";
-    $new_table_name=$wpdb->prefix."church_admin_smallgroup";
-    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-    
-    //attendance
-    $old_table_name=$wpdb->prefix."church_directory_attendance";
-    $new_table_name=$wpdb->prefix."church_admin_attendance";
-    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-    
-    //visitors
-    $old_table_name=$wpdb->prefix."church_directory_visitors";
-    $new_table_name=$wpdb->prefix."church_admin_visitors";
-    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-    
-    //rota
-    $old_table_name=$wpdb->prefix."church_directory_rota";
-    $new_table_name=$wpdb->prefix."church_admin_rota";
-    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-
-    //rota settings
-    $old_table_name=$wpdb->prefix."church_directory_rota_settings";
-    $new_table_name=$wpdb->prefix."church_admin_rota_settings";
-    if ($wpdb->get_var("SHOW TABLES LIKE '$old_table_name'") == $old_table_name && $wpdb->get_var("SHOW TABLES LIKE '$new_table_name'") != $new_table_name){$wpdb->query("ALTER TABLE $old_table_name RENAME TO $new_table_name");}
-    
-    if(get_option('church_directory_version'))
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOU_TBL.'"') != CA_HOU_TBL)
     {
-        update_option('mailserver_url',get_option('church_directory_mail_host'));
-        update_option('mailserver_login',get_option('church_directory_mail_user_name'));
-        update_option('mailserver_password',get_option('church_directory_mail_password'));
-        update_option('mailserver_port','110');
-	if(get_option('church_directory_sms_username'))update_option('church_admin_sms_username',get_option('church_directory_sms_username'));
-        if(get_option('church_directory_sms_password'))update_option('church_admin_sms_password',get_option('church_directory_sms_password'));
-        if(get_option('church_directory_sms_reply'))update_option('church_admin_sms_reply',get_option('church_directory_sms_reply'));
-        if(get_option('church_directory_sms_iso'))update_option('church_admin_sms_iso',$_POST['sms_iso']);
-	delete_option('church_directory_version');
-	delete_option('church_directory_mail_host');
-        delete_option('church_directory_mail_user_name');
-	delete_option('church_directory_password');
-    	delete_option('church_directory_sms_username');
-	delete_option('church_directory_sms_password');
-	delete_option('church_directory_sms_reply');
-    }
-    
-    //end of migrate over church_directory plugin
-    //address book table    
-    $table_name = $wpdb->prefix."church_admin_directory";
-    if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name)
-    {
-        $sql = "CREATE TABLE ". $table_name ." (id int(11) NOT NULL AUTO_INCREMENT, ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, address_line1 varchar(255) NOT NULL,  address_line2 varchar(255) DEFAULT NULL,  city varchar(255) NOT NULL  ,  state varchar(255) NOT NULL ,  zipcode varchar(8) NOT NULL,  homephone varchar(15) NOT NULL,  cellphone varchar(12) NOT NULL,
-first_name varchar(255) NOT NULL, last_name varchar(255) CHARACTER SET utf8 NOT NULL, children text NOT NULL, email varchar(255) NOT NULL, email2 varchar(255) NOT NULL, website tinytext NOT NULL, small_group int(11) NOT NULL , PRIMARY KEY (id));";
+        $sql = 'CREATE TABLE '.CA_HOU_TBL.' ( address TEXT, lat VARCHAR(50),lng VARCHAR (50), phone VARCHAR(15),member_type_id INT(11),ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,household_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (household_id));';
         $wpdb->query($sql);
     }
+    //people table    
+    ;
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_PEO_TBL.'"') != CA_PEO_TBL)
+    {
+        $sql = 'CREATE TABLE '.CA_PEO_TBL.' (first_name VARCHAR(100),last_name VARCHAR(100), date_of_birth DATE, member_type_id INT(11), roles TEXT, sex INT(1),mobile VARCHAR(15), email TEXT,people_type_id INT(11),smallgroup_id INT(11),household_id INT(11),member_data TEXT, user_id INT(11),people_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (people_id));';
+        $wpdb->query($sql);
+    }
+    //people_meta table    
+   
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_MET_TBL.'"') != CA_MET_TBL)
+    {
+        $sql = 'CREATE TABLE '.CA_MET_TBL.' ( people_id INT(11),role_id INT(11), meta_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (meta_id));';
+        $wpdb->query($sql);
+    }
+    
+    
+    $people_type=array('1'=>'Adult','2'=>'Child');
+    $member_type=array('0'=>'Visitor','1'=>'Member');
+    $church_admin_people_settings=get_option('church_admin_people_settings');
+    if(empty($church_admin_people_settings))update_option('church_admin_people_settings',array('people_type'=>$people_type,'member_type'=>$member_type));
+
+
+//migrate old tables
+    $table_name = $wpdb->prefix."church_admin_directory";
+    if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name && $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."church_admin_directory_old'") != $wpdb->prefix.'church_admin_directory_old' )
+    {
+	
+	$results=$wpdb->get_results('SELECT * FROM '.$table_name.' ORDER BY last_name');
+	foreach($results AS $row)
+	{
+	    
+	    //split off household
+	    $address=esc_sql(serialize(array('address_line1'=>stripslashes($row->address_line1),'address_line2'=>stripslashes($row->address_line2),'town'=>stripslashes($row->city),'county'=>stripslashes($row->state),'postcode'=>stripslashes($row->zipcode))));
+	    $wpdb->query('INSERT INTO '.$wpdb->prefix.'church_admin_household (address,lat,lng,phone,member_type_id)VALUES("'.$address.'","52.0","0","'.esc_sql($row->homephone).'","1")');
+	    $household_id=$wpdb->insert_id;
+	    $member_data=esc_sql(serialize(array('member'=>mysql2date('Y-m-d',$row->ts))));
+	    //deal with adults assume & is the separator
+	    $adults=explode(" & ",$row->first_name);
+	    //update smallgroup bits
+	    $sg_leader=array();
+	    $sg_id=$wpdb->get_var('SELECT id FROM '.CA_SMG_TBL.' WHERE leader="'.$row->id.'"');
+		foreach($adults AS $key=>$adult)
+		{
+		    if(!empty($adult))
+		    {
+		        $sql='INSERT INTO '.$wpdb->prefix.'church_admin_people (first_name,last_name,member_type_id,people_type_id,sex,email,mobile,smallgroup_id,household_id,member_data) VALUES("'.esc_sql(trim($adult)).'","'.esc_sql($row->last_name).'","1","1","1","'.esc_sql($row->email).'","'.$row->cellphone.'","'.esc_sql($row->small_group).'","'.$household_id.'","'.$member_data.'")';
+		   
+		        $wpdb->query($sql);
+			//small group leader array  while at it!
+			$people_id=$wpdb->insert_id;
+			if($sg_id)
+			{
+			    $sg_leader[]=$people_id;
+			    //give person small group leader role!
+			    church_admin_update_role('1',$people_id);
+			}
+		    }
+		}
+	    if(!empty($sg_leader)&& !empty($sg_id))$wpdb->query('UPDATE '.CA_SMG_TBL.' SET leader="'.esc_sql(serialize($sg_leader)).'" WHERE id="'.esc_sql($sg_id).'"');
+	    $children=explode(", ",$row->children);
+	    
+	    foreach($children AS $key=>$child)
+	    {
+		if(!empty($child))
+		{
+		    $sql='INSERT INTO '.$wpdb->prefix.'church_admin_people (first_name,last_name,member_type_id,people_type_id,sex,email,mobile,smallgroup_id,household_id,member_data) VALUES("'.esc_sql(trim($child)).'","'.esc_sql($row->last_name).'","1","2","1","'.esc_sql($row->email).'","'.$row->mobile.'","'.esc_sql($row->small_group).'","'.$household_id.'","'.$member_data.'")';
+		    
+		    $wpdb->query($sql);
+		}
+	    }
+	
+	}
+	
+	$wpdb->query('RENAME TABLE '.$wpdb->prefix.'church_admin_directory TO '.$wpdb->prefix.'church_admin_directory_old');
+    }
+    //handle visitors
+    
+    $table_name = $wpdb->prefix."church_admin_visitors";
+    if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name && $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."church_admin_visitors_old'") != $wpdb->prefix.'church_admin_visitors_old')
+    {
+	
+	$results=$wpdb->get_results('SELECT * FROM '.$table_name.' ORDER BY last_name');
+	foreach($results AS $row)
+	{
+	    $visitor_data=esc_sql(serialize(array('visitor'=>$row->first_sunday)));
+	    //split off household
+	    $address=serialize(array('address_line1'=>stripslashes($row->address_line1),'address_line2'=>stripslashes($row->address_line2),'town'=>stripslashes($row->city),'county'=>stripslashes($row->state),'postcode'=>stripslashes($row->zipcode)));
+	    //check if entered
+	    $household_id=NULL;
+	    $household_id=$wpdb->get_var('SELECT household_id FROM '.CA_HOU_TBL.' WHERE address="'.esc_sql($address).'" ');
+	    if($address=='a:5:{s:13:"address_line1";s:0:"";s:13:"address_line2";s:0:"";s:4:"town";s:0:"";s:6:"county";s:0:"";s:8:"postcode";s:0:"";}'||!$household_id)
+	    {
+		$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (address,lat,lng,phone,member_type_id)VALUES("'.esc_sql($address).'","52.0","0","'.esc_sql($row->homephone).'","0")');
+		$household_id=$wpdb->insert_id;
+	    }
+	    //deal with adults assume & is the separator
+	    $adults=explode(" & ",$row->first_name);
+	    
+		foreach($adults AS $key=>$adult)
+		{
+		    if(!empty($adult))
+		    {
+			$people_id=$wpdb->get_var('SELECT people_id FROM '.CA_PEO_TBL.' WHERE first_name="'.esc_sql(trim($adult)).'" AND last_name="'.esc_sql($row->last_name).'" AND household_id="'.esc_sql($household_id).'"');
+		        if(!$people_id)
+			{
+			    $sql='INSERT INTO '.CA_PEO_TBL.' (first_name,last_name,member_type_id,people_type_id,sex,email,mobile,smallgroup_id,household_id,member_data) VALUES("'.esc_sql(trim($adult)).'","'.esc_sql($row->last_name).'","0","1","1","'.esc_sql($row->email).'","'.$row->cellphone.'","'.esc_sql($row->small_group).'","'.$household_id.'","'.$visitor_data.'")';
+			    $wpdb->query($sql);
+			}
+			else
+			{//update member data
+			    $member_data=maybe_unserialize($wpdb->get_var('SELECT member_data FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"'));
+			    if(!$member_data)$member_data=array();
+			    $member_data['visitor']=$row->first_sunday;
+			    $wpdb->query('UPDATE '.CA_PEO_TBL.' SET member_data="'.esc_sql(serialize($memeber_data)).'" WHERE people_id="'.$people_id.'"');
+			}//update memberdata
+		    }
+		}
+	      $children=explode(", ",$row->children);
+	    
+	    foreach($children AS $key=>$child)
+	    {
+		if(!empty($child))
+		{
+		    $people_id=$wpdb->get_var('SELECT people_id FROM '.CA_PEO_TBL.' WHERE first_name="'.esc_sql(trim($adult)).'" AND last_name="'.esc_sql($row->last_name).'" AND household_id="'.esc_sql($household_id).'"');
+		        if(!$people_id)
+			{
+			    $sql='INSERT INTO '.$wpdb->prefix.'church_admin_people (first_name,last_name,member_type_id,people_type_id,sex,email,mobile,smallgroup_id,household_id,member_data) VALUES("'.esc_sql(trim($child)).'","'.esc_sql($row->last_name).'","1","2","1","'.esc_sql($row->email).'","'.$row->mobile.'","'.esc_sql($row->small_group).'","'.$household_id.'","'.$visitor_data.'")';
+			    $wpdb->query($sql);
+			}
+			else
+			{//update member data
+			    $member_data=maybe_unserialize($wpdb->get_var('SELECT member_data FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"'));
+			    if(!$member_data)$member_data=array();
+			    $member_data['visitor']=$row->first_sunday;
+			    $wpdb->query('UPDATE '.CA_PEO_TBL.' SET member_data="'.esc_sql(serialize($memeber_data)).'" WHERE people_id="'.$people_id.'"');
+			}//update memberdata
+		}
+	    }
+	
+	}
+	
+	$wpdb->query('RENAME TABLE '.$wpdb->prefix.'church_admin_visitors TO '.$wpdb->prefix.'church_admin_visitors_old');
+    }
+//end migrate old tables
     
     //install small group table
     $table_name = $wpdb->prefix."church_admin_smallgroup";
@@ -71,6 +162,10 @@ first_name varchar(255) NOT NULL, last_name varchar(255) CHARACTER SET utf8 NOT 
 	$sql="CREATE TABLE  ". $table_name ." (leader int(11) NOT NULL,group_name varchar(255) NOT NULL,whenwhere tinytext NOT NULL,id int(11) NOT NULL AUTO_INCREMENT,PRIMARY KEY (id));";
         $wpdb->query ($sql);
 	$wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_smallgroup (leader,group_name,whenwhere,id)VALUES ('0', 'Unattached', '', '1');");
+    }
+    else
+    {
+	$wpdb->query('ALTER TABLE '.$table_name.' CHANGE `leader` `leader` TEXT NOT NULL ');
     }
 
 //install emails sent table
@@ -91,13 +186,15 @@ $wpdb->query ($sql);
     }
     
     //install rotas table
-    $table_name = $wpdb->prefix."church_admin_rotas";
+    $table_name = CA_ROT_TBL;
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
     {
-	$sql="CREATE TABLE  ". $table_name ."  (  rota_date date NOT NULL,  rota_jobs text NOT NULL, service_id int(11) NOT NULL, rota_id int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (rota_id));";
+	$sql="CREATE TABLE  ". $table_name ."  (  rota_date DATE NOT NULL,  rota_jobs TEXT NOT NULL, service_id INT(11) NOT NULL, rota_id INT(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (rota_id));";
 	//echo $sql;
 	$wpdb->query ($sql);
-   
+    }
+	if($wpdb->get_var('show tables like "'.$wpdb->prefix.'church_admin_rota"') == $wpdb->prefix.'church_admin_rota')
+	{
 	    //grab current jobs
 	    $jobs=array();
 	    $results=$wpdb->get_results('SELECT a.*,b.rota_task FROM '.$wpdb->prefix.'church_admin_rota a,'.$wpdb->prefix.'church_admin_rota_settings b WHERE a.rota_option_id=b.rota_id');
@@ -115,17 +212,10 @@ $wpdb->query ($sql);
 		}
 	    $wpdb->query('DROP TABLE '.$wpdb->prefix.'church_admin_rota');
 	    }
-	
-    }
+	}
     
-    //install visitors table
-    $table_name = $wpdb->prefix."church_admin_visitors";
-    if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
-    {
-    	$sql="CREATE TABLE ". $table_name ."  (first_name TEXT NOT NULL ,last_name TEXT NOT NULL ,address_line1 TEXT NOT NULL ,address_line2 TEXT NOT NULL ,city TEXT NOT NULL ,state TEXT NOT NULL ,zipcode VARCHAR( 20 ) NOT NULL ,email TEXT NOT NULL ,homephone VARCHAR( 20 ) NOT NULL ,cellphone VARCHAR( 20 ) NOT NULL ,first_sunday DATE NOT NULL ,contacted DATE NOT NULL ,contacted_by VARCHAR( 255 ) NOT NULL ,returned DATE NOT NULL ,
-regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT NOT NULL ,children TEXT NOT NULL ,id INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY );";
-    $wpdb->query($sql);
-    }
+    
+  
     
     
     //install attendance table
@@ -171,7 +261,15 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
         $wpdb->query("INSERT INTO $table_name (category,bgcolor,cat_id) VALUES('Unused','#FFFFFF','0')");
     }
     
+ //services
+  //household table    
     
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SER_TBL.'"') != CA_SER_TBL)
+    {
+        $sql = 'CREATE TABLE '.CA_SER_TBL.' ( service_name TEXT, service_day INT(1),service_time TIME, venue VARCHAR(100),address TEXT,lat VARCHAR(50),lng VARCHAR(50),first_meeting DATE,service_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (service_id));';
+        $wpdb->query($sql);
+	$wpdb->query('INSERT INTO '.CA_SER_TBL.' (service_name,service_day,service_time,venue,address,lat,lng,first_meeting) VALUES ("Sunday Service","1","10:00","Main Venue","'.esc_sql(serialize(array('address_line1'=>"",'address_line2'=>"",'town'=>"",'county'=>"",'postcode'=>""))).'","52.0","0.0","'.date('Y-m-d').'")');
+    }
     
     
   //make sure tables are UTF8  
@@ -179,10 +277,7 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
-    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_directory CONVERT TO CHARACTER SET '.DB_CHARSET;
-    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
-    $sql.=';';
-    $wpdb->query($sql);
+   
    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_calendar_date CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
@@ -203,10 +298,7 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
-    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_rotas CONVERT TO CHARACTER SET '.DB_CHARSET;
-    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
-    $sql.=';';
-    $wpdb->query($sql);
+    
     $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_rota_settings CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
@@ -215,15 +307,12 @@ regular INT(1) NOT NULL,why INT(1) NOT NULL,small_group INT NOT NULL ,notes TEXT
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
-    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_visitors CONVERT TO CHARACTER SET '.DB_CHARSET;
-    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
-    $sql.=';';
-    $wpdb->query($sql);
-//update pdf cache
-update_option('church_admin_calendar_width','630');
-update_option('church_admin_pdf_size','A4');
-update_option('church_admin_label','L7163');
 
+//update pdf cache
+if(!get_option('church_admin_calendar_width'))update_option('church_admin_calendar_width','630');
+if(!get_option('church_admin_pdf_size'))update_option('church_admin_pdf_size','A4');
+if(!get_option('church_admin_label'))update_option('church_admin_label','L7163');
+if(!get_option('church_admin_page_limit'))update_option('church_admin_page_limit',30);
 //sort out wp-cron
 if(get_option('church_admin_cron')=='wp-cron')
 {
@@ -232,6 +321,9 @@ if(get_option('church_admin_cron')=='wp-cron')
     wp_schedule_event($timestamp, 'hourly', 'church_admin_bulk_email');
 }
 
+//roles
+$roles=array('1'=>'Small Group Leader','2'=>'Elder');
+update_option('church_admin_roles',$roles);
 
 //update version
 update_option('church_admin_version',$church_admin_version);

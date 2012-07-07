@@ -14,3 +14,45 @@ table.church_admin_calendar { empty-cells: show; table-layout:fixed; font-size:1
 .Postit li {text-indent:0;padding:0 0 10px 0;margin:0!important;list-style:none;border-bottom:none !important;}
 .church_admin_address{-moz-border-radius:4px; border:1px solid #E3E3E3; margin:8px 0px; padding:6px; position: relative;}
 .church_admin_calendar td{width:14.28%}
+/*
+Plugin Name: WP-Digg Style Paginator
+Plugin URI: http://www.mis-algoritmos.com/2007/09/09/wp-digg-style-pagination-plugin-v-10/
+Author: Victor De la Rocha
+Author URI: http://www.mis-algoritmos.com
+*/
+
+/*CSS Sabrosus style pagination*/
+div.pagination {
+	padding:3px;
+	margin:3px;
+	text-align:center;
+}
+
+div.pagination a {
+	padding: 2px 5px 2px 5px;
+	margin-right: 2px;
+	border: 1px solid #9aafe5;
+	
+	text-decoration: none; 
+	color: #2e6ab1;
+}
+div.pagination a:hover, div.pagination a:active {
+	border: 1px solid #2b66a5;
+	color: #000;
+	background-color: lightyellow;
+}
+div.pagination span.current {
+	padding: 2px 5px 2px 5px;
+	margin-right: 2px;
+	border: 1px solid navy;
+	font-weight: bold;
+	background-color: #2e6ab1;
+	color: #FFF;
+}
+div.pagination span.disabled {
+	padding: 2px 5px 2px 5px;
+	margin-right: 2px;
+	border: 1px solid #929292;
+	color: #929292;
+}
+#map{width:500px;height:500px;}

@@ -2,9 +2,9 @@
 Contributors: andymoyle
 Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
-Requires at least: 3.0.0
-Tested up to: 3.3
-Stable tag: 0.33.4.5
+Requires at least: 3.4.1
+Tested up to: 3.4.1
+Stable tag: 0.4.1
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -22,9 +22,11 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 
 *   Sunday Rota - create and show rotas for your volunteers.
 
-*   Attendance tracking and graphs
+*   Attendance tracking 
 
-*   Visitor tracking and follow up
+*   Roles - people can have different roles and be SMS or email by role, other functions coming soon.
+
+*   Google map integrations for small groups and directories
 
 *   Calendar - month to view, agenda view and nth day recurring events (eg 3rd Sunday)
 
@@ -34,17 +36,15 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 
 1. Upload the `church_admin` directory to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Place [church_admin type=address-list] on the page you want the address book displayed. 
+3. Place [church_admin type=address-list member_type_id=# map=1] on the page you want the address book displayed, member_type=1 for members, map=1 toshow map for geocoded addresses. 
 4. Place [church_admin type=small-groups-list] on the page you want the small group list displayed
 5. Place [church_admin type=small-groups] on the page you want the list of small groups and their members displayed
 6. Place [church_admin type=rota] on the page you want the rota displayed
 7. Place [church_admin type=calendar category=# weeks=#] on the page you want a page per month calendar displayed
 8. Place [church_admin type=calendar-list] on the page you want a agenda view calendar - option category and weeks options pastable from category admin page
-9. Place [church_admin type=rolling-average] on the page you want a rolling average attendance graph
-10.Place [church_admin type=monthly-average] on the page you want a monthly average attendance graph
-11. There is a calendar widget with customisable title, how many events you want to show and an option for it to look like a post-it note
-
-We recommend password protecting the pages - if it is password protected a link is provided to logout
+9. There is a calendar widget with customisable title, how many events you want to show and an option for it to look like a post-it note
+10. Place [church_admin_map member_type_id=#] to show a map of colour coded small groups - need to set a service venue first to centre map and geolocate addresses by editing them.
+We recommend password protecting the pages - if it is password protected. A link is provided to logout
 
 
 == Frequently Asked Questions ==
@@ -150,6 +150,12 @@ Clear out files
 * Apologies, your rota would have been duplicated. This fix  stops it happening on further upgrades.
 = 0.33.4.5 =
 * Rota Gremlins fixed
+= 0.4.0 =
+* Major Rewrite, especially how the directory is handled and stored
+= 0.4.1 =
+* Bug fixes for rewrite
+= 0.4.2 =
+* Google map of small groups members [church_admin_map member_type_id=#]
 == Upgrade Notice ==
 * 0.33.4.5 required
 

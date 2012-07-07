@@ -91,8 +91,8 @@ function church_admin_edit_category($id)
 function church_admin_category_form($data)
 {
     if(empty($data))$data->bgcolor='#e4afb1';
-echo '<script src="'.CHURCH_ADMIN_INCLUDE_URL.'farbtastic.js" type="text/javascript"></script><script type="text/javascript" charset="utf-8"> 
-  $(document).ready(function() {
+echo '<script type="text/javascript" > 
+  jQuery(document).ready(function($) {
     
     $(\'#picker\').farbtastic(\'#color\');
     
@@ -390,7 +390,7 @@ function church_admin_calendar_error_check($data)
 {
     global $error,$sqlsafe;
      //check startdate
-      $start_date=church_admin_dateCheck($data['start_date'], $yearepsilon=50);
+      $start_date=date('Y-m-d',strtotime($data['start_date']));
       
       $end_date=church_admin_dateCheck($data['end_date'], $yearepsilon=50);
       
@@ -499,7 +499,14 @@ foreach($result3 AS $row)
 
 $out.=$first.$select;//have original value first!
 $out.='</select></p>
-<p><label >Start Date</label><input name="start_date" type="text" '.$error['start_date'].' value="'.$data->start_date.'" size="25" /><a href="#" onclick="cal_begin.select(document.forms[\'calendar\'].start_date,\'date_anchor1\',\'dd/MM/yyyy\'); return false;" name="date_anchor1" id="date_anchor1"><img src="'.CHURCH_ADMIN_IMAGES_URL.'cal.gif" width="16" height="16" border="0" alt="Pick a date"/></a></p><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div>';
+<p><label >Start Date</label><input name="start_date" id="start_date" type="text" '.$error['start_date'].' value="'.mysql2date('d M Y',$data->start_date).'" size="25" />';
+$out.='<script type="text/javascript">
+      jQuery(document).ready(function(){
+         jQuery(\'#start_date\').datepicker({
+            dateFormat : "'." d MM yy".'", changeYear: true ,yearRange: "2011:'.date('Y',time()+60*60*24*365*10).'"
+         });
+      });
+   </script>';
 if($recurring==1){
     $out.='
 <p><label>Recurring</label>

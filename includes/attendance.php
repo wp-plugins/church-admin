@@ -22,19 +22,21 @@ function church_admin_show_graph()
 
 function church_admin_add_attendance(){
   global $wpdb;
-if( !empty($_POST['add_date']) &&checkDateFormat($_POST['add_date']) && !empty($_POST['adults'])&& !empty($_POST['children']) &&is_numeric($_POST['adults']) && is_numeric($_POST['children'])&&check_admin_referer( 'church_admin_add_attendance'))
+  $wpdb->show_errors();
+if( !empty($_POST['add_date'])  && !empty($_POST['adults'])&& !empty($_POST['children']) &&is_numeric($_POST['adults']) && is_numeric($_POST['children'])&&check_admin_referer( 'church_admin_add_attendance'))
 { 
     
-    $sql="INSERT INTO ".$wpdb->prefix."church_admin_attendance (date,adults,children) VALUES('".esc_sql($_POST['add_date'])."','".esc_sql($_POST['adults'])."','".esc_sql($_POST['children'])."')";
+    $sql='INSERT INTO '.CA_ATT_TBL.' (date,adults,children) VALUES("'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'","'.esc_sql($_POST['adults']).'","'.esc_sql($_POST['children']).'")';
+
 $wpdb->query($sql)  ;
 //work out rolling average from values!
 
-$avesql="SELECT FORMAT(AVG(adults),0) AS rolling_adults,FORMAT(AVG(children),0) AS rolling_children FROM ".$wpdb->prefix."church_admin_attendance WHERE `date` >= DATE_SUB('{$_POST['add_date']}',INTERVAL 52 WEEK) AND `date`<= '{$_POST['add_date']}' ";
-  
+     $avesql='SELECT FORMAT(AVG(adults),0) AS rolling_adults,FORMAT(AVG(children),0) AS rolling_children FROM '.CA_ATT_TBL.' WHERE `date` >= DATE_SUB("'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'",INTERVAL 52 WEEK) AND `date`<= "'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'"';
+
     $averow=$wpdb->get_row($avesql);
 
 //update table with rolling average
-    $up="UPDATE ".$wpdb->prefix."church_admin_attendance SET rolling_adults='{$averow->rolling_adults}', rolling_children='{$averow->rolling_children}' WHERE `date`='{$_POST['add_date']}'";
+    $up='UPDATE '.CA_ATT_TBL.' SET rolling_adults="'.$averow->rolling_adults.'", rolling_children="'.$averow->rolling_children.'" WHERE `date`="'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'"';
 
     $wpdb->query($up);
 
@@ -42,8 +44,7 @@ $avesql="SELECT FORMAT(AVG(adults),0) AS rolling_adults,FORMAT(AVG(children),0) 
 echo '<div id="message" class="updated fade">';
 echo '<p><strong>Attendance added.</strong></p>';
 echo '</div>';
-church_admin_show_rolling_average();
-church_admin_show_graph();
+church_admin_attendance_metrics();
 
 }
 else
@@ -51,26 +52,26 @@ else
 echo'<div class="wrap church_admin"><h2>Attendance</h2>';
 echo '<form action="" method="post" name="add_attendance" id="add_attendance">';
 
-echo '<script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script>
-<script type="text/javascript">document.write(getCalendarStyles());</script>';
+
 
 if ( function_exists('wp_nonce_field') ) wp_nonce_field('church_admin_add_attendance');
 //datepicker js
-	
-echo'<script type="text/javascript">
-var cal_begin = new CalendarPopup(\'pop_up_cal\');
-function unifydates() {
-document.forms[\'add_attendance\'].add_date.value = document.forms[\'add_attendance\'].add_date.value;
-}
-					</script>
-<ul><li><label >Date (yyyy-mm-dd):</label><input type="text" name="add_date" class="input" size="12" value="'.date('Y-m-d',strtotime("last Sunday")).'" /><a href="#" onclick="cal_begin.select(document.forms[\'add_attendance\'].add_date,\'attendance\',\'yyyy-MM-dd\'); return false;" name="attendance" id="attendance">Select date</a><div id="pop_up_cal" style="position:absolute;margin-left:150px;visibility:hidden;background-color:white;layer-background-color:white;z-index:1;"></div></li>
-<li><label >Adults</label><input type="text" name="adults" value=""/></li>
+echo'<p><label >Date :</label><input type="text" id="add_date" name="add_date" ';
+ echo ' value="'.date("d M yy").'" ';
+	echo'/></p>';
+	echo'<script type="text/javascript">
+      jQuery(document).ready(function(){
+         jQuery(\'#add_date\').datepicker({
+            dateFormat : "'." d MM yy".'", changeYear: true ,yearRange: "2011:'.date('Y',time()+60*60*24*365*10).'"
+         });
+      });
+   </script>';
+echo'   <p><label >Adults</label><input type="text" name="adults" value=""/></li>
 
-<li><label >Children</label><input type="text" name="children" value=""/></li>
-</ul>
+<p><label >Children</label><input type="text" name="children" value=""/></p>
 <p class="submit"><input type="submit" value="Add attendance for that date &raquo;" /></p></form></div>
 ';
-$attendance=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_attendance");
+$attendance=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_ATT_TBL);
 if($attendance>0)
 {
     echo'<h2>Attendance by Month</h2>';
@@ -86,14 +87,14 @@ function church_admin_attendance_metrics()
 {
      global $wpdb;
      $wpdb->show_errors;
-     $first_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.$wpdb->prefix.'church_admin_attendance ORDER BY `date` ASC LIMIT 1');
-     $last_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.$wpdb->prefix.'church_admin_attendance ORDER BY `date` DESC LIMIT 1');
+     $first_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.CA_ATT_TBL.' ORDER BY `date` ASC LIMIT 1');
+     $last_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.CA_ATT_TBL.' ORDER BY `date` DESC LIMIT 1');
     
      for($year=$first_year;$year<=$last_year;$year++){$thead.="<th>$year</th>";}
     
      $aggtable=$totaltable=$adulttable=$childtable='<table class="widefat"><thead><tr><th>Month</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
     
-	  $results=$wpdb->get_results('SELECT ROUND( AVG( adults ) ) AS adults, ROUND( AVG( children ) ) AS children, YEAR( `date` ) AS year, MONTH( `date` ) AS month FROM '.$wpdb->prefix.'church_admin_attendance GROUP BY YEAR( `date` ) , MONTH( `date` )');
+	  $results=$wpdb->get_results('SELECT ROUND( AVG( adults ) ) AS adults, ROUND( AVG( children ) ) AS children, YEAR( `date` ) AS year, MONTH( `date` ) AS month FROM '.CA_ATT_TBL.' GROUP BY YEAR( `date` ) , MONTH( `date` )');
 	  
 	 
 	  foreach($results AS $row)

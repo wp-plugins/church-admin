@@ -1,6 +1,8 @@
  #smallgroup{display:none;}
  #individuals{display:none;}
+ #roles{display:none;}
 .church_admin .red{border:1px solid #f00!important;}
+.church_admin .roles{display:inline-block;}
 .church_admin form li {width:700px;}
 .church_admin label{width:200px; float:left;font-weight:bold;}
 .church_admin input[type="text"]{width:300px;}
@@ -22,7 +24,7 @@
 #church_admin_submit{position:relative;top:95px;left:20px;}  
 
 #donatebox
-{width:500px;height:215px; float:right;background:#FFFBCC;border:1px solid #E6DB55;padding: 0 5px 0 5px;margin-bottom:3px;}
+{width:500px;height:225px; float:right;background:#FFFBCC;border:1px solid #E6DB55;padding: 0 5px 0 5px;margin-bottom:3px;}
 #donatebox img{text-decoration:none!important;}
 #donatebox .right{float:right;}
-#donatebox li{padding:0}
+#donatebox p{padding:0;margin:0}
