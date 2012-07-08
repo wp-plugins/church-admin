@@ -16,6 +16,6 @@ function church_admin_public_header()
     echo'<!-- church_admin v'.$church_admin_version.'-->
     <style>table.church_admin_calendar{width:';
     if(get_option('church_admin_calendar_width')){echo get_option('church_admin_calendar_width');}else {echo'700';}
-    echo'</style>';
+    echo'}</style>';
 }
 ?>
