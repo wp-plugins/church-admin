@@ -99,7 +99,7 @@ Version History
 0.4.0 2012-07-03 Rewrite of directory side
 0.4.1 2012-07-03   Search front end and add services
 0.4.2 2012-07-06 Added google map showing small group members [church_admin_map member_type_id=#]
-0.4.3 20120-07-08 Redundamt file with possible Security Vulnerability removed.
+0.4.3 20120-07-08 Redundant file with possible Security Vulnerability removed.
 */
 add_action('activated_plugin','save_error');
 function save_error(){
