@@ -37,9 +37,9 @@ function church_admin_cron_pdf()
 
 }
 
-function church_admin_smallgroup_pdf()
+function church_admin_smallgroup_pdf($member_type_id)
 {
-    global $wpdb;
+    global $wpdb,$member_type;
 require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
 //cache small group pdf
 $wpdb->show_errors();
@@ -47,8 +47,10 @@ $smallgroups=array();
 $leader=array();
 
 //grab people
-
-$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE a.smallgroup_id=b.id ORDER BY a.smallgroup_id ';
+$memb=explode(',',esc_sql($member_type_id));
+foreach($memb AS $key=>$value){$membsql[]='a.member_type_id='.$value;}
+if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE a.people_type_id="1"  '.$memb_sql.' AND a.smallgroup_id=b.id ORDER BY a.smallgroup_id,a.last_name ';
 $results = $wpdb->get_results($sql);
 $gp=0;
 foreach ($results as $row) 
@@ -70,7 +72,10 @@ $width=55;
 $pdf->AddPage('L',get_option('church_admin_pdf_size'));
 $pdf->SetFont('Arial','B',16);
 $next_sunday=strtotime("this sunday");
-$text='Small Group List '.date("d-m-Y",$next_sunday);
+$whichtype=array();
+foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
+
+$text=implode(", ",$whichtype).' Small Group List '.date("d-m-Y",$next_sunday);
 $pdf->Cell(0,10,$text,0,2,C);
 $pageno+=1;
 
@@ -108,9 +113,11 @@ function church_admin_address_pdf($member_type_id=1)
   global $wpdb;
 //address book cache
 require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
-
+$memb=explode(',',esc_sql($member_type_id));
+foreach($memb AS $key=>$value){$membsql[]='member_type_id='.$value;}
+if(!empty($membsql)) {$memb_sql=implode(' || ',$membsql);}else{$memb_sql='member_type_id=1';}
 //grab addresses
-$sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'"  GROUP BY household_id ORDER BY last_name ASC ';
+$sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
   $results=$wpdb->get_results($sql);
 
   $counter=1;
@@ -194,7 +201,10 @@ global $wpdb;
 $wpdb->show_errors();
 //grab addresses
 //get alphabetic order
-$sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'" GROUP BY last_name ORDER BY last_name';
+$memb=explode(',',esc_sql($member_type_id));
+foreach($memb AS $key=>$value){$membsql[]='a.member_type_id='.$value;}
+if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+$sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.' GROUP BY last_name ORDER BY last_name';
 $results = $wpdb->get_results($sql);
 if($results)
 {

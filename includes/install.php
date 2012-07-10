@@ -27,7 +27,7 @@ function church_admin_install()
     
     
     $people_type=array('1'=>'Adult','2'=>'Child');
-    $member_type=array('0'=>'Visitor','1'=>'Member');
+    $member_type=array('0'=>'Visitor','1'=>'Member',2=>'Infrequent');
     $church_admin_people_settings=get_option('church_admin_people_settings');
     if(empty($church_admin_people_settings))update_option('church_admin_people_settings',array('people_type'=>$people_type,'member_type'=>$member_type));
 

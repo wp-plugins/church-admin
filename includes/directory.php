@@ -6,6 +6,9 @@ function church_admin_address_list()
    if(!empty($act_error)) echo '<div class="updated fade"><h2> You had an activation error, oh beta tester</h2><p> please post it to the forum on <a href="http://www.themoyles.co.uk">www.themoyles.co.uk</a>.</p>'.$act_error.'</div>';
     if(isset($_REQUEST['member_type_id']) && is_numeric($_REQUEST['member_type_id'])) {$member_type_id=$_REQUEST['member_type_id'];}else{$member_type_id=1;}
     global $wpdb,$member_type;
+    $all=implode(',',$member_type);
+    $all_id=implode(',',array_keys($member_type));
+   
     $wpdb->show_errors();
     //grab address list in order
     $res = $wpdb->query('SELECT * FROM '.CA_HOU_TBL.' WHERE member_type_id="'.$member_type_id.'"');
@@ -65,17 +68,21 @@ echo'<h2>'.ucwords($member_type[$member_type_id]).' Address List</h2>';
     echo'<p><label>Search</label><form name="ca_search" action="admin.php?page=church_admin/index.php&amp;action=church_admin_search" method="POST"><input name="ca_search" style="width:100px;" type="text"/><input type="submit" value="Go"/></form></p>';
     echo '<p><label>Download a PDF</label><form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value">';
     echo'<option selected="selected" value="'.home_url().'/?download=addresslist&member_type_id=1">-- Choose a pdf --</option>';
-    $types=get_option('church_admin_people_settings');
-    $member_types=$types['member_type'];
-    foreach($member_types AS $key=>$value)
+
+    foreach($member_type AS $key=>$value)
     {
 	echo'<option value="'.home_url().'/?download=mailinglabel&member_type_id='.$key.'">'.$value.' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</option>';
     }
-    foreach($member_types AS $key=>$value)
+    foreach($member_type AS $key=>$value)
     {
 	echo'<option value="'.home_url().'/?download=addresslist&member_type_id='.$key.'">'.$value.' Address List PDF</option>';
     }
-    echo '<option value="'.home_url().'/?download=smallgroup">Small Group List PDF</option>';
+    echo'<option value="'.home_url().'/?download=addresslist&member_type_id='.$all_id.'">'.$all.' Address List PDF</option>';
+    foreach($member_type AS $key=>$value)
+    {
+	 echo '<option value="'.home_url().'/?download=smallgroup&member_type_id='.$key.'">'.$value.' Small Group List PDF</option>';
+    }
+    echo '<option value="'.home_url().'/?download=smallgroup&member_type_id='.$all_id.'">'.$all.' Small Group List PDF</option>';
 for($x=0;$x<5;$x++)
 	    {
 		$y=date('Y')+$x;
@@ -112,7 +119,7 @@ for($x=0;$x<5;$x++)
 	    {
 		if(empty($people->last_name))$people->last_name='Add Surname';
 		if(empty($people->first_name))$people->first_name='Add Firstname';
-		if($people->people_type_id=='1'){$last_name=$people->last_name; $adults[]='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;household_id='.$row->household_id.'&amp;people_id='.$people->people_id,'edit_people').'">'.$people->first_name.'</a>';}else{$children[]='<a href="'.wp_nonce_url('admin.php&page=church_admin/index.php&amp;action=church_admin_edit_people&amp;household_id='.$row->household_id.'&amp;people_id='.$people->people_id,'edit_people').'">'.$people->first_name.'</a>' ;}
+		if($people->people_type_id=='1'){$last_name=$people->last_name; $adults[]='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;household_id='.$row->household_id.'&amp;people_id='.$people->people_id,'edit_people').'">'.$people->first_name.'</a>';}else{$children[]='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;household_id='.$row->household_id.'&amp;people_id='.$people->people_id,'edit_people').'">'.$people->first_name.'</a>' ;}
 		
 	    }
 	    
@@ -222,11 +229,11 @@ function church_admin_edit_people($people_id=NULL,$household_id)
 	$prev_member_types=serialize($prev_member_types);
 	if($people_id)
 	{//update
-	    $wpdb->query('UPDATE '.CA_PEO_TBL.' SET first_name="'.$sql['first_name'].'" , last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$date.'",member_data="'.esc_sql($prev_member_types).'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"');
+	    $wpdb->query('UPDATE '.CA_PEO_TBL.' SET first_name="'.$sql['first_name'].'" , last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$date.'",member_data="'.esc_sql($prev_member_types).'",smallgroup_id="'.$sql['smallgroup_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"');
 	}//end update
 	else
 	{
-	    $wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data) VALUES("'.$sql['first_name'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$date.'" , "'.esc_sql($household_id).'","'.esc_sql($prev_member_types).'" )');
+	    $wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id) VALUES("'.$sql['first_name'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$date.'" , "'.esc_sql($household_id).'","'.esc_sql($prev_member_types).'" ,"'.$sql['smallgroup_id'].'")');
 	    $people_id=$wpdb->insert_id;
 	}
 	//update meta
@@ -570,7 +577,7 @@ function church_admin_search($search)
     else
     {
 	echo'<div class="updated fade"><p>Search '.$s.' not found</p></div>';
-	church_admin_directory();
+	church_admin_address_list();
     }
 }
 

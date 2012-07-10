@@ -100,6 +100,7 @@ Version History
 0.4.1 2012-07-03   Search front end and add services
 0.4.2 2012-07-06 Added google map showing small group members [church_admin_map member_type_id=#]
 0.4.3 20120-07-08 Redundant file with possible Security Vulnerability removed.
+0.4.4 2012-07-10 Selelct member types for pdf and a few bug fixes
 */
 add_action('activated_plugin','save_error');
 function save_error(){
@@ -107,7 +108,7 @@ function save_error(){
 }
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.3';
+$church_admin_version = '0.4.4';
 
 
 //define DB
@@ -462,7 +463,7 @@ function church_admin_download($file)
         case'cron-instructions':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_cron_pdf();break;
 	case'rota':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_rota_pdf();break;
         case'yearplanner':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_year_planner_pdf($_GET['year']);break;
-	case'smallgroup':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_smallgroup_pdf();break;
+	case'smallgroup':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_smallgroup_pdf($_GET['member_type_id']);break;
 	case'addresslist':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_pdf($_GET['member_type_id']);break;
 	case'vcf':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');ca_vcard($_GET['id']);break;
 	case'mailinglabel':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_label_pdf($_GET['member_type_id']);break;

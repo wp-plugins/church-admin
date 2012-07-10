@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
 Tested up to: 3.4.1
-Stable tag: 0.4.3
+Stable tag: 0.4.4
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -158,6 +158,10 @@ Clear out files
 * Google map of small groups members [church_admin_map member_type_id=#]
 = 0.4.3 =
 * Security vulnerability fixed
+= 0.4.4 =
+* Select member types for pdfs
+
+
 == Upgrade Notice ==
 * 0.4.3 required
 
