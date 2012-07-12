@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.3
+Version: 0.4.41
 Author: Andy Moyle
 
 
@@ -101,6 +101,7 @@ Version History
 0.4.2 2012-07-06 Added google map showing small group members [church_admin_map member_type_id=#]
 0.4.3 20120-07-08 Redundant file with possible Security Vulnerability removed.
 0.4.4 2012-07-10 Selelct member types for pdf and a few bug fixes
+0.4.41 2012-07-12 Small group add bug fixed
 */
 add_action('activated_plugin','save_error');
 function save_error(){
@@ -108,7 +109,7 @@ function save_error(){
 }
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.4';
+$church_admin_version = '0.4.41';
 
 
 //define DB
@@ -311,7 +312,7 @@ function church_admin_main()
         case 'church_admin_move_visitor':check_admin_referer('move_visitor');if(church_admin_level_check('Visitor')){church_admin_move_visitor($_GET['id']);}break;
         //small groups
         case  'church_admin_edit_small_group':check_admin_referer('edit_small_group');if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php');  church_admin_edit_small_group($_GET['id']);}break;
-        case  'church_admin_delete_small_group':check_admin_referer('delete small group');if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php'); church_admin_delete_small_group($_GET['id']);}break;
+        case  'church_admin_delete_small_group':check_admin_referer('delete_small_group');if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php'); church_admin_delete_small_group($_GET['id']);}break;
         //services
         case  'church_admin_edit_service':check_admin_referer('edit_service');if(church_admin_level_check('Service')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'services.php');  church_admin_edit_service($_GET['id']);}break;
         case  'church_admin_delete_service':check_admin_referer('delete_service');if(church_admin_level_check('Service')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'services.php'); church_admin_delete_service($_GET['id']);}break;

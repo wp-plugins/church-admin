@@ -72,7 +72,7 @@ function church_admin_edit_small_group($id)
 	}//end update
 	else
 	{//insert
-	    $wpdb->query('INSERT INTO  '.CA_SMG_TBL.' (group_name,leaders,whenwhere) VALUES("'.esc_sql($form['group_name']).'","'.$leaders.'","'.esc_sql($form['whenwhere']).'")');
+	    $wpdb->query('INSERT INTO  '.CA_SMG_TBL.' (group_name,leader,whenwhere) VALUES("'.esc_sql($form['group_name']).'","'.$leaders.'","'.esc_sql($form['whenwhere']).'")');
 	}//insert
 	
 	echo'<div class="wrap church_admin"><div id="message" class="updated fade"><p><strong>Small Group Edited</strong></p></div>';
