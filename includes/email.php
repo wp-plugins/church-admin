@@ -218,7 +218,7 @@ function church_admin_choose_recipients($email_id)
     echo'<h2>Now choose recipients...</h2><form action="" method="post"><input type="hidden" value="'.$email_id.'" name="email_id"/><input type="hidden" name="send_email" value="1"/>';
  foreach($member_type AS $key=>$value)
  {
-   echo'<p><label><strong>'.$value.'</strong></label><input type="radio" name="type" value="'.$key.'"/></p>';
+   echo'<p><label><strong>'.$value.'</strong></label><input type="checkbox" name="member_type[]" value="'.$key.'"/></p>';
  }
 
 echo'<p><label><strong>A Small group</strong></label><input type="radio" name="type" value="smallgroup"/></p>';
@@ -265,14 +265,23 @@ function church_admin_send_message($email_id)
 {
     global $wpdb,$member_type;
     $wpdb->show_errors();
+    print_r($_POST);
     //this function sends the message cached in $_POST['filename'] out to the right recipients
-    if(!empty($_POST['type']) && is_numeric($_POST['type'])) $sql='SELECT DISTINCT email, first_name FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($_POST['type']).'"';
-    elseif(!empty($_POST['type']) && $_POST['type']=='smallgroup') $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE small_group_id="'.esc_sql($_POST['group_id']).'"';
+    if(!empty($_POST['member_type']))
+    {
+      $w=array();
+      $where='(';
+      foreach($_POST['member_type'] AS $key=>$value)if(array_key_exists($value,$member_type))$w[]=' member_type_id='.$value.' ';
+      $where.=implode("||",$w).')';
+      $sql='SELECT DISTINCT email, first_name FROM '.CA_PEO_TBL.' WHERE email!="" AND '.$where;
+   
+    }
+    elseif(!empty($_POST['type']) && $_POST['type']=='smallgroup') $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE email!="" AND small_group_id="'.esc_sql($_POST['group_id']).'"';
     elseif(!empty($_POST['type']) && $_POST['type']=='individuals')
     {
 	    $names=array();
             foreach ($_POST['person']AS $value){$names[]='id = "'.esc_sql($value).'"';}
-            $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE "'.implode(' OR ',$names).'"';
+            $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE email!="" AND "'.implode(' OR ',$names).'"';
     }
     elseif(!empty($_POST['type']) && $_POST['type']=='roles')
     {

@@ -6,6 +6,67 @@ church_admin_show_graph()
 church_admin_add_attendance()
 
 */
+function church_admin_attendance_list($service_id=1)
+{
+     global $wpdb,$days;
+     $wpdb->show_errors();
+    //grab address list in order
+    $items = $wpdb->get_var('SELECT COUNT(*) FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
+    
+    
+    // number of total rows in the database
+    require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
+    if($items > 0)
+    {
+	$p = new pagination;
+	$p->items($items);
+	$p->limit(get_option('church_admin_page_limit')); // Limit entries per page
+	$p->target("admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list");
+	if(!isset($p->paging))$p->paging=1; 
+	if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
+	$p->currentPage($_GET[$p->paging]); // Gets and validates the current page
+	$p->calculate(); // Calculates what to show
+	$p->parameterName('paging');
+	$p->adjacents(1); //No. of page away from the current page
+	if(!isset($_GET['paging']))
+	{
+	    $p->page = 1;
+	}
+	else
+	{
+	    $p->page = $_GET['paging'];
+	}
+        //Query for limit paging
+	$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
+    } 
+    
+    //prepare WHERE clause using given service_id
+    $sql='SELECT * FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" ORDER BY `date` DESC '.$limit;
+    $results=$wpdb->get_results($sql);
+    if($results)
+     {
+	   $sql='SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"';
+	  
+	  $service=$wpdb->get_row($sql);
+	  $service_details=$service->service_name.' on '.$days[$service->service_day].' '.$service->service_time;
+	  echo'<div class="wrap church_admin"><h2>Attendance List for '.$service_details.'</h2>';
+	  echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">Add attendance</a>';
+	  // Pagination
+	  echo '<div class="tablenav"><div class="tablenav-pages">';
+	  echo $p->show();  
+	  echo '</div></div>';
+	  //Pagination
+	  echo '<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Date</th><th>Adults</th><th>Children</th><th>Total</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Date</th><th>Adults</th><th>Children</th><th>Total</th></tr></tfoot><tbody>';
+	  foreach($results AS $row)
+	  {
+	       $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance&amp;attendance_id='.$row->attendance_id,'edit_attendance').'">Edit</a>';
+	       $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_attendance&amp;attendance_id='.$row->attendance_id,'delete_attendance').'">Delete</a>';
+	       $total=$row->adults+$row->children;
+	       echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.mysql2date(get_option('date_format'),$row->date).'</td><td>'.$row->adults.'</td><td>'.$row->children.'</td><td>'.$total.'</td></tr>';
+	  }
+	  echo'</tbody></table></div>';
+     }
+}
 function church_admin_show_rolling_average()
 {   global $wpdb;
      include(CHURCH_ADMIN_INCLUDE_PATH."rolling-average-graph.php");
@@ -20,31 +81,45 @@ function church_admin_show_graph()
 
 }
 
-function church_admin_add_attendance(){
-  global $wpdb;
+function church_admin_edit_attendance($attendance_id){
+  global $wpdb,$days;
+  
   $wpdb->show_errors();
-if( !empty($_POST['add_date'])  && !empty($_POST['adults'])&& !empty($_POST['children']) &&is_numeric($_POST['adults']) && is_numeric($_POST['children'])&&check_admin_referer( 'church_admin_add_attendance'))
-{ 
-    
-    $sql='INSERT INTO '.CA_ATT_TBL.' (date,adults,children) VALUES("'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'","'.esc_sql($_POST['adults']).'","'.esc_sql($_POST['children']).'")';
-
-$wpdb->query($sql)  ;
-//work out rolling average from values!
+  $data=$wpdb->get_row('SELECT * FROM '.CA_ATT_TBL.' WHERE attendance_id="'.esc_sql($attendance_id).'"');
+  print_r($data);
+if(isset($_POST['edit_att']))
+{
+  $sql=array();
+     if(ctype_digit($_POST['adults'])){$sql['adults']=esc_sql($_POST['adults']);}else{$sql['adults']=0;}
+     if(ctype_digit($_POST['children'])){$sql['children']=esc_sql($_POST['children']);}else{$sql['children']=0;}
+     if(ctype_digit($_POST['service_id'])){$sql['service_id']=esc_sql($_POST['service_id']);}else{$sql['service_id']=1;}
+     $sql['date']=date('Y-m-d',strtotime($_POST['add_date']));
+     print_r($sql);
+     if(!$attendance_id){$attendance_id=$wpdb->get_var('SELECT attendance_id FROM '.CA_ATT_TBL.' WHERE service_id="'.$sql['service_id'].'" AND `date`="'.$sql['date'].'" AND adults="'.$sql['adults'].'" AND children="'.$sql['children'].'"');  }
+     if($attendance_id)
+     {//update
+	 $sql='UPDATE '.CA_ATT_TBL.' SET service_id="'.$sql['service_id'].'" , `date`="'.$sql['date'].'" , adults="'.$sql['adults'].'" , children="'.$sql['children'].'",service_id="'.$sql['service_id'].'"';
+     }//update
+     else
+     {//insert
+	  $sql='INSERT INTO '.CA_ATT_TBL.' (date,adults,children,service_id) VALUES("'.$sql['date'].'","'.$sql['adults'].'","'.$sql['children'].'","'.$sql['service_id'].'")';
+     }//insert
+     echo $sql;
+     $attendance_id=$wpdb->query($sql)  ;
+     //work out rolling average from values!
 
      $avesql='SELECT FORMAT(AVG(adults),0) AS rolling_adults,FORMAT(AVG(children),0) AS rolling_children FROM '.CA_ATT_TBL.' WHERE `date` >= DATE_SUB("'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'",INTERVAL 52 WEEK) AND `date`<= "'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'"';
-
     $averow=$wpdb->get_row($avesql);
 
-//update table with rolling average
-    $up='UPDATE '.CA_ATT_TBL.' SET rolling_adults="'.$averow->rolling_adults.'", rolling_children="'.$averow->rolling_children.'" WHERE `date`="'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'"';
+     //update table with rolling average
+         $up='UPDATE '.CA_ATT_TBL.' SET rolling_adults="'.$averow->rolling_adults.'", rolling_children="'.$averow->rolling_children.'" WHERE attendance_id="'.esc_sql($attendnace_id).'"';
+	 $wpdb->query($up);
 
-    $wpdb->query($up);
 
-
-echo '<div id="message" class="updated fade">';
-echo '<p><strong>Attendance added.</strong></p>';
-echo '</div>';
-church_admin_attendance_metrics();
+     echo '<div id="message" class="updated fade">';
+     echo '<p><strong>Attendance added.</strong></p>';
+     echo '</div>';
+     church_admin_attendance_list($sql['service_id']);
 
 }
 else
@@ -52,52 +127,78 @@ else
 echo'<div class="wrap church_admin"><h2>Attendance</h2>';
 echo '<form action="" method="post" name="add_attendance" id="add_attendance">';
 
+//service
+echo'<p><label>Service</label><select name="service_id">';
 
-
-if ( function_exists('wp_nonce_field') ) wp_nonce_field('church_admin_add_attendance');
+$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+$option='';
+foreach($services AS $service)
+{
+     
+    if(!empty($data->service_id)&& $data->service_id==$service->service_id)
+     {
+	  
+	  $first='<option value="'.$service->service_id.'" selected="selected">'.$service->service_name.' '.$service->service_time.'</option>';
+     
+     }
+     else
+     {
+	  $option.='<option value="'.$service->service_id.'" >'.$service->service_name.' on '.$days[$service->service_day].' '.$service->service_time.'</option>';
+     }
+}
+     echo $first.$option.'</select></p>';
 //datepicker js
 echo'<p><label >Date :</label><input type="text" id="add_date" name="add_date" ';
- echo ' value="'.date("d M yy").'" ';
+ if(empty($data->date)){echo ' value="'.date("d M Y").'" ';}else{echo ' value="'.mysql2date("d M Y",$data->date).'" ';}
 	echo'/></p>';
 	echo'<script type="text/javascript">
       jQuery(document).ready(function(){
          jQuery(\'#add_date\').datepicker({
-            dateFormat : "'." d MM yy".'", changeYear: true ,yearRange: "2011:'.date('Y',time()+60*60*24*365*10).'"
+            dateFormat : "'."d M yy".'", changeYear: true ,yearRange: "2011:'.date('Y',time()+60*60*24*365*10).'"
          });
       });
    </script>';
-echo'   <p><label >Adults</label><input type="text" name="adults" value=""/></li>
+echo'   <p><label >Adults</label><input type="text" name="adults"  ';
+if(!empty($data->adults)) echo' value="'.$data->adults.'" ';
+echo'/></p>
 
-<p><label >Children</label><input type="text" name="children" value=""/></p>
+<p><label >Children</label><input type="text" name="children" ';
+if(!empty($data->children)) echo' value="'.$data->children.'" ';
+echo'/><input type="hidden" name="edit_att" value="y"/></p>
 <p class="submit"><input type="submit" value="Add attendance for that date &raquo;" /></p></form></div>
 ';
-$attendance=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_ATT_TBL);
-if($attendance>0)
-{
-    echo'<h2>Attendance by Month</h2>';
-    church_admin_attendance_metrics();
-  //church_admin_show_rolling_average();
-  //church_admin_show_graph();
-}//end check for values before trying to produce graphs
+
 }//end of attendance form
 }//end funtion
 
-
-function church_admin_attendance_metrics()
+function church_admin_delete_attendance($attendance_id)
 {
      global $wpdb;
+     //find service_id
+     $service_id=$wpdb->get_var('SELECT service_id FROM '.CA_ATT_TBL.' WHERE attendance_id="'.esc_sql($attendance_id).'"');
+     $wpdb->query('DELETE FROM '.CA_ATT_TBL.' WHERE attendance_id="'.esc_sql($attendance_id).'"');
+     echo'<div class="updated fade"><p>Attendance record deleted</p></div>';
+     church_admin_attendance_list($service_id);
+}
+
+function church_admin_attendance_metrics($service_id=1)
+{
+     global $wpdb,$days;
      $wpdb->show_errors;
-     $first_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.CA_ATT_TBL.' ORDER BY `date` ASC LIMIT 1');
-     $last_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.CA_ATT_TBL.' ORDER BY `date` DESC LIMIT 1');
+     
+     if(empty($service_id))$service_id=1;
+     $service=$wpdb->get_var('SELECT CONCAT_WS(" ",service_name,service_time) AS service FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
+     $first_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" ORDER BY `date` ASC LIMIT 1');
+     $last_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" ORDER BY `date` DESC LIMIT 1');
     
      for($year=$first_year;$year<=$last_year;$year++){$thead.="<th>$year</th>";}
     
      $aggtable=$totaltable=$adulttable=$childtable='<table class="widefat"><thead><tr><th>Month</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
     
-	  $results=$wpdb->get_results('SELECT ROUND( AVG( adults ) ) AS adults, ROUND( AVG( children ) ) AS children, YEAR( `date` ) AS year, MONTH( `date` ) AS month FROM '.CA_ATT_TBL.' GROUP BY YEAR( `date` ) , MONTH( `date` )');
+	  $results=$wpdb->get_results('SELECT ROUND( AVG( adults ) ) AS adults, ROUND( AVG( children ) ) AS children, YEAR( `date` ) AS year, MONTH( `date` ) AS month FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" GROUP BY YEAR( `date` ) , MONTH( `date` )');
 	  
-	 
-	  foreach($results AS $row)
+if($results) 
+{	  foreach($results AS $row)
 	  {
 	       
 	       $adults[$row->month][$row->year]=$row->adults;
@@ -124,10 +225,34 @@ function church_admin_attendance_metrics()
 	  $adulttable.='</tr>';
 	  $childtable.='</tr>';
      }
+     $aggtable.='</tbody></table>';
+	  $totaltable.='</tbody></table>';
+	  $adulttable.='</tbody></table>';
+	  $childtable.='</tbody></table>';
+}
+else
+{
+     $totaltable=$aggtable=$childtable=$adulttable='<p>No attendance recorded yet</p>';
+}
+
+     echo'<div class="church_admin wrap"><h2>Attendance Figures</h2>';
+     echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">Add attendance</a>';
+     $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+     
+     echo'<table>';
+     foreach($services AS $service)
+     {
+	  $sql='SELECT * FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service->service_id).'"';
 	  
-     echo '<h2>Attendance Adults,Children (Total)</h2>'.$aggtable.'<tbody></table>';
-     echo '<h2>Total Attendance</h2>'.$totaltable.'<tbody></table>';
-     echo '<h2>Adults Attendance</h2>'.$adulttable.'<tbody></table>';
-     echo '<h2>Children Attendance</h2>'.$childtable.'<tbody></table>';
+	  $check=$wpdb->get_row($sql);
+	  if($service->service_id==$service_id)$service_details=$service->service_name.' on '.$days[$service->service_day].' '.$service->service_time;
+	  if($check) echo'<tr><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_metrics&amp;service_id='.$service->service_id.'">View attendance table for '.$service->service_name.' '.$service->service_time.'</a></td><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">Edit week by week attendance for '.$service->service_name.' '.$service->service_time.'</a></td></tr>';
+     }
+     echo'</table>';
+     echo '<h2>Attendance Adults,Children (Total) '.$service_details.'</h2>'.$aggtable;
+     echo '<h2>Total Attendance for '.$service_details.'</h2>'.$totaltable;
+     echo '<h2>Adults Attendance for '.$service_details.'</h2>'.$adulttable;
+     echo '<h2>Children Attendance for '.$service_details.'</h2>'.$childtable;
+     echo'</div>';
 }
 ?>

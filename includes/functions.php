@@ -1,11 +1,35 @@
 <?php
-
-function church_admin_update_role($role_id,$people_id)
+function church_admin_update_order()
+{
+    global $wpdb;
+    if(isset($_POST['order']))
+    {
+        $order=explode(",",$_POST['order']);
+        foreach($order AS $member_type_order=>$member_type_id)
+        {
+            $member_type_order++;
+            $sql='UPDATE '.CA_MTY_TBL.' SET member_type_order="'.esc_sql($member_type_order).'" WHERE member_type_id="'.esc_sql($member_type_id).'"';
+            $wpdb->query($sql);
+        }
+    }
+}
+function church_admin_member_type_array()
+{
+    global $wpdb;
+    $member_type=array();
+    $results=$wpdb->get_results('SELECT * FROM '.CA_MTY_TBL.' ORDER BY member_type_order ASC');
+    foreach($results AS $row)
+    {
+        $member_type[$row->member_type_id]=$row->member_type;
+    }
+    return($member_type);
+}
+function church_admin_update_department($department_id,$people_id)
 {
   global $wpdb;
   $wpdb->show_errors;
-  $id=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND role_id="'.esc_sql($role_id).'"');
-  if(!$id){$wpdb->query('INSERT INTO '.CA_MET_TBL.'(people_id,role_id) VALUES("'.esc_sql($people_id).'","'.esc_sql($role_id).'")');}
+  $id=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND department_id="'.esc_sql($department_id).'"');
+  if(!$id){$wpdb->query('INSERT INTO '.CA_MET_TBL.'(people_id,department_id) VALUES("'.esc_sql($people_id).'","'.esc_sql($department_id).'")');}
 }
 function strip_only($str, $tags) {
     //this functions strips some tages, but not all

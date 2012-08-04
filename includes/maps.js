@@ -4,6 +4,7 @@ jQuery(document).ready(function($){
   var map, marker;
   var markers = [];
   var inputAddress = $('#address_line1').val() + ', ' + $('#address_line2').val()+ ', ' +  $('#town').val()  + ', '+  $('#county').val()  + ', ' + $('#postcode').val() ;
+  console.log(inputAddress);
   var inputLat = '#lat';
   var inputLng = '#lng';
   var finalise ='#finalise';
@@ -79,6 +80,7 @@ jQuery(document).ready(function($){
   {
     geocoder.geocode({'address' : address}, function(result, status){
       // this returns a latlng
+      console.log(status);
       var location = result[0].geometry.location;
       map.setCenter(location);
       

@@ -21,16 +21,39 @@ function church_admin_install()
    
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_MET_TBL.'"') != CA_MET_TBL)
     {
-        $sql = 'CREATE TABLE '.CA_MET_TBL.' ( people_id INT(11),role_id INT(11), meta_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (meta_id));';
+        $sql = 'CREATE TABLE '.CA_MET_TBL.' ( people_id INT(11),department_id INT(11), meta_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (meta_id));';
         $wpdb->query($sql);
     }
     
-    
+  //sort out people types  
     $people_type=array('1'=>'Adult','2'=>'Child');
-    $member_type=array('0'=>'Visitor','1'=>'Member',2=>'Infrequent');
+   
     $church_admin_people_settings=get_option('church_admin_people_settings');
-    if(empty($church_admin_people_settings))update_option('church_admin_people_settings',array('people_type'=>$people_type,'member_type'=>$member_type));
-
+    if(empty($church_admin_people_settings['member_type']))$church_admin_people_settings['member_type']=array(1=>'Visitor',2=>'Member');
+    if(!empty($church_admin_people_settings['member_type']))
+    {
+	//install member type table
+	    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_MTY_TBL.'"') != CA_MTY_TBL)
+	    {
+		$sql='CREATE TABLE '.CA_MTY_TBL.' (`member_type_order` INT( 11 ) NOT NULL ,`member_type` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,`member_type_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY)  CHARACTER SET utf8 COLLATE utf8_general_ci;';
+		$wpdb->query($sql);
+		$order=1;
+		foreach($church_admin_people_settings['member_type'] AS $id=>$type)
+		{
+		    $wpdb->query('INSERT INTO '.CA_MTY_TBL .' (member_type_order,member_type,member_type_id) VALUES("'.$order.'","'.esc_sql($type).'","'.esc_sql($id).'")');
+		    $order++;
+		}
+	    }
+    }//end member type already in people_settings option
+    
+    if(!empty($church_admin_people_settings['people_type']))
+    {
+	update_option('church_admin_people_type',$ptype['people_type']);
+    
+    }
+    
+    
+    delete_option('church_admin_people_settings');
 
 //migrate old tables
     $table_name = $wpdb->prefix."church_admin_directory";
@@ -55,7 +78,7 @@ function church_admin_install()
 		{
 		    if(!empty($adult))
 		    {
-		        $sql='INSERT INTO '.$wpdb->prefix.'church_admin_people (first_name,last_name,member_type_id,people_type_id,sex,email,mobile,smallgroup_id,household_id,member_data) VALUES("'.esc_sql(trim($adult)).'","'.esc_sql($row->last_name).'","1","1","1","'.esc_sql($row->email).'","'.$row->cellphone.'","'.esc_sql($row->small_group).'","'.$household_id.'","'.$member_data.'")';
+		        $sql='INSERT INTO '.CA_PEO_TBL.' (first_name,last_name,member_type_id,people_type_id,sex,email,mobile,smallgroup_id,household_id,member_data) VALUES("'.esc_sql(trim($adult)).'","'.esc_sql($row->last_name).'","1","1","1","'.esc_sql($row->email).'","'.$row->cellphone.'","'.esc_sql($row->small_group).'","'.$household_id.'","'.$member_data.'")';
 		   
 		        $wpdb->query($sql);
 			//small group leader array  while at it!
@@ -223,7 +246,7 @@ $wpdb->query ($sql);
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
     {
 
-	$sql="CREATE TABLE   IF NOT EXISTS  ". $table_name ."  (date DATE NOT NULL ,adults INT(11) NOT NULL,children INT(11)NOT NULL,rolling_adults INT(11) NOT NULL,rolling_children INT(11)NOT NULL,attendance_id INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY );";
+	$sql="CREATE TABLE   IF NOT EXISTS  ". $table_name ."  (date DATE NOT NULL ,adults INT(11) NOT NULL,children INT(11)NOT NULL,rolling_adults INT(11) NOT NULL,rolling_children INT(11)NOT NULL,service_id INT(11), attendance_id INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY );";
 	$wpdb->query ($sql);
     }
     
@@ -259,6 +282,16 @@ $wpdb->query ($sql);
         $sql="CREATE TABLE IF NOT EXISTS ". $table_name ."  (category varchar(255)  NOT NULL DEFAULT '',  fgcolor varchar(7)  NOT NULL DEFAULT '', bgcolor varchar(7)  NOT NULL DEFAULT '', cat_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`cat_id`))" ;
         $wpdb->query ($sql);
         $wpdb->query("INSERT INTO $table_name (category,bgcolor,cat_id) VALUES('Unused','#FFFFFF','0')");
+    }
+    //follow up funnels
+    if($wpdb->get_var('SHOW TABLES LIKE "'.CA_FUN_TBL.'"')!=CA_FUN_TBL)
+    {
+	
+	if(!defined( 'DB_CHARSET'))define( 'DB_COLLATE','utf8');
+	$sql='CREATE TABLE '.CA_FUN_TBL.' (action TEXT CHARACTER SET '.DB_CHARSET.' ,
+member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), people_type_id INT(11), funnel_id INT( 11 ) AUTO_INCREMENT PRIMARY KEY
+) ENGINE = MYISAM CHARACTER SET '.DB_CHARSET.';';
+	$wpdb->query($sql);
     }
     
  //services
@@ -307,7 +340,26 @@ $wpdb->query ($sql);
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
-
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "last_updated"')!='last_updated')
+{
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD last_updated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP';
+    $wpdb->query($sql);
+}
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "roles"')=='roles')
+{
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' CHANGE roles departments TEXT';
+    $wpdb->query($sql);
+}
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "role_id"')=='role_id')
+{
+    $sql='ALTER TABLE  '.CA_MET_TBL.' CHANGE role_id department_id INT(11)';
+    $wpdb->query($sql);
+}
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_ATT_TBL.' LIKE "service_id"')!='service_id')
+{
+    $sql='ALTER TABLE  '.CA_ATT_TBL.' ADD service_id INT(11) DEFAULT "1"';
+    $wpdb->query($sql);
+}
 //update pdf cache
 if(!get_option('church_admin_calendar_width'))update_option('church_admin_calendar_width','630');
 if(!get_option('church_admin_pdf_size'))update_option('church_admin_pdf_size','A4');
@@ -322,8 +374,12 @@ if(get_option('church_admin_cron')=='wp-cron')
 }
 
 //roles
-$roles=array('1'=>'Small Group Leader','2'=>'Elder');
-update_option('church_admin_roles',$roles);
+$departments=get_option('church_admin_departments');
+if(empty($departments))
+{
+    $departments=array('1'=>'Small Group Leader','2'=>'Elder');
+    update_option('church_admin_roles',$departments);
+}
 
 //update version
 update_option('church_admin_version',$church_admin_version);
