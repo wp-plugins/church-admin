@@ -34,13 +34,14 @@ function church_admin_frontend_directory($member_type_id=1,$map=1)
 	  }
 	  //Query for limit paging
 	  $limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
-	  }
+	  
 	  
 	  // Pagination
 	$out.= '<div class="tablenav"><div class="tablenav-pages">';
         $out.= $p->getOutput();  
         $out.= '</div></div>';
       //Pagination
+      }
       //grab household_id in last name order
       $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'"  GROUP BY household_id ORDER BY last_name ASC '.$limit;
       $results=$wpdb->get_results($sql);

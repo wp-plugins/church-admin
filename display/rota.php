@@ -11,7 +11,7 @@ function church_admin_front_end_rota()
     elseif(!($_REQUEST['service_id']))
     {//choose service
 	
-	$out='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_rota_list" method="POST">';
+	$out='<form action="" method="POST">';
 	$out.='<p><label>Which Service?</label><select name="service_id">';
 	foreach($services AS $service)
 	{
@@ -22,11 +22,11 @@ function church_admin_front_end_rota()
     }//choose service
     if($service_id)
     {
-	$sql='SELECT * FROM '.$wpdb->prefix.'church_admin_rotas  WHERE rota_date>"'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" LIMIT 1';
+	$sql='SELECT * FROM '.CA_ROT_TBL.'  WHERE rota_date>"'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" LIMIT 1';
 	$row=$wpdb->get_row($sql);
 	$out='<p><a href="'.home_url().'/?download=rota&amp;service_id='.$service_id.'">PDF Version of the rota</a></p>';
 	$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	$out.='<h2>Who is doing what at'.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2><table>';
+	$out.='<h2>Who is doing what at '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2><table>';
 	$rota_jobs =unserialize($row->rota_jobs);
 	if(!empty($rota_jobs))
 	{
@@ -37,7 +37,7 @@ function church_admin_front_end_rota()
 	}
 	else
 	{
-	    $out.='<tr><td colspan="2">No one is doing anything on '.mysql2date('d-m-Y', $date, $translate = true).'</td></tr>';    
+	    $out.='<tr><td colspan="2">No one is doing anything yet</td></tr>';    
 	}
 	$out.='</table>';
 	

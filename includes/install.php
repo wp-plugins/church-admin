@@ -26,7 +26,7 @@ function church_admin_install()
     }
     
   //sort out people types  
-    $people_type=array('1'=>'Adult','2'=>'Child');
+    
    
     $church_admin_people_settings=get_option('church_admin_people_settings');
     if(empty($church_admin_people_settings['member_type']))$church_admin_people_settings['member_type']=array(1=>'Visitor',2=>'Member');
@@ -45,12 +45,10 @@ function church_admin_install()
 		}
 	    }
     }//end member type already in people_settings option
-    
-    if(!empty($church_admin_people_settings['people_type']))
-    {
-	update_option('church_admin_people_type',$ptype['people_type']);
-    
-    }
+    $people_type=get_option('church_admin_people_type');
+    if(empty($people_type))$people_type=array('1'=>'Adult','2'=>'Child');
+    update_option('church_admin_people_type',$people_type);
+   
     
     
     delete_option('church_admin_people_settings');
