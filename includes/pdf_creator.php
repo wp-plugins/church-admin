@@ -144,7 +144,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY hous
 	}
 	$addresses['address'.$counter]['name']=$last_name.' '.implode(" & ", $adults);
 	$addresses['address'.$counter]['kids']=implode(" , ", $children);
-	$addresses['address'.$counter]['address']=implode(", ",array_filter(unserialize($address->address)));
+	$addresses['address'.$counter]['address']=implode(", ",array_filter(maybe_unserialize($address->address)));
 	$addresses['address'.$counter]['email']=implode("\n",array_filter($emails));
 	$addresses['address'.$counter]['mobile']=implode("\n",array_filter($mobiles));
 	$addresses['address'.$counter]['phone']=$address->phone;
@@ -195,59 +195,57 @@ $pdf->Output();
 //end of cache address list
 }
 
-function church_admin_label_pdf($member_type_id)
+function church_admin_label_pdf($member_type_id=1)
 {
 global $wpdb;
 $wpdb->show_errors();
 //grab addresses
 //get alphabetic order
 $memb=explode(',',esc_sql($member_type_id));
-foreach($memb AS $key=>$value){$membsql[]='a.member_type_id='.$value;}
-if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+foreach($memb AS $key=>$value){$membsql[]='member_type_id='.$value;}
+if(!empty($membsql)) {$memb_sql=implode(' || ',$membsql).' ';}else{$memb_sql='';}
 $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.' GROUP BY last_name ORDER BY last_name';
 $results = $wpdb->get_results($sql);
 if($results)
 {
+     require_once('PDF_Label.php');
+    $pdflabel = new PDF_Label(get_option('church_admin_label'), 'mm', 1, 2);
+    $pdflabel->Open();
+    $pdflabel->AddPage();
     $counter=1;
     $addresses=array();
     foreach ($results as $row) 
     {
-	$address_row=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($row->household_id).'"');
-	$address=array_filter(unserialize($address_row->address));
-	$people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
-	$adults=array();
-	foreach($people_results AS $people)
-	{
-	  if($people->people_type_id=='1')
-	  {
-	    $last_name=$people->last_name;
-	    $adults[]=$people->first_name;
-	  
-	  }
-	}
-	$addresses['address'.$counter]=array();
-	$addresses['address'.$counter]['name']=html_entity_decode(implode(" & ",$adults))." ".$last_name;
 	
-	$addresses['label'.$counter]=$address->address_line1;
-	$addresses['address'.$counter]['address'].=stripslashes(implode(",\n",$address));}
-	$counter++;
+	$add='';
+	$address_row=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($row->household_id).'"');
+	if($address_row){$address=array_filter(unserialize($address_row->address));}else{$address=NULL;}
+	if(!empty($address))
+	{
+	    $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
+	    $adults=array();
+	    foreach($people_results AS $people)
+	    {
+	      if($people->people_type_id=='1')
+	      {
+	        $last_name=$people->last_name;
+	        $adults[]=$people->first_name;
+	    }
+	    }	
+	    
+	    $add=html_entity_decode(implode(" & ",$adults))." ".$last_name."\n".stripslashes(implode(",\n",$address));
+	    
+	    $pdflabel->Add_Label($add);
+	}
     }
     //start of cache mailing labels!
-    require_once('PDF_Label.php');
-    $pdflabel = new PDF_Label(get_option('church_admin_label'), 'mm', 1, 2);
-    $pdflabel->Open();
-    $pdflabel->AddPage();
-
-for($z=0;$z<=$counter-1;$z++)
-{
-    $add=$addresses['address'.$z]['name']."\n".$addresses['address'.$z]['address'];
-    $pdflabel->Add_Label($add);
-}
+   
+   
 $pdflabel->Output();
 
 //end of mailing labels
 }
-
+}
 
 
 function ca_vcard($id)
