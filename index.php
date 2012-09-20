@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.54
+Version: 0.4.55
 Author: Andy Moyle
 
 
@@ -101,7 +101,7 @@ Version History
 0.4.2 2012-07-06 Added google map showing small group members [church_admin_map member_type_id=#]
 0.4.3 2012-07-08 Redundant file with possible Security Vulnerability removed.
 0.4.5 2012-08-04 Changed departments, fixed some bugs, orderable membership types.
-0.4.54 2012-09-20 Various Bug fixes change admin  home screen
+0.4.55 2012-09-20 Various Bug fixes change admin  home screen
 */
 add_action('activated_plugin','save_error');
 function save_error(){
@@ -109,7 +109,7 @@ function save_error(){
 }
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.54';
+$church_admin_version = '0.4.55';
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -477,7 +477,7 @@ function church_admin_shortcode($atts, $content = null)
         break;
 	case 'small-groups-list':
             require(CHURCH_ADMIN_DISPLAY_PATH."small-group-list.php");
-            $out.= church_admin_small_group_list($member_type_id);
+            $out.= church_admin_small_group_list();
         break;
 	case 'small-groups':
             $out.='<p><a href="'.home_url().'/?download=smallgroup&amp;member_type='.$member_type_id.'">PDF version</a></p>';
