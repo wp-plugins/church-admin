@@ -81,7 +81,7 @@ function church_admin_edit_small_group($id)
     else
     {
 	$data=$wpdb->get_row('SELECT * FROM '.CA_SMG_TBL.' WHERE id="'.esc_sql($id).'"');
-	$leaders=$wpdb->get_results('SELECT a.people_id, CONCAT_WS(" ", b.first_name,b.last_name) AS leader  FROM '.CA_MET_TBL.' a, '.CA_PEO_TBL.' b WHERE a.role_id=1 AND a.people_id=b.people_id');
+	$leaders=$wpdb->get_results('SELECT a.people_id, CONCAT_WS(" ", b.first_name,b.last_name) AS leader  FROM '.CA_MET_TBL.' a, '.CA_PEO_TBL.' b WHERE a.department_id=1 AND a.people_id=b.people_id');
 	if($leaders)
 	{//leaders available
 	    echo'<div class="wrap church_admin"><h2>Add/Edit Small Group</h2><form action="" method="post">';

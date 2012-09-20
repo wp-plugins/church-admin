@@ -12,6 +12,7 @@ function church_admin_widget_control()
         $options['title']=strip_tags(stripslashes($_POST['title']));
         if($_POST['postit']=='1') {$options['postit']='1';}else{$options['postit']='0';}
         if(ctype_digit($_POST['events'])){$options['events']=$_POST['events'];}else{$options['events']='5';}
+        if(ctype_digit($_POST['cat_id'])){$options['cat_id']=$_POST['cat_id'];}else{$options['cat_id']='0';}
         update_option('church_admin_widget',$options);
     }
     church_admin_widget_control_form();
@@ -19,11 +20,27 @@ function church_admin_widget_control()
 
 function church_admin_widget_control_form()
 {
+    global $wpdb;
+    $wpdb->show_errors;
+    
     $option=get_option('church_admin_widget');
     echo '<p><label for="title">Title:</label><input type="text" name="title" value="'.$option['title'].'" /></p>';
     echo '<p><label for="postit">Postit Note style?:</label><input type="checkbox" name="postit" value="1"';
     if($option['postit']==1) echo ' checked="checked" ';
-    echo '"/></p>';
+    echo '/></p>';
+    echo'<p><label for="category">Select a Category</label>';
+    $sql='SELECT * FROM '.CA_CAT_TBL;
+    
+    $results=$wpdb->get_results($sql );
+    echo'<select name="cat_id">';
+    if($option['cat_id'])
+    {
+        $opt=$wpdb->get_var('SELECT category FROM '.CA_CAT_TBL. 'WHERE cat_id="'.esc_sql($option['cat_id']).'"');
+        '<option value="'.$option['cat_id'].'" selected="selected">'.$opt.'</option>';
+    }
+    echo'<option value="0">All events</option>';
+    foreach($results AS $row)echo'<option value="'.$row->cat_id.'">'.$row->category.'</option>';
+    echo'</select></p>';
     echo '<p><label for="howmany">How many events to show?</label><select name="events">';
     if(isset($option['events'])) echo '<option value="'.$option['events'].'">'.$option['events'].'</option>';
     for($x=1;$x<=10;$x++){echo '<option value="'.$x.'">'.$x.'</option>';}
@@ -47,7 +64,8 @@ $sqlnext=date("Y-m-d",strtotime($sqlnow." + 1month"));
 $numdaysinmonth = cal_days_in_month( CAL_GREGORIAN, $thismonth, $thisyear );
 // create a calendar object
 $jd = cal_to_jd( CAL_GREGORIAN, $thismonth,date( 1 ), $thisyear );
-
+$options=get_option('church_admin_widget');
+if(isset($options['cat_id']) && $options['cat_id']!=0){$cat=CA_CAT_TBL.'.cat_id="'.$options['cat_id'].'" AND ';} else {$cat='';}
 //prepare output
 if($postit)$out.='<div class="Postit">';
 $out.='<ul>';
@@ -61,7 +79,7 @@ for($x=0;$x<=$limit;$x++)
     //query
 $sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.start_date, TIME_FORMAT(".$wpdb->prefix."church_admin_calendar_date.start_time,'%h:%i%p')AS start_time, ".$wpdb->prefix."church_admin_calendar_date.end_time, ".$wpdb->prefix."church_admin_calendar_event.title, ".$wpdb->prefix."church_admin_calendar_event.description,".$wpdb->prefix."church_admin_calendar_category.category
 FROM ".$wpdb->prefix."church_admin_calendar_date, ".$wpdb->prefix."church_admin_calendar_event,".$wpdb->prefix."church_admin_calendar_category
-WHERE ".$wpdb->prefix."church_admin_calendar_date.start_date='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.event_id = ".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_event.cat_id=".$wpdb->prefix."church_admin_calendar_category.cat_id
+WHERE ".$cat."  ".$wpdb->prefix."church_admin_calendar_date.start_date='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.event_id = ".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_event.cat_id=".$wpdb->prefix."church_admin_calendar_category.cat_id
 ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date,".$wpdb->prefix."church_admin_calendar_date.start_time
 LIMIT 0 ,".$limit;
 

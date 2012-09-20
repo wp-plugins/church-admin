@@ -12,6 +12,7 @@ function church_admin_settings()
       echo'<div class="wrap church_admin">';
    if(!empty($_POST['save_setting']))
    {
+      print_r($_POST);
       if(isset($_POST['church_admin_page_limit']))update_option('church_admin_page_limit',$_POST['church_admin_page_limit']);
       if(isset($_POST['church_admin_facebook']))update_option('church_admin_facebook',$_POST['church_admin_facebook']);
       if(isset($_POST['church_admin_twitter']))update_option('church_admin_twitter',$_POST['church_admin_twitter']);
@@ -72,7 +73,7 @@ function church_admin_settings()
 	
 	 foreach($levels AS $key=>$value)
 	 {
-	    if(array_key_exists($_POST[$key],$available_levels))$levels[$key]=$value;
+	    if(array_key_exists($_POST['level'.$key],$available_levels))$levels[$key]=$_POST['level'.$key];
 	    
 	 }
 	 update_option('church_admin_levels',$levels);

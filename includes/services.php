@@ -3,7 +3,7 @@ function church_admin_service_list()
 {
     global $wpdb,$days;
     echo'<div class="wrap church_admin"><h2>Services List</h2>';
-    echo'<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_service','edit_service').'">Add a service</a>';
+    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_service','edit_service').'">Add a service</a></p>';
     echo'<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Service Name</th><th>Day</th><th>Time</th><th>Venue</th><th>Address</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Service Name</th><th>Day</th><th>Time</th><th>Venue</th><th>Address</th></tr></tfoot><tbody>';
     
     $sql='SELECT * FROM '.CA_SER_TBL;
@@ -69,7 +69,7 @@ function church_admin_edit_service($id)
        if(!empty($data->venue))echo' value="'.$data->venue.'" ';
        echo'/></p>';
        require_once(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
-       church_admin_address_form($data,$error=NULL);
+       echo church_admin_address_form($data,$error=NULL);
        echo'<p class="submit"><input type="hidden" name="service" value="yes"/><input type="submit" value="Save Service&raquo;" /></p></form></div>';
     }
 }

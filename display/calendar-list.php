@@ -32,7 +32,7 @@ $out.='<tr><td width="150">Date</td><td width="150">Time</td><td width="400" >Ev
 foreach($result AS $row)
 {
     
-    $out.="<tr><td>".mysql2date(get_option('date_format'),$row->start_date)."</td><td>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."</td><td><strong>".stripslashes($row->title)."</strong><br> ".stripslashes($row->description)."</td></tr>";
+    $out.="<tr><td>".mysql2date(get_option('date_format'),$row->start_date)."</td><td>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."</td><td><strong>".esc_html(stripslashes($row->title))."</strong><br> ".esc_html(stripslashes($row->description))."</td></tr>";
 }
 $out.="</table>";
 	

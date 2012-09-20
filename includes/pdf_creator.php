@@ -144,7 +144,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY hous
 	}
 	$addresses['address'.$counter]['name']=$last_name.' '.implode(" & ", $adults);
 	$addresses['address'.$counter]['kids']=implode(" , ", $children);
-	$addresses['address'.$counter]['address']=implode(", ",array_filter(maybe_unserialize($address->address)));
+	$addresses['address'.$counter]['address']=implode(", ",array_filter(unserialize($address->address)));
 	$addresses['address'.$counter]['email']=implode("\n",array_filter($emails));
 	$addresses['address'.$counter]['mobile']=implode("\n",array_filter($mobiles));
 	$addresses['address'.$counter]['phone']=$address->phone;

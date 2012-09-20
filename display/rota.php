@@ -15,7 +15,7 @@ function church_admin_front_end_rota()
 	$out.='<p><label>Which Service?</label><select name="service_id">';
 	foreach($services AS $service)
 	{
-	    $out.='<option value="'.$service->service_id.'">'.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</option>';
+	    $out.='<option value="'.$service->service_id.'">'.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</option>';
 	}
 	$out.='</select></p>';
 	$out.='<p class="submit"><input type="submit" name="choose_service" value="Choose service &raquo;" /></p></form></div>';
@@ -26,13 +26,13 @@ function church_admin_front_end_rota()
 	$row=$wpdb->get_row($sql);
 	$out='<p><a href="'.home_url().'/?download=rota&amp;service_id='.$service_id.'">PDF Version of the rota</a></p>';
 	$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	$out.='<h2>Who is doing what at '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2><table>';
+	$out.='<h2>Who is doing what at '.esc_html($service->service_name).' on '.esc_html($days[$service->service_day]).' at '.esc_html($service->service_time).' '.esc_html($service->venue).'</h2><table>';
 	$rota_jobs =unserialize($row->rota_jobs);
 	if(!empty($rota_jobs))
 	{
 	    foreach($rota_jobs AS $job=>$who)
 	    {
-                if(!empty($who))$out.='<tr><td>'.$job.'</td><td>'.$who.'</td></tr>';
+                if(!empty($who))$out.='<tr><td>'.esc_html($job).'</td><td>'.esc_html($who).'</td></tr>';
 	    }
 	}
 	else

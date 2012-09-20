@@ -10,7 +10,7 @@ function load(lat,lng) {
       
 
       // Change this depending on the name of your PHP file
-      downloadUrl('http://localhost/wordpress/?download=address-xml&member_type_id=1', function(data) {
+      downloadUrl(xml_url, function(data) {
         var xml = data.responseXML;
         var markers = xml.documentElement.getElementsByTagName("marker");
         var smallgroup=new Array();
