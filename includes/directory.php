@@ -544,7 +544,7 @@ function church_admin_search($search)
 	    }
 	    $adult=implode(" & ",$adults);
 	    if(!empty($children)){$kids=' ('.implode(", ",$children).')';}else{$kids='';}
-	    $add=esc_html(implode(', ',maybe_unserialize($add_row->address)));
+	    if(!empty($add_row->address))$add=esc_html(implode(', ',maybe_unserialize($add_row->address)));
 	    
 	    if(!empty($add)&& $add!=', , , , '){$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">'.esc_html($add).'</a>';}else{$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">Add Address</a>';}
 	    
