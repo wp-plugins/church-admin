@@ -1,7 +1,7 @@
 <?php
 function church_admin_front_admin()
 {
-    global $people_type,$member_type,$wpdb;
+    global $people_type,$member_type,$wpdb,$days;
     echo'<div class="wrap church_admin"><h2>Church Admin plugin</h2>';
     //top message box
     echo '<!-- end top message box--><div class="updated fade"><p><a id="showhidetrigger" href="#" style="float:right;">show/hide plugin information</a>This is version '.get_option("church_admin_version").' of the <strong>Church Admin</strong> plugin by Andy Moyle.</p>';
@@ -147,7 +147,13 @@ function church_admin_front_admin()
     //End Services
     
     echo'<div class="clear"></div>';
-
-    
+  //attendance
+  echo'<div class="church_admin_main_menu"><h2>Attendance</h2>';
+  echo'<p><a href="admin.php?page=church_admin/index.php&action=church_admin_attendance_metrics">Church Attendance Data</a></p>';
+  $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+  foreach($services AS $service)  echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&service_id='.$service->service_id.'">Attendance List for '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.'</a></p>';
+   echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">Add Attendance</a></p>';
+   echo'</div>';
+   echo'<div class="clear"></div>';
 }
 ?>

@@ -20,17 +20,21 @@ function church_admin_address_list($member_type_id=1)
     
     
     //grab address list in order
-    $items = $wpdb->get_var('SELECT COUNT(*) FROM '.CA_PEO_TBL.' WHERE member_type_id="'.$member_type_id.'" GROUP BY household_id');
+    $sql='SELECT DISTINCT household_id FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'" ';
+   
+    $result = $wpdb->get_var($sql);
+    $items=$wpdb->num_rows;
     
     
     // number of total rows in the database
     require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
     if($items > 0)
     {
+	
 	$p = new pagination;
 	$p->items($items);
 	$p->limit(get_option('church_admin_page_limit')); // Limit entries per page
-	$p->target("admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;action=member_type_id=".$member_type_id);
+	$p->target("admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id=".$member_type_id);
 	if(!isset($p->paging))$p->paging=1; 
 	if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
 	$p->currentPage($_GET[$p->paging]); // Gets and validates the current page
@@ -556,7 +560,7 @@ function church_admin_search($search)
     else
     {
 	echo'<div class="updated fade"><p>Search '.$s.' not found</p></div>';
-	church_admin_directory();
+	church_admin_address_list('1');
     }
 }
 

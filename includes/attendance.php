@@ -86,40 +86,42 @@ function church_admin_edit_attendance($attendance_id){
   
   $wpdb->show_errors();
   $data=$wpdb->get_row('SELECT * FROM '.CA_ATT_TBL.' WHERE attendance_id="'.esc_sql($attendance_id).'"');
-  print_r($data);
+  //print_r($data);
 if(isset($_POST['edit_att']))
 {
   $sql=array();
-     if(ctype_digit($_POST['adults'])){$sql['adults']=esc_sql($_POST['adults']);}else{$sql['adults']=0;}
-     if(ctype_digit($_POST['children'])){$sql['children']=esc_sql($_POST['children']);}else{$sql['children']=0;}
-     if(ctype_digit($_POST['service_id'])){$sql['service_id']=esc_sql($_POST['service_id']);}else{$sql['service_id']=1;}
-     $sql['date']=date('Y-m-d',strtotime($_POST['add_date']));
-     print_r($sql);
-     if(!$attendance_id){$attendance_id=$wpdb->get_var('SELECT attendance_id FROM '.CA_ATT_TBL.' WHERE service_id="'.$sql['service_id'].'" AND `date`="'.$sql['date'].'" AND adults="'.$sql['adults'].'" AND children="'.$sql['children'].'"');  }
+     if(ctype_digit($_POST['adults'])){$sqlsafe['adults']=esc_sql($_POST['adults']);}else{$sqlsafe['adults']=0;}
+     if(ctype_digit($_POST['children'])){$sqlsafe['children']=esc_sql($_POST['children']);}else{$sqlsafe['children']=0;}
+     if(ctype_digit($_POST['service_id'])){$sqlsafe['service_id']=esc_sql($_POST['service_id']);}else{$sqlsafe['service_id']=1;}
+     $sqlsafe['date']=date('Y-m-d',strtotime($_POST['add_date']));
+     //print_r($sql);
+     if(!$attendance_id){$attendance_id=$wpdb->get_var('SELECT attendance_id FROM '.CA_ATT_TBL.' WHERE service_id="'.$sqlsafe['service_id'].'" AND `date`="'.$sqlsafe['date'].'" AND adults="'.$sqlsafe['adults'].'" AND children="'.$sqlsafe['children'].'"');  }
      if($attendance_id)
      {//update
-	 $sql='UPDATE '.CA_ATT_TBL.' SET service_id="'.$sql['service_id'].'" , `date`="'.$sql['date'].'" , adults="'.$sql['adults'].'" , children="'.$sql['children'].'",service_id="'.$sql['service_id'].'"';
+	 $sql='UPDATE '.CA_ATT_TBL.' SET  `date`="'.$sqlsafe['date'].'" , adults="'.$sqlsafe['adults'].'" , children="'.$sqlsafe['children'].'",service_id="'.$sqlsafe['service_id'].'" WHERE attendance_id="'.esc_sql($attendance_id).'"';
      }//update
      else
      {//insert
-	  $sql='INSERT INTO '.CA_ATT_TBL.' (date,adults,children,service_id) VALUES("'.$sql['date'].'","'.$sql['adults'].'","'.$sql['children'].'","'.$sql['service_id'].'")';
+	  $sql='INSERT INTO '.CA_ATT_TBL.' (date,adults,children,service_id) VALUES("'.$sqlsafe['date'].'","'.$sqlsafe['adults'].'","'.$sqlsafe['children'].'","'.$sqlsafe['service_id'].'")';
      }//insert
-     echo $sql;
-     $attendance_id=$wpdb->query($sql)  ;
+     
+     $wpdb->query($sql)  ;
+     $attendance_id=$wpdb->insert_id;
      //work out rolling average from values!
 
      $avesql='SELECT FORMAT(AVG(adults),0) AS rolling_adults,FORMAT(AVG(children),0) AS rolling_children FROM '.CA_ATT_TBL.' WHERE `date` >= DATE_SUB("'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'",INTERVAL 52 WEEK) AND `date`<= "'.esc_sql(date('Y-m-d',strtotime($_POST['add_date']))).'"';
     $averow=$wpdb->get_row($avesql);
 
      //update table with rolling average
-         $up='UPDATE '.CA_ATT_TBL.' SET rolling_adults="'.$averow->rolling_adults.'", rolling_children="'.$averow->rolling_children.'" WHERE attendance_id="'.esc_sql($attendnace_id).'"';
+         $up='UPDATE '.CA_ATT_TBL.' SET rolling_adults="'.$averow->rolling_adults.'", rolling_children="'.$averow->rolling_children.'" WHERE attendance_id="'.esc_sql($attendance_id).'"';
 	 $wpdb->query($up);
 
 
      echo '<div id="message" class="updated fade">';
      echo '<p><strong>Attendance added.</strong></p>';
      echo '</div>';
-     church_admin_attendance_list($sql['service_id']);
+     //print_r($sqlsafe);
+     church_admin_attendance_list($sqlsafe['service_id']);
 
 }
 else
