@@ -13,7 +13,7 @@ $password=get_option(church_admin_sms_password);
 $sender=get_option(church_admin_sms_reply);    
 $port = 80;    
 //find out how many credits are left    
-   $url= 'http://www.community.bulksms.co.uk:5567/eapi/user/get_credits/1/1.1' ;
+   $url= 'http://community.bulksms.co.uk:5567/eapi/user/get_credits/1/1.1' ;
 $get_info=file_get_contents($url."?username=$username&password=$password");
   
     $info=explode('|',$get_info);

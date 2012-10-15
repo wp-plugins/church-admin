@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
 Tested up to: 3.4.2
-Stable tag: 0.4.56
+Stable tag: 0.4.57
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -24,7 +24,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 
 *   Attendance tracking 
 
-*   Roles - people can have different roles and be SMS or email by role, other functions coming soon.
+*   Ministries - people can have different ministries they are involved in and be sent SMS or email by role, other functions coming soon.
 
 *   Google map integrations for small groups and directories
 
@@ -161,8 +161,10 @@ Clear out files
 = 0.4.56 =
 * Bug Fixes
 * Admin home screen tidied up
-
+= 0.4.57 =
+* Bug Fixes
+* Departments/Roles renamed to ministries for clarity
 == Upgrade Notice ==
-* 0.4.56 required
+* 0.4.57 required
 
 == Credits: ==

@@ -79,11 +79,13 @@ jQuery(document).ready(function($){
   function geocodeLocation(address)
   {
     geocoder.geocode({'address' : address}, function(result, status){
-      // this returns a latlng
+      
+      if(status!='ZERO_RESULTS')
+      {// this returns a latlng
       console.log(status);
       var location = result[0].geometry.location;
       map.setCenter(location);
-      
+      }
       // replace markers
       placeMarker(location);      
     });
@@ -101,11 +103,11 @@ jQuery(document).ready(function($){
         case 'ERROR':
           alert('There was a problem in processing. Please try again later.');
           break;
-         /* 
+         
         case 'OK':
           $(inputAddress).val(result[1].formatted_address);
           break;
-         */
+         
       }
     });
   }

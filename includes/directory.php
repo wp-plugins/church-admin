@@ -304,7 +304,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	    }
 	    echo'</span></p>';
 	
-	echo'<p><label>Departments</label><span style="display:inline-block">';
+	echo'<p><label>Ministries</label><span style="display:inline-block">';
 	if(!empty($departments))
 	{
 	    foreach($departments AS $key=>$value)
@@ -318,24 +318,25 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	        echo '/><br style="clear:left"/>';
 	    }
 	}
-	echo '<input type="text" name="new_department" value="Add a new department" onfocus="javascript:this.value=\'\';"/></p>';
+	echo '<input type="text" name="new_department" value="Add a new ministry" onfocus="javascript:this.value=\'\';"/></p>';
 	//small group
 	echo'<p><label>Small Group</label><select name="smallgroup_id">';
 	$smallgroups=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
+	$first=$option='';
 	foreach($smallgroups AS $smallgroup)
 	{
-	    echo'<option value="'.$smallgroup->id.'" ';
-	    if(!empty($data->smallgroup_id))selected($smallgroup->id,$data->smallgroup_id);
-	    echo'>'.$smallgroup->group_name.'</option>';
+	    
+	    if($smallgroup->id==$data->smallgroup_id)
+	    {$first ='<option value="'.$smallgroup->id.'" selected="selected">'.$smallgroup->group_name.'</option>';}else{$option.='<option value="'.$smallgroup->id.'" selected="selected">'.$smallgroup->group_name.'</option>';}
 	}
-	echo'</select></p>';
+	echo $first.$option.'</select></p>';
 	echo'<p><label>Wordpress User</label>';
-	if($data->user_id)
+	if($data->user_id )
 	{
 	   $user_info=get_userdata($data->user_id);
 	   echo $user_info->wp_capabilities['0'].'</p>';
 	}
-	else
+	elseif(!empty($household_id))
 	{
 	    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_create_user&amp;people_id='.$people_id.'&amp;household_id='.$household_id,'create_user').'">Create WP User</a></p>';
 	}
@@ -409,7 +410,7 @@ function church_admin_display_household($household_id)
 	if($people)
 	{//are people
 	    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;household_id='.$household_id,'edit_people').'">Add someone</a></p>';
-	    echo'<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Sex</th><th>Person type</th><th>Member Level</th><th>Departments</th><th>Email</th><th>Mobile</th><th>WP user</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Sex</th><th>People type</th><th>Member Level</th><th>Departments</th><th>Email</th><th>Mobile</th><th>WP user</th></tr></tfoot><tbody>';
+	    echo'<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Sex</th><th>Person type</th><th>Member Level</th><th>Ministriess</th><th>Email</th><th>Mobile</th><th>WP user</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Sex</th><th>People type</th><th>Member Level</th><th>Ministries</th><th>Email</th><th>Mobile</th><th>WP user</th></tr></tfoot><tbody>';
 	    foreach ($people AS $person)
 	    {
 		switch($person->sex)

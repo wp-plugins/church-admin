@@ -29,7 +29,7 @@ function church_admin_install()
     
    
     $church_admin_people_settings=get_option('church_admin_people_settings');
-    if(empty($church_admin_people_settings['member_type']))$church_admin_people_settings['member_type']=array(1=>'Visitor',2=>'Member');
+    if(empty($church_admin_people_settings['member_type']))$church_admin_people_settings['member_type']=array(0=>'Mailing List',1=>'Visitor',2=>'Member');
     if(!empty($church_admin_people_settings['member_type']))
     {
 	//install member type table
@@ -291,7 +291,15 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
 ) ENGINE = MYISAM CHARACTER SET '.DB_CHARSET.';';
 	$wpdb->query($sql);
     }
-    
+        //follow up people's funnels 
+    if($wpdb->get_var('SHOW TABLES LIKE "'.CA_FP_TBL.'"')!=CA_FP_TBL)
+    {
+	
+	if(!defined( 'DB_CHARSET'))define( 'DB_COLLATE','utf8');
+	$sql='CREATE TABLE '.CA_FP_TBL.' (funnel_id INT(11) ,member_type_id INT(11),people_id INT( 11 )  ,assign_id INT( 11 )  , assigned_date DATE,email DATE NOT NULL DEFAULT "0000-00-00", completion_date DATE, id INT( 11 ) AUTO_INCREMENT PRIMARY KEY
+) ENGINE = MYISAM CHARACTER SET '.DB_CHARSET.';';
+	$wpdb->query($sql);
+    }
  //services
   //household table    
     
@@ -303,12 +311,47 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
     }
     
     
-  //make sure tables are UTF8  
+  
+    
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "last_updated"')!='last_updated')
+{
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD last_updated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP';
+    $wpdb->query($sql);
+}
+
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "funnels"')!='funnels')
+{
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD funnels TEXT';
+    $wpdb->query($sql);
+}
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "role_id"')=='role_id')
+{
+    $sql='ALTER TABLE  '.CA_MET_TBL.' CHANGE role_id department_id INT(11)';
+    $wpdb->query($sql);
+}
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_ATT_TBL.' LIKE "service_id"')!='service_id')
+{
+    $sql='ALTER TABLE  '.CA_ATT_TBL.' ADD service_id INT(11) DEFAULT "1"';
+    $wpdb->query($sql);
+}
+
+//make sure tables are UTF8  
     $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_attendance CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
-   
+   $sql='ALTER TABLE '.CA_PEO_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+     $sql='ALTER TABLE '.CA_HOU_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
+     $sql='ALTER TABLE '.CA_MTY_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
+    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
+    $sql.=';';
+    $wpdb->query($sql);
    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_calendar_date CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
@@ -338,26 +381,7 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
-if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "last_updated"')!='last_updated')
-{
-    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD last_updated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP';
-    $wpdb->query($sql);
-}
-if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "roles"')=='roles')
-{
-    $sql='ALTER TABLE  '.CA_PEO_TBL.' CHANGE roles departments TEXT';
-    $wpdb->query($sql);
-}
-if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "role_id"')=='role_id')
-{
-    $sql='ALTER TABLE  '.CA_MET_TBL.' CHANGE role_id department_id INT(11)';
-    $wpdb->query($sql);
-}
-if($wpdb->get_var('SHOW COLUMNS FROM '.CA_ATT_TBL.' LIKE "service_id"')!='service_id')
-{
-    $sql='ALTER TABLE  '.CA_ATT_TBL.' ADD service_id INT(11) DEFAULT "1"';
-    $wpdb->query($sql);
-}
+    
 //update pdf cache
 if(!get_option('church_admin_calendar_width'))update_option('church_admin_calendar_width','630');
 if(!get_option('church_admin_pdf_size'))update_option('church_admin_pdf_size','A4');

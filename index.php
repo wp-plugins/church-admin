@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.56
+Version: 0.4.57
 Author: Andy Moyle
 
 
@@ -103,6 +103,7 @@ Version History
 0.4.5 2012-08-04 Changed departments, fixed some bugs, orderable membership types.
 0.4.55 2012-09-20 Various Bug fixes change admin  home screen
 0.4.56 2012-10-07 Address list admin pagination fixed, attendance added to menu
+0.4.57 2012-10-15 Bug fixes and make departments clearer by renaming to ministries
 */
 add_action('activated_plugin','save_error');
 function save_error(){
@@ -110,7 +111,7 @@ function save_error(){
 }
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.56';
+$church_admin_version = '0.4.57';
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -363,6 +364,7 @@ function church_admin_main()
         //departments
         case 'church_admin_edit_department':check_admin_referer('edit_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_edit_department($_GET['department_id']);break;         
         case 'church_admin_delete_department':check_admin_referer('delete_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_delete_department($_GET['department_id']);break;         
+        case 'church_admin_department_list':check_admin_referer('department_list');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_delete_department_list();break;         
        
         //funnel
         case 'church_admin_funnel_list':require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');church_admin_funnel_list();break;         
@@ -570,7 +572,7 @@ function church_admin_widget_init()
     require(CHURCH_ADMIN_INCLUDE_PATH.'calendar_widget.php');
     wp_register_widget_control('Church Admin Calendar','Church Admin Calendar','church_admin_widget_control');
 }
-add_action('init','church_admin_widget_init');
+//add_action('init','church_admin_widget_init');
 function church_admin_download($file)
 {
     switch($file)

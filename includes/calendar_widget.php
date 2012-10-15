@@ -2,7 +2,8 @@
 /*
  2011-02-03 Fixed widget display so multiple events per day
 */
-function church_admin_widget_control()
+if(!function_exists('church_admin_widget_control'))
+{function church_admin_widget_control()
 {
     //get saved options
     $options=get_option('church_admin_widget');
@@ -17,7 +18,7 @@ function church_admin_widget_control()
     }
     church_admin_widget_control_form();
 }
-
+}
 function church_admin_widget_control_form()
 {
     global $wpdb;

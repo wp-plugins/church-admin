@@ -22,7 +22,7 @@ foreach ($sg_results as $sg_row)
 	        $ldr[] = $wpdb->get_var($leader_sql);
 	    }
 	}
-	
+	if(empty($ldr))$ldr=array(1=>'No leaders assigned yet');
 	$edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_small_group&amp;id='.$sg_row->id;
 	$delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_small_group&amp;id='.$sg_row->id;
         
@@ -63,7 +63,7 @@ function church_admin_edit_small_group($id)
     {
 	$form=array();
 	foreach($_POST AS $key=>$value)$form[$key]=stripslashes($value);
-	$leaders=esc_sql(serialize(array(1=>$_POST['leader1'],2=>$_POST['leader2'])));
+	if(!empty($_POST['leader1'])){$leaders=esc_sql(serialize(array(1=>$_POST['leader1'],2=>$_POST['leader2'])));}else{$leaders=esc_sql(serialize(array(1=>'',2=>'')));}
 	if(!$id)$id=$wpdb->get_var('SELECT id FROM '.CA_SMG_TBL.' WHERE leader="'.$leaders.'" AND whenwhere="'.esc_sql($form['whenwhere']).'" AND group_name="'.esc_sql($form['group_name']).'"');
 	if($id)
 	{//update
@@ -82,8 +82,7 @@ function church_admin_edit_small_group($id)
     {
 	$data=$wpdb->get_row('SELECT * FROM '.CA_SMG_TBL.' WHERE id="'.esc_sql($id).'"');
 	$leaders=$wpdb->get_results('SELECT a.people_id, CONCAT_WS(" ", b.first_name,b.last_name) AS leader  FROM '.CA_MET_TBL.' a, '.CA_PEO_TBL.' b WHERE a.department_id=1 AND a.people_id=b.people_id');
-	if($leaders)
-	{//leaders available
+	
 	    echo'<div class="wrap church_admin"><h2>Add/Edit Small Group</h2><form action="" method="post">';
 	    echo'<p><label>Small group name</label><input type="text" name="group_name"';
 	    if(!empty($data->group_name)) echo ' value="'.$data->group_name.'" ';
@@ -91,31 +90,31 @@ function church_admin_edit_small_group($id)
 	    echo'<p><label>Where &amp; When</label><input type="text" name="whenwhere"';
 	    if(!empty($data->whenwhere)) echo ' value="'.$data->whenwhere.'" ';
 	    echo'/></p>';
-	    $curr_leaders=unserialize($data->leader);
-	    echo'<p><label>Leader</label>';
-	    echo'<select name="leader1">';
-	    foreach($leaders AS $leader)
-	    {
-		echo'<option value="'.$leader->people_id.'" ';
-		selected($curr_leaders[1],$leader->people_id);
-		echo' >'.$leader->leader.'</option>';
-	    }
-	    echo'</select></p>';
-	    echo'<p><label>Leader</label>';
-	    echo'<select name="leader2">';
-	    foreach($leaders AS $leader)
-	    {
-		echo'<option value="'.$leader->people_id.'" ';
-		selected($curr_leaders[2],$leader->people_id);
-		echo' >'.$leader->leader.'</option>';
-	    }
-	    echo'</select></p>';
+	    if($leaders)
+	    {//leaders available
+		$curr_leaders=unserialize($data->leader);
+		echo'<p><label>Leader</label>';
+		echo'<select name="leader1">';
+		foreach($leaders AS $leader)
+		{
+		    echo'<option value="'.$leader->people_id.'" ';
+		    selected($curr_leaders[1],$leader->people_id);
+		    echo' >'.$leader->leader.'</option>';
+		}
+		echo'</select></p>';
+		echo'<p><label>Leader</label>';
+		echo'<select name="leader2">';
+		foreach($leaders AS $leader)
+		{
+		    echo'<option value="'.$leader->people_id.'" ';
+		    selected($curr_leaders[2],$leader->people_id);
+		    echo' >'.$leader->leader.'</option>';
+		}
+		echo'</select></p>';
+	    }//leaders available
 	    echo'<p class="submit"><input type="submit" name="edit_small_group" value="Edit Small Group &raquo;" /></p></form></div>';
-	}//leaders available
-	else
-	{
-	    echo'<div class="updated fade"><p>No Small Group Leaders to choose From - please edit the <a href="admin.php?page=church_admin/index.php">directory</a> first</p></div>';
-	}
+	
+	
     }
 }
 

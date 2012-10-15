@@ -37,7 +37,7 @@
  * @copyright 2003 Laurent PASSEBECQ
 **/
 
-if(!class_exists('FPDF')) require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
+require_once('fpdf.php');
 
 class PDF_Label extends FPDF {
 
@@ -86,8 +86,8 @@ class PDF_Label extends FPDF {
         $this->SetFont('Arial');
         $this->SetMargins(0,0); 
         $this->SetAutoPageBreak(false); 
-        $this->_COUNTX = $posX-3;
-        $this->_COUNTY = $posY-2;
+        $this->_COUNTX = $posX-2;
+        $this->_COUNTY = $posY-1;
     }
 
     function _Set_Format($format) {

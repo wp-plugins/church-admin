@@ -39,9 +39,14 @@ function church_admin_front_admin()
             });
         });
     </script>';
+    echo'<h2>Quick Glossary</h2>';
+    echo'<p><strong>Member Type</strong> - Are the broad categories within church life a person is in eg. First Time Visitor, Regular Attender, Member.</p>';
+    echo'<p><strong>Ministries</strong> - Are the ministries a person is involved with like being an elder, small group leader. Used to be called "Departments" but people got too confused!</p>';
+    echo'<p><strong>Small Groups</strong> - If you have small groups, that\'s what this section is for. Before creating small groups, you need to make sure your small group leaders have "Small Group leader" checked in the department.</p>';
     //People Functions
     echo'<div class="church_admin_main_menu"><h2>People Functions</h2>';
-    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">Add Household</a></p>';
+        echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_migrate_users','migrate_users').'">Import Wordpress Users (only new ones added)</a></p>';
+    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">Add a Household</a></p>';
     echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people','edit_people').'">Add a new person (not connected to a current household)</a></p>';
     echo'<p><label>Select Address List</label><form name="address" action="admin.php?page=church_admin/index.php&action=church_admin_address_list" method="POST"><select onchange="this.form.submit();" name="member_type_id" >';
     echo '<option value="">Choose Member Type...</option>';
@@ -51,7 +56,7 @@ function church_admin_front_admin()
     }
     echo'</select></form></p>';
     echo'<p><label>Search</label><form name="ca_search" action="admin.php?page=church_admin/index.php&amp;action=church_admin_search" method="POST"><input name="ca_search" style="width:100px;" type="text"/><input type="submit" value="Go"/></form></p>';
-    echo '<p><label>Download an address list PDF</label></p><p>';
+    echo '<p>Download an address list PDF</p><p>';
     
     foreach($member_type AS $key=>$value)
     {
@@ -64,8 +69,16 @@ function church_admin_front_admin()
     echo'</p>';
     echo'</div>';
     //end people
+    
+    //departments
+    echo'<div class="church_admin_main_menu"><h2>Ministry</h2>';
+    echo'<p>In this section you can set up the ministry a person is involved in or a role that they have e.g. Elder or Small Group Leader or P.A. operator</p>';
+    echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&action=church_admin_department_list",'department_list').'">Ministry List</a></p>';
+    echo'</div>';
+    //departments
     //member types
     echo'<div class="church_admin_main_menu"><h2>Member Types</h2>';
+    
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&action=church_admin_edit_member_type",'edit_member_type').'">Add a member Type</a></p>';
     echo'<p><a href="admin.php?page=church_admin/index.php&action=church_admin_member_type">Member Type List</a></p>';
     echo'</div>';
@@ -127,6 +140,7 @@ function church_admin_front_admin()
     echo'<div class="clear"></div>';
     //small Group
     echo'<div class="church_admin_main_menu"><h2>Small groups</h2>';
+    echo '<p>Make sure you have made some people have the ministry of "small group leader", before creating a small group</p>';
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_small_group",'edit_small_group').'">Add a small group</a></p>';
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_small_groups">Small Group List</a></p>';
     echo '<p><label>Download an small group PDF</label><form name="address_list_form" action="'.home_url().'" method="get"><input type="hidden" name="download" value="smallgroup"/><select name="member_type_id" onchange="this.form.submit()">';

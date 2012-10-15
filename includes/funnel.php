@@ -48,7 +48,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
             if(!$funnel_id)$funnel_id=$wpdb->get_var('SELECT funnel_id FROM '.CA_FUN_TBL.' WHERE action="'.esc_sql(stripslashes($_POST['action'])).'" AND member_type_id="'.esc_sql((int)($_POST['member_type_id'])).'"');
             if($funnel_id)
             {//update
-                $success=$wpdb->query('UPDATE '.CA_FUN_TBL.' SET people_type_id="'.esc_sql($people_type_id).'", action="'.esc_sql(stripslashes($_POST['action'])).'",member_type_id="'.esc_sql((int)($_POST['member_type_id'])).'",department_id="'.esc_sql((int)($_POST['department_id'])).'"');
+                $success=$wpdb->query('UPDATE '.CA_FUN_TBL.' SET people_type_id="'.esc_sql($people_type_id).'", action="'.esc_sql(stripslashes($_POST['action'])).'",member_type_id="'.esc_sql((int)($_POST['member_type_id'])).'",department_id="'.esc_sql((int)($_POST['department_id'])).'" WHERE funnel_id="'.esc_sql($funnel_id).'"');
             }//end update
             else
             {//insert

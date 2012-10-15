@@ -27,7 +27,7 @@ function  church_admin_member_type()
         else
         {
             $delete=$check .' people who are '.$membertype;
-            $reassign='<form action="admin.php?page=church_admin_member_type" method="post">Reassign people to ';
+            $reassign='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_member_type" method="post">Reassign people to ';
             $reassign.='<select name="reassign">';
             foreach($member_type AS $mtid=>$value)if($mtid!=$id && $mtid!=$_POST['current']) $reassign.='<option value="'.$mtid.'">'.$value.'</option>';
             $reassign.='</select><input type="hidden" name="current" value="'.$id.'"/><input type="submit" value="Reassign"/></form>';
@@ -117,12 +117,13 @@ function church_admin_edit_member_type($member_type_id=NULL)
 }
 function church_admin_delete_member_type($member_type_id=NULL)
 {
-    global $member_type;
-    unset($member_type[$member_type_id]);
-    $church_admin_people_settings=get_option('church_admin_people_settings');
-    $church_admin_people_settings['member_type']=$member_type;
-    update_option('church_admin_people_settings',$church_admin_people_settings);
-    echo'<div class="updated fade"><p><strong>Member Type Deleted</strong></p></div>';
+    global $wpdb;
+    $wpdb->show_errors();
+    if($member_type_id)
+    {
+        $wpdb->query('DELETE FROM '.CA_MTY_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'"');
+        echo'<div class="updated fade"><p><strong>Member Type Deleted</strong></p></div>';
+    }
     church_admin_member_type();
 }
 ?>

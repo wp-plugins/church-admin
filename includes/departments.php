@@ -35,7 +35,7 @@ function church_admin_delete_department($id)
         echo $sql.'<br/>';
         $wpdb->query($sql);
     }
-    echo'<div class="updated fade"><p>Department Deleted</p></div>';
+    echo'<div class="updated fade"><p>Ministry Deleted</p></div>';
     church_admin_department_list();
 }
 function church_admin_edit_department($id)
@@ -48,18 +48,18 @@ function church_admin_edit_department($id)
         {//update current department name
             $departments[$id]=$dep_name;
             update_option('church_admin_departments',$departments);
-            echo '<div class="updated fade"><p>Departments Updated</p></div>';
+            echo '<div class="updated fade"><p>Ministries Updated</p></div>';
         }        
         elseif(!in_array($dep_name,$departments))
         {//add new one if unique
             $departments[]=$dep_name;
             
             update_option('church_admin_departments',$departments);
-            echo '<div class="updated fade"><p>Departments Updated</p></div>';
+            echo '<div class="updated fade"><p>Ministries Updated</p></div>';
         }
         else
         {//not unique or update, so ignore!
-           echo '<div class="updated fade"><p>Departments Unchanged</p></div>'; 
+           echo '<div class="updated fade"><p>Ministries Unchanged</p></div>'; 
         }
         church_admin_department_list();
         
@@ -68,12 +68,12 @@ function church_admin_edit_department($id)
     {//form
         echo'<h2>';
         if($id){echo'Update ';}else {echo'Add ';}
-        echo'Department</h2>';
+        echo'Ministry</h2>';
         echo'<form action="" method="post">';
-        echo'<p><label>Department Name</label><input type="text" name="department_name" ';
+        echo'<p><label>Ministry Name</label><input type="text" name="department_name" ';
         if($id) echo ' value="'.$departments[$id].'" ';
         echo'/></p>';
-        echo'<p class="submit"><input type="hidden" name="edit_department" value="yes"/><input type="submit" value="Save Department&raquo;" /></p></form></div>';
+        echo'<p class="submit"><input type="hidden" name="edit_department" value="yes"/><input type="submit" value="Save Ministry&raquo;" /></p></form></div>';
         
     }//end form
 }

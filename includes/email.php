@@ -218,7 +218,7 @@ function church_admin_choose_recipients($email_id)
     echo'<h2>Now choose recipients...</h2><form action="" method="post"><input type="hidden" value="'.$email_id.'" name="email_id"/><input type="hidden" name="send_email" value="1"/>';
  foreach($member_type AS $key=>$value)
  {
-   echo'<p><label><strong>'.$value.'</strong></label><input type="checkbox" name="member_type[]" value="'.$key.'"/></p>';
+   echo'<p><label><strong>All '.$value.'</strong></label><input type="checkbox" name="member_type[]" value="'.$key.'"/></p>';
  }
 
 echo'<p><label><strong>A Small group</strong></label><input type="radio" name="type" value="smallgroup"/></p>';
@@ -244,17 +244,17 @@ echo'<p><label><strong>Choose individuals</strong></label><input type="radio" na
     echo'<p><input type="button" id="btnAdd" value="Add another person" /><input type="button" id="btnDel" value="Remove person" /></p></fieldset>';
   
     //end choose individuals
-    echo'<p><label>Choose Role</label><input type="radio" name="type" value="roles"  /></p>';
-    $roles=get_option('church_admin_roles');
+    echo'<p><label>Everyone in this ministry...</label><input type="radio" name="type" value="roles"  /></p>';
+    $roles=get_option('church_admin_departments');
      echo'<fieldset id="roles">';
     echo '<div class="roleclonedInput" id="roleinput1">';
-    echo'<p><label>Select Role</label><select name="role_id[]" id="roleid1" class="role_id">';
+    echo'<p><label>Select Ministry</label><select name="role_id[]" id="roleid1" class="role_id">';
     foreach($roles AS $key=>$value)
     {
       echo'<option value="'.$key.'">'.$value.'</option>';
     }
     echo'</select></p></div>';
-     echo'<p><input type="button" id="roleadd" value="Add another role" /><input type="button" id="roledel" value="Remove role" /></p></fieldset>';
+     echo'<p><input type="button" id="roleadd" value="Add another ministry" /><input type="button" id="roledel" value="Remove ministry" /></p></fieldset>';
   
     echo'<p><input type="submit" class="secondary-button" value="Send Email"/>';
     echo'</form></div>';
@@ -273,15 +273,15 @@ function church_admin_send_message($email_id)
       $where='(';
       foreach($_POST['member_type'] AS $key=>$value)if(array_key_exists($value,$member_type))$w[]=' member_type_id='.$value.' ';
       $where.=implode("||",$w).')';
-      $sql='SELECT DISTINCT email, first_name FROM '.CA_PEO_TBL.' WHERE email!="" AND '.$where;
+      $sql='SELECT DISTINCT email, first_name FROM '.CA_PEO_TBL.' WHERE '.$where;
    
     }
-    elseif(!empty($_POST['type']) && $_POST['type']=='smallgroup') $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE email!="" AND small_group_id="'.esc_sql($_POST['group_id']).'"';
+    elseif(!empty($_POST['type']) && $_POST['type']=='smallgroup') $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE small_group_id="'.esc_sql($_POST['group_id']).'"';
     elseif(!empty($_POST['type']) && $_POST['type']=='individuals')
     {
 	    $names=array();
             foreach ($_POST['person']AS $value){$names[]='id = "'.esc_sql($value).'"';}
-            $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE email!="" AND "'.implode(' OR ',$names).'"';
+            $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE "'.implode(' OR ',$names).'"';
     }
     elseif(!empty($_POST['type']) && $_POST['type']=='roles')
     {
