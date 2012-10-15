@@ -69,7 +69,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=1)
 	{
 	  if($people->people_type_id=='1')
 	  {
-	    $last_name=$people->last_name);
+	    $last_name=$people->last_name;
 	    $adults[]=$people->first_name;
 	    if($people->email!=end($emails)) $emails[]=$people->email;
 	    if($people->mobile!=end($mobiles))$mobiles[]=$people->mobile;
