@@ -255,9 +255,9 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	echo'</p>';
 	//sex
 	echo'<p><label>Sex</label>Male <input type="radio" name="sex" value="1"';
-	if(!empty($data->sex)) checked($data->sex,1);
+	if(!empty($data->sex) && $data->sex==1) echo' checked="checked" ';
 	echo ' /> Female <input type="radio" name="sex" value="0"';
-	if(!empty($data->sex))  checked($data->sex,0);
+	if($data->sex==0)  echo' checked="checked" ';
 	echo'/></p>';
 	//people_type
 	echo'<p><label>People Type</label><select name="people_type_id">';
@@ -280,19 +280,22 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
       });
    </script>';
 	
-	echo'<p><label>Current Member Type</label><select name="member_type_id">';
+	echo'<p><label>Current Member Type</label><span style="display:inline-block">';
+	$first=$option='';
 		foreach($member_type AS $key=>$value)
 	{
-	    echo'<option value="'.$key.'" ';
-	    selected($key,$data->people_type_id);
-	    echo'>'.$value.'</option>';
+	    echo'<input type="checkbox" name="member_type_id" value="'.$key.'"';
+	    if($data->member_type_id==$key)echo' checked="checked" ';
+	    echo ' />'.$value.'<br/>';
+	   
 	}
-	echo'</select></p>';
-	echo'</p>';
+	
+	echo'</span></p>';
+	
 	
 	$prev_member_types=unserialize($data->member_data);
 	
-	    echo'<p><label>Dates of Member Levels</label><span style="display:inline-block">';
+	    echo'<p><label>Dates of Member Levels</label><span style="display:inline-block">	';
 	    foreach($member_type AS $key=>$value)
 	    {
 		//if no value for member type date make sure no value is given
@@ -327,7 +330,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	{
 	    
 	    if($smallgroup->id==$data->smallgroup_id)
-	    {$first ='<option value="'.$smallgroup->id.'" selected="selected">'.$smallgroup->group_name.'</option>';}else{$option.='<option value="'.$smallgroup->id.'" selected="selected">'.$smallgroup->group_name.'</option>';}
+	    {$first ='<option value="'.$smallgroup->id.'" selected="selected">'.$smallgroup->group_name.'</option>';}else{$option.='<option value="'.$smallgroup->id.'" >'.$smallgroup->group_name.'</option>';}
 	}
 	echo $first.$option.'</select></p>';
 	echo'<p><label>Wordpress User</label>';
