@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.57
+Version: 0.4.58
 Author: Andy Moyle
 
 
@@ -111,7 +111,7 @@ function save_error(){
 }
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.57';
+$church_admin_version = '0.4.58';
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -364,7 +364,7 @@ function church_admin_main()
         //departments
         case 'church_admin_edit_department':check_admin_referer('edit_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_edit_department($_GET['department_id']);break;         
         case 'church_admin_delete_department':check_admin_referer('delete_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_delete_department($_GET['department_id']);break;         
-        case 'church_admin_department_list':check_admin_referer('department_list');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_delete_department_list();break;         
+        case 'church_admin_department_list':check_admin_referer('department_list');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_department_list();break;         
        
         //funnel
         case 'church_admin_funnel_list':require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');church_admin_funnel_list();break;         
@@ -377,6 +377,8 @@ function church_admin_main()
         case 'church_admin_delete_member_type':check_admin_referer('delete_member_type');require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_delete_member_type($_GET['member_type_id']);break;         
        
         //celendar
+        case 'church_admin_calendar_list':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_calendar();}break;         
+        
         case 'church_admin_add_category':check_admin_referer('add_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_category();}break;         
         case 'church_admin_edit_category':check_admin_referer('edit_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_edit_category($_GET['id']);}break;
         case 'church_admin_delete_category':check_admin_referer('delete_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_delete_category($_GET['id']);}break;
@@ -384,7 +386,7 @@ function church_admin_main()
         case 'church_admin_series_event_delete':check_admin_referer('series_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event_delete($_GET['date_id'],$_GET['event_id']);}break;     
         case 'church_admin_category_list':if(church_admin_level_check('Calendar'));{require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_category_list();}break;    
         case 'church_admin_series_event_edit':check_admin_referer('series_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event($_GET['date_id'],$_GET['event_id']);}break;
-        case 'church_admin_single_event_edit':check_admin_referer('single_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_edit($_GET['date_id'],$_GET['event_id']);}break;
+        case 'church_admin_single_event_edit':check_admin_referer('single_event_edit');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_edit($_GET['date_id'],$_GET['event_id']);}break;
         case 'church_admin_add_calendar':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_calendar();}break;
         //address
         case 'church_admin_address_list': if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_address_list($_REQUEST['member_type_id']);}else{echo"<p>You don't have permission to do that";}break;

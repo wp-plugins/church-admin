@@ -183,6 +183,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
     $wpdb->show_errors();
     
     if($people_id)$data=$wpdb->get_row('SELECT * FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
+  
     if(!empty($data->household_id))$household_id=$data->household_id;
     if(!empty($_POST['edit_people']))
     {//process
@@ -204,11 +205,11 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	$prev_member_types=serialize($prev_member_types);
 	if($people_id)
 	{//update
-	    $wpdb->query('UPDATE '.CA_PEO_TBL.' SET first_name="'.$sql['first_name'].'" , last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$date.'",member_data="'.esc_sql($prev_member_types).'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"');
+	    $wpdb->query('UPDATE '.CA_PEO_TBL.' SET first_name="'.$sql['first_name'].'" , last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$date.'",member_data="'.esc_sql($prev_member_types).'",smallgroup_id="'.$sql['smallgroup_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"');
 	}//end update
 	else
 	{
-	    $wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data) VALUES("'.$sql['first_name'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$date.'" , "'.esc_sql($household_id).'","'.esc_sql($prev_member_types).'" )');
+	    $wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id) VALUES("'.$sql['first_name'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$date.'" , "'.esc_sql($household_id).'","'.esc_sql($prev_member_types).'" ,"'.$sql['smallgroup_id'].'")');
 	    $people_id=$wpdb->insert_id;
 	}
 	//update meta
@@ -220,13 +221,14 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	        if(array_key_exists($key,$departments)){church_admin_update_department($key,$people_id);}
 	    }
 	}
-	if(!empty($_POST['new_department'])&&$_POST['new_department']!='Add a new department')
+	if(!empty($_POST['new_department'])&&$_POST['new_department']!='Add a new ministry')
 	{
 	    
 	    if(!in_array(stripslashes($_POST['new_department']),$departments))
 	    {
 		$departments[]=stripslashes($_POST['new_department']);
 		update_option('church_admin_departments',$departments);
+		
 		church_admin_update_department(key($departments),$people_id);
 	    }
 	}
@@ -284,7 +286,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	$first=$option='';
 		foreach($member_type AS $key=>$value)
 	{
-	    echo'<input type="checkbox" name="member_type_id" value="'.$key.'"';
+	    echo'<input type="radio" name="member_type_id" value="'.$key.'"';
 	    if($data->member_type_id==$key)echo' checked="checked" ';
 	    echo ' />'.$value.'<br/>';
 	   
@@ -323,16 +325,17 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	}
 	echo '<input type="text" name="new_department" value="Add a new ministry" onfocus="javascript:this.value=\'\';"/></p>';
 	//small group
-	echo'<p><label>Small Group</label><select name="smallgroup_id">';
+	echo'<p><label>Small Group</label><span style="display:inline-block">';
 	$smallgroups=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
 	$first=$option='';
 	foreach($smallgroups AS $smallgroup)
 	{
 	    
-	    if($smallgroup->id==$data->smallgroup_id)
-	    {$first ='<option value="'.$smallgroup->id.'" selected="selected">'.$smallgroup->group_name.'</option>';}else{$option.='<option value="'.$smallgroup->id.'" >'.$smallgroup->group_name.'</option>';}
+	   echo'<input type="radio" name="smallgroup_id" value="'.$smallgroup->id.'"';
+	   if($smallgroup->id==$data->smallgroup_id) echo' checked="checked" ';
+	   echo'/>'.$smallgroup->group_name.'<br/>';
 	}
-	echo $first.$option.'</select></p>';
+	echo '</span></p>';
 	echo'<p><label>Wordpress User</label>';
 	if($data->user_id )
 	{
@@ -343,7 +346,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	{
 	    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_create_user&amp;people_id='.$people_id.'&amp;household_id='.$household_id,'create_user').'">Create WP User</a></p>';
 	}
-	echo'<p class="submit"><input type="hidden" name="edit_people" value="yes"/><input type="submit" value="Save Address&raquo;" /></p></form></div>';
+	echo'<p class="submit"><input type="hidden" name="edit_people" value="yes"/><input type="submit" value="Save Details&raquo;" /></p></form></div>';
     }
 }
 function church_admin_delete_people($people_id=NULL,$household_id)
