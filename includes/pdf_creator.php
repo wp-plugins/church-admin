@@ -125,6 +125,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY hous
   foreach($results AS $ordered_row)
   {
       $address=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'"');
+      
       $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
       $adults=$children=$emails=$mobiles=array();
       foreach($people_results AS $people)
@@ -144,7 +145,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY hous
 	}
 	$addresses['address'.$counter]['name']=$last_name.' '.implode(" & ", $adults);
 	$addresses['address'.$counter]['kids']=implode(" , ", $children);
-	$addresses['address'.$counter]['address']=implode(", ",array_filter(unserialize($address->address)));
+	if(!empty($address->address))$addresses['address'.$counter]['address']=implode(", ",array_filter(unserialize($address->address)));
 	$addresses['address'.$counter]['email']=implode("\n",array_filter($emails));
 	$addresses['address'.$counter]['mobile']=implode("\n",array_filter($mobiles));
 	$addresses['address'.$counter]['phone']=$address->phone;

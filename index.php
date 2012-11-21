@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.58
+Version: 0.4.59
 Author: Andy Moyle
 
 
@@ -104,6 +104,7 @@ Version History
 0.4.55 2012-09-20 Various Bug fixes change admin  home screen
 0.4.56 2012-10-07 Address list admin pagination fixed, attendance added to menu
 0.4.57 2012-10-15 Bug fixes and make departments clearer by renaming to ministries
+0.4.59 2012-11-21 Address list pdf bug fixed
 */
 add_action('activated_plugin','save_error');
 function save_error(){
@@ -111,7 +112,7 @@ function save_error(){
 }
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.58';
+$church_admin_version = '0.4.59';
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -476,7 +477,7 @@ function church_admin_shortcode($atts, $content = null)
         break;
         case 'address-list':
 	   
-            $out.='<p><a href="'.home_url().'/?download=addresslist&amp;member_type='.$member_type_id.'">PDF version</a></p>';
+            $out.='<p><a href="'.home_url().'/?download=addresslist&amp;member_type_id='.$member_type_id.'">PDF version</a></p>';
             require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
             $out.=church_admin_frontend_directory($member_type_id,$map);
         break;
