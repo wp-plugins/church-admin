@@ -471,10 +471,11 @@ $threemonths=date('Y-m-d',strtotime('+6 months'));
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
 $pdf=new FPDF();
 $pdf->AddPage('L',get_option('church_admin_pdf_size'));
-$pdf->SetFont('Arial','B',16);
+$pdf->AddFont('Verdana','','verdana.php');
+$pdf->SetFont('Verdana','',16);
 $text='Sunday Rota '.date("d-m-Y");
 $pdf->Cell(0,10,$text,0,2,C);
-$pdf->SetFont('Arial','B',8);
+$pdf->SetFont('Verdana','',8);
 
 //column headers query
 $colres=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
