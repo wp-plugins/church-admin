@@ -24,7 +24,7 @@ if(!empty($_POST['rota_task']) )
             {
                 $jobs=unserialize($row->rota_jobs);
                 $jobs["$rota_task"]='';
-                if(!array_key_exists($rota_task))$rota_jobs=esc_sql(serialize($jobs));
+                if(!array_key_exists($rota_task,$jobs))$rota_jobs=esc_sql(serialize($jobs));
                 $wpdb->query('UPDATE '.$wpdb->prefix.'church_admin_rotas SET rota_jobs="'.$rota_jobs.'" WHERE rota_id="'.$row->rota_id.'"');
             }
         

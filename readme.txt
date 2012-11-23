@@ -166,6 +166,8 @@ Clear out files
 * Departments/Roles renamed to ministries for clarity
 = 0.4.59 =
 * Address List pdf bug fixed
+= 0.4.60
+* Creating wp user for people fixed
 == Upgrade Notice ==
 * 0.4.57 required
 

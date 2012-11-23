@@ -487,27 +487,70 @@ function church_admin_migrate_users()
 function church_admin_create_user($people_id,$household_id)
 {
     global $wpdb;
-    if(!$people_id)exit("Nobody was specified!");
-    $user=$wpdb->get_row('SELECT * FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
-    if(empty($user->user_id)&&!email_exists($user->email))
+    if(!$people_id)
     {
-	$username=strtolower($user->first_name.$user->last_name);
-	$x='';
-	while(username_exists( $user_name.$x ))
-	{
-	    $x+=1;
-	}
-
-	$random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
-	$user_id = wp_create_user( $username, $random_password, $user->email );
-	$message='<p>The web team at <a href="'.site_url().'">'.site_url().'</a> have just created a user login for you.</p>';
-	$message.='<p>Your username is <strong>'.$username.$x.'</strong></p>';
-	$message.='<p>Your password is <strong>'.$random_password.'</strong></p>';
-	QueueEmail($user->email,'Login for '.site_url(),$message,'',"Web team at ".site_url(),get_option('admin_email'),NULL);
-	$wpdb->query('UPDATE '.CA_PEO_TBL.' SET user_id="'.esc_sql($user_id).'" WHERE people_id="'.esc_sql($people_id).'"');
-	church_admin_display_household($household_id);
+	echo"<p>Nobody was specified!</p>";
     }
-}
+    else
+    {//people_id
+	
+	$user=$wpdb->get_row('SELECT * FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
+	if(empty($user))
+	{
+	    echo'<div class="updated fade">That people record doesn\'t exist</p></div>';
+	}
+	else
+	{//user exits in plugin db
+	    $user_id=email_exists($user->email);
+	    if(!empty($user_id) && $user->user_id==$user_id)
+	    {//wp user exists and is in plugin db
+		echo'<div class="updated fade">User already created</p></div>';
+		church_admin_display_household($household_id);
+	    }
+	    elseif(!empty($user_id) && $user->user_id!=$user_id)
+	    {//wp user exists, update plugin
+		$wpdb->query('UPDATE '.CA_PEO_TBL.' SET user_id="'.esc_sql($user_id).'" WHERE people_id="'.esc_sql($people_id).'"');
+		echo'<div class="updated fade">User updated</p></div>';
+		church_admin_display_household($household_id);
+	    }
+	    else
+	    {//wp user needs creating!
+		//create unique username
+		$username=strtolower(str_replace(' ','',$user->first_name).str_replace(' ','',$user->last_name));
+		$x='';
+		while(username_exists( $user_name.$x ))
+		{
+		    $x+=1;
+		}
+		$random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
+		$user_id = wp_create_user( $username.$x, $random_password, $user->email );
+		
+		$message='<p>The web team at <a href="'.site_url().'">'.site_url().'</a> have just created a user login for you.</p>';
+		$message.='<p>Your username is <strong>'.$username.$x.'</strong></p>';
+		$message.='<p>Your password is <strong>'.$random_password.'</strong></p>';
+		echo '<div class="updated fade">User created with username <strong>'.$username.'</strong>, password: <strong>'.$random_password.'</strong> and this message queued to them<br/>'.$message;
+		$headers=array();
+		$headers[] = 'From: Web team at '.site_url() .'<'.get_option('admin_email').'>';
+		$headers[] = 'Cc: Web team at '.site_url() .'<'.get_option('admin_email').'>';
+		if(wp_mail($user->email,'Login for '.site_url(),$message,$headers))
+		{
+		    echo'<strong>Email sent successfully</strong></div>';
+		}
+		else
+		{
+		    echo'<strong>Email NOT sent successfully</strong></div>';
+		}
+		$wpdb->query('UPDATE '.CA_PEO_TBL.' SET user_id="'.esc_sql($user_id).'" WHERE people_id="'.esc_sql($people_id).'"');
+		church_admin_display_household($household_id);
+	    }//wp user needs creating!
+    
+	   
+	    
+	}//user exits in plugin db
+    
+    
+    }//people_id
+}//function church_admin_create_user
 function church_admin_get_capabilities($id)
 {
     $user_info=get_userdata($id);
