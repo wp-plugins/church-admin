@@ -199,10 +199,10 @@ $wpdb->query ($sql);
 
 
     //install rota settings table
-    $table_name = $wpdb->prefix."church_admin_rota_settings";
+    $table_name = CA_RST_TBL;
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
     {
-	$sql="CREATE TABLE  ". $table_name ."  (rota_task TEXT NOT NULL ,rota_id INT( 11 ) NOT NULL AUTO_INCREMENT ,PRIMARY KEY (  rota_id ));";
+	$sql="CREATE TABLE  ". $table_name ."  (rota_task TEXT NOT NULL ,task_order INT(11),rota_id INT( 11 ) NOT NULL AUTO_INCREMENT ,PRIMARY KEY (  rota_id ));";
 	$wpdb->query ($sql);
     }
     
@@ -311,7 +311,48 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
     }
     
     
-  
+ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "rota_order"')!='rota_order')
+{
+    $sql='ALTER TABLE  '.CA_RST_TBL.' ADD rota_order INT(11)';
+    $wpdb->query($sql);
+    //order current rota jobs as
+    $result=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_id');
+    $x=1;
+    $order=array();
+    if($result)
+    {
+	foreach($result AS $row)
+	{
+	    $order[$x]=$row->rota_task;
+	    $wpdb->query('UPDATE '.CA_RST_TBL.' SET rota_order ="'.$x.'" WHERE rota_id="'.$row->rota_id.'"');
+	    $x++;
+	}
+    }
+    //adjust rota table so it is normalised
+   
+    $results=$wpdb->get_results('SELECT * FROM '.CA_ROT_TBL);
+    if($results)
+    {
+	 
+	foreach($results AS $row)
+	{
+	    $tasks=maybe_unserialize($row->rota_jobs);
+	    if($tasks)
+	    {
+		$new_rota=array();
+		foreach($tasks AS $task_name=>$person)
+		{
+		    $id=array_search($task_name,$order);
+		    if($id) $new_rota[$id]=$person;
+		}
+		$sql='UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.esc_sql(maybe_serialize($new_rota)).'" WHERE rota_id="'.esc_sql($row->rota_id).'"';
+		
+		$wpdb->query($sql);
+	    }
+	}
+    }
+    
+} 
     
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "last_updated"')!='last_updated')
 {

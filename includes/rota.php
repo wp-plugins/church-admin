@@ -2,7 +2,7 @@
 
 function church_admin_rota_list($service_id=NULL)
 {
-global$wpdb;
+global$wpdb,$rota_order;
 //check rota settings!
 $rota_jobs=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_jobs FROM ".$wpdb->prefix."church_admin_rota_settings");
 
@@ -15,7 +15,7 @@ if($rota_jobs>0&&$rota_list>0)
     <p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_rota_settings",'add_rota_settings').'" >Add more rota jobs</a></p>
     <p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota",'edit_rota').'">Add to rota</a></p>';
 //grab rota tasks
-$taskresult=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings  ORDER by rota_id");
+$taskresult=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings  ORDER by rota_order");
 if(!empty($taskresult))
 {
     if(!$service_id)
@@ -67,10 +67,21 @@ if(!empty($taskresult))
 		//start building row
 		echo '<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">[Edit]</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">[Delete]</a></td><td>'.mysql2date('jS M Y',$daterows->rota_date).'</td>';
 		//get rota task people for that date
-	    
-		$jobs=unserialize($daterows->rota_jobs);
-		foreach($jobs AS $title=>$who)echo'<td>'.esc_html($who).'</td>';
-	    
+		$rota_jobs =maybe_unserialize($daterows->rota_jobs);
+		
+		
+		if(!empty($rota_jobs))
+		{
+		    foreach($rota_order AS $order=>$id)
+		    {
+			if(!empty($rota_jobs[$id])) {echo'<td>'.esc_html($rota_jobs[$id]).'</td>';}else {echo'<td>&nbsp;</td>';}
+		    }
+		}
+		else
+		{
+		    echo'<td colspan="'.count($rota_order).'">No one is doing anything yet</td>';    
+		}
+			    
 		echo'</tr>';//finish building row	
 		}
 	    echo'</tbody>';
@@ -100,7 +111,7 @@ if ($rota_jobs>0 && $rota_list==0) {
 
 function church_admin_edit_rota($id=NULL,$service_id=NULL)
 {
-    global $wpdb,$days;
+    global $wpdb,$days,$rota_order;
    
     echo'<div class="wrap church_admin">';
     if(!$service_id)
@@ -123,7 +134,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
     }
     if($service_id)
     {//service chosen
-	$task_result=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings");
+	$task_result=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 	if(!empty($_POST['edit_rota']))
 	{
 	    if(!empty($_POST['rota_date']))
@@ -132,7 +143,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    }
 	    
 	    $jobs=array();
-	    foreach($task_result AS $task){$jobs[$task->rota_task]=stripslashes($_POST[urlencode($task->rota_task)]);}
+	    foreach($task_result AS $task){$jobs[$task->rota_id]=stripslashes($_POST[urlencode($task->rota_id)]);}
 	    if(!$id)
 	    {
 	        $sql='SELECT rota_id FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date="'.esc_sql($date).'"AND service_id="'.esc_sql($service_id).'"';
@@ -178,14 +189,14 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    }else
 	    {
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	        echo'<h2>Edit rota for '.mysql2date('d/m/Y',$date).' and '.$service->service_id.'">'.$service->service_name.' at '.$service->service_time.' '.$service->venue.'</h2>';
+	        echo'<h2>Edit rota for '.mysql2date('d/m/Y',$jobs->rota_date).' and '.$service->service_name.' at '.$service->service_time.' '.$service->venue.'</h2>';
 	    }
 	    //grab different jobs
 	
 	    foreach($task_result as $task_row)
 	    {
 	        $job=unserialize($jobs->rota_jobs);
-	        echo '<p><label>'.$task_row->rota_task.':</label><input type="text" name="'.urlencode($task_row->rota_task).'" value="'.$job[$task_row->rota_task].'"/></p>';
+	        echo '<p><label>'.$task_row->rota_task.':</label><input type="text" name="'.urlencode($task_row->rota_id).'" value="'.$job[$task_row->rota_id].'"/></p>';
 	}
 	    echo'<p class="submit"><input type="submit" name="edit_rota" value="Save &raquo;" /></p></form></div>';
 	}//end form

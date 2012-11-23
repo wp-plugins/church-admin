@@ -60,7 +60,7 @@ function  church_admin_member_type()
         console.log(Order);
         
         $.ajax({
-            url: "admin.php?page=church_admin/index.php&action=church_admin_update_order",
+            url: "admin.php?page=church_admin/index.php&action=church_admin_update_order&which=member_type",
             type: "post",
             data:  Order,
             error: function() {

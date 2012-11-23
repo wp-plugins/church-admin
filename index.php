@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.60
+Version: 0.4.61
 Author: Andy Moyle
 
 
@@ -114,7 +114,7 @@ function save_error(){
 }
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.60';
+$church_admin_version = '0.4.61';
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -129,6 +129,7 @@ define('CA_SMG_TBL',$table_prefix.'church_admin_smallgroup');
 define('CA_MET_TBL',$table_prefix.'church_admin_people_meta');
 define('CA_ATT_TBL',$table_prefix.'church_admin_attendance');
 define('CA_ROT_TBL',$table_prefix.'church_admin_rotas');
+define('CA_RST_TBL',$table_prefix.'church_admin_rota_settings');
 define('CA_SER_TBL',$table_prefix.'church_admin_services');
 define('CA_FUN_TBL',$table_prefix.'church_admin_funnels');
 define('CA_FP_TBL',$table_prefix.'church_admin_follow_up');
@@ -153,6 +154,16 @@ if (get_option("church_admin_version") != $church_admin_version )
     require(CHURCH_ADMIN_INCLUDE_PATH."install.php");
     church_admin_install();
 }    
+    //rota_order
+    $results=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order ASC');
+    if($results)
+    {
+        $rota_order=array();
+        foreach($results AS $row)
+        {
+            $rota_order[]=$row->rota_id;
+        }
+    }
     $people_type=get_option('church_admin_people_type');
     $member_type=church_admin_member_type_array();
     $departments=get_option('church_admin_departments');
@@ -240,14 +251,14 @@ function church_admin_init()
         wp_enqueue_script( 'farbtastic' );
         wp_enqueue_style('farbtastic');	
     }
-    if(isset($_GET['page'])&&$_GET['page']=='church_admin_member_type')
+    if(isset($_GET['action'])&&($_GET['action']=='church_admin_member_type'||$_GET['action']=='church_admin_rota_settings_list'||$_GET['action']=='church_admin_add_rota_settings'))
     {
         wp_enqueue_script( 'jquery-ui-sortable' );
     }
     if(isset($_GET['action'])&&$_GET['action']=='church_admin_update_order')
     {
          
-        church_admin_update_order($_POST);
+        church_admin_update_order($_GET['which']);
         exit();
     }
 }

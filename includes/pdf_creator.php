@@ -477,12 +477,12 @@ $pdf->Cell(0,10,$text,0,2,C);
 $pdf->SetFont('Arial','B',8);
 
 //column headers query
-$colres=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings ORDER BY rota_id");
+$colres=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 //set up size array, minimum length is the number of characters in the job title (helps if no one is assigned role!)
 $size=array();
 foreach($colres AS $colrow)$size[$colrow->rota_task]=strlen($colrow->rota_task);
 //grab dates
-$sql='SELECT * FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date>"'.$now.'" AND rota_date<="'.$threemonths.'" AND service_id="'.esc_sql($service_id).'"';
+$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>"'.$now.'" AND rota_date<="'.$threemonths.'" AND service_id="'.esc_sql($service_id).'"';
 $results=$wpdb->get_results($sql);
 
 

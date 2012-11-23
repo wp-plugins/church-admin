@@ -176,7 +176,7 @@ if  ($_FILES['userfile3']['size']>0)
     $filename='Email-'.date('Y-m-d-H-i-s').'.html';
     $message=str_replace('[cache]','<p style="font-size:smaller;text-align:center;margin:0 auto;">Having trouble reading this? - <a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">view in your web browser</a></p>',$message);
 
-    
+    if(!is_dir(CHURCH_ADMIN_CACHE))mkdir(CHURCH_ADMIN_CACHE);
     
     $handle=fopen(CHURCH_ADMIN_EMAIL_CACHE.$filename,"w")OR DIE("Couldn't open");
     fwrite($handle, $message);  
@@ -265,7 +265,7 @@ function church_admin_send_message($email_id)
 {
     global $wpdb,$member_type;
     $wpdb->show_errors();
-    print_r($_POST);
+    
     //this function sends the message cached in $_POST['filename'] out to the right recipients
     if(!empty($_POST['member_type']))
     {
@@ -328,7 +328,7 @@ function church_admin_send_message($email_id)
             $wpdb->query('UPDATE wp_church_admin_email_build SET recipients="'.esc_sql(maybe_serialize($addresses)).'" WHERE email_id="'.esc_sql($email_id).'"');
         }
         
-    }
+    }else{echo'<p>No email address found for '.$sql.'</p>';}
 }
 
 function getTweetUrl($url, $text)

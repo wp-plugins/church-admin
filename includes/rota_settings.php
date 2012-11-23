@@ -39,6 +39,7 @@ if(!empty($_POST['rota_task']) )
 }
 else{
 echo'<h1>Set up Rotas</h1><h2>Add a Rota Job</h2><div class="wrap church_admin"><form action="" method="post">';
+
 echo'<ul><label>Rota Job:</label><input type="text" name="rota_task" /></li></ul>';
 echo'<p class="submit"><input type="submit" name="add_rota_setting" value="Add Rota Job &raquo;" /></p></form>
 </div>';
@@ -80,17 +81,58 @@ function church_admin_rota_settings_list()
 global$wpdb;
 echo '<div class="wrap church_admin"><h2>Rota Jobs</h2>';
 echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_rota_settings",'add_rota_settings').'">Add a rota job</a></p>';
-$rota_results=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings");
+echo'<p>Rota tasks can be sorted by drag and drop, for use in other parts of the plugin.</p>';
+$rota_results=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order ASC');
 if(!empty($rota_results))
 {
-       echo '<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Rota Task</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Rota Task</th></tr></tfoot><tbody>';
+       echo '<table class="widefat" id="sortable"><thead><tr><th>Edit</th><th>Delete</th><th>Rota Task</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Rota Task</th></tr></tfoot><tbody  class="content">';
     foreach($rota_results AS $rota_row)
     {
         $rota_edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota_settings&id='.$rota_row->rota_id;
         $rota_delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_rota_settings&id='.$rota_row->rota_id;
-        echo '<tr><td><a href="'.wp_nonce_url($rota_edit_url, 'edit_rota_settings').'">[Edit]</a></td><td><a href="'.wp_nonce_url(        $rota_delete_url, 'delete_rota_settings').'">[Delete]</a></td><td>'.esc_html(stripslashes($rota_row->rota_task)).'</td></tr>';
+        echo '<tr class="sortable-row" id="'.$rota_row->rota_id.'"><td><a href="'.wp_nonce_url($rota_edit_url, 'edit_rota_settings').'">[Edit]</a></td><td><a href="'.wp_nonce_url(        $rota_delete_url, 'delete_rota_settings').'">[Delete]</a></td><td>'.esc_html(stripslashes($rota_row->rota_task)).'</td></tr>';
     }
     echo'</tbody></table></div>';
+        echo '
+    <script type="text/javascript">
+  
+ jQuery(document).ready(function($) {
+ 
+    var fixHelper = function(e,ui){
+            ui.children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
+        };
+    var sortable = $("#sortable tbody.content").sortable({
+    helper: fixHelper,
+    stop: function(event, ui) {
+        //create an array with the new order
+        
+       
+				var Order = "order="+$(this).sortable(\'toArray\').toString();
+
+        console.log(Order);
+        
+        $.ajax({
+            url: "admin.php?page=church_admin/index.php&action=church_admin_update_order&which=rota_settings",
+            type: "post",
+            data:  Order,
+            error: function() {
+                console.log("theres an error with AJAX");
+            },
+            success: function() {
+                console.log("Saved.");
+            }
+        });}
+});
+$("#sortable tbody.content").disableSelection();
+});
+
+   
+   
+    </script>
+';
 }
 }
 

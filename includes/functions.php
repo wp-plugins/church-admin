@@ -1,14 +1,19 @@
 <?php
-function church_admin_update_order()
+function church_admin_update_order($which='member_type')
 {
     global $wpdb;
     if(isset($_POST['order']))
     {
+        switch($which)
+        {
+            case'member_type':$tb=CA_MTY_TBL;$field='member_type_order';$id='member_type_id';break;
+            case'rota_settings':$tb=CA_RST_TBL;$field='rota_order';$id='rota_id';break;
+        }
         $order=explode(",",$_POST['order']);
-        foreach($order AS $member_type_order=>$member_type_id)
+        foreach($order AS $order=>$row_id)
         {
             $member_type_order++;
-            $sql='UPDATE '.CA_MTY_TBL.' SET member_type_order="'.esc_sql($member_type_order).'" WHERE member_type_id="'.esc_sql($member_type_id).'"';
+            $sql='UPDATE '.$tb.' SET '.$field.'="'.esc_sql($order).'" WHERE '.$id.'="'.esc_sql($row_id).'"';
             $wpdb->query($sql);
         }
     }
