@@ -480,9 +480,9 @@ $pdf->SetFont('Arial','B',8);
 $colres=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 //set up size array, minimum length is the number of characters in the job title (helps if no one is assigned role!)
 $size=array();
-foreach($colres AS $colrow)$size[$colrow->rota_task]=strlen($colrow->rota_task);
+foreach($colres AS $colrow)$size[$colrow->rota_id]=strlen($colrow->rota_task);
 //grab dates
-$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>"'.$now.'" AND rota_date<="'.$threemonths.'" AND service_id="'.esc_sql($service_id).'"';
+$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>"'.$now.'" AND rota_date<="'.$threemonths.'" AND service_id="'.esc_sql($service_id).'"ORDER BY rota_date ASC';
 $results=$wpdb->get_results($sql);
 
 
@@ -512,10 +512,10 @@ $w=280*(12/$totalcharas);
 $pdf->Cell($w,$h,"Date",1,0,C,0);
 foreach($colres AS $colrow)
 {
-    if($widths[$colrow->rota_task]>0)
+    if($widths[$colrow->rota_id]>0)
     {
         
-            $w=round(280*$widths[$colrow->rota_task]);
+            $w=round(280*$widths[$colrow->rota_id]);
        
         
         $pdf->Cell($w,$h,"{$colrow->rota_task}",1,0,'C',0);
