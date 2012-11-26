@@ -240,7 +240,7 @@ $wpdb->query ($sql);
     
     
     //install attendance table
-    $table_name = $wpdb->prefix."church_admin_attendance";
+    $table_name = CA_ATT_TBL;
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
     {
 
@@ -377,7 +377,7 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_ATT_TBL.' LIKE "service_id"')!='servic
 }
 
 //make sure tables are UTF8  
-    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_attendance CONVERT TO CHARACTER SET '.DB_CHARSET;
+    $sql='ALTER TABLE '. CA_ATT_TBL.'CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
