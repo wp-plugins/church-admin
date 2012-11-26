@@ -377,7 +377,7 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_ATT_TBL.' LIKE "service_id"')!='servic
 }
 
 //make sure tables are UTF8  
-    $sql='ALTER TABLE '. CA_ATT_TBL.'CONVERT TO CHARACTER SET '.DB_CHARSET;
+    $sql='ALTER TABLE '. CA_ATT_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
