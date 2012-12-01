@@ -1,7 +1,7 @@
 <?php
 function church_admin_front_end_rota()
 {
-    global $wpdb;
+    global $wpdb,$rota_order;
     $service_id=$_REQUEST['service_id'];
     $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
     if($wpdb->num_rows==1)
@@ -22,24 +22,27 @@ function church_admin_front_end_rota()
     }//choose service
     if($service_id)
     {
-	$sql='SELECT * FROM '.CA_ROT_TBL.'  WHERE rota_date>"'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" LIMIT 1';
+	$sql='SELECT * FROM '.CA_ROT_TBL.'  WHERE rota_date>"'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date ASC LIMIT 1';
+	
 	$row=$wpdb->get_row($sql);
 	$out='<p><a href="'.home_url().'/?download=rota&amp;service_id='.$service_id.'">PDF Version of the rota</a></p>';
 	$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	$out.='<h2>Who is doing what at '.esc_html($service->service_name).' on '.esc_html($days[$service->service_day]).' at '.esc_html($service->service_time).' '.esc_html($service->venue).'</h2><table>';
+	$out.='<h2>Who is doing what at '.esc_html($service->service_name).' on '.esc_html($days[$service->service_day]).' at '.esc_html($service->service_time).' '.esc_html($service->venue).'</h2>';
 	$rota_jobs =unserialize($row->rota_jobs);
+	$rota_tasks=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 	if(!empty($rota_jobs))
 	{
-	    foreach($rota_jobs AS $job=>$who)
+	    foreach($rota_tasks AS $task_row)
 	    {
-                if(!empty($who))$out.='<tr><td>'.esc_html($job).'</td><td>'.esc_html($who).'</td></tr>';
+	        if(!empty($rota_jobs[$task_row->rota_id])) $out.='<p><label style="float:left;width:150px;font-weight:bold">'.esc_html($task_row->rota_task).'</label>'.esc_html($rota_jobs[$task_row->rota_id]).'</p>';
 	    }
+	    
 	}
 	else
 	{
-	    $out.='<tr><td colspan="2">No one is doing anything yet</td></tr>';    
+	    $out.='<p>No one is doing anything yet</p>';    
 	}
-	$out.='</table>';
+	
 	
     }
     return $out;
