@@ -490,12 +490,15 @@ $results=$wpdb->get_results($sql);
 //find longest rota entries
 foreach($results AS $row)
 {
-    $jobs=unserialize($row->rota_jobs);
-    foreach($jobs AS $job=>$value)
+    $jobs=maybe_unserialize($row->rota_jobs);
+    if(!empty($jobs))
     {
-	//replace $size value if bigger
-	//ignore if not enough jobs in that row
-	if(count($jobs)==count($size) && (empty($size[$job])||strlen($value)>$size[$job]))$size[$job]=strlen($value);
+	foreach($jobs AS $job=>$value)
+	{
+	    //replace $size value if bigger
+	    //ignore if not enough jobs in that row
+	    if(count($jobs)==count($size) && (empty($size[$job])||strlen($value)>$size[$job]))$size[$job]=strlen($value);
+	}
     }
 }
 $totalcharas=array_sum($size)+12;
@@ -530,19 +533,22 @@ $h=6;
 
 foreach($results AS $row)
 {
-      //date has changed
+      
+	$jobs=maybe_unserialize($row->rota_jobs);
+    //pull rota results for that date    
+    if(!empty($jobs))
+    {
+	//date has changed
         $pdf->Ln();//add new line
         $date1=mysql2date('d/m/Y',$row->rota_date);
         $pdf->Cell(280*(12/$totalcharas),$h,"{$date1}",1,0,C,0);//print new date
         $a++;
-	$jobs=unserialize($row->rota_jobs);
-    //pull rota results for that date    
-    foreach($jobs AS $key=>$value)    
-    {
-	
-        $w=round(280*$widths[$key]);
-        if(empty($value)){$text=' ';}else{$text=$value;}
-        $pdf->Cell($w,$h,"$text",1,0,'C',0);
+	foreach($jobs AS $key=>$value)    
+	{
+	    $w=round(280*$widths[$key]);
+	    if(empty($value)){$text=' ';}else{$text=$value;}
+	    $pdf->Cell($w,$h,"$text",1,0,'C',0);
+	}
     }
 }
 
