@@ -4,7 +4,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=1)
 {
   global $wpdb;
   $out='';
-  $out.='<p><label style="width:75px;float:left;">Search</label><form name="ca_search" action="" method="POST"><input name="ca_search" type="text"/><input type="submit" value="Go"/></form></p>';
+  $out.='<p><label style="width:75px;float:left;">'.__('Search','church-admin').'</label><form name="ca_search" action="" method="POST"><input name="ca_search" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></form></p>';
     if(empty($_POST['ca_search']))
     {
       $res = $wpdb->query('SELECT * FROM '.CA_HOU_TBL.' WHERE member_type_id="'.$member_type_id.'"');
@@ -84,7 +84,8 @@ function church_admin_frontend_directory($member_type_id=1,$map=1)
   
     $out .= '<div  class="church_admin_address"><div style="width:49%; float:left"><div style="clear:both;"></div><div style="margin-bottom: 10px;"><span style="font-size:larger;font-variant: small-caps"><strong>'.esc_html(implode(" &amp; ",$adults)).' '.esc_html($last_name).'</strong></span><br />';
     if(!empty($children))$out.=esc_html(implode(", ",$children)).'<br/>';
-    $out.='</div>'.implode(",<br/> ",array_filter(unserialize($address->address))).'</div><div align="right">';
+    $out.='</div>';
+    if(!empty($address->address)){$out.=implode(",<br/> ",array_filter(unserialize($address->address))).'</div><div align="right">';}
     if (!empty($emails))
     foreach($emails AS $email)
     {

@@ -28,7 +28,7 @@ $out.='</td>
                 
                 
 </tr></table><table>';
-$out.='<tr><td width="150">Date</td><td width="150">Time</td><td width="400" >Event</td></tr>';
+$out.='<tr><td width="150">Date</td><td width="150">'.__('Time','church-admin').'</td><td width="400" >'.__('Event','church-admin').'</td></tr>';
 foreach($result AS $row)
 {
     

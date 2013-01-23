@@ -11,19 +11,19 @@ function church_admin_category_list()
 {
     global $wpdb;
     //build category tableheader
-        $thead='<tr><th>Edit</th><th>Delete</th><th width="100">Category</th><th>Shortcode</th></tr>';
+        $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Category','church-admin').'</th><th>'.__('Shortcode','church-admin').'</th></tr>';
     $table= '<table class="widefat" ><thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
         //grab categories
     $results=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category");
     foreach($results AS $row)
     {
-        $edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_category&amp;id='.$row->cat_id,'edit_category').'">Edit</a>';;
-        $delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_category&amp;id='.$row->cat_id,'delete_category').'">Delete</a>';
+        $edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_category&amp;id='.$row->cat_id,'edit_category').'">'.__('Edit','church-admin').'</a>';;
+        $delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_category&amp;id='.$row->cat_id,'delete_category').'">'.__('Delete','church-admin').'</a>';
         $shortcode='[church_admin type=calendar-list category='.$row->cat_id.' weeks=4]';
         $table.='<tr><td>'.$edit_url.'</td><td>'.$delete_url.'</td><td style="background:'.$row->bgcolor.'">'.esc_html($row->category).'</td><td>'.$shortcode.'</td></tr>';
     }
     $table.='</tbody></table>';
-    echo '<div class="wrap"><h2>Calendar Categories</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_add_category','add_category').'">Add a category</a></p>'.$table.'</div>';
+    echo '<div class="wrap"><h2>'.__('Calendar Categories','church-admin').'</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_add_category','add_category').'">'.__('Add a category','church-admin').'</a></p>'.$table.'</div>';
 }
 
 function church_admin_add_category()
@@ -34,15 +34,15 @@ function church_admin_add_category()
         
         $wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_calendar_category (category,bgcolor)VALUES('".esc_sql(stripslashes($_POST['category']))."','".esc_sql($_POST['color'])."')");
         echo '<div id="message" class="updated fade">';
-        echo '<p><strong>Category Added.</strong></p>';
+        echo '<p><strong>'.__('Category Added','church-admin').'</strong></p>';
         echo '</div>';
         church_admin_category_list();
     }
     else
     {
-        echo'<div class="wrap church_admin"><h2>Add Category</h2><form action="" method="post">';
+        echo'<div class="wrap church_admin"><h2>'.__('Add Category','church-admin').'</h2><form action="" method="post">';
         church_admin_category_form('');
-        echo'<p><label>&nbsp;</label><input type="submit" name="add_category" value="Add Category"/></p></form></div>';  
+        echo'<p><label>&nbsp;</label><input type="submit" name="add_category" value="'.__('Add Category','church-admin').'"/></p></form></div>';  
     }
     
 }
@@ -57,9 +57,9 @@ function church_admin_delete_category($id)
     //adjust events with deleted cat_id to 0
     $wpdb->query("UPDATE ".$wpdb->prefix."church_admin_calendar_event SET cat_id='1' WHERE cat_id='".esc_sql($id)."'");
     echo '<div id="message" class="updated fade">';
-        echo '<p><strong>Category Deleted.<br/>';
-        if($count==1) echo 'Note that '.$count.' event used that category and will need editing.';
-        if($count>1) echo 'Note that '.$count.' events used that category and will need editing.';
+        echo '<p><strong>'.__('Category Deleted','church-admin').'.<br/>';
+        if($count==1) echo __('Please note that','church-admin').' '.$count.' '.__('event used that category and will need editing','church-admin').'.';
+        if($count>1) echo __('Please note that','church-admin').' '.$count.' '.__('event used that category and will need editing','church-admin').'.';
         echo'</strong></p>';
         echo '</div>';
         church_admin_category_list();
@@ -73,17 +73,17 @@ function church_admin_edit_category($id)
     {
         $wpdb->query("UPDATE ".$wpdb->prefix."church_admin_calendar_category SET category='".esc_sql(stripslashes($_POST['category']))."',bgcolor='".esc_sql($_POST['color'])."' WHERE cat_id='".esc_sql($id)."'");
         echo '<div id="message" class="updated fade">';
-        echo '<p><strong>Category Edited.</strong></p>';
+        echo '<p><strong>'.__('Category Edited','church-admin').'</strong></p>';
         echo '</div>';
         church_admin_category_list();
     }
     else
     {
-    echo'<div class="wrap church_admin"><h2>Edit Category</h2><form action="" method="post">';
+    echo'<div class="wrap church_admin"><h2>'.__('Edit Category','church-admin').'</h2><form action="" method="post">';
     //grab current data
     $row=$wpdb->get_row("SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category WHERE cat_id='".esc_sql($id)."'");
     church_admin_category_form($row);
-    echo'<p><label>&nbsp;</label><input type="submit" name="edit_category" value="Edit Category"/></p></form>';
+    echo'<p><label>&nbsp;</label><input type="submit" name="edit_category" value="'.__('Edit Category','church-admin').'"/></p></form>';
     church_admin_category_list();
     echo'</div>';
     }
@@ -107,7 +107,7 @@ echo '<script type="text/javascript" >
 function church_admin_calendar()
 {
     global $wpdb;
-    echo'<div class="wrap church_admin"><h2>Calendar</h2><p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_category_list">Category List</a></p>';
+    echo'<div class="wrap church_admin"><h2>'.__('Calendar','church-admin').'</h2><p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_category_list">'.__('Category List','church-admin').'</a></p>';
     church_admin_calendar_list();
     echo'</div>';
 }
@@ -175,7 +175,7 @@ function church_admin_series_event($date_id,$event_id)
       
       //end of process
         echo '<div id="message" class="updated fade">';
-        echo '<p><strong>Calendar Event Series Edited.</strong></p>';
+        echo '<p><strong>'.__('Calendar Event Series Edited','church-admin').'.</strong></p>';
         echo '</div>';
        
         church_admin_calendar_list();
@@ -184,7 +184,7 @@ function church_admin_series_event($date_id,$event_id)
         else
         {//there was an error
         echo '<div id="message" class="updated fade">';
-        echo '<p><strong>There was an error in your form.</strong></p>';
+        echo '<p><strong>'.__('There was an error in your form','church-admin').'.</strong></p>';
         echo '</div>';
         
         }//end of there was an error
@@ -199,7 +199,7 @@ function church_admin_series_event($date_id,$event_id)
      $data->how_many=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_date WHERE event_id='".esc_sql($event_id)."'");
     echo'<div class="wrap church_admin"><h2>Edit a Series Calendar Item</h2><form action="" id="calendar" method="post">';
     echo church_admin_calendar_form($data,$error,1);
-    echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form></div>';    
+    echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="'.__('Edit Event','church-admin').'"/></form></div>';    
     }//end form
 }
 function church_admin_single_event_delete($date_id,$event_id)
@@ -210,7 +210,7 @@ function church_admin_single_event_delete($date_id,$event_id)
     if($count==0){$wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_event WHERE event_id='".esc_sql($event_id)."'");}
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_date WHERE date_id='".esc_sql($date_id)."'");
     echo '<div id="message" class="updated fade">';
-    echo '<p><strong>Calendar Event deleted.</strong></p>';
+    echo '<p><strong>'.__('Calendar Event deleted','church-admin').'.</strong></p>';
     echo '</div>';
 
     church_admin_calendar_list();
@@ -222,7 +222,7 @@ function church_admin_series_event_delete($date_id,$event_id)
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_event WHERE event_id='".esc_sql($event_id)."'");
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_calendar_date WHERE date_id='".esc_sql($date_id)."'");
     echo '<div id="message" class="updated fade">';
-    echo '<p><strong>Calendar Events deleted.</strong></p>';
+    echo '<p><strong>'.__('Calendar Events deleted','church-admin').'.</strong></p>';
     echo '</div>';
     
 
@@ -261,14 +261,14 @@ function church_admin_single_event_edit($date_id,$event_id)
         
         $wpdb->query($sql);
           echo '<div id="message" class="updated fade">';
-        echo '<p><strong>Calendar Event edited.</strong></p>';
+        echo '<p><strong>'.__('Calendar Event edited','church-admin').'.</strong></p>';
         echo '</div>';
         
         church_admin_calendar_list();
       }//end no errors
       else
       {//errors
-        echo "oops";
+        echo __('oops','church-admin');
        
       }//end errors
     }//end process 
@@ -279,9 +279,9 @@ function church_admin_single_event_edit($date_id,$event_id)
     $data=$wpdb->get_row($sql);
     $data->start_date=mysql2date('d/m/Y',$data->start_date);
     
-    echo'<div class="wrap church_admin"><h2>Edit a Single Calendar Item</h2><form action="" id="calendar" method="post">';
+    echo'<div class="wrap church_admin"><h2>'.__('Edit a Single Calendar Item','church-admin').'</h2><form action="" id="calendar" method="post">';
     echo church_admin_calendar_form($data,$error,0);
-    echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="Edit Event"/></form></div>';
+    echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="'.__('Edit Event','church-admin').'"/></form></div>';
     }//end form not submitted
 }
 
@@ -346,7 +346,7 @@ function church_admin_add_calendar()
       
       //end of process
         echo '<div id="message" class="updated fade">';
-        echo '<p><strong>Calendar Event added.</strong></p>';
+        echo '<p><strong>'.__('Calendar Event added','church-admin').'.</strong></p>';
         echo '</div>';
        
         church_admin_calendar_list();
@@ -354,7 +354,7 @@ function church_admin_add_calendar()
        else
        {
         echo '<div id="message" class="updated fade">';
-        echo '<p><strong>Calendar Event was not saved for some reason, sorry.</strong></p>';
+        echo '<p><strong>'.__('Calendar Event was not saved for some reason, sorry','church-admin').'.</strong></p>';
         echo '</div>';
        }
         
@@ -369,9 +369,9 @@ function church_admin_add_calendar()
         }
         
         $data=array_to_object($_POST);
-      echo'<div class="wrap church_admin"><h2>Add a Calendar Item</h2><p><em>There were some errors, marked in red</em></p><form action="" id="calendar" method="post">';
+      echo'<div class="wrap church_admin"><h2>'.__('Add a Calendar Item','church-admin').'</h2><p><em>'.__('There were some errors, marked in red','church-admin').'</em></p><form action="" id="calendar" method="post">';
         echo church_admin_calendar_form($data,$error,1);
-        echo '<p><label>&nbsp;</label><input type="hidden" name="add_event"  value="y"/><input type="submit" value="Add Event"/></form>';
+        echo '<p><label>&nbsp;</label><input type="hidden" name="add_event"  value="y"/><input type="submit" value="'.__('Add Event','church-admin').'"/></form>';
         
       }//end of error handling
       
@@ -379,9 +379,9 @@ function church_admin_add_calendar()
     else
     {
       
-        echo'<div class="wrap church_admin"><h2>Add a Calendar Item</h2><form action="" id="calendar" method="post">';
+        echo'<div class="wrap church_admin"><h2>'.__('Add a Calendar Item','church-admin').'</h2><form action="" id="calendar" method="post">';
         echo church_admin_calendar_form($data,$error,1);
-        echo '<p><label>&nbsp;</label><input name="add_event" type="hidden" value="y"/> <input type="submit"  value="Add Event"/></p></form></div>';
+        echo '<p><label>&nbsp;</label><input name="add_event" type="hidden" value="y"/> <input type="submit"  value="'.__('Add Event','church-admin').'"/></p></form></div>';
         
     }
     
@@ -477,11 +477,11 @@ if(document.getElementById(\'recurring\').value==\'a\'){
 		}
 }
 </script>
-<p><label>Event Title</label><input type="text" name="title" value="'.stripslashes($data->title).'" '.$error['title'].' /></p>
-<p><label>Event Description</label><textarea rows="5" cols="50" name="description" '.$error['description'].'>'.stripslashes($data->description).'</textarea></p>
-<p><label>Event Location</label><textarea rows="5" cols="50" name="location" '.$error['location'].'>'.stripslashes($data->location).'</textarea></p>
-<p><label> Category</label><select name="category" '.$error['category'].' >';
-$first='<option value="">Please select...</option>';
+<p><label>'.__('Event Title','church-admin').'</label><input type="text" name="title" value="'.stripslashes($data->title).'" '.$error['title'].' /></p>
+<p><label>'.__('Event Description','church-admin').'</label><textarea rows="5" cols="50" name="description" '.$error['description'].'>'.stripslashes($data->description).'</textarea></p>
+<p><label>'.__('Event Location','church-admin').'</label><textarea rows="5" cols="50" name="location" '.$error['location'].'>'.stripslashes($data->location).'</textarea></p>
+<p><label> '.__('Category','church-admin').'</label><select name="category" '.$error['category'].' >';
+$first='<option value="">'.__('Please select','church-admin').'...</option>';
 $sql="SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category";
 $result3=$wpdb->get_results($sql);
 foreach($result3 AS $row)
@@ -499,7 +499,7 @@ foreach($result3 AS $row)
 
 $out.=$first.$select;//have original value first!
 $out.='</select></p>
-<p><label >Start Date</label><input name="start_date" id="start_date" type="text" '.$error['start_date'].' value="'.mysql2date('d M Y',$data->start_date).'" size="25" />';
+<p><label >'.__('Start Date','church-admin').'</label><input name="start_date" id="start_date" type="text" '.$error['start_date'].' value="'.mysql2date('d M Y',$data->start_date).'" size="25" />';
 $out.='<script type="text/javascript">
       jQuery(document).ready(function(){
          jQuery(\'#start_date\').datepicker({
@@ -509,31 +509,31 @@ $out.='<script type="text/javascript">
    </script>';
 if($recurring==1){
     $out.='
-<p><label>Recurring</label>
+<p><label>'.__('Recurring','church-admin').'</label>
 <select name="recurring" '.$error['recurring'].' id="recurring" onchange="OnChange(\'recurring\')">
 ';
 if(!empty($data->recurring))
 {
-    $option=array(s=>'Once',1=>'Daily',7=>'Weekly',n=>'nth day eg.1st Friday',m=>'Monthly',a=>'Annually');
+    $option=array(s=>__('Once','church-admin'),1=>__('Daily','church-admin'),7=>__('Weekly','church-admin'),n=>__('nth day eg.1st Friday','church-admin'),m=>__('Monthly','church-admin'),a=>__('Annually','church-admin'));
     $out.= '<option value="'.$data->recurring.'">'.$option[$data->recurring].'</option>';
 }
 $out.='
-<option value="s">Once</option>
-<option value="1">Daily</option>
-<option value="7">Weekly</option>
-<option value="14">Fortnightly</option>
-<option value="n">nth day (eg 1st Friday)</option>
-<option value="m">Monthly on same date</option>
-<option value="a">Annually</option>
+<option value="s">'.__('Once','church-admin').'</option>
+<option value="1">'.__('Daily','church-admin').'</option>
+<option value="7">'.__('Weekly','church-admin').'</option>
+<option value="14">'.__('Fortnightly','church-admin').'</option>
+<option value="n">'.__('nth day (eg 1st Friday)','church-admin').'</option>
+<option value="m">'.__('Monthly on same date','church-admin').'</option>
+<option value="a">'.__('Annually','church-admin').'</option>
 </select></p>
 <div id="nth" ';
 if($data->recurring=='n'){$out.='style="display:block"';}else{$out.='style="display:none"';}
-$out.='><p><label>Recurring on </label><select '.$error['nth'].' name="nth">';
+$out.='><p><label>'.__('Recurring on','church-admin').' </label><select '.$error['nth'].' name="nth">';
 if(!empty($data->nth)) $out.='<option value="'.$data->nth.'">'.$data->nth.'</option>';
-$out.='<option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option></select>&nbsp;<select name="day"><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select></p></div>
+$out.='<option value="1">'.__('1st','church-admin').'</option><option value="2">'.__('2nd','church-admin').'</option><option value="3">'.__('3rd','church-admin').'</option><option value="4">'.__('4th','church-admin').'</option></select>&nbsp;<select name="day"><option value="0">'.__('Sunday','church-admin').'</option><option value="1">'.__('Monday','church-admin').'</option><option value="2">'.__('Tuesday','church-admin').'</option><option value="3">'.__('Wednesday','church-admin').'</option><option value="4">'.__('Thursday','church-admin').'</option><option value="5">'.__('Friday','church-admin').'</option><option value="6">'.__('Saturday','church-admin').'</option></select></p></div>
 <div id="howmany" ';
 if(!empty($data->recurring) && $data->recurring!='s'){$out.='style="display:block"';}else{$out.='style="display:none"';}
-$out.='><p><label>How many times in all?</label><input type="text" '.$error['how_many'].' name="how_many" value="'.$data->how_many.'"/></p></div>';
+$out.='><p><label>'.__('How many times in all?','church-admin').'</label><input type="text" '.$error['how_many'].' name="how_many" value="'.$data->how_many.'"/></p></div>';
 }//end recurring
 else
 {
@@ -541,9 +541,9 @@ else
 }
 $data->start_time=substr($data->start_time,0,5);//remove seconds
 $data->end_time=substr($data->end_time,0,5);//remove seconds
-$out.='<p><label>Start Time of form HH:MM</label><input type="text" name="start_time" '.$error['start_time'].' value="'.$data->start_time.'"/></p>
-<p><label>End Time of form HH:MM</label><input type="text" name="end_time" '.$error['end_time'].' value="'.$data->end_time.'" /></p>
-<p><label>Appear on Year Planner?</label><input type="checkbox" name="year_planner" value="1"';
+$out.='<p><label>'.__('Start Time of form HH:MM','church-admin').'</label><input type="text" name="start_time" '.$error['start_time'].' value="'.$data->start_time.'"/></p>
+<p><label>'.__('End Time of form HH:MM','church-admin').'</label><input type="text" name="end_time" '.$error['end_time'].' value="'.$data->end_time.'" /></p>
+<p><label>'.__('Appear on Year Planner?','church-admin').'</label><input type="checkbox" name="year_planner" value="1"';
 if($data->year_planner) $out.=' checked="checked"';
 $out.='/></p>
 ';
@@ -554,7 +554,7 @@ function church_admin_calendar_list()
 {
     global $wpdb;
     if(empty($_REQUEST['date']))$_REQUEST['date']=time();
-   echo'<div class="wrap church_admin"><p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_calendar&amp;date='.$_GET['date'].'">Add calendar Event</a></p>';
+   echo'<div class="wrap church_admin"><p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_calendar&amp;date='.$_GET['date'].'">'.__('Add calendar Event','church-admin').'</a></p>';
 $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calendar_event"); 
  if(!empty($events))
 {
@@ -566,8 +566,8 @@ $events=$wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."church_admin_calen
     $sqlnow=date("Y-m%", $current);
     $sqlnext=date("Y-m-d",$next);
     
-    echo '<table><tr><td><a href="admin.php?page=church_admin_calendar&amp;date='.$previous.'">Prev</a> '.$now.' <a href="admin.php?page=church_admin_calendar&amp;date='.$next.'">Next</a></td><td>';
-    echo'<form action="admin.php?page=church_admin_calendar" method="post"><select name="date">';
+    echo '<table><tr><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_calendar_list&amp;date='.$previous.'">'.__('Prev','church-admin').'</a> '.$now.' <a href="admin.php?page=church_admin/index.php&amp;action=church_admin_calendar_list&amp;date='.$next.'">'.__('Next','church-admin').'</a></td><td>';
+    echo'<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_calendar_list" method="post"><select name="date">';
     if(isset($_REQUEST['date']))echo '<option value="'.$_REQUEST['date'].'">'.date('M Y',$_REQUEST['date']).'</option>';
 //generate a form to access calendar
 for($x=0;$x<12;$x++)
@@ -575,25 +575,25 @@ for($x=0;$x<12;$x++)
     $date=strtotime("+ $x month",time());
     echo '<option value="'.$date.'">'.date('M Y',$date).'</option>';
 }
-echo '</select><input type="submit" value="Go to date"/></form></td></tr></table>';
+echo '</select><input type="submit" value="'.__('Go to date','church-admin').'"/></form></td></tr></table>';
     //initialise table
-    $table='<table class="widefat"><thead><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></thead><tfoot><tr><th>Single Edit</th><th>Series Edit</th><th>Single Delete</th><th>Series Delete</th><th>Start date</th><th>Start Time</th><th>End Time</th><th>Event Name</th><th>Category</th><th>Year Planner?</th></tr></tfoot><tbody>';
+    $table='<table class="widefat"><thead><tr><th>'.__('Single Edit','church-admin').'</th><th>'.__('Series Edit','church-admin').'</th><th>'.__('Single Delete','church-admin').'</th><th>'.__('Series Delete','church-admin').'</th><th>'.__('Start date','church-admin').'</th><th>'.__('Start Time','church-admin').'</th><th>'.__('End Time','church-admin').'</th><th>'.__('Event Name','church-admin').'</th><th>'.__('Category','church-admin').'</th><th>'.__('Year Planner','church-admin').'?</th></tr></thead><tfoot><tr><th>'.__('Single Edit','church-admin').'</th><th>'.__('Series Edit','church-admin').'</th><th>'.__('Single Delete','church-admin').'</th><th>'.__('Series Delete','church-admin').'</th><th>'.__('Start date','church-admin').'</th><th>'.__('Start Time','church-admin').'</th><th>'.__('End Time','church-admin').'</th><th>'.__('Event Name','church-admin').'</th><th>'.__('Category','church-admin').'</th><th>'.__('Year Planner','church-admin').'?</th></tr></tfoot><tbody>';
     $sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.*,".$wpdb->prefix."church_admin_calendar_event.*,".$wpdb->prefix."church_admin_calendar_category.* FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_event WHERE ".$wpdb->prefix."church_admin_calendar_date.event_id=".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date LIKE '$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date";
   
    $result=$wpdb->get_results($sql);
     foreach($result AS $row)
     {
     //create links
-    $single_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'church admin single event edit').'">Edit</a>';
-    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'church admin series event edit').'">Edit Series</a>';}
-    $single_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'single_event_delete').'">Delete this one</a>';
+    $single_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'single_event_edit').'">'.__('Edit','church-admin').'</a>';
+    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'series_event_edit').'">'.__('Edit Series','church-admin').'</a>';}
+    $single_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'single_event_delete').'">'.__('Delete this one','church-admin').'</a>';
 
-    if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'series_event_delete').'">Delete Series</a>';}
+    if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id={$row->event_id}&amp;date_id={$row->date_id}&amp;date={$_GET['date']}",'series_event_delete').'">'.__('Delete Series','church-admin').'</a>';}
     
     //sort out category
     
      $table.='<tr><td>'.$single_edit_url.'</td><td>'.$series_edit_url.'</td><td>'.$single_delete_url.'</td><td>'.$series_delete_url.'</td><td>'.mysql2date('j F Y',$row->start_date).'</td><td>'.$row->start_time.'</td><td>'.$row->end_time.'</td><td>'.htmlentities($row->title).'</td><td style="background:'.$row->bgcolor.'">'.htmlentities($row->category).'</td><td>';
-     if($row->year_planner){$table.='Yes';}else{$table.='&nbsp;';}
+     if($row->year_planner){$table.=__('Yes','church_admin');}else{$table.='&nbsp;';}
      $table.='</td></tr>';
     }
     $table.='</tbody></table>';
@@ -632,7 +632,7 @@ if(!function_exists(array_to_object)) {
 
 function nthday($nth,$day,$date)
 {
-    $days=array(0=>'Sunday',1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday');
+    $days=array(0=>__('Sunday','church_admin'),1=>__('Monday','church_admin'),2=>__('Tuesday','church_admin'),3=>__('Wednesday','church_admin'),4=>__('Thursday','church_admin'),5=>__('Friday','church_admin'),6=>__('Saturday','church_admin'));
     $month=date('M',strtotime($date));
     $year=date('Y',strtotime($date));
     return date('Y-m-d',strtotime("+$nth {$days[$day]} $month $year"));

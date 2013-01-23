@@ -9,12 +9,12 @@ function church_admin_send_email()
 
    if(!empty($_POST['send_email']))
    {
-    echo '<p>Processing</p>';
+    echo '<p>'.__('Processing','church-admin').'</p>';
         church_admin_send_message($_POST['email_id']);
    }
    elseif(!empty($_POST['build_message']))
     {
-        echo'<div class="wrap church_admin"><h2>Step 2 check message and choose recipients</h2>';
+        echo'<div class="wrap church_admin"><h2>'.__('Step 2 check message and choose recipients','church-admin').'</h2>';
         $email_id=church_admin_email_build();
         church_admin_choose_recipients($email_id);
     }
@@ -32,27 +32,27 @@ function church_admin_email_form()
 {
     global $wpdb;
     //This function displays a form to build the email message
-    echo'<div class="wrap church_admin"><h2>Bulk Email</h2>';
-    echo'<h2>Step 1 Build Email Message</h2>';
+    echo'<div class="wrap church_admin"><h2>'.__('Bulk Email','church-admin').'</h2>';
+    echo'<h2>'.__('Step 1 Build Email Message','church-admin').'</h2>';
     //set up form
     echo'<form action="" enctype="multipart/form-data" method="post" >';
     echo'<input type="hidden" name="MAX_FILE_SIZE" value="1000000" />';
     echo'<input type="hidden" name="build_message" value="1"/>';
-    echo'<p><label for="subject"><strong>Subject:</strong></label><input type="text" name="subject" id="subject" maxlength="100" size="100"/></p>
-    <p><label for="reply_name"><strong>Reply to name:</strong></label><input id="reply_name" type="text" name="from_name" value="'.get_option('blogname').'"/></p>
-    <p><label for="reply_email"><strong>Email address for replies:</strong></label><input id="reply_email" type="text" name="from_email" value="'.get_option('admin_email').'"/></p> 
-    <p><label>Attachment 1 (max 500KB):</label>
+    echo'<p><label for="subject"><strong>'.__('Subject','church-admin').':</strong></label><input type="text" name="subject" id="subject" maxlength="100" size="100"/></p>
+    <p><label for="reply_name"><strong>'.__('Reply to name','church-admin').':</strong></label><input id="reply_name" type="text" name="from_name" value="'.get_option('blogname').'"/></p>
+    <p><label for="reply_email"><strong>'.__('Email address for replies','church-admin').':</strong></label><input id="reply_email" type="text" name="from_email" value="'.get_option('admin_email').'"/></p> 
+    <p><label>'.__('Attachment','church-admin').' 1 (max 500KB):</label>
 			<input type="file" name="userfile1"/>
 	</p>
-	<p><label>Attachment 2 (max 500KB):</label>
+	<p><label>'.__('Attachment','church-admin').' 2 (max 500KB):</label>
 			<input type="file" name="userfile2"/>
 	</p>
-	<p><label>Attachment 3 (max 500KB):</label>
+	<p><label>'.__('Attachment','church-admin').' 3 (max 500KB):</label>
 			<input type="file" name="userfile3"/>
 	</p>	';
         if ( function_exists('wp_nonce_field') ) wp_nonce_field('church_admin_events_send_email');
     
-    echo'<p> All emails are individually addressed.</p>';
+    echo'<p>'.__('All emails are individually addressed','church-admin').'</p>';
     echo'<div id="poststuff">';
     the_editor('','message',"", true);
     echo'</div>';
@@ -62,14 +62,14 @@ function church_admin_email_form()
     $posts=$wpdb->get_results($sql);
     if($posts)
     {
-        echo '<p><strong> Choose Latest News posts to add</strong></p>';
+        echo '<p><strong>'.__('Choose Latest News posts to add','church-admin').'</strong></p>';
         foreach($posts AS $post)
         {
             echo '<p><input type="checkbox" name="post[]" value="'.$post->ID.'"/>'.$post->post_title.' published '.mysql2date('d/m/Y',$post->post_date).'</p>';
         }
     }
    
-    echo'<p><input type="submit" class="secondary-button" value="Save Email"/>';
+    echo'<p><input type="submit" class="secondary-button" value="'.__('Save Email','church-admin').'"/>';
     echo'</form></div>';
 
 }
@@ -174,7 +174,7 @@ if  ($_FILES['userfile3']['size']>0)
     //copyright year
     $message=str_replace('[year]',date('Y'),$message);
     $filename='Email-'.date('Y-m-d-H-i-s').'.html';
-    $message=str_replace('[cache]','<p style="font-size:smaller;text-align:center;margin:0 auto;">Having trouble reading this? - <a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">view in your web browser</a></p>',$message);
+    $message=str_replace('[cache]','<p style="font-size:smaller;text-align:center;margin:0 auto;">'.__('Having trouble reading this?','church-admin').' - <a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">'.__('view in your web browser','church-admin').'</a></p>',$message);
 
     if(!is_dir(CHURCH_ADMIN_CACHE))mkdir(CHURCH_ADMIN_CACHE);
     
@@ -201,9 +201,9 @@ if  ($_FILES['userfile3']['size']>0)
     
     
     //output message to screen
-    echo'<h3>This is how the message will look...</h3>';
-    echo'<p>The email will have Dear First Name, when it is sent out!</p>';
-    echo '<iframe width="700" border="1" height="450" src="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">Please upgrade your browser to display the email!</iframe>';
+    echo'<h3>'.__('This is how the message will look','church-admin').'...</h3>';
+    echo'<p>'.__('The email will have Dear First Name, when it is sent out','church-admin').'!</p>';
+    echo '<iframe width="700" border="1" height="450" src="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">'.__('Please upgrade your browser to display the email!','church-admin').'</iframe>';
     echo'<h3>Use these social media buttons to post the email url...</h3><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=118790464849935&amp;xfbml=1"></script><fb:like href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'" send="false" width="450" show_faces="false" font="lucida grande"></fb:like></p>';
 echo '<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-text="'.$_POST['subject'].'" data-url="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script> '  ;
     
@@ -218,45 +218,45 @@ function church_admin_choose_recipients($email_id)
     echo'<h2>Now choose recipients...</h2><form action="" method="post"><input type="hidden" value="'.$email_id.'" name="email_id"/><input type="hidden" name="send_email" value="1"/>';
  foreach($member_type AS $key=>$value)
  {
-   echo'<p><label><strong>All '.$value.'</strong></label><input type="checkbox" name="member_type[]" value="'.$key.'"/></p>';
+   echo'<p><label><strong>'.__('All','church-admin').' '.$value.'</strong></label><input type="checkbox" name="member_type[]" value="'.$key.'"/></p>';
  }
 
-echo'<p><label><strong>A Small group</strong></label><input type="radio" name="type" value="smallgroup"/></p>';
+echo'<p><label><strong>'.__('A Small group','church-admin').'</strong></label><input type="radio" name="type" value="smallgroup"/></p>';
  echo'<fieldset id="smallgroup">';
-echo'<p><label>Which group</label><select name="group_id">';
+echo'<p><label>'.__('Which group','church-admin').'</label><select name="group_id">';
 $results=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
 foreach($results AS $row)
 {
     echo'<option value="'.$row->id.'">'.$row->group_name.'</option>';
 }
 echo'</select></p></fieldset>';
-echo'<p><label><strong>Choose individuals</strong></label><input type="radio" name="type" value="individuals"  /></p>';
+echo'<p><label><strong>'.__('Choose individuals','church-admin').'</strong></label><input type="radio" name="type" value="individuals"  /></p>';
     //choose individuals
     echo'<fieldset id="individuals">';
     echo '<div class="clonedInput" id="input1">';
-    echo'<p><label>Select Person</label><select name="person[]" id="person1" class="person">';
+    echo'<p><label>'.__('Select Person','church-admin').'</label><select name="person[]" id="person1" class="person">';
     $results=$wpdb->get_results('SELECT CONCAT_WS(", ",last_name,first_name) AS name,people_id FROM '.CA_PEO_TBL.' WHERE email!="" AND last_name!="" AND first_name!="" ORDER BY last_name');
     foreach($results AS $row)
     {
-        echo '<option value="'.$row->id.'">'.$row->name.'</option>';
+        echo '<option value="'.$row->people_id.'">'.$row->name.'</option>';
     }
     echo'</select></p></div>';
-    echo'<p><input type="button" id="btnAdd" value="Add another person" /><input type="button" id="btnDel" value="Remove person" /></p></fieldset>';
+    echo'<p><input type="button" id="btnAdd" value="'.__('Add another person','church-admin').'" /><input type="button" id="btnDel" value="'.__('Remove person','church-admin').'" /></p></fieldset>';
   
     //end choose individuals
-    echo'<p><label>Everyone in this ministry...</label><input type="radio" name="type" value="roles"  /></p>';
+    echo'<p><label>'.__('Everyone in this ministry','church-admin').'...</label><input type="radio" name="type" value="roles"  /></p>';
     $roles=get_option('church_admin_departments');
      echo'<fieldset id="roles">';
     echo '<div class="roleclonedInput" id="roleinput1">';
-    echo'<p><label>Select Ministry</label><select name="role_id[]" id="roleid1" class="role_id">';
+    echo'<p><label>'.__('Select Ministry','church-admin').'</label><select name="role_id[]" id="roleid1" class="role_id">';
     foreach($roles AS $key=>$value)
     {
       echo'<option value="'.$key.'">'.$value.'</option>';
     }
     echo'</select></p></div>';
-     echo'<p><input type="button" id="roleadd" value="Add another ministry" /><input type="button" id="roledel" value="Remove ministry" /></p></fieldset>';
+     echo'<p><input type="button" id="roleadd" value="'.__('Add another ministry','church-admin').'" /><input type="button" id="roledel" value="Remove ministry" /></p></fieldset>';
   
-    echo'<p><input type="submit" class="secondary-button" value="Send Email"/>';
+    echo'<p><input type="submit" class="secondary-button" value="'.__('Send Email','church-admin').'"/>';
     echo'</form></div>';
 //end of choose recipients
 }
@@ -273,25 +273,39 @@ function church_admin_send_message($email_id)
       $where='(';
       foreach($_POST['member_type'] AS $key=>$value)if(array_key_exists($value,$member_type))$w[]=' member_type_id='.$value.' ';
       $where.=implode("||",$w).')';
-      $sql='SELECT DISTINCT email, first_name FROM '.CA_PEO_TBL.' WHERE '.$where;
+      $sql='SELECT email, first_name FROM '.CA_PEO_TBL.' WHERE '.$where.' GROUP BY email';
    
     }
     elseif(!empty($_POST['type']) && $_POST['type']=='smallgroup') $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE small_group_id="'.esc_sql($_POST['group_id']).'"';
     elseif(!empty($_POST['type']) && $_POST['type']=='individuals')
     {
 	    $names=array();
-            foreach ($_POST['person']AS $value){$names[]='id = "'.esc_sql($value).'"';}
-            $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE "'.implode(' OR ',$names).'"';
+            foreach ($_POST['person'] AS $value){$names[]='people_id = "'.esc_sql($value).'"';}
+            $sql='SELECT  email,first_name FROM '.CA_PEO_TBL.' WHERE '.implode(' OR ',$names).' GROUP BY email';
     }
     elseif(!empty($_POST['type']) && $_POST['type']=='roles')
     {
-      foreach($_POST['role_id'] AS $key=>$value)$r[]='b.role_id='.$value;
-      $sql='SELECT DISTINCT a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).')';
+      foreach($_POST['role_id'] AS $key=>$value)$r[]='b.department_id='.$value;
+      $sql='SELECT  a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).') GROUP BY email';
       
     }
     $results=$wpdb->get_results($sql);
     if($results)
     {
+      
+	 $email_settings=get_option('church_admin_smtp');
+	 if(!empty($email_settings))
+	 {
+	    require_once(CHURCH_ADMIN_INCLUDE_PATH.'class.phpmailer.php');
+	    $mail = new PHPMailer();
+	    $mail->IsSMTP();
+	    $mail->SMTPAuth   = true;                  // enable SMTP authentication
+	    if($email_settings['ssl'])$mail->SMTPSecure = "ssl"; 
+	    $mail->Host       = $email_settings['host'];
+	    $mail->Port       = $email_settings['port'];
+	    $mail->Username   = $email_settings['username'];
+	    $mail->Password   = $email_settings['password'];
+	 }
         $sql='SELECT * FROM '.$wpdb->prefix.'church_admin_email_build WHERE email_id="'.esc_sql($email_id).'"';
   
         $email_data=$wpdb->get_row($sql);
@@ -306,7 +320,7 @@ function church_admin_send_message($email_id)
                     if(!empty($row->email)&& !in_array($row->email,$addresses))
                     {
 			$addresses[]=$row->email;
-                        if(QueueEmail($row->email,$email_data->subject,str_replace("<!--salutation-->",'Dear '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
+                        if(QueueEmail($row->email,$email_data->subject,str_replace("<!--salutation-->",__('Dear','church-admin').' '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
                     }
                     
                 }
@@ -314,13 +328,48 @@ function church_admin_send_message($email_id)
 		  
                         add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
 
-                        $headers="From: ".$email_data->from_name." <".$email_data->from_email.">\n";
+                       
                         if(!empty($row->email))
                         {
-			   $addresses[]=$row->email;
-			      if(wp_mail($row->email,$email_data->subject,str_replace('<!--salutation-->','Dear '.$row->first_name.',',$email_data->message),$headers,unserialize($email_data->filename)))
+			   if(!empty($email_settings))
+			   {//use phpmailer
+			      $mail->From     = $email_data->from_email;
+			      $mail->FromName = $email_data->from_name;
+			      $mail->IsHTML(true); 
+			      $mail->AddAddress($row->email);
+			      if(!empty($email_data->filename))
+			      {
+				 $paths=array();
+				 $paths=unserialize($email_data->filename);
+				 if (!empty($paths))
+				 {
+				    Foreach($paths AS $path)
+				    {
+					  $mail->AddAttachment($path, $name = "", $encoding = "base64",$type = "application/octet-stream");
+                    
+				    }
+				 }
+			      }
+			      else
+			      {
+			       $mail->ClearAttachments();
+			      }
+			      $mail->Subject = $email_data->subject ;
+			      $mail->Body=str_replace('<!--salutation-->',__('Dear','church-admin').' '.$row->first_name.',',$email_data->message);
+			      if($mail->Send()) echo '<p>'.$row->email.' sent </p>';
+			      echo     $mail->ErrorInfo;
+			      $mail->ClearAllRecipients();//clears all recipients
+			      $mail->ClearCustomHeaders();//clears headers for next message
+			      $mail->ClearAttachments();
+			      $path='';
+			   }//end use phpmailer
+			   else
+			   {//use native wordpress
+			       $headers="From: ".$email_data->from_name." <".$email_data->from_email.">\n";
+			      $addresses[]=$row->email;
+			      if(wp_mail($row->email,$email_data->subject,str_replace('<!--salutation-->',__('Dear','church-admin').' '.$row->first_name.',',$email_data->message),$headers,unserialize($email_data->filename)))
 			      echo'<p>'.$row->email.' sent immediately</p>';
-			    
+			   } 
                         }
                         
                     }
@@ -328,7 +377,7 @@ function church_admin_send_message($email_id)
             $wpdb->query('UPDATE wp_church_admin_email_build SET recipients="'.esc_sql(maybe_serialize($addresses)).'" WHERE email_id="'.esc_sql($email_id).'"');
         }
         
-    }else{echo'<p>No email address found for '.$sql.'</p>';}
+    }else{echo'<p>'.__('No email address found for','church-admin').' '.$sql.'</p>';}
 }
 
 function getTweetUrl($url, $text)

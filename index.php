@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.631
+Version: 0.4.7
 Author: Andy Moyle
 
 
@@ -43,80 +43,29 @@ Copyright (C) 2010 Andy Moyle
 
 ----------------------------------------
 
-The structure of this plugin is as follows:
 
-===========================================
-MAIN FILES
-----------
-index.php - main plugin file
-
-INCLUDES
----------
-
-------------------------------------------------
-
-
-Version History
-================================================
-0.1 2010-11-31 Initial Release
-0.2 2011-01-05 Minor bug fixes for small groups
-0.3 2011-01-24 Added calendar
-0.31.2 2011-01-31 Fixed install roblems from svn
-0.31.3 2011-01-31 Order calendar widget by start date and multiple events per day allowed
-0.31.4 2011-02-04 Calendar Event deletes added, fixed jquery conflict on admin pages, rota for today on a sunday
-0.32.1    2011-02-08  A4 year planner added,rebuilds cronemail.php on upgrade
-0.32.2 2011-02-16 Valid XHTML on admin pages
-0.32.3 2011-02-18 Minor formatting fixes on admin pages
-0.32.4 20110-03-06 Various fixes
-0.32.6 2011-03-08 Calendar CSS fixed
-0.32.7 2011-03-14 Calendar fix on error in form - not showing in red
-0.32.8 2011-03-23 Calendar times and dates use Wordpress format settings, pdf's adjustable for different sizes
-0.32.9 2011-03-25 Agenda view date select fixed
-0.32.9.1 2011-04-18 Fixed cron issue
-0.32.9.2 2011-05-24 Fixed jquery conflict issue in Calendar tooltip display
-0.32.9.3 2011-06-22 Added category shortcode to calendar-list & basic email template to bulk email
-0.32.9.5 2011-07-20 Error message if calendar event not saved!
-0.32.9.6 2011-08-25 Minor CSS tweak for address list display on non white backgrounds
-0.33.0 2011-08-26 Fixes for non queued emails, removed redundant email settings and added templating to Email generation and small group fix for directory
-0.33.1 2011-09-02 Attendance tables
-0.33.2.1 2011-09-04 Added missing files and ability to send email immediately
-0.33.2.2 2011-10-26 MOved emailing cahcing out of plugin
-0.33.2.3 2011-10-30 Attendance graph Shortcodes
-0.33.2.4 2011-11-30 Fixed Salutation missing from 1st email sent instantly
-0.33.2.5 2011-12-01 Added 5 years of year planners to cache
-0.33.2.6 2011-12-05 Fixed calendar bugs in display and editing
-0.33.2.7 2011-12-13 Calendar  display dropdown menu fix
-0.33.2.8 2011-12-19 Calendar previous and next bug fix
-0.33.2.9 2011-12-20 Calendar list format bug fix
-0.33.3.0 2011-12-31 Jquery no conflict wrapper for email
-0.33.3.1 2012-01-03 Fixed bug where add calendar event with same details wasn't saved
-0.33.3.2 2012-01-06 Calendar Year planner added choices to main directory list & rota add job issue fixed
-0.33.3.3 2012-01-06 UTF8 character set for DB tables
-0.33.4.0 2012-01-23 PDFs created dynamically
-0.33.4.3 2012-02-21 Clear out filesfrom svn repository
-0.33.4.4 2012-02-26 Oops your rota would have been duplicated
-0.33.4.5 2012-03-27 Rota gremlins fixed
-0.4.0 2012-07-03 Rewrite of directory side
-0.4.1 2012-07-03   Search front end and add services
-0.4.2 2012-07-06 Added google map showing small group members [church_admin_map member_type_id=#]
-0.4.3 2012-07-08 Redundant file with possible Security Vulnerability removed.
-0.4.5 2012-08-04 Changed departments, fixed some bugs, orderable membership types.
-0.4.55 2012-09-20 Various Bug fixes change admin  home screen
-0.4.56 2012-10-07 Address list admin pagination fixed, attendance added to menu
-0.4.57 2012-10-15 Bug fixes and make departments clearer by renaming to ministries
-0.4.59 2012-11-21 Address list pdf bug fixed
-0.4.60 2012-11-23 Create User fixed
-0.4.62 2012-11-26 Fixed activation bug
-0.4.631 2012-12-01 Updated rota display to new version
 */
 add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
 add_action('activated_plugin','save_error');
 function save_error(){
     update_option('plugin_error',  ob_get_contents());
 }
+
+//add localisation
+$my_translator_domain   = 'church-admin';
+$my_translator_is_setup = 0;
+function ca_loc_setup(){
+  global $my_translator_domain, $my_translator_is_setup;
+  if($my_translator_is_setup) {
+    return;
+  }
+  load_plugin_textdomain( 'church-admin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+}
+ca_loc_setup();
+//end add localisation
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.631';
+$church_admin_version = '0.4.7';
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -176,9 +125,9 @@ $rota_order=ca_rota_order();
     $member_type=church_admin_member_type_array();
     $departments=get_option('church_admin_departments');
     $level=get_option('church_admin_levels');
-    if(empty($level)||count($level)<10){$level=array('Directory'=>'administrator','Small Groups'=>'administrator','Rota'=>'administrator','Funnel'=>'administrator','Bulk Email'=>'administrator','Bulk SMS'=>'administrator','Vistor'=>'administrator','Calendar'=>'administrator','Attendance'=>'administrator','Service'=>'administrator');update_option('church_admin_levels',$level);}
+    if(empty($level)||count($level)<10){$level=array(__('Directory','church-admin')=>'administrator',__('Small Groups','church-admin')=>'administrator',__('Rota','church-admin')=>'administrator',__('Funnel','church-admin')=>'administrator',__('Bulk Email','church-admin')=>'administrator',__('Bulk SMS','church-admin')=>'administrator','Vistor'=>'administrator','Calendar'=>'administrator','Attendance'=>'administrator','Service'=>'administrator');update_option('church_admin_levels',$level);}
     
-    $days=array(1=>'Sunday',2=>'Monday',3=>'Tuesday',4=>'Wednesday',5=>'Thursday',6=>'Friday',7=>'Saturday');
+    $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
     
     
 add_filter('the_posts', 'church_admin_conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
@@ -325,7 +274,7 @@ function church_admin_menus()
 
 {
     global $level;
-    add_menu_page('church_admin:Administration', 'Church Admin',  'administrator', 'church_admin/index.php', 'church_admin_main');
+    add_menu_page('church_admin:Administration', __('Church Admin','church-admin'),  'administrator', 'church_admin/index.php', 'church_admin_main');
 /*    add_submenu_page('church_admin/index.php', 'Directory List', 'Directory List', $level['Directory'], 'church_admin_address_list', 'church_admin_address_list');
     add_submenu_page('church_admin/index.php', 'Follow Up Funnels', 'Follow Up Funnels', $level['Funnel'], 'church_admin_funnel_list', 'church_admin_funnel_list');
     add_submenu_page('church_admin/index.php', 'Church Departments', 'Church Departments', 'administrator', 'church_admin_department_list', 'church_admin_department_list');
@@ -338,7 +287,7 @@ function church_admin_menus()
     if( get_option('church_admin_cron')=='wp-cron'||file_exists(CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php')) add_submenu_page('church_admin/index.php', 'Bulk Email', 'Send Bulk Email', $level['Bulk Email'], 'church_admin_send_email', 'church_admin_send_email');    
     add_submenu_page('church_admin/index.php', 'Member Types', 'Member Types', 'administrator', 'church_admin_member_type', 'church_admin_member_type');
 */
-    add_submenu_page('church_admin/index.php', 'Settings', 'Settings', 'administrator', 'church_admin_settings', 'church_admin_settings');
+    add_submenu_page('church_admin/index.php', __('Settings','church-admin'), 'Settings', 'administrator', 'church_admin_settings', 'church_admin_settings');
 
 }
 
@@ -347,9 +296,9 @@ function mytheme_admin_bar_render() {
  global $wp_admin_bar;
  // Add a new top level menu link
  // Here we add a customer support URL link
- $wp_admin_bar->add_menu( array('parent' => false, 'id' => 'church_admin', 'title' => __('Church Admin'), 'href' => admin_url().'admin.php?page=church_admin/index.php' ));
- $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'church_admin_settings', 'title' => __('Settings'), 'href' => admin_url().'admin.php?page=church_admin/index.php&action=church_admin_settings' ));
- $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'plugin_support', 'title' => __('Plugin Support'), 'href' => 'http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support' ));
+ $wp_admin_bar->add_menu( array('parent' => false, 'id' => 'church_admin', 'title' => __('Church Admin','church-admin'), 'href' => admin_url().'admin.php?page=church_admin/index.php' ));
+ $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'church_admin_settings', 'title' => __('Settings','church-admin'), 'href' => admin_url().'admin.php?page=church_admin/index.php&action=church_admin_settings' ));
+ $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'plugin_support', 'title' => __('Plugin Support','church-admin'), 'href' => 'http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support' ));
 }
 
 // Finally we add our hook function
@@ -466,7 +415,7 @@ function church_admin_shortcode($atts, $content = null)
     //check to see if on a password protected page
     if(($pageinfo->post_password!='')&&isset( $_COOKIE['wp-postpass_' . COOKIEHASH] )) 
     {
-	$text = 'Log out of password protected posts';
+	$text = __('Log out of password protected posts','church-admin');
 	//text for link
 	$link = get_bloginfo(url).'?cd_logout=posts_logout';
 	$out.= '<p><a href="' . wp_nonce_url($link, 'posts logout') .'">' . $text . '</a></p>';
@@ -480,11 +429,11 @@ function church_admin_shortcode($atts, $content = null)
        
         case 'calendar':
 	    
-	    $out.='<table><tr><td>Year Planner pdfs </td><td>  <form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="">-- Choose a pdf --</option>';
+	    $out.='<table><tr><td>'.__('Year Planner pdfs','church-admin').' </td><td>  <form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="">-- '.__('Choose a pdf','church-admin').' --</option>';
 	    for($x=0;$x<5;$x++)
 	    {
 		$y=date('Y')+$x;
-		$out.='<option value="'.home_url().'/?download=yearplanner&amp;year='.$y.'">'.$y.' Year Planner</option>';
+		$out.='<option value="'.home_url().'/?download=yearplanner&amp;year='.$y.'">'.$y.__('Year Planner','church-admin').'</option>';
 	    }
 	    $out.='</select></form></td></tr></table>';
 	    
@@ -498,7 +447,7 @@ function church_admin_shortcode($atts, $content = null)
         break;
         case 'address-list':
 	   
-            $out.='<p><a href="'.home_url().'/?download=addresslist&amp;member_type_id='.$member_type_id.'">PDF version</a></p>';
+            $out.='<p><a href="'.home_url().'/?download=addresslist&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
             require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
             $out.=church_admin_frontend_directory($member_type_id,$map);
         break;
@@ -507,7 +456,7 @@ function church_admin_shortcode($atts, $content = null)
             $out.= church_admin_small_group_list();
         break;
 	case 'small-groups':
-            $out.='<p><a href="'.home_url().'/?download=smallgroup&amp;member_type='.$member_type_id.'">PDF version</a></p>';
+            $out.='<p><a href="'.home_url().'/?download=smallgroup&amp;member_type='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
             require(CHURCH_ADMIN_DISPLAY_PATH."small-groups.php");
             $out.=church_admin_frontend_small_groups($member_type_id);
         break;
@@ -516,10 +465,10 @@ function church_admin_shortcode($atts, $content = null)
             $out.=church_admin_front_end_rota();
         break;
 	case 'monthly-average':
-	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'attendance-graph.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'attendance-graph.png" alt="Average Attendance Graph"/>';
+	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'attendance-graph.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'attendance-graph.png" alt="'.__('Average Attendance Graph','church-admin').'"/>';
         break;
 	case 'rolling-average':
-	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'rolling_average_attendance.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png" alt="Average Attendance Graph"/>';
+	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'rolling_average_attendance.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png" alt="'.__('Average Attendance Graph','church-admin').'"/>';
         break;
 	default:
             require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");

@@ -12,16 +12,7 @@ $username=get_option(church_admin_sms_username);
 $password=get_option(church_admin_sms_password);
 $sender=get_option(church_admin_sms_reply);    
 $port = 80;    
-//find out how many credits are left    
-   $url= 'http://community.bulksms.co.uk:5567/eapi/user/get_credits/1/1.1' ;
-$get_info=file_get_contents($url."?username=$username&password=$password");
-  
-    $info=explode('|',$get_info);
-    if($info['0']=='0')
-    {
-        $credits=$info['1'];   
-        echo "<p>$credits credits left<br/>";
-    }
+
     
 //grab recipients
 $mobiles=array();
@@ -40,8 +31,7 @@ $mobiles=array();
             }    
     
  echo"$needed credits required<br/>";   
-if($credits>$needed)
-{
+
     $msisdn = implode(',',$mobiles);     
     $message = stripslashes($_POST['counttxt']);
     $url = 'http://community.bulksms.co.uk:5567/eapi/submission/send_sms/2/2.0';
@@ -100,10 +90,7 @@ if($credits>$needed)
     curl_close($ch);
 echo"</p></div>";
     
-}
-else{echo'Not enough credits - please <a href="http://www.bulksms.co.uk">Top up</a>';}
-}//end of form process 
-    
+} 
     else
     {
       church_admin_send_sms_form();  

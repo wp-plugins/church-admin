@@ -8,8 +8,8 @@ function church_admin_recent_display($month)
         $results=$wpdb->get_results($sql);
         if($results)
         {
-            echo'<h2>'.$type.' activity for last '.$month.' month(s)</h2>';
-            echo'<table><thead><th>Date</th><th>Name</th><th>Address</th><th>Mobile</th><th>Phone</th><th>Email</th><th>Next Action</th><th>Assign to</th></thead><tfoot><th>Date</th><th>Name</th><th>Address</th><th>Mobile</th><th>Phone</th><th>Email</th><th>Next Action</th><th>Assign to</th></tfoot><tbody>';
+            echo'<h2>'.$type.' '.__('activity for last','church-admin').' '.$month.' '.__('month(s)','church-admin').'</h2>';
+            echo'<table><thead><tr><th>'.__('Date','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Address','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Phone','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Next Action','church-admin').'</th><th>'.__('Assign to','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Date','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Address','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Phone','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Next Action','church-admin').'</th><th>'.__('Assign to','church-admin').'</th></tr></tfoot><tbody>';
             foreach($results AS $row)
             {
                 $assign=$next_action='coming soon';

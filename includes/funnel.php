@@ -4,19 +4,19 @@
 function church_admin_funnel_list()
 {
     global $wpdb,$member_type,$people_type;
-    echo'<h2>Follow Up Funnel</h2>';
-    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel','edit_funnel').'">Add a follow up funnel</a></p>';
+    echo'<h2>'.__('Follow Up Funnel','church-admin').'</h2>';
+    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel','edit_funnel').'">'.__('Add a follow up funnel','church-admin').'</a></p>';
     
     $departments=get_option('church_admin_departments');
     $result=$wpdb->get_results('SELECT * FROM '.CA_FUN_TBL .'  ORDER BY funnel_order');
     if($result)
     {
         
-        echo'<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Funnel</th><th>Applies to...</th><th>Department Responsible</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Funnel</th><th>Applies to...</th><th>Department Responsible</th></tr></tfoot><tbody>';
+        echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></tfoot><tbody>';
         foreach($result AS $row)
         {
-            $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel&amp;funnel_id='.$row->funnel_id,'edit_funnel').'">Edit</a>';
-            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_funnel&amp;funnel_id='.$row->funnel_id,'delete_funnel').'">Delete</a>';
+            $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel&amp;funnel_id='.$row->funnel_id,'edit_funnel').'">'.__('Edit','church-admin').'</a>';
+            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_funnel&amp;funnel_id='.$row->funnel_id,'delete_funnel').'">'.__('Delete','church-admin').'</a>';
             echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$row->action.'</td><td>'.$member_type[$row->member_type_id].'</td><td>'.$departments[$row->department_id].'</td></tr>';
         }
     }
@@ -29,13 +29,13 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
     $wpdb->show_errors();
     echo'<div class="church_admin wrap">';
     echo'<h2>';
-        if($funnel_id){echo'Edit';$data=$wpdb->get_row('SELECT * FROM '.CA_FUN_TBL.' WHERE funnel_id="'.esc_sql($funnel_id).'"');}else{echo 'Add ';}
-        echo'Follow Up Funnel</h2>';
+        if($funnel_id){echo __('Edit','church-admin');$data=$wpdb->get_row('SELECT * FROM '.CA_FUN_TBL.' WHERE funnel_id="'.esc_sql($funnel_id).'"');}else{echo __('Add','church-admin');}
+        echo' '.__('Follow Up Funnel','church-admin').'</h2>';
         
         if(isset($_POST['edit_funnel']))
         {//process form
             //deal with new department
-            if(!empty($_POST['new_department'])&&$_POST['new_department']!='Or add a new department')
+            if(!empty($_POST['new_department'])&&$_POST['new_department']!=__('Or add a new department','church-admin'))
             {
                 if(!in_array(stripslashes($_POST['new_department']),$departments))
                 {
@@ -54,7 +54,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
             {//insert
                 $success=$wpdb->query('INSERT INTO '.CA_FUN_TBL.' (action,member_type_id,department_id,people_type_id)VALUES("'.esc_sql(stripslashes($_POST['action'])).'" ,"'.esc_sql((int)($_POST['member_type_id'])).'","'.esc_sql((int)($_POST['department_id'])).'","'.esc_sql($people_type_id).'")');
             }//insert
-            echo '<div class="updated fade"><p>Funnel Updated</p></div>';
+            echo '<div class="updated fade"><p>'.__('Funnel Updated','church-admin').'</p></div>';
             church_admin_funnel_list($people_type_id);
         }//end process form
         else
@@ -62,12 +62,12 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
            echo'<form action="" method="POST">';
            
            //funnel action
-           echo'<p><label>Funnel Action</label><input type="text" name="action" ';
+           echo'<p><label>'.__('Funnel Action','church-admin').'</label><input type="text" name="action" ';
            if(!empty($data->action))echo ' value="'.$data->action.'" ';
            echo'/></p>';
            //member type
-           echo'<p><label>Link to Member Type</label><select name="member_type_id">';
-           $first='<option value="">Please select member type</option>';
+           echo'<p><label>'.__('Link to Member Type','church-admin').'</label><select name="member_type_id">';
+           $first='<option value="">'.__('Please select member type','church-admin').'</option>';
            $option='';
            foreach($member_type AS $id=>$type)
            {
@@ -75,16 +75,16 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
            }
            echo $first.$option.'</option></select></p>';
            //responsible department
-           echo'<p><label>Department responsible for action</label><select name="department_id">';
+           echo'<p><label>'.__('Ministry responsible for action','church-admin').'</label><select name="department_id">';
            $first=$option='';
            foreach($departments AS $id=>$type)
            {
              if($id==$data->member_type_id){$first='<option value="'.$id.'" selected="selected">'.$type.'</option>'; }else{$option.='<option value="'.$id.'" >'.$type.'</option>';}
            }
            echo $first.$option.'</option></select>';
-           echo '<input type="text" name="new_department" onfocus="javascript:this.value=\'\';" value="Or add a new department"/></p>';
+           echo '<input type="text" name="new_department" onfocus="javascript:this.value=\'\';" value="'.__('Or add a new department','church-admin').'"/></p>';
            echo'</p>';
-           echo'<p class="submit"><input type="hidden" name="edit_funnel" value="yes"/><input type="submit" value="Save Follow Up Funnel&raquo;" /></p></form></div>';
+           echo'<p class="submit"><input type="hidden" name="edit_funnel" value="yes"/><input type="submit" value="'.__('Save Follow Up Funnel','church-admin').' &raquo;" /></p></form></div>';
         }//form
       echo'</div>';
 }

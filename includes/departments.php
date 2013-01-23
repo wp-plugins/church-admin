@@ -2,14 +2,14 @@
 function church_admin_department_list()
 {
     global $departments;
-    echo'<h2>Departments</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department','edit_department').'">Add a department</a></p>';
+    echo'<h2>Departments</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department','edit_department').'">'.__('Add a department','church_admin').'</a></p>';
     if(!empty($departments))
     {
-        echo'<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Department Name</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Department Name</th></tr></tfoot><tbody>';
+        echo'<table class="widefat"><thead><tr><th>'.__('Edit','church_admin').'</th><th>'.__('Delete','church_admin').'</th><th>'.__('Department Name','church_admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church_admin').'</th><th>'.__('Delete','church_admin').'</th><th>'.__('Department Name','church_admin').'</th></tr></tr></tfoot><tbody>';
         foreach($departments AS $id=>$department)
         {
-            $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department&amp;department_id='.$id,'edit_department').'">Edit</a>';
-            if($id!=1){$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_department&amp;department_id='.$id,'delete_department').'">Delete</a>';}else{$delete='Can\'t be deleted';}
+            $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department&amp;department_id='.$id,'edit_department').'">'.__('Edit','church-admin').'</a>';
+            if($id!=1){$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_department&amp;department_id='.$id,'delete_department').'">'.__('Delete','church-admin').'</a>';}else{$delete=__("Can't be deleted",'church-admin');}
             echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$department.'</td></tr>';
         }
         echo'</tbody></table>';
@@ -32,10 +32,10 @@ function church_admin_delete_department($id)
         $id=array_search($id,$dep);
         if($id)unset($dep[$id]);
         $sql='UPDATE '.CA_PEO_TBL.' SET departments="'.esc_sql(serialize($dep)).'" WHERE people_id="'.esc_sql($row->people_id).'"';
-        echo $sql.'<br/>';
+        //echo $sql.'<br/>';
         $wpdb->query($sql);
     }
-    echo'<div class="updated fade"><p>Ministry Deleted</p></div>';
+    echo'<div class="updated fade"><p>'.__('Ministries Deleted','church-admin').'</p></div>';
     church_admin_department_list();
 }
 function church_admin_edit_department($id)
@@ -48,18 +48,18 @@ function church_admin_edit_department($id)
         {//update current department name
             $departments[$id]=$dep_name;
             update_option('church_admin_departments',$departments);
-            echo '<div class="updated fade"><p>Ministries Updated</p></div>';
+            echo '<div class="updated fade"><p>'.__('Ministries Updated','church-admin').'</p></div>';
         }        
         elseif(!in_array($dep_name,$departments))
         {//add new one if unique
             $departments[]=$dep_name;
             
             update_option('church_admin_departments',$departments);
-            echo '<div class="updated fade"><p>Ministries Updated</p></div>';
+            echo '<div class="updated fade"><p>'.__('Ministries Updated','church-admin').'</p></div>';
         }
         else
         {//not unique or update, so ignore!
-           echo '<div class="updated fade"><p>Ministries Unchanged</p></div>'; 
+           echo '<div class="updated fade"><p>'.__('Ministries Unchanged','church-admin').'</p></div>'; 
         }
         church_admin_department_list();
         
@@ -67,13 +67,13 @@ function church_admin_edit_department($id)
     else
     {//form
         echo'<h2>';
-        if($id){echo'Update ';}else {echo'Add ';}
-        echo'Ministry</h2>';
+        if($id){echo __('Update','church-admin').' ';}else {echo __('Add','church-admin').' ';}
+        echo __('Ministry','church-admin').'</h2>';
         echo'<form action="" method="post">';
-        echo'<p><label>Ministry Name</label><input type="text" name="department_name" ';
+        echo'<p><label>'.__('Ministry Name','church-admin').'</label><input type="text" name="department_name" ';
         if($id) echo ' value="'.$departments[$id].'" ';
         echo'/></p>';
-        echo'<p class="submit"><input type="hidden" name="edit_department" value="yes"/><input type="submit" value="Save Ministry&raquo;" /></p></form></div>';
+        echo'<p class="submit"><input type="hidden" name="edit_department" value="yes"/><input type="submit" value="'.__('Save Ministry','church-admin').'&raquo;" /></p></form></div>';
         
     }//end form
 }

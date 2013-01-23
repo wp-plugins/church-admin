@@ -48,19 +48,19 @@ function church_admin_attendance_list($service_id=1)
 	   $sql='SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"';
 	  
 	  $service=$wpdb->get_row($sql);
-	  $service_details=$service->service_name.' on '.$days[$service->service_day].' '.$service->service_time;
-	  echo'<div class="wrap church_admin"><h2>Attendance List for '.$service_details.'</h2>';
-	  echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">Add attendance</a>';
+	  $service_details=$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.$service->service_time;
+	  echo'<div class="wrap church_admin"><h2>'.__('Attendance List for','church-admin').' '.$service_details.'</h2>';
+	  echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">'.__('Add attendance','church-admin').'</a>';
 	  // Pagination
 	  echo '<div class="tablenav"><div class="tablenav-pages">';
 	  echo $p->show();  
 	  echo '</div></div>';
 	  //Pagination
-	  echo '<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Date</th><th>Adults</th><th>Children</th><th>Total</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Date</th><th>Adults</th><th>Children</th><th>Total</th></tr></tfoot><tbody>';
+	  echo '<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Adults','church-admin').'</th><th>'.__('Children','church-admin').'</th><th>'.__('Total','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Adults','church-admin').'</th><th>'.__('Children','church-admin').'</th><th>'.__('Total','church-admin').'</th></tr></tfoot><tbody>';
 	  foreach($results AS $row)
 	  {
-	       $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance&amp;attendance_id='.$row->attendance_id,'edit_attendance').'">Edit</a>';
-	       $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_attendance&amp;attendance_id='.$row->attendance_id,'delete_attendance').'">Delete</a>';
+	       $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance&amp;attendance_id='.$row->attendance_id,'edit_attendance').'">'.__('Edit','church-admin').'</a>';
+	       $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_attendance&amp;attendance_id='.$row->attendance_id,'delete_attendance').'">'.__('Delete','church-admin').'</a>';
 	       $total=$row->adults+$row->children;
 	       echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.mysql2date(get_option('date_format'),$row->date).'</td><td>'.$row->adults.'</td><td>'.$row->children.'</td><td>'.$total.'</td></tr>';
 	  }
@@ -118,7 +118,7 @@ if(isset($_POST['edit_att']))
 
 
      echo '<div id="message" class="updated fade">';
-     echo '<p><strong>Attendance added.</strong></p>';
+     echo '<p><strong>'.__('Attendance added','church-admin').'.</strong></p>';
      echo '</div>';
      //print_r($sqlsafe);
      church_admin_attendance_list($sqlsafe['service_id']);
@@ -126,11 +126,11 @@ if(isset($_POST['edit_att']))
 }
 else
 {
-echo'<div class="wrap church_admin"><h2>Attendance</h2>';
+echo'<div class="wrap church_admin"><h2>'.__('Attendance','church-admin').'</h2>';
 echo '<form action="" method="post" name="add_attendance" id="add_attendance">';
 
 //service
-echo'<p><label>Service</label><select name="service_id">';
+echo'<p><label>'.__('Service','church-admin').'</label><select name="service_id">';
 
 $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 $option='';
@@ -150,7 +150,7 @@ foreach($services AS $service)
 }
      echo $first.$option.'</select></p>';
 //datepicker js
-echo'<p><label >Date :</label><input type="text" id="add_date" name="add_date" ';
+echo'<p><label >'.__('Date','church-admin').' :</label><input type="text" id="add_date" name="add_date" ';
  if(empty($data->date)){echo ' value="'.date("d M Y").'" ';}else{echo ' value="'.mysql2date("d M Y",$data->date).'" ';}
 	echo'/></p>';
 	echo'<script type="text/javascript">
@@ -160,14 +160,14 @@ echo'<p><label >Date :</label><input type="text" id="add_date" name="add_date" '
          });
       });
    </script>';
-echo'   <p><label >Adults</label><input type="text" name="adults"  ';
+echo'   <p><label >'.__('Adults','church-admin').'</label><input type="text" name="adults"  ';
 if(!empty($data->adults)) echo' value="'.$data->adults.'" ';
 echo'/></p>
 
-<p><label >Children</label><input type="text" name="children" ';
+<p><label >'.__('Children','church-admin').'</label><input type="text" name="children" ';
 if(!empty($data->children)) echo' value="'.$data->children.'" ';
 echo'/><input type="hidden" name="edit_att" value="y"/></p>
-<p class="submit"><input type="submit" value="Add attendance for that date &raquo;" /></p></form></div>
+<p class="submit"><input type="submit" value="'.__('Add attendance for that date','church-admin').' &raquo;" /></p></form></div>
 ';
 
 }//end of attendance form
@@ -179,7 +179,7 @@ function church_admin_delete_attendance($attendance_id)
      //find service_id
      $service_id=$wpdb->get_var('SELECT service_id FROM '.CA_ATT_TBL.' WHERE attendance_id="'.esc_sql($attendance_id).'"');
      $wpdb->query('DELETE FROM '.CA_ATT_TBL.' WHERE attendance_id="'.esc_sql($attendance_id).'"');
-     echo'<div class="updated fade"><p>Attendance record deleted</p></div>';
+     echo'<div class="updated fade"><p>'.__('Attendance record deleted','church-admin').'</p></div>';
      church_admin_attendance_list($service_id);
 }
 
@@ -195,7 +195,7 @@ function church_admin_attendance_metrics($service_id=1)
     
      for($year=$first_year;$year<=$last_year;$year++){$thead.="<th>$year</th>";}
     
-     $aggtable=$totaltable=$adulttable=$childtable='<table class="widefat"><thead><tr><th>Month</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
+     $aggtable=$totaltable=$adulttable=$childtable='<table class="widefat"><thead><tr><th>'.__('Month','church-admin').'</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
     
 	  $results=$wpdb->get_results('SELECT ROUND( AVG( adults ) ) AS adults, ROUND( AVG( children ) ) AS children, YEAR( `date` ) AS year, MONTH( `date` ) AS month FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" GROUP BY YEAR( `date` ) , MONTH( `date` )');
 	  
@@ -234,11 +234,11 @@ if($results)
 }
 else
 {
-     $totaltable=$aggtable=$childtable=$adulttable='<p>No attendance recorded yet</p>';
+     $totaltable=$aggtable=$childtable=$adulttable='<p>'.__('No attendance recorded yet','church-admin').'</p>';
 }
 
-     echo'<div class="church_admin wrap"><h2>Attendance Figures</h2>';
-     echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">Add attendance</a>';
+     echo'<div class="church_admin wrap"><h2>'.__('Attendance Figures','church-admin').'</h2>';
+     echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">'.__('Add attendance','church-admin').'</a>';
      $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
      
      echo'<table>';
@@ -247,14 +247,14 @@ else
 	  $sql='SELECT * FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service->service_id).'"';
 	  
 	  $check=$wpdb->get_row($sql);
-	  if($service->service_id==$service_id)$service_details=$service->service_name.' on '.$days[$service->service_day].' '.$service->service_time;
-	  if($check) echo'<tr><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_metrics&amp;service_id='.$service->service_id.'">View attendance table for '.$service->service_name.' '.$service->service_time.'</a></td><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">Edit week by week attendance for '.$service->service_name.' '.$service->service_time.'</a></td></tr>';
+	  if($service->service_id==$service_id)$service_details=$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.$service->service_time;
+	  if($check) echo'<tr><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_metrics&amp;service_id='.$service->service_id.'">View attendance table for '.$service->service_name.' '.$service->service_time.'</a></td><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">'.__('Edit week by week attendance for','church-admin').' '.$service->service_name.' '.$service->service_time.'</a></td></tr>';
      }
      echo'</table>';
-     echo '<h2>Attendance Adults,Children (Total) '.$service_details.'</h2>'.$aggtable;
-     echo '<h2>Total Attendance for '.$service_details.'</h2>'.$totaltable;
-     echo '<h2>Adults Attendance for '.$service_details.'</h2>'.$adulttable;
-     echo '<h2>Children Attendance for '.$service_details.'</h2>'.$childtable;
+     echo '<h2>'.__('Attendance Adults,Children (Total)','church-admin').' '.$service_details.'</h2>'.$aggtable;
+     echo '<h2>'.__('Total Attendance for','church-admin').' '.$service_details.'</h2>'.$totaltable;
+     echo '<h2>'.__('Adults Attendance for','church-admin').' '.$service_details.'</h2>'.$adulttable;
+     echo '<h2>'.__('Children Attendance for','church-admin').' '.$service_details.'</h2>'.$childtable;
      echo'</div>';
 }
 ?>

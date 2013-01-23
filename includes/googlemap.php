@@ -9,12 +9,12 @@ function address_xml($member_type_id)
 
 
 // Select all the rows in the markers table
-$query = "SELECT '.CA_HOU_TBL.' FROM markers WHERE member_type_id="'.esc_sql($member_type_id).'";
+$query = 'SELECT '.CA_HOU_TBL.' FROM markers WHERE member_type_id="'.esc_sql($member_type_id).'"';
 $result = $wpdb->get_results($sql);
 
 header("Content-type: text/xml");
 
-// Iterate through the rows, adding XML nodes for each
+//Iterate through the rows, adding XML nodes for each
 while ($row = @mysql_fetch_assoc($result)){
   // ADD TO XML DOCUMENT NODE
   $node = $doc->create_element("marker");

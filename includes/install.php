@@ -46,7 +46,7 @@ function church_admin_install()
 	    }
     }//end member type already in people_settings option
     $people_type=get_option('church_admin_people_type');
-    if(empty($people_type))$people_type=array('1'=>'Adult','2'=>'Child');
+    if(empty($people_type))$people_type=array('1'=>__('Adult','church-admin'),'2'=>__('Child','church-admin'));
     update_option('church_admin_people_type',$people_type);
    
     
@@ -307,7 +307,7 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
     {
         $sql = 'CREATE TABLE '.CA_SER_TBL.' ( service_name TEXT, service_day INT(1),service_time TIME, venue VARCHAR(100),address TEXT,lat VARCHAR(50),lng VARCHAR(50),first_meeting DATE,service_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (service_id));';
         $wpdb->query($sql);
-	$wpdb->query('INSERT INTO '.CA_SER_TBL.' (service_name,service_day,service_time,venue,address,lat,lng,first_meeting) VALUES ("Sunday Service","1","10:00","Main Venue","'.esc_sql(serialize(array('address_line1'=>"",'address_line2'=>"",'town'=>"",'county'=>"",'postcode'=>""))).'","52.0","0.0","'.date('Y-m-d').'")');
+	$wpdb->query('INSERT INTO '.CA_SER_TBL.' (service_name,service_day,service_time,venue,address,lat,lng,first_meeting) VALUES ("'.__('Sunday Service','church-admin').'","1","10:00","'.__('Main Venue','church-admin').'","'.esc_sql(serialize(array('address_line1'=>"",'address_line2'=>"",'town'=>"",'county'=>"",'postcode'=>""))).'","52.0","0.0","'.date('Y-m-d').'")');
     }
     
     
@@ -440,7 +440,7 @@ if(get_option('church_admin_cron')=='wp-cron')
 $departments=get_option('church_admin_departments');
 if(empty($departments))
 {
-    $departments=array('1'=>'Small Group Leader','2'=>'Elder');
+    $departments=array('1'=>__('Small Group Leader','church-admin'),'2'=>__('Elder','church-admin'));
     update_option('church_admin_roles',$departments);
 }
 

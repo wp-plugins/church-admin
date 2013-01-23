@@ -33,7 +33,7 @@ for($q=0;$q<=12;$q++)
       if(isset($_POST['ca_month'])&&$_POST['ca_month']==$mon) {$first="<option value=\"$mon\" selected=\"selected\">$MON</option>";}else{$out.= "<option value=\"$mon\">$MON</option>";}
 }
 $out.=$first.$option;
-$out.='</select>Year<select name="ca_year">';
+$out.='</select>'.__('Year','church-admin').'<select name="ca_year">';
 $first=$option='';
 for ($x=$actualyear;$x<=$actualyear+15;$x++)
 {
@@ -63,13 +63,13 @@ $out.='</td>
                 
 </tr>
 		
-    <tr><td  ><strong>Sunday</strong></td>
-    <td ><strong>Monday</strong></td>
-    <td ><strong>Tuesday</strong></td>
-    <td ><strong>Wednesday</strong></td>
-    <td ><strong>Thursday</strong></td>
-    <td ><strong>Friday</strong></td>
-    <td ><strong>Saturday</strong></td>
+    <tr><td  ><strong>'.__('Sunday','church-admin').'</strong></td>
+    <td ><strong>'.__('Monday','church-admin').'</strong></td>
+    <td ><strong>'.__('Tuesday','church-admin').'</strong></td>
+    <td ><strong>'.__('Wednesday','church-admin').'</strong></td>
+    <td ><strong>'.__('Thursday','church-admin').'</strong></td>
+    <td ><strong>'.__('Friday','church-admin').'</strong></td>
+    <td ><strong>'.__('Saturday','church-admin').'</strong></td>
     </tr>
     <tr>';
 // put render empty cells

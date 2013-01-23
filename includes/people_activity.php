@@ -10,8 +10,8 @@ function church_admin_recent_people_activity()
     $items=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL);
     if($items > 0)
     {
-        echo '<h2>Recent People Activity</h2>';
-        echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_email_follow_up_activity','email_funnels').'">Email newly assigned follow-up activity</a></p>';
+        echo '<h2>'.__('Recent People Activity','church_admin').'</h2>';
+        echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_email_follow_up_activity','email_funnels').'">'.__('Email newly assigned follow-up activity','church_admin').'</a></p>';
 	$p = new pagination;
 	$p->items($items);
 	$p->limit(10); // Limit entries per page
@@ -43,7 +43,7 @@ function church_admin_recent_people_activity()
             echo  '</div></div>';
             //prepare table
             echo '<h2>'.$member_type[$id].'</h2>';
-            echo '<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Member Level</th><th>Follow Up Action</th><th>Mobile</th><th>Email</th><th>Last Updated</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Name</th><th>Member Level</th><th>Follow Up Action</th><th>Mobile</th><th>Email</th><th>Last Updated</th></tr></tfoot><tbody>';
+            echo '<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Follow Up Action','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Last Updated','church-admin').'</th></tr></thead><tfoot><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Follow Up Action','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Last Updated','church-admin').'</th></tfoot><tbody>';
             foreach($results AS $row)
             {
                 $fun_display='';
@@ -52,8 +52,8 @@ function church_admin_recent_people_activity()
                 $funnel=$wpdb->get_row($sql);
                 if($funnel)
                 {//funnel has been assigned already
-                    $fun_display=$funnel->action .' assigned to '.$funnel->name.' on '.mysql2date(get_option('date_format'),$funnel->assigned_date);
-                    if($funnel->completion_date!='0000-00-00')$fun_display.=' completed on '.mysql2date(get_option('date_format'),$funnel->completion_date);
+                    $fun_display=$funnel->action .' '.__('assigned to','church-admin').' '.$funnel->name.' '.__('on','church-admin').' '.mysql2date(get_option('date_format'),$funnel->assigned_date);
+                    if($funnel->completion_date!='0000-00-00')$fun_display.=' '.__('completed on','church-admin').' '.mysql2date(get_option('date_format'),$funnel->completion_date);
                 }
                 else
                 {
@@ -61,8 +61,8 @@ function church_admin_recent_people_activity()
                     if($funnel_id){$fun_display.=church_admin_funnel_assign($row->people_id,$funnel_id,$row->member_type_id);}else{$fun_display.='';}
                
                 }
-                $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$row->people_id,'edit_people').'">Edit</a>';
-                $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_people&amp;people_id='.$row->funnel_id,'delete_people').'">Delete</a>';
+                $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$row->people_id,'edit_people').'">'.__('Edit','church-admin').'</a>';
+                $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_people&amp;people_id='.$row->funnel_id,'delete_people').'">'.__('Delete','church-admin').'</a>';
                 echo '<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($row->first_name).' <strong>'. esc_html($row->last_name).'</strong></td><td>'.$member_type[$row->member_type_id].'</td><td>'.$fun_display.'</td><td>'.esc_html($row->mobile).'</td><td>';
                 echo '';
                 //only provide email link if actually an email
@@ -114,7 +114,7 @@ function church_admin_assign_funnel()
     
     if(empty($_POST['people_id']) || empty($_POST['funnel_id']) || empty($_POST['assign_id']) || !ctype_digit($_POST['people_id'])||!ctype_digit($_POST['funnel_id'])||!ctype_digit($_POST['assign_id']))
     {
-        echo'<div class="updated fade"><p>Couldn\'t process data</p></strong></div>'.church_admin_recent_people_activity();
+        echo'<div class="updated fade"><p>'.__("Couldn't process data",'church-admin').'</p></strong></div>'.church_admin_recent_people_activity();
     }
     else
     {
@@ -126,7 +126,7 @@ function church_admin_assign_funnel()
         $sql='INSERT INTO '.CA_FP_TBL .'(funnel_id,people_id,member_type_id,assign_id,assigned_date,completion_date)VALUES("'.$funnel_id.'","'.$people_id.'","'.$member_type_id.'","'.$assign_id.'","'.$assign_date.'","0000-00-00")';
         
         $wpdb->query($sql);
-        echo'<div class="updated fade"><p><strong>Follow Up Funnel Assigned</strong></p></div>';
+        echo'<div class="updated fade"><p><strong>'.__('Follow Up Funnel Assigned','church-admin').'</strong></p></div>';
         church_admin_recent_people_activity();
     }
 }
@@ -142,17 +142,17 @@ function church_admin_email_follow_up_activity()
 if($results)
 {
         
-    echo'<div class="updated fade"><p><strong>Follow Up activities emailed to..<br/>';
+    echo'<div class="updated fade"><p><strong>'.__('Follow Up activities emailed to...','church-admin').'<br/>';
     foreach($results AS $row)
     {
         
         $assign=$wpdb->get_row('SELECT * FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($row->assign_id).'"');
         $sql='SELECT a.*,b.action,CONCAT_WS(" ",c.first_name,c.last_name) AS name,c.email,c.mobile,d.address,d.phone FROM '.CA_FP_TBL.' a, '.CA_FUN_TBL.' b,'.CA_PEO_TBL.' c,'.CA_HOU_TBL.' d WHERE a.id=b.funnel_id AND a.people_id=c.people_id AND c.household_id=d.household_id';
         $re=$wpdb->get_results($sql);
-        $message='<p>Hi '.$assign->first_name.' '.$assign->last_name.',</p><p>You\'ve been assigned some follow up actions</p>';
+        $message='<p>Hi '.$assign->first_name.' '.$assign->last_name.',</p><p>'.__("You've been assigned some follow up actions",'church-admin').'</p>';
         foreach($re AS $f_row)
         {
-            $message.='<h2>'.$f_row->action.' assigned on '.mysql2date(get_option('date_format'),$f_row->assigned_date).'</h2>';
+            $message.='<h2>'.$f_row->action.' '.__('assigned on','church-admin').' '.mysql2date(get_option('date_format'),$f_row->assigned_date).'</h2>';
             $message.='<table><tr><td>Name</td><td>'.$f_row->name.'</td></tr>';
             if(!empty($f_row->email))$message.='<tr><td>Email</td><td><a href="mailto:'.$f_row->email.'">'.$f_row->email.'</a></td></tr>';
             if(!empty($f_row->mobile))$message.='<tr><td>Mobile</td><td>'.$f_row->mobile.'</td></tr>';
@@ -162,12 +162,12 @@ if($results)
             
         }
         echo $assign->first_name.' '.$assign->last_name.'<br/>';
-        wp_mail($assign->email,"You've been assigned some follow up tasks",$message);
+        wp_mail($assign->email,__("You've been assigned some follow up tasks",'church-admin'),$message);
         $wpdb->query('UPDATE '.CA_FP_TBL.' SET email="'.date('Y-m-d').'" WHERE assign_id="'.esc_sql($assign->people_id).'" AND email="0000-00-00"');
     }
     echo'</strong></p></div>';
 }
-else{echo'<div class="updated fade"><p><strong>Follow Up activities did not need to be emailed</strong></p></div>';}
+else{echo'<div class="updated fade"><p><strong>'.__('Follow Up activities did not need to be emailed','church-admin').'</strong></p></div>';}
 church_admin_recent_people_activity();
 }
 ?>

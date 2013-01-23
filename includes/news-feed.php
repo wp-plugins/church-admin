@@ -17,7 +17,7 @@ if ( function_exists( 'fetch_feed' ) )
 	
 	    if ( $max_items == 0 )
 	    {
-	    	$output.='<li class="ajax-error">No feed items found to display.</li>';
+	    	$output.='<li class="ajax-error">'.__('No feed items found to display','church_admin').'.</li>';
 		}
 		else
 		{
@@ -27,7 +27,7 @@ if ( function_exists( 'fetch_feed' ) )
 		} 
 		}
     } else { 
-    	$output.=' <li class="ajax-error">No feed items found to display.</li>';
+    	$output.=' <li class="ajax-error">'.__('No feed items found to display','church_admin').'.</li>';
     }
     $output.='</ul>';
 return $output;

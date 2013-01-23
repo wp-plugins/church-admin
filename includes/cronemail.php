@@ -17,7 +17,7 @@ $sql="SELECT option_value FROM ".$table_prefix."options WHERE option_name='churc
 $result=mysql_query($sql);
 $row=mysql_fetch_assoc($result);
 if(!empty($row['option_value'])){$max_email=$row['option_value'];}else{$max_email=100;}
-if($output==1)echo '<p>Attempting to sending '.$max_email.' emails on this run</p>';
+if($output==1)echo '<p>Attempting to send '.$max_email.' emails on this run</p>';
 //initialise phpmailer script
 require("class.phpmailer.php");
 $mail = new PHPMailer();

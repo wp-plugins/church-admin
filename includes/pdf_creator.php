@@ -7,7 +7,7 @@ function church_admin_cron_pdf()
     $pdf=new FPDF();
     $pdf->AddPage('P','A4');
     $pdf->SetFont('Arial','B',24);
-    $text='How to set up Bulk Email Queuing';
+    $text=__('How to set up Bulk Email Queuing','church_admin');
     $pdf->Cell(0,10,$text,0,2,L);
     if (PHP_OS=='Linux')
     {
@@ -75,7 +75,7 @@ $next_sunday=strtotime("this sunday");
 $whichtype=array();
 foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
 
-$text=implode(", ",$whichtype).' Small Group List '.date("d-m-Y",$next_sunday);
+$text=implode(", ",$whichtype).' '.__('Small Group List','church_admin').' '.date("d-m-Y",$next_sunday);
 $pdf->Cell(0,10,$text,0,2,C);
 $pageno+=1;
 
@@ -481,7 +481,8 @@ $pdf->SetFont('Verdana','',8);
 $colres=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 //set up size array, minimum length is the number of characters in the job title (helps if no one is assigned role!)
 $size=array();
-foreach($colres AS $colrow)$size[$colrow->rota_id]=strlen($colrow->rota_task);
+foreach($colres AS $colrow)$size[$colrow->rota_id]=strlen($colrow->rota_task)+2;
+
 //grab dates
 $sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>"'.$now.'" AND rota_date<="'.$threemonths.'" AND service_id="'.esc_sql($service_id).'"ORDER BY rota_date ASC';
 $results=$wpdb->get_results($sql);
@@ -497,10 +498,12 @@ foreach($results AS $row)
 	{
 	    //replace $size value if bigger
 	    //ignore if not enough jobs in that row
-	    if(count($jobs)==count($size) && (empty($size[$job])||strlen($value)>$size[$job]))$size[$job]=strlen($value);
+	    if(empty($size[$job])||strlen($value)>$size[$job])$size[$job]=strlen($value);
 	}
     }
 }
+
+
 $totalcharas=array_sum($size)+12;
 
 $widths=array();//array with proportions for each key
