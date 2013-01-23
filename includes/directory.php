@@ -141,7 +141,7 @@ function church_admin_edit_household($household_id=NULL)
 	}//update
 	if($success)
 	{
-	    echo '<div class="updated fade"><p><strong>'.__('Address saved','church-admin').'</strong></p></div>';
+	    echo '<div class="updated fade"><p><strong>'.__('Address saved','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$household_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
 	}
 	
 	    church_admin_display_household($household_id);
