@@ -253,8 +253,8 @@ if(!empty($taskresult))
 	    echo'<p class="submit"><input type="submit" name="choose_service" value="'.__('Choose service','church-admin').' &raquo;" /></p></form></div>';
 	}
     }
-    $check=$wpdb->get_var('SELECT service_id FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-    if($service_id && $service_id==$check)
+    $check=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
+    if($service_id && $service_id==$check->service_id)
     {//service chosen
 	//grab already set dates from db after today
 	$sql='SELECT * FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date LIMIT 0,52 ';
@@ -294,7 +294,7 @@ if(!empty($taskresult))
 		}
 	    
 	}
-	$filename="Rota-for-service.csv";
+	$filename="Rota-for-service-".$check->service_name.".csv";
 	header("Cache-Control: public");
 	header("Content-Description: File Transfer");
 	header("Content-Disposition: attachment; filename=$filename");
