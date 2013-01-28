@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.7
+Version: 0.4.7.1
 Author: Andy Moyle
 
 
@@ -60,12 +60,13 @@ function ca_loc_setup(){
     return;
   }
   load_plugin_textdomain( 'church-admin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+  $my_translator_is_setup = 1;
 }
-ca_loc_setup();
+add_action('plugins_loaded', 'ca_loc_setup');
 //end add localisation
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.7';
+$church_admin_version = '0.4.7.1';
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -464,6 +465,7 @@ function church_admin_shortcode($atts, $content = null)
             include(CHURCH_ADMIN_DISPLAY_PATH."rota.php");
             $out.=church_admin_front_end_rota();
         break;
+        
 	case 'monthly-average':
 	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'attendance-graph.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'attendance-graph.png" alt="'.__('Average Attendance Graph','church-admin').'"/>';
         break;
@@ -557,6 +559,7 @@ function church_admin_download($file)
 	case'addresslist':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_pdf($_GET['member_type_id']);break;
 	case'vcf':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');ca_vcard($_GET['id']);break;
 	case'mailinglabel':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_label_pdf($_GET['member_type_id']);break;
+        case 'rotacsv':require(CHURCH_ADMIN_INCLUDE_PATH."rota.php");church_admin_rota_csv($_GET['service_id']); break;
     }
 }
 ?>

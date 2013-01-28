@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Church Admin\n"
-"POT-Creation-Date: 2013-01-23 14:23-0000\n"
-"PO-Revision-Date: 2013-01-23 14:23-0000\n"
+"POT-Creation-Date: 2013-01-28 22:00-0000\n"
+"PO-Revision-Date: 2013-01-28 22:00-0000\n"
 "Last-Translator: Andy Moyle <clients@themoyles.co.uk>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,94 +16,94 @@ msgstr ""
 "X-Poedit-SearchPath-1: ./includes\n"
 "X-Poedit-SearchPath-2: ./display\n"
 
-#: index.php:130
+#: index.php:129
 msgid "Directory"
 msgstr ""
 
-#: index.php:130 includes/admin.php:45
+#: index.php:129 includes/admin.php:44
 msgid "Small Groups"
 msgstr ""
 
-#: index.php:130 includes/admin.php:100
+#: index.php:129 includes/admin.php:99
 msgid "Rota"
 msgstr ""
 
-#: index.php:130 includes/funnel.php:15
+#: index.php:129 includes/funnel.php:15
 msgid "Funnel"
 msgstr ""
 
-#: index.php:130 includes/email.php:35
+#: index.php:129 includes/email.php:35
 msgid "Bulk Email"
 msgstr ""
 
-#: index.php:130
+#: index.php:129
 msgid "Bulk SMS"
 msgstr ""
 
-#: index.php:132 display/calendar.php:66 includes/calendar.php:533
+#: index.php:131 display/calendar.php:66 includes/calendar.php:533
 #: includes/calendar.php:635
 msgid "Sunday"
 msgstr ""
 
-#: index.php:132 display/calendar.php:67 includes/calendar.php:533
+#: index.php:131 display/calendar.php:67 includes/calendar.php:533
 #: includes/calendar.php:635
 msgid "Monday"
 msgstr ""
 
-#: index.php:132 display/calendar.php:68 includes/calendar.php:533
+#: index.php:131 display/calendar.php:68 includes/calendar.php:533
 #: includes/calendar.php:635
 msgid "Tuesday"
 msgstr ""
 
-#: index.php:132 display/calendar.php:69 includes/calendar.php:533
+#: index.php:131 display/calendar.php:69 includes/calendar.php:533
 #: includes/calendar.php:635
 msgid "Wednesday"
 msgstr ""
 
-#: index.php:132 display/calendar.php:70 includes/calendar.php:533
+#: index.php:131 display/calendar.php:70 includes/calendar.php:533
 #: includes/calendar.php:635
 msgid "Thursday"
 msgstr ""
 
-#: index.php:132 display/calendar.php:71 includes/calendar.php:533
+#: index.php:131 display/calendar.php:71 includes/calendar.php:533
 #: includes/calendar.php:635
 msgid "Friday"
 msgstr ""
 
-#: index.php:132 display/calendar.php:72 includes/calendar.php:533
+#: index.php:131 display/calendar.php:72 includes/calendar.php:533
 #: includes/calendar.php:635
 msgid "Saturday"
 msgstr ""
 
-#: index.php:279 index.php:301
+#: index.php:278 index.php:300
 msgid "Church Admin"
 msgstr ""
 
-#: index.php:292 index.php:302
+#: index.php:291 index.php:301
 msgid "Settings"
 msgstr ""
 
-#: index.php:303
+#: index.php:302
 msgid "Plugin Support"
 msgstr ""
 
-#: index.php:420
+#: index.php:419
 msgid "Log out of password protected posts"
 msgstr ""
 
-#: index.php:434
+#: index.php:433
 msgid "Year Planner pdfs"
 msgstr ""
 
-#: index.php:434 includes/admin.php:128 includes/admin.php:146
+#: index.php:433 includes/admin.php:133 includes/admin.php:151
 msgid "Choose a pdf"
 msgstr ""
 
-#: index.php:438 includes/admin.php:132 includes/calendar.php:580
+#: index.php:437 includes/admin.php:137 includes/calendar.php:580
 msgid "Year Planner"
 msgstr ""
 
-#: index.php:452 index.php:461
+#: index.php:451 index.php:460
 msgid "PDF version"
 msgstr ""
 
@@ -111,8 +111,12 @@ msgstr ""
 msgid "Average Attendance Graph"
 msgstr ""
 
-#: display/address-list.php:7 includes/admin.php:58 includes/directory.php:613
+#: display/address-list.php:7 includes/admin.php:57 includes/directory.php:613
 msgid "Search"
+msgstr ""
+
+#: display/address-list.php:7
+msgid "Go"
 msgstr ""
 
 #: display/calendar-list.php:31
@@ -128,22 +132,24 @@ msgid "Year"
 msgstr ""
 
 #: display/rota.php:15 includes/rota.php:31 includes/rota.php:126
+#: includes/rota.php:247
 msgid "Which Service?"
 msgstr ""
 
 #: display/rota.php:18 display/rota.php:30 display/small-group-list.php:18
-#: includes/admin.php:110 includes/admin.php:167 includes/attendance.php:51
-#: includes/attendance.php:250 includes/people_activity.php:55
-#: includes/rota.php:129
+#: includes/admin.php:109 includes/admin.php:117 includes/admin.php:172
+#: includes/attendance.php:51 includes/attendance.php:250
+#: includes/people_activity.php:55 includes/rota.php:129
 msgid "on"
 msgstr ""
 
-#: display/rota.php:18 display/rota.php:30 includes/admin.php:110
-#: includes/admin.php:167
+#: display/rota.php:18 display/rota.php:30 includes/admin.php:109
+#: includes/admin.php:117 includes/admin.php:172
 msgid "at"
 msgstr ""
 
 #: display/rota.php:21 includes/rota.php:37 includes/rota.php:132
+#: includes/rota.php:253
 msgid "Choose service"
 msgstr ""
 
@@ -168,6 +174,10 @@ msgid "led by"
 msgstr ""
 
 #: includes/admin.php:7
+msgid "Show/Hide plugin information"
+msgstr ""
+
+#: includes/admin.php:7
 msgid "This is version"
 msgstr ""
 
@@ -175,229 +185,233 @@ msgstr ""
 msgid "of the"
 msgstr ""
 
-#: includes/admin.php:10
+#: includes/admin.php:9
 msgid "Get Support"
 msgstr ""
 
-#: includes/admin.php:10
+#: includes/admin.php:9
 msgid "Latest News"
 msgstr ""
 
-#: includes/admin.php:13
+#: includes/admin.php:12
 msgid "If you like the plugin, please buy me a cup of coffee!"
 msgstr ""
 
-#: includes/admin.php:27
+#: includes/admin.php:26
 msgid "You had an activation error"
 msgstr ""
 
-#: includes/admin.php:27
+#: includes/admin.php:26
 msgid "Please post it to the forum on "
 msgstr ""
 
-#: includes/admin.php:29
+#: includes/admin.php:28
 msgid "Show/Hide recent people activity"
 msgstr ""
 
-#: includes/admin.php:42
+#: includes/admin.php:41
 msgid "Quick Glossary"
 msgstr ""
 
-#: includes/admin.php:43 includes/member_type.php:108
+#: includes/admin.php:42 includes/member_type.php:108
 #: includes/member_type.php:109
 msgid "Member Type"
 msgstr ""
 
-#: includes/admin.php:43
+#: includes/admin.php:42
 msgid ""
 "Are the broad categories within church life a person is in eg. First Time "
 "Visitor, Regular Attender, Member."
 msgstr ""
 
-#: includes/admin.php:44 includes/directory.php:313 includes/directory.php:420
+#: includes/admin.php:43 includes/directory.php:313 includes/directory.php:420
 msgid "Ministries"
 msgstr ""
 
-#: includes/admin.php:44
+#: includes/admin.php:43
 msgid ""
 "Are the ministries a person is involved with like being an elder, small "
 "group leader. Used to be called \"Departments\" but people got too confused!"
 msgstr ""
 
-#: includes/admin.php:45
+#: includes/admin.php:44
 msgid ""
 "If you have small groups, that's what this section is for. Before creating "
 "small groups, you need to make sure your small group leaders have 'Small "
 "Group leader' checked in the department."
 msgstr ""
 
-#: includes/admin.php:47
+#: includes/admin.php:46
 msgid "People Functions"
 msgstr ""
 
-#: includes/admin.php:48
+#: includes/admin.php:47
 msgid "Import Wordpress Users (only new ones added)"
 msgstr ""
 
-#: includes/admin.php:49
+#: includes/admin.php:48
 msgid "Add a Household"
 msgstr ""
 
-#: includes/admin.php:50 includes/directory.php:14
+#: includes/admin.php:49 includes/directory.php:14
 msgid "Add a new person (not connected to a current household)"
 msgstr ""
 
-#: includes/admin.php:52
+#: includes/admin.php:51
 msgid "Choose Member Type..."
 msgstr ""
 
-#: includes/admin.php:59
+#: includes/admin.php:58
 msgid "Download an address list PDF"
 msgstr ""
 
-#: includes/admin.php:67
+#: includes/admin.php:66
 msgid "Address List PDF"
 msgstr ""
 
-#: includes/admin.php:74 includes/departments.php:71
+#: includes/admin.php:73 includes/departments.php:71
 msgid "Ministry"
 msgstr ""
 
-#: includes/admin.php:75
+#: includes/admin.php:74
 msgid ""
 "In this section you can set up the ministry a person is involved in or a "
 "role that they have e.g. Elder or Small Group Leader or P.A. operator"
 msgstr ""
 
-#: includes/admin.php:76
+#: includes/admin.php:75
 msgid "Ministry List"
 msgstr ""
 
-#: includes/admin.php:80 includes/member_type.php:13
+#: includes/admin.php:79 includes/member_type.php:13
 msgid "Member Types"
 msgstr ""
 
-#: includes/admin.php:82
+#: includes/admin.php:81
 msgid "Add a member Type"
 msgstr ""
 
-#: includes/admin.php:83
+#: includes/admin.php:82
 msgid "Member Type List"
 msgstr ""
 
-#: includes/admin.php:86
+#: includes/admin.php:85
 msgid "Communications"
 msgstr ""
 
-#: includes/admin.php:87
+#: includes/admin.php:86
 msgid "Send Bulk SMS"
 msgstr ""
 
-#: includes/admin.php:88
+#: includes/admin.php:87
 msgid "Send Bulk Email"
 msgstr ""
 
-#: includes/admin.php:91
+#: includes/admin.php:90
 msgid "Follow Up Funnels"
 msgstr ""
 
-#: includes/admin.php:92 includes/funnel.php:8
+#: includes/admin.php:91 includes/funnel.php:8
 msgid "Add a follow up funnel"
 msgstr ""
 
-#: includes/admin.php:93
+#: includes/admin.php:92
 msgid "Follow Up Funnel List"
 msgstr ""
 
-#: includes/admin.php:101 includes/rota.php:14
+#: includes/admin.php:100 includes/rota.php:14
 msgid "View/Edit Rota Jobs"
 msgstr ""
 
-#: includes/admin.php:102 includes/rota.php:15
+#: includes/admin.php:101 includes/rota.php:15
 msgid "Add more rota jobs"
 msgstr ""
 
-#: includes/admin.php:103 includes/rota.php:16
+#: includes/admin.php:102 includes/rota.php:16
 msgid "Add to rota"
 msgstr ""
 
-#: includes/admin.php:106
+#: includes/admin.php:105
 msgid "Choose a service"
 msgstr ""
 
-#: includes/admin.php:119 includes/calendar.php:110
-msgid "Calendar"
-msgstr ""
-
-#: includes/admin.php:120 includes/calendar.php:557
-msgid "Add calendar Event"
-msgstr ""
-
-#: includes/admin.php:121
-msgid "View Calendar"
-msgstr ""
-
-#: includes/admin.php:123 includes/calendar.php:26
-msgid "Add a category"
+#: includes/admin.php:113
+msgid "Download a service rota CSV"
 msgstr ""
 
 #: includes/admin.php:124 includes/calendar.php:110
+msgid "Calendar"
+msgstr ""
+
+#: includes/admin.php:125 includes/calendar.php:557
+msgid "Add calendar Event"
+msgstr ""
+
+#: includes/admin.php:126
+msgid "View Calendar"
+msgstr ""
+
+#: includes/admin.php:128 includes/calendar.php:26
+msgid "Add a category"
+msgstr ""
+
+#: includes/admin.php:129 includes/calendar.php:110
 msgid "Category List"
 msgstr ""
 
-#: includes/admin.php:127
+#: includes/admin.php:132
 msgid "Download a year planner PDF"
 msgstr ""
 
-#: includes/admin.php:142
+#: includes/admin.php:147
 msgid "Small groups"
 msgstr ""
 
-#: includes/admin.php:143
+#: includes/admin.php:148
 msgid "Add a small group"
 msgstr ""
 
-#: includes/admin.php:144 includes/pdf_creator.php:78
+#: includes/admin.php:149 includes/pdf_creator.php:78
 msgid "Small Group List"
 msgstr ""
 
-#: includes/admin.php:145
+#: includes/admin.php:150
 msgid "Download an small group PDF"
 msgstr ""
 
-#: includes/admin.php:150
+#: includes/admin.php:155
 msgid "Small group PDF"
 msgstr ""
 
-#: includes/admin.php:152
+#: includes/admin.php:157
 msgid "All member types Small group PDF"
 msgstr ""
 
-#: includes/admin.php:156
+#: includes/admin.php:161
 msgid "Services"
 msgstr ""
 
-#: includes/admin.php:157
+#: includes/admin.php:162
 msgid "Service List"
 msgstr ""
 
-#: includes/admin.php:158
+#: includes/admin.php:163
 msgid "Add a service"
 msgstr ""
 
-#: includes/admin.php:164 includes/attendance.php:129
+#: includes/admin.php:169 includes/attendance.php:129
 msgid "Attendance"
 msgstr ""
 
-#: includes/admin.php:165
+#: includes/admin.php:170
 msgid "Church Attendance Data"
 msgstr ""
 
-#: includes/admin.php:167 includes/attendance.php:52
+#: includes/admin.php:172 includes/attendance.php:52
 msgid "Attendance List for"
 msgstr ""
 
-#: includes/admin.php:168
+#: includes/admin.php:173
 msgid "Add Attendance"
 msgstr ""
 
@@ -520,6 +534,10 @@ msgstr ""
 
 #: includes/calendar.php:61 includes/calendar.php:62
 msgid "Please note that"
+msgstr ""
+
+#: includes/calendar.php:61 includes/calendar.php:62
+msgid "event used that category and will need editing"
 msgstr ""
 
 #: includes/calendar.php:76
@@ -736,10 +754,6 @@ msgstr ""
 
 #: includes/calendar.php:596
 msgid "Yes"
-msgstr ""
-
-#: includes/calendar.php:62 includes/calendar.php:61
-msgid "event used that category and will need editing"
 msgstr ""
 
 #: includes/calendar_widget.php:28
@@ -992,6 +1006,10 @@ msgstr ""
 msgid "Address saved"
 msgstr ""
 
+#: includes/directory.php:144 includes/directory.php:236
+msgid "Back to Directory"
+msgstr ""
+
 #: includes/directory.php:157 includes/front_end_register.php:53
 #: includes/recent.php:12
 msgid "Phone"
@@ -1007,10 +1025,6 @@ msgstr ""
 
 #: includes/directory.php:236
 msgid "Person Edited"
-msgstr ""
-
-#: includes/directory.php:236
-msgid "Back to Directory"
 msgstr ""
 
 #: includes/directory.php:241

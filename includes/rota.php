@@ -219,4 +219,96 @@ function church_admin_delete_rota($id)
     
 }
 
+function church_admin_rota_csv($service_id=NULL)
+{
+global$wpdb,$rota_order;
+$csv='';
+//check rota settings!
+$rota_jobs=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_jobs FROM ".$wpdb->prefix."church_admin_rota_settings");
+
+$rota_list=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_list FROM ".$wpdb->prefix."church_admin_rotas");
+
+if($rota_jobs>0&&$rota_list>0)
+{
+    //grab rota tasks
+$taskresult=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings  ORDER by rota_order");
+if(!empty($taskresult))
+{
+    if(!$service_id)
+    {
+	$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+	if($wpdb->num_rows==1)
+	{
+	    $service_id=1;
+	}
+	else
+	{
+	    echo'<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_rota_list" method="POST">';
+	    echo'<p><label>'.__('Which Service?','church-admin').'</label><select name="service_id">';
+	    foreach($services AS $service)
+	    {
+		echo'<option value="'.$service->service_id.'">'.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</option>';
+	    }
+	    echo'</select></p>';
+	    echo'<p class="submit"><input type="submit" name="choose_service" value="'.__('Choose service','church-admin').' &raquo;" /></p></form></div>';
+	}
+    }
+    $check=$wpdb->get_var('SELECT service_id FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
+    if($service_id && $service_id==$check)
+    {//service chosen
+	//grab already set dates from db after today
+	$sql='SELECT * FROM '.$wpdb->prefix.'church_admin_rotas WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date LIMIT 0,52 ';
+   
+	$results=$wpdb->get_results($sql);
+	if($results)
+	{
+	    $cols=array();
+		//build rota tableheader
+		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
+	        foreach($taskresult AS $taskrow)
+	    {
+	      $cols[]='"'.esc_html($taskrow->rota_task).'"';
+	    }
+	    $csv.=implode(',',$cols)."\r\n";
+
+	    //end rota table header
+    	
+	    //grab results for each date
+	    foreach($results AS $daterows)
+	    {
+	       $line=array();
+		//start building row
+		$line[]= '"'.mysql2date('jS M Y',$daterows->rota_date).'"';
+		//get rota task people for that date
+		$rota_jobs =maybe_unserialize($daterows->rota_jobs);
+		
+		
+		if(!empty($rota_jobs))
+		{
+		    foreach($rota_order AS $order=>$id)
+		    {
+			if(!empty($rota_jobs[$id])) {$line[]='"'.$rota_jobs[$id].'"';}else {$line[]='""';}
+		    }
+		}
+		if(!empty($line)){$csv.=implode(',',$line)."\r\n";}else{$csv.="\r\n";}
+		}
+	    
+	}
+	$filename="Rota-for-service.csv";
+	header("Cache-Control: public");
+	header("Content-Description: File Transfer");
+	header("Content-Disposition: attachment; filename=$filename");
+	header("Content-Type: text/csv");
+	header("Content-Transfer-Encoding: binary");
+
+	echo $csv;
+	
+    }
+    else echo "<p>Not possible to download that rota </p>";
+}//end of non empty rota tasks.			
+}
+  
+    
+}
+
 ?>

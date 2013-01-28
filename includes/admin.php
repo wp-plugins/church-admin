@@ -109,7 +109,13 @@ function church_admin_front_admin()
 	echo'<option value="'.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.' '.$service->venue.'</option>';
     }
     echo'</select></p>';
-    echo'</form></div>';
+    echo'</form>';
+    echo'<p><strong>Download a service rota CSV</strong><br/>';
+    $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+    foreach($services AS $service)
+    {
+	echo'<a href="'.home_url().'/?download=rotacsv&amp;service_id='.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.' '.$service->venue.'</a><br/>';}
+    echo'</p></div>';
    
     //Rota
     
