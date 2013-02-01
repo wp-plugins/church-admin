@@ -269,7 +269,7 @@ if(!empty($taskresult))
 	    {
 	      $cols[]='"'.esc_html($taskrow->rota_task).'"';
 	    }
-	    $csv.=implode(',',$cols)."\r\n";
+	    $csv.='"'.__('Date','church-admin').'",'.implode(',',$cols)."\r\n";
 
 	    //end rota table header
     	

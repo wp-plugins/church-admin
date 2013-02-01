@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Church Admin\n"
-"POT-Creation-Date: 2013-01-28 22:00-0000\n"
-"PO-Revision-Date: 2013-01-28 22:00-0000\n"
+"POT-Creation-Date: 2013-02-01 17:09-0000\n"
+"PO-Revision-Date: 2013-02-01 17:09-0000\n"
 "Last-Translator: Andy Moyle <clients@themoyles.co.uk>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -136,14 +136,14 @@ msgstr ""
 msgid "Which Service?"
 msgstr ""
 
-#: display/rota.php:18 display/rota.php:30 display/small-group-list.php:18
+#: display/rota.php:18 display/rota.php:32 display/small-group-list.php:18
 #: includes/admin.php:109 includes/admin.php:117 includes/admin.php:172
 #: includes/attendance.php:51 includes/attendance.php:250
 #: includes/people_activity.php:55 includes/rota.php:129
 msgid "on"
 msgstr ""
 
-#: display/rota.php:18 display/rota.php:30 includes/admin.php:109
+#: display/rota.php:18 display/rota.php:32 includes/admin.php:109
 #: includes/admin.php:117 includes/admin.php:172
 msgid "at"
 msgstr ""
@@ -154,14 +154,18 @@ msgid "Choose service"
 msgstr ""
 
 #: display/rota.php:28
-msgid "PDF Version of the rota"
+msgid "PDF Version of the rota for next 3 months"
 msgstr ""
 
-#: display/rota.php:30
-msgid "Who is doing what at "
+#: display/rota.php:29
+msgid "Spreadsheet Version of the rota for next 3 months"
 msgstr ""
 
-#: display/rota.php:43 includes/rota.php:82
+#: display/rota.php:32
+msgid "Who is doing what at the next "
+msgstr ""
+
+#: display/rota.php:45 includes/rota.php:82
 msgid "No one is doing anything yet"
 msgstr ""
 
@@ -443,7 +447,7 @@ msgid "Delete"
 msgstr ""
 
 #: includes/attendance.php:59 includes/attendance.php:153
-#: includes/recent.php:12 includes/rota.php:52
+#: includes/recent.php:12 includes/rota.php:52 includes/rota.php:272
 msgid "Date"
 msgstr ""
 
