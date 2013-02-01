@@ -172,8 +172,10 @@ Clear out files
 * Fix calendar link bugs
 = 0.4.7
 * Added Internationalisation
-= 0.4.7.1
+= 0.4.71
 * Added CSV download support for rotas
+= 0.4.72
+* Tweak CSV support for rotas
 
 == Upgrade Notice ==
 * 0.4.632 required
