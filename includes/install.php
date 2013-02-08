@@ -29,7 +29,7 @@ function church_admin_install()
     
    
     $church_admin_people_settings=get_option('church_admin_people_settings');
-    if(empty($church_admin_people_settings['member_type']))$church_admin_people_settings['member_type']=array(0=>'Mailing List',1=>'Visitor',2=>'Member');
+    if(empty($church_admin_people_settings['member_type']))$church_admin_people_settings['member_type']=array('0'=>'Mailing List','1'=>'Visitor','2'=>'Member');
     if(!empty($church_admin_people_settings['member_type']))
     {
 	//install member type table
@@ -40,7 +40,8 @@ function church_admin_install()
 		$order=1;
 		foreach($church_admin_people_settings['member_type'] AS $id=>$type)
 		{
-		    $wpdb->query('INSERT INTO '.CA_MTY_TBL .' (member_type_order,member_type,member_type_id) VALUES("'.$order.'","'.esc_sql($type).'","'.esc_sql($id).'")');
+		    $check=$wpdb->get_var('SELECT member_type_id FROM '. CA_MTY_TBL. ' WHERE member_type_id="'.esc_sql($id).'"');
+		    if(!$check)$wpdb->query('INSERT INTO '.CA_MTY_TBL .' (member_type_order,member_type,member_type_id) VALUES("'.$order.'","'.esc_sql($type).'","'.esc_sql($id).'")');
 		    $order++;
 		}
 	    }

@@ -176,8 +176,10 @@ Clear out files
 * Added CSV download support for rotas
 = 0.4.72
 * Tweak CSV support for rotas
+= 0.4.73
+* Install Member type table bug fix
 
 == Upgrade Notice ==
-* 0.4.632 required
+* 0.4.73 required
 
 == Credits: ==

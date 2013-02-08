@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.72
+Version: 0.4.73
 Author: Andy Moyle
 
 
@@ -66,7 +66,7 @@ add_action('plugins_loaded', 'ca_loc_setup');
 //end add localisation
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.72';
+$church_admin_version = '0.4.73';
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -74,19 +74,24 @@ if(!empty($oldroles))
     update_option('church_admin_departments',$oldroles);
     delete_option('church_admin_roles');
 }
+
+church_admin_constants();
+function church_admin_constants()
+{
+    global $wpdb;
 //define DB
-define('CA_HOU_TBL',$table_prefix.'church_admin_household');
-define('CA_PEO_TBL',$table_prefix.'church_admin_people');
-define('CA_SMG_TBL',$table_prefix.'church_admin_smallgroup');
-define('CA_MET_TBL',$table_prefix.'church_admin_people_meta');
-define('CA_ATT_TBL',$table_prefix.'church_admin_attendance');
-define('CA_ROT_TBL',$table_prefix.'church_admin_rotas');
-define('CA_RST_TBL',$table_prefix.'church_admin_rota_settings');
-define('CA_SER_TBL',$table_prefix.'church_admin_services');
-define('CA_FUN_TBL',$table_prefix.'church_admin_funnels');
-define('CA_FP_TBL',$table_prefix.'church_admin_follow_up');
-define('CA_MTY_TBL',$table_prefix.'church_admin_member_types');
-define ('CA_CAT_TBL',$table_prefix.'church_admin_calendar_category');
+define('CA_HOU_TBL',$wpdb->prefix.'church_admin_household');
+define('CA_PEO_TBL',$wpdb->prefix.'church_admin_people');
+define('CA_SMG_TBL',$wpdb->prefix.'church_admin_smallgroup');
+define('CA_MET_TBL',$wpdb->prefix.'church_admin_people_meta');
+define('CA_ATT_TBL',$wpdb->prefix.'church_admin_attendance');
+define('CA_ROT_TBL',$wpdb->prefix.'church_admin_rotas');
+define('CA_RST_TBL',$wpdb->prefix.'church_admin_rota_settings');
+define('CA_SER_TBL',$wpdb->prefix.'church_admin_services');
+define('CA_FUN_TBL',$wpdb->prefix.'church_admin_funnels');
+define('CA_FP_TBL',$wpdb->prefix.'church_admin_follow_up');
+define('CA_MTY_TBL',$wpdb->prefix.'church_admin_member_types');
+define ('CA_CAT_TBL',$wpdb->prefix.'church_admin_calendar_category');
 //define DB
 //define paths
 define('CHURCH_ADMIN_DISPLAY_PATH', WP_PLUGIN_DIR . '/church-admin/display/');
@@ -100,6 +105,7 @@ define('CHURCH_ADMIN_EMAIL_CACHE',WP_PLUGIN_DIR.'/church-admin-cache/');
 define('CHURCH_ADMIN_EMAIL_CACHE_URL',WP_PLUGIN_URL.'/church-admin-cache/');
 if(!is_dir(CHURCH_ADMIN_EMAIL_CACHE))mkdir(CHURCH_ADMIN_EMAIL_CACHE,'755');
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
+}
 //check install is uptodate 
 if (get_option("church_admin_version") != $church_admin_version ) 
 {
