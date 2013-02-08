@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.73
+Version: 0.4.74
 Author: Andy Moyle
 
 
@@ -78,6 +78,16 @@ if(!empty($oldroles))
 church_admin_constants();
 function church_admin_constants()
 {
+        /**
+ *
+ * Sets up constants for plugin
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   
+ * @version  0.1
+ * 
+ */ 
     global $wpdb;
 //define DB
 define('CA_HOU_TBL',$wpdb->prefix.'church_admin_household');
@@ -114,6 +124,16 @@ if (get_option("church_admin_version") != $church_admin_version )
 }    
 function ca_rota_order()
 {
+ /**
+ *
+ * Retrieves rota items in order
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   Array, key is order
+ * @version  0.1
+ * 
+ */ 
     global $wpdb;
     //rota_order
     $results=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order ASC');
@@ -139,6 +159,16 @@ $rota_order=ca_rota_order();
     
 add_filter('the_posts', 'church_admin_conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
 function church_admin_conditionally_add_scripts_and_styles($posts){
+    /**
+ *
+ * Add scripts and styles depending on shortcode in post/page, called using filter
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   
+ * @version  0.1
+ * 
+ */ 
 	if (empty($posts)) return $posts;
  
 	$shortcode_found = false; // use this flag to see if styles and scripts need to be enqueued
@@ -172,6 +202,16 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
 
 function church_admin_init()
 {
+        /**
+ *
+ * Initialises js scripts and css
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   
+ * @version  0.1
+ * 
+ */ 
     //This function add scripts as needed
     ca_thumbnails();
     wp_enqueue_style('church_admin',CHURCH_ADMIN_INCLUDE_URL.'admin.css');
@@ -231,6 +271,16 @@ add_action('init', 'church_admin_init');
 /* Thumbnails */
 function ca_thumbnails()
 {
+        /**
+ *
+ * Add thumbnails for plugin use
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   
+ * @version  0.1
+ * 
+ */ 
     add_theme_support( 'post-thumbnails' );
     if ( function_exists( 'add_image_size' ) )
     { 
@@ -280,6 +330,16 @@ add_action('admin_menu', 'church_admin_menus');
 function church_admin_menus() 
 
 {
+/**
+ *
+ * Admin menu
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   
+ * @version  0.1
+ * 
+ */ 
     global $level;
     add_menu_page('church_admin:Administration', __('Church Admin','church-admin'),  'administrator', 'church_admin/index.php', 'church_admin_main');
 /*    add_submenu_page('church_admin/index.php', 'Directory List', 'Directory List', $level['Directory'], 'church_admin_address_list', 'church_admin_address_list');
@@ -300,6 +360,16 @@ function church_admin_menus()
 
 // Admin Bar Customisation
 function mytheme_admin_bar_render() {
+/**
+ *
+ * Admin Bar Menu
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   
+ * @version  0.1
+ * 
+ */ 
  global $wp_admin_bar;
  // Add a new top level menu link
  // Here we add a customer support URL link
@@ -315,6 +385,16 @@ add_action( 'wp_before_admin_bar_render', 'mytheme_admin_bar_render' );
 
  function church_admin_cron()
     {
+/**
+ *
+ * Calls wp cron
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   
+ * @version  0.1
+ * 
+ */
         // Do something regularly.
         require(CHURCH_ADMIN_INCLUDE_PATH."cronemail.php");
     }
