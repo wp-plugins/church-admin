@@ -2,30 +2,42 @@
 
 function church_admin_send_email()
 {
+   global $wpdb;
    //this is the main function for sending emails out
    //step1 - build email fochurch_admin
    //step2 - display email - church_admin_email_build() and show recipient choosing fochurch_admin church_admin_choose_recipients()
    //step3 - queue personalised emails to the correct recipients.
-
-   if(!empty($_POST['send_email']))
+//check to see if directory is populated!
+   $check=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL);
+   if(empty($check)||$check<1)
    {
-    echo '<p>'.__('Processing','church-admin').'</p>';
-        church_admin_send_message($_POST['email_id']);
+      echo'<div class="updated fade">';
+      echo'<p><strong>You need some people in the directory before you can use this Bulk SMS service</strong></p>';
+      echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a></p>';
+      echo'</div>';
    }
-   elseif(!empty($_POST['build_message']))
-    {
-        echo'<div class="wrap church_admin"><h2>'.__('Step 2 check message and choose recipients','church-admin').'</h2>';
-        $email_id=church_admin_email_build();
-        church_admin_choose_recipients($email_id);
-    }
-    elseif(!empty($_POST['choose_recipients']))
-    {
-        church_admin_send_message($_POST['message_id']);
-    }
-    elseif(empty($_POST))
-    {
-        church_admin_email_form();
-    }
+   else
+   {//people stored in directory
+      if(!empty($_POST['send_email']))
+      {//Step 3
+	 echo '<p>'.__('Processing','church-admin').'</p>';
+	 church_admin_send_message($_POST['email_id']);
+      }//Step 3 
+      elseif(!empty($_POST['build_message']))
+      {//Step 2 Choose Recipients
+	 echo'<div class="wrap church_admin"><h2>'.__('Step 2 check message and choose recipients','church-admin').'</h2>';
+	 $email_id=church_admin_email_build();
+	 church_admin_choose_recipients($email_id);
+      }//Step 2 Choose Recipients
+      elseif(!empty($_POST['choose_recipients']))
+      {//Step 3 Send Email
+	 church_admin_send_message($_POST['message_id']);
+      }//Step 3 Send Email
+      elseif(empty($_POST))
+      {//Step 1 Build Email
+	 church_admin_email_form();
+      }//Step 1 Build Email
+   }//end people in directory
 }
 
 function church_admin_email_form()
@@ -185,7 +197,7 @@ if  ($_FILES['userfile3']['size']>0)
     //add cache message
 
     $sqlsafe['message']=esc_sql($message);
-    $email_id=$wpdb->get_var('SELECT email_id FROM wp_church_admin_email_build WHERE subject="'.$sqlsafe['subject'].'" AND message="'.$sqlsafe['message'].'" AND from_email="'.$sqlsafe['from_email'].'" AND from_name="'.$sqlsafe['from_name'].'" AND filename="'.esc_sql(maybe_serialize($attachments)).'"');
+    $email_id=$wpdb->get_var('SELECT email_id FROM '.$wpdb->prefix.'church_admin_email_build WHERE subject="'.$sqlsafe['subject'].'" AND message="'.$sqlsafe['message'].'" AND from_email="'.$sqlsafe['from_email'].'" AND from_name="'.$sqlsafe['from_name'].'" AND filename="'.esc_sql(maybe_serialize($attachments)).'"');
     if($email_id)
     {//update
         $wpdb->query('UPDATE '.$wpdb->prefix.'church_admin_email_build SET subject="'.$sqlsafe['subject'].'",message="'.$sqlsafe['message'].'", from_email="'.$sqlsafe['from_email'].'" ,from_name="'.$sqlsafe['from_name'].'",filename="'.esc_sql(maybe_serialize($attachments)).'" WHERE email_id="'.esc_sql($email_id).'"');
@@ -273,7 +285,7 @@ function church_admin_send_message($email_id)
       $where='(';
       foreach($_POST['member_type'] AS $key=>$value)if(array_key_exists($value,$member_type))$w[]=' member_type_id='.$value.' ';
       $where.=implode("||",$w).')';
-      $sql='SELECT email, first_name FROM '.CA_PEO_TBL.' WHERE '.$where.' GROUP BY email';
+      $sql='SELECT email, first_name FROM '.CA_PEO_TBL.' WHERE '.$where;
    
     }
     elseif(!empty($_POST['type']) && $_POST['type']=='smallgroup') $sql='SELECT DISTINCT email,first_name FROM '.CA_PEO_TBL.' WHERE small_group_id="'.esc_sql($_POST['group_id']).'"';
@@ -281,12 +293,12 @@ function church_admin_send_message($email_id)
     {
 	    $names=array();
             foreach ($_POST['person'] AS $value){$names[]='people_id = "'.esc_sql($value).'"';}
-            $sql='SELECT  email,first_name FROM '.CA_PEO_TBL.' WHERE '.implode(' OR ',$names).' GROUP BY email';
+            $sql='SELECT  email,first_name FROM '.CA_PEO_TBL.' WHERE '.implode(' OR ',$names);
     }
     elseif(!empty($_POST['type']) && $_POST['type']=='roles')
     {
       foreach($_POST['role_id'] AS $key=>$value)$r[]='b.department_id='.$value;
-      $sql='SELECT  a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).') GROUP BY email';
+      $sql='SELECT  a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).')' ;
       
     }
     $results=$wpdb->get_results($sql);
@@ -374,7 +386,7 @@ function church_admin_send_message($email_id)
                         
                     }
             }
-            $wpdb->query('UPDATE wp_church_admin_email_build SET recipients="'.esc_sql(maybe_serialize($addresses)).'" WHERE email_id="'.esc_sql($email_id).'"');
+            $wpdb->query('UPDATE '.$wpdb->prefix.'church_admin_email_build SET recipients="'.esc_sql(maybe_serialize($addresses)).'" WHERE email_id="'.esc_sql($email_id).'"');
         }
         
     }else{echo'<p>'.__('No email address found for','church-admin').' '.$sql.'</p>';}

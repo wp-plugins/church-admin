@@ -4,6 +4,7 @@ jQuery(document).ready(function($){
   var map, marker;
   var markers = [];
   var inputAddress = $('#address_line1').val() + ', ' + $('#address_line2').val()+ ', ' +  $('#town').val()  + ', '+  $('#county').val()  + ', ' + $('#postcode').val() ;
+  
   console.log(inputAddress);
   var inputLat = '#lat';
   var inputLng = '#lng';
@@ -117,7 +118,8 @@ jQuery(document).ready(function($){
     // handle geocoding of given address
     jQuery(domAddressConverter).click(function(e){
       e.preventDefault();
-      
+      var inputAddress = $('#address_line1').val() + ', ' + $('#address_line2').val()+ ', ' +  $('#town').val()  + ', '+  $('#county').val()  + ', ' + $('#postcode').val() ;
+  
       if(inputAddress== '')
       {
         alert('No address specified!');
@@ -125,7 +127,7 @@ jQuery(document).ready(function($){
       else
       {
         geocodeLocation(inputAddress);
-        $(finalise).html('Please drag the pin to finalise address');
+        $('#finalise').html('Please drag the pin to finalise address');
       }
     });
     

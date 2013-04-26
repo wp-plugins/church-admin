@@ -12,7 +12,7 @@ $sg_results = $wpdb->get_results($sg_sql);
 foreach ($sg_results as $sg_row) 
     {
 	//build leader array
-	$leaders=unserialize($sg_row->leader);
+	$leaders=maybe_unserialize($sg_row->leader);
 	$ldr=array();
 	if(!empty($leaders))
 	{

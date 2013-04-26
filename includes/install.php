@@ -1,6 +1,18 @@
 <?php
 function church_admin_install()
 {
+    /**
+ *
+ * Installs WP tables and options
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   
+ * @version  0.11
+ *
+ * 0.11 added attachement_id to People table 2013-02-24
+ * 
+ */ 
     global $wpdb,$church_admin_version;
     $wpdb->show_errors();
     //household table    
@@ -14,9 +26,20 @@ function church_admin_install()
     ;
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_PEO_TBL.'"') != CA_PEO_TBL)
     {
-        $sql = 'CREATE TABLE '.CA_PEO_TBL.' (first_name VARCHAR(100),last_name VARCHAR(100), date_of_birth DATE, member_type_id INT(11), roles TEXT, sex INT(1),mobile VARCHAR(15), email TEXT,people_type_id INT(11),smallgroup_id INT(11),household_id INT(11),member_data TEXT, user_id INT(11),people_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (people_id));';
+        $sql = 'CREATE TABLE '.CA_PEO_TBL.' (first_name VARCHAR(100),last_name VARCHAR(100), date_of_birth DATE, member_type_id INT(11),attachment_id INT(11), roles TEXT, sex INT(1),mobile VARCHAR(15), email TEXT,people_type_id INT(11),smallgroup_id INT(11),household_id INT(11),member_data TEXT, user_id INT(11),people_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (people_id));';
         $wpdb->query($sql);
     }
+
+    //add attachement_id to people table for photo storage
+     if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "attachment_id"')!='attachment_id')
+    {
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD attachment_id INT(11)';
+    $wpdb->query($sql);
+    
+     }
+    
+    
+    
     //people_meta table    
    
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_MET_TBL.'"') != CA_MET_TBL)
@@ -222,9 +245,11 @@ $wpdb->query ($sql);
 	    $results=$wpdb->get_results('SELECT a.*,b.rota_task FROM '.$wpdb->prefix.'church_admin_rota a,'.$wpdb->prefix.'church_admin_rota_settings b WHERE a.rota_option_id=b.rota_id');
 	    if($results)
 	    {
+		$peeps=array();
 		foreach($results AS $row)
 		{
-		    $jobs[$row->rota_date][$row->rota_task]=$row->who;
+		    if(!empty($row->who)){$peeps=explode(", ",$row->who);}
+		    $jobs[$row->rota_date][$row->rota_task]=$peeps;
 		}
 		foreach($jobs AS $date=>$people)
 		{
@@ -302,7 +327,6 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
 	$wpdb->query($sql);
     }
  //services
-  //household table    
     
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SER_TBL.'"') != CA_SER_TBL)
     {
@@ -311,7 +335,12 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
 	$wpdb->query('INSERT INTO '.CA_SER_TBL.' (service_name,service_day,service_time,venue,address,lat,lng,first_meeting) VALUES ("'.__('Sunday Service','church-admin').'","1","10:00","'.__('Main Venue','church-admin').'","'.esc_sql(serialize(array('address_line1'=>"",'address_line2'=>"",'town'=>"",'county'=>"",'postcode'=>""))).'","52.0","0.0","'.date('Y-m-d').'")');
     }
     
-    
+ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "department_id"')!='department_id')
+{
+    //add department_id to allow choosing people easily default NULL no department, 0 = whole list, int = department_id
+    $sql='ALTER TABLE  '.CA_RST_TBL.' ADD department_id INT(11) DEFAULT 1';
+    $wpdb->query($sql);
+ }
  if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "rota_order"')!='rota_order')
 {
     $sql='ALTER TABLE  '.CA_RST_TBL.' ADD rota_order INT(11)';
@@ -444,7 +473,67 @@ if(empty($departments))
     $departments=array('1'=>__('Small Group Leader','church-admin'),'2'=>__('Elder','church-admin'));
     update_option('church_admin_roles',$departments);
 }
+//sermon podcast
 
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SERM_TBL.'"') != CA_SERM_TBL)
+    {
+        $sql='CREATE TABLE  '.CA_SERM_TBL.' (`series_name` TEXT NOT NULL ,`series_image` TEXT NOT NULL,`series_description` TEXT NOT NULL ,`series_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
+        $wpdb->query($sql);
+    }
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_FIL_TBL.'"') != CA_FIL_TBL)
+    {
+        $sql='CREATE TABLE  '.CA_FIL_TBL.' (`file_name` TEXT NOT NULL ,`file_title` TEXT NOT NULL ,`file_description` TEXT NOT NULL ,`service_id` INT(11),`bible_passages` TEXT NOT NULL,`private` INT(1) NOT NULL DEFAULT "0",`length` TEXT NOT NULL, `pub_date` DATETIME, last_modified DATETIME, `series_id` INT( 11 ) NOT NULL , `speaker` TEXT NOT NULL,`file_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
+        $wpdb->query($sql);
+    }
+    if($wpdb->get_var('SHOW TABLES LIKE "'.CA_BIB_TBL.'"') != CA_BIB_TBL)
+    {
+	$sql='CREATE TABLE IF NOT EXISTS '.CA_BIB_TBL.' (`bible_id` int(10) NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL, PRIMARY KEY (`bible_id`)) ENGINE=MyISAM ;';
+	$wpdb->query($sql);
+	$sql="INSERT INTO ".CA_BIB_TBL." (`bible_id`, `name`) VALUES(1, 'Genesis'),(2, 'Exodus'),(3, 'Leviticus'),(4, 'Numbers'),(5, 'Deuteronomy'),(6, 'Joshua'),(7, 'Judges'),(8, 'Ruth'),(9, '1 Samuel'),(10, '2 Samuel'),(11, '1 Kings'),(12, '2 Kings'),(13, '1 Chronicles'),(14, '2 Chronicles'),(15, 'Ezra'),(16, 'Nehemiah'),(17, 'Esther'),(18, 'Job'),(19, 'Psalm'),(20, 'Proverbs'),(21, 'Ecclesiastes'),(22, 'Song of Solomon'),(23, 'Isaiah'),(24, 'Jeremiah'),(25, 'Lamentations'),(26, 'Ezekiel'),(27, 'Daniel'),(28, 'Hosea'),(29, 'Joel'),(30, 'Amos'),(31, 'Obadiah'),(32, 'Jonah'),(33, 'Micah'),(34, 'Nahum'),(35, 'Habakkuk'),(36, 'Zephaniah'),(37, 'Haggai'),(38, 'Zechariah'),(39, 'Malachi'),(40, 'Matthew'),(41, 'Mark'),(42, 'Luke'),(43, 'John'),(44, 'Acts'),(45, 'Romans'),(46, '1 Corinthians'),(47, '2 Corinthians'),(48, 'Galatians'),(49, 'Ephesians'),(50, 'Philippians'),(51, 'Colossians'),(52, '1 Thessalonians'),(53, '2 Thessalonians'),(54, '1 Timothy'),(55, '2 Timothy'),(56, 'Titus'),(57, 'Philemon'),(58, 'Hebrews'),(59, 'James'),(60, '1 Peter'),(61, '2 Peter'),(62, '1 John'),(63, '2 John'),(64, '3 John'),(65, 'Jude'),(66, 'Revelation')";
+	$wpdb->query($sql);
+    }
+    
+    $file_template=get_option('ca_podcast_file_template');
+    if(empty($file_template))
+    {
+        $file_template='<div class="ca_podcast_file"><h3>[FILE_TITLE]</h3><p><audio src="[FILE_NAME]" preload="none"/></p><p>[FILE_DOWNLOAD][FILE_TITLE]</a><br/>[FILE_DESCRIPTION]<br/><span style="font-size:smaller">[SERIES_NAME]: [SPEAKER_NAME]</span></p></div>';
+        update_option('ca_podcast_file_template',$file_template);
+    }
+    $series_template=get_option('ca_podcast_series_template');
+    if(empty($series_template))
+    {
+        $series_template='<h2>[SERIES_NAME]</h2>[SERIES_DESCRIPTION]';
+        update_option('ca_podcast_series_template',$series_template);
+    }
+    $speaker_template=get_option('ca_podcast_speaker_template');
+    if(empty($speaker_template))
+    {
+        $speaker_template='<h2>[SPEAKER_NAME]</h2>[SPEAKER_DESCRIPTION]';
+        update_option('ca_podcast_speaker_template',$speaker_template);
+    }
+    
+    if(empty($ca_podcast_settings))
+    {
+        $ca_podcast_settings=array(
+            
+            'title'=>'',  
+            'copyright'=>'',
+            'link'=>CA_POD_URL.'podcast.xml',
+            'subtitle'=>'',
+            'author'=>'',
+            'summary'=>'',
+            'description'=>'',
+            'owner_name'=>'',
+            'owner_email'=>'',
+            'image'=>'',
+            'category'=>'',
+        );
+        
+    }
+
+
+
+//sermonpodcast
 //update version
 update_option('church_admin_version',$church_admin_version);
 }

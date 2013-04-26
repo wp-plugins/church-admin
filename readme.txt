@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
 Tested up to: 3.5.1
-Stable tag: 0.4.74
+Stable tag: 0.50
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -36,7 +36,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 
 1. Upload the `church_admin` directory to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Place [church_admin type=address-list member_type_id=# map=1] on the page you want the address book displayed, member_type=1 for members, map=1 toshow map for geocoded addresses. 
+3. Place [church_admin type=address-list member_type_id=# map=1] on the page you want the address book displayed, member_type=1 for members, map=1 toshow map for geocoded addresses. The member_type_id can be comma separated  e.g. member_type_id=1,2,3 
 4. Place [church_admin type=small-groups-list] on the page you want the small group list displayed
 5. Place [church_admin type=small-groups] on the page you want the list of small groups and their members displayed
 6. Place [church_admin type=rota] on the page you want the rota displayed
@@ -176,10 +176,20 @@ Clear out files
 * Added CSV download support for rotas
 = 0.4.72 =
 * Tweak CSV support for rotas
-= 0.4.74 =
+= 0.4.73 =
 * Install Member type table bug fix
+= 0.4.8 =
+* Podcasting and autocomplete for rota
+= 0.4.91 =
+* Updates rota table to new format
+* Address list pdf and shortcode can have comma separated member_type_ids
+= 0.50 =
+* Bug fixes for fresh installs
+* Sermon Podcasting
+* better rota handling (autocomplete) and ability to email weekly service rotas to participants
+* Move email cache to uploads/church-admin-cache directory and handle redirect
 
 == Upgrade Notice ==
-* 0.4.74 required
+* 0.4.73 required
 
 == Credits: ==

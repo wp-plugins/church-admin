@@ -1,4 +1,197 @@
 <?php
+
+function church_admin_autocomplete($name='people',$first_id='friends',$second_id='to',$current_data=array(),$department_id=NULL)
+{
+            /**
+ *
+ * Creates autocomplete field 
+ * 
+ * @author  Andy Moyle
+ * @param    $name,$first_id,$second_id
+ * @return   html string
+ * @version  0.1
+ *
+ * 
+ */
+    $current='';        
+    if(!empty($current_data))
+    {
+        $curr_data=maybe_unserialize($current_data);
+        foreach($curr_data AS $key=>$value)
+        {
+            if(ctype_digit($value))$value=church_admin_get_person($value);
+            $current.=$value.', ';
+        }
+    }
+    $out= '<input id="'.$first_id.'" class="to" type="text" name="'.$name.'" /> ';
+    $out.='<script type="text/javascript">
+
+	jQuery(document).ready(function ($){
+	$("#'.$first_id.'").blur(function(){
+    // Using disable and close after destroy is redundant; just use destroy
+    $(this).autocomplete("destroy");
+});
+
+	$("#'.$first_id.'").autocomplete({
+		source: function(req, add){
+			$.getJSON("'.site_url().'/wp-admin/admin.php?page=church_admin/index.php&action=get_people&callback=?", req,  function(data) {  
+                              
+                    //create array for response objects  
+                    var suggestions = [];  
+                              
+                    //process response  
+                    $.each(data, function(i, val){                                
+                    suggestions.push(val.name);  
+                });  
+                              
+                //pass array to callback  
+                add(suggestions);  
+            });  
+
+		},
+		select: function (event, ui) {
+                var terms = $("#'.$first_id.'").val().split(", ");
+		// remove the current input
+                terms.pop();
+                console.log(terms);
+		// add the selected item
+                terms.push(ui.item.value);
+		console.log(terms);
+                // add placeholder to get the comma-and-space at the end
+                terms.push("");
+                this.value = terms.join(", ");
+                $("#'.$first_id.'").val(this.value);
+                return false;
+            },
+		minLength: 3,
+		
+	});
+});
+
+
+</script>';
+    return $out;
+}
+function church_admin_get_person($id)
+{
+             /**
+ *
+ * Returns person's names from $id
+ * 
+ * @author  Andy Moyle
+ * @param    $id
+ * @return   string
+ * @version  0.1
+ *
+ *
+*/
+ global $wpdb;
+    $name=$wpdb->get_var('SELECT CONCAT_WS(" ",first_name,last_name) FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($id).'"');
+    if($name){return $name;}else{return FALSE;}
+}
+
+function church_admin_get_people($idArray)
+{
+         /**
+ *
+ * Returns peoples names from serialized array
+ * 
+ * @author  Andy Moyle
+ * @param    $idArray
+ * @return   string
+ * @version  0.1
+ * 
+ */
+    global $wpdb;
+    $ids=maybe_unserialize($idArray);
+    
+    if(!empty($ids))
+    {
+        $names=array();
+        foreach($ids AS $key=>$id)
+        {
+            if(ctype_digit($id))
+            {//is int
+                $names[]=$wpdb->get_var('SELECT CONCAT_WS(" ",first_name,last_name) FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($id).'"');
+            }//end is int
+            else
+            {//is text
+                $names[]=$id;
+            }//end is text
+        }
+        return implode(", ", $names);
+    }
+    else
+    return " ";
+}
+
+function church_admin_get_people_id($name)
+{
+        /**
+ *
+ * Returns serialized array of people_id if $name is in DB
+ * 
+ * @author  Andy Moyle
+ * @param    $name
+ * @return   serialized array
+ * @version  0.1
+ * 
+ */
+    global $wpdb;    
+    $names=explode(',',$name);
+    
+    $people_ids=array();
+    if(!empty($names))
+    {
+        foreach($names AS $key=>$value)
+        {
+            if(!empty($value))
+            {//only look if a name stored!
+                $sql='SELECT people_id FROM '.CA_PEO_TBL.' WHERE CONCAT_WS(" ",first_name,last_name) REGEXP "^'.esc_sql($value).'" LIMIT 1';
+                $result=$wpdb->get_var($sql);
+                if($result){$people_ids[]=$result;}else{$people_ids[]=$value;}
+            }
+        }
+    }
+    
+    return maybe_serialize(array_filter($people_ids));
+}
+
+
+function church_admin_ajax_people()
+{
+            /**
+ *
+ * Ajax - returns json array with people's names
+ * 
+ * @author  Andy Moyle
+ * @param    null
+ * @return   json array
+ * @version  0.1
+ * 
+ */
+    global $wpdb;
+    $names=explode(", ", $_GET['term']);//put passed var into array
+    $name=esc_sql(stripslashes(end($names)));//grabs final value for search
+
+    $sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name FROM '.CA_PEO_TBL.' WHERE CONCAT_WS(" ",first_name,last_name) REGEXP "^'.$name.'"';
+   
+    $result=$wpdb->get_results($sql);
+    if($result)
+    {
+        $people=array();
+        foreach($result AS $row)
+        {
+            $people[]=array('name'=>$row->name);
+        }
+        
+        //echo JSON to page  
+    $response = $_GET["callback"] . "(" . json_encode($people) . ")";  
+    echo $response; 
+    }
+    exit();
+}
+
 function church_admin_update_order($which='member_type')
 {
     global $wpdb;

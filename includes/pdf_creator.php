@@ -288,7 +288,7 @@ $output = $v->getVCard();
 $filename=$last_name.'.vcf';
 
 
-      header("Cache-Control: public");
+    header("Cache-Control: public");
     header("Content-Description: File Transfer");
     header("Content-Disposition: attachment; filename=$filename");
     header("Content-Type: text/x-vcard");
@@ -475,7 +475,7 @@ $pdf->AddFont('Verdana','','verdana.php');
 $pdf->SetFont('Verdana','',16);
 $text='Sunday Rota '.date("d-m-Y");
 $pdf->Cell(0,10,$text,0,2,C);
-$pdf->SetFont('Verdana','',8);
+$pdf->SetFont('Verdana','',6);
 
 //column headers query
 $colres=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
@@ -498,7 +498,8 @@ foreach($results AS $row)
 	{
 	    //replace $size value if bigger
 	    //ignore if not enough jobs in that row
-	    if(empty($size[$job])||strlen($value)>$size[$job])$size[$job]=strlen($value);
+	    $people=strlen(church_admin_get_people($value));
+	    if(empty($size[$job])||$people>$size[$job])$size[$job]=$people;
 	}
     }
 }
@@ -549,7 +550,7 @@ foreach($results AS $row)
 	foreach($jobs AS $key=>$value)    
 	{
 	    $w=round(280*$widths[$key]);
-	    if(empty($value)){$text=' ';}else{$text=$value;}
+	    if(empty($value)){$text=' ';}else{$text=church_admin_get_people($value);}
 	    $pdf->Cell($w,$h,"$text",1,0,'C',0);
 	}
     }

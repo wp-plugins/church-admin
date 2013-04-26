@@ -42,7 +42,7 @@ function church_admin_recent_people_activity()
             echo $p->show();  
             echo  '</div></div>';
             //prepare table
-            echo '<h2>'.$member_type[$id].'</h2>';
+            
             echo '<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Follow Up Action','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Last Updated','church-admin').'</th></tr></thead><tfoot><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Follow Up Action','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Last Updated','church-admin').'</th></tfoot><tbody>';
             foreach($results AS $row)
             {
@@ -62,7 +62,7 @@ function church_admin_recent_people_activity()
                
                 }
                 $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$row->people_id,'edit_people').'">'.__('Edit','church-admin').'</a>';
-                $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_people&amp;people_id='.$row->funnel_id,'delete_people').'">'.__('Delete','church-admin').'</a>';
+                $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_people&amp;people_id='.$row->people_id,'delete_people').'">'.__('Delete','church-admin').'</a>';
                 echo '<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($row->first_name).' <strong>'. esc_html($row->last_name).'</strong></td><td>'.$member_type[$row->member_type_id].'</td><td>'.$fun_display.'</td><td>'.esc_html($row->mobile).'</td><td>';
                 echo '';
                 //only provide email link if actually an email
@@ -89,7 +89,7 @@ function church_admin_funnel_assign($people_id,$funnel_id,$member_type_id)
         $people=$wpdb->get_results('SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id AS people_id FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.department_id="'.esc_sql($funnel_details->department_id).'" AND b.people_id=a.people_id ORDER BY a.last_name');
         if($people)
         {//people available to assign to
-            $fun_display='<form action="admin.php?page=church_admin/index.php&action=church_admin_assign_funnel" method="post">';
+            $fun_display='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_assign_funnel" method="post">';
             $fun_display.='<input type="hidden" name="people_id" value="'.$people_id.'"/>';
             $fun_display.='<input type="hidden" name="funnel_id" value="'.$funnel_id.'"/>';
             $fun_display.='<input type="hidden" name="member_type_id" value="'.$member_type_id.'"/>';

@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.4.74
+Version: 0.50
 Author: Andy Moyle
 
 
@@ -45,8 +45,16 @@ Copyright (C) 2010 Andy Moyle
 
 
 */
+//Version Number
+define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
+$church_admin_version = '0.50';
+church_admin_constants();
+require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+require_once(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
 add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
 add_action('activated_plugin','save_error');
+add_action('load-church-admin', 'church_admin_add_screen_meta_boxes');
+
 function save_error(){
     update_option('plugin_error',  ob_get_contents());
 }
@@ -64,9 +72,7 @@ function ca_loc_setup(){
 }
 add_action('plugins_loaded', 'ca_loc_setup');
 //end add localisation
-//Version Number
-define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.4.73';
+
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
 if(!empty($oldroles))
@@ -75,10 +81,10 @@ if(!empty($oldroles))
     delete_option('church_admin_roles');
 }
 
-church_admin_constants();
+
 function church_admin_constants()
 {
-        /**
+/**
  *
  * Sets up constants for plugin
  * 
@@ -102,6 +108,10 @@ define('CA_FUN_TBL',$wpdb->prefix.'church_admin_funnels');
 define('CA_FP_TBL',$wpdb->prefix.'church_admin_follow_up');
 define('CA_MTY_TBL',$wpdb->prefix.'church_admin_member_types');
 define ('CA_CAT_TBL',$wpdb->prefix.'church_admin_calendar_category');
+define ('CA_SERM_TBL',$wpdb->prefix.'church_admin_sermon_series');
+
+define ('CA_FIL_TBL',$wpdb->prefix.'church_admin_sermon_files');
+define ('CA_BIB_TBL',$wpdb->prefix.'church_admin_bible_books');
 //define DB
 //define paths
 define('CHURCH_ADMIN_DISPLAY_PATH', WP_PLUGIN_DIR . '/church-admin/display/');
@@ -111,11 +121,72 @@ define('CHURCH_ADMIN_INCLUDE_URL', CHURCH_ADMIN_URL.'includes/');
 define('CHURCH_ADMIN_IMAGES_PATH', WP_PLUGIN_DIR . '/church-admin/images/');
 define('CHURCH_ADMIN_IMAGES_URL', WP_PLUGIN_URL . '/church-admin/images/');
 define('CHURCH_ADMIN_TEMP_PATH',WP_PLUGIN_DIR.'/church-admin/temp/');
-define('CHURCH_ADMIN_EMAIL_CACHE',WP_PLUGIN_DIR.'/church-admin-cache/');
-define('CHURCH_ADMIN_EMAIL_CACHE_URL',WP_PLUGIN_URL.'/church-admin-cache/');
-if(!is_dir(CHURCH_ADMIN_EMAIL_CACHE))mkdir(CHURCH_ADMIN_EMAIL_CACHE,'755');
-require_once(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
+define('OLD_CHURCH_ADMIN_EMAIL_CACHE',WP_PLUGIN_DIR.'/church-admin-cache/');
+define('OLD_CHURCH_ADMIN_EMAIL_CACHE_URL',WP_PLUGIN_URL.'/church-admin-cache/');
+define('CHURCH_ADMIN_EMAIL_CACHE',WP_CONTENT_DIR.'/uploads/church-admin-cache/');
+define('CHURCH_ADMIN_EMAIL_CACHE_URL',WP_CONTENT_URL.'/uploads/church-admin-cache/');
+define('CA_POD_URL',WP_CONTENT_URL.'/uploads/sermons/');
+define('CA_POD_PTH',WP_CONTENT_DIR.'/uploads/sermons/');
+if(!is_dir(CA_POD_PTH))
+    {
+        $old = umask(0);
+        mkdir(CA_POD_PTH);
+        chmod(CA_POD_PTH, 0755);
+        umask($old); 
+        $index="<?php\r\n//nothing is good;\r\n?>";
+        $fp = fopen(CA_POD_PTH.'index.php', 'w');
+        fwrite($fp, $index);
+        fclose($fp);
+    }
+if(!is_dir(CHURCH_ADMIN_EMAIL_CACHE))
+{
+        $old = umask(0);
+        mkdir(CHURCH_ADMIN_EMAIL_CACHE);
+        chmod(CHURCH_ADMIN_EMAIL_CACHE, 0755);
+        umask($old); 
+        $index="<?php\r\n//nothing is good;\r\n?>";
+        $fp = fopen(CHURCH_ADMIN_EMAIL_CACHE.'index.php', 'w');
+        fwrite($fp, $index);
+        fclose($fp);
 }
+if(is_dir(OLD_CHURCH_ADMIN_EMAIL_CACHE))
+{
+    //make old directory writeable
+    $old = umask(0);
+    chmod(OLD_CHURCH_ADMIN_EMAIL_CACHE, 0755);
+    umask($old);
+    //grab files
+    $files=scandir(OLD_CHURCH_ADMIN_EMAIL_CACHE);
+    if(!empty($files))
+    {
+	foreach($files AS $file)
+	{
+	    if ($file!= "." && $file!= "..")
+	    {
+	        //work through files, but don't delete as old emails have link to old uris
+	        $success=copy(OLD_CHURCH_ADMIN_EMAIL_CACHE.$file,CHURCH_ADMIN_EMAIL_CACHE.$file);
+	        if($success)
+	        {
+	        	echo '<p>Copied '.$file.'</p>';
+	        	unlink(OLD_CHURCH_ADMIN_EMAIL_CACHE.$file);
+	        }
+	    }
+	}
+	//create htaccess redirect for cached emails
+    
+	$htaccess="\r\n RedirectPermanent /wp-content/plugins/church-admin-cache/ /wp-content/uploads/church-admin-cache/\r\n";
+	// Let's make sure the file exists and is writable first.
+	if (is_writable(ABSPATH.'.htaccess'))
+	{
+    
+	    if (!$handle = fopen(ABSPATH.'.htaccess', 'a')) {echo "Cannot open file (ABSPATH.'.htaccess')";}
+	    elseif(fwrite($handle, $htaccess) === FALSE) {echo "Cannot write to file (".ABSPATH.".htaccess)";}
+	    else{fclose($handle);}
+	} else {echo "The file ".ABSPATH.".htaccess is not writable";}
+    }
+}
+    
+}//end constants
 //check install is uptodate 
 if (get_option("church_admin_version") != $church_admin_version ) 
 {
@@ -144,8 +215,9 @@ function ca_rota_order()
         {
             $rota_order[]=$row->rota_id;
         }
-    }
     return $rota_order;
+    }
+    
 }
 $rota_order=ca_rota_order();
     $people_type=get_option('church_admin_people_type');
@@ -173,16 +245,22 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
  
 	$shortcode_found = false; // use this flag to see if styles and scripts need to be enqueued
 	foreach ($posts as $post) {
+		if(stripos($post->post_content,'type=podcast')!== false ||stripos($post->post_content,'type="podcast"')!== false ||stripos($post->post_content,"type='podcast'")!== false )$shortcode_found='podcast';
 		if (stripos($post->post_content, '[church_admin_map') !== false )$shortcode_found='map';
                 if(stripos($post->post_content, '[church_admin_register') !== false ) $shortcode_found = 'register';
 	}
  
 	if ($shortcode_found) {
 		// enqueue here
+		if($shortcode_found=='podcast')
+		{
+		    wp_enqueue_script('rm_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js');
+		    wp_enqueue_script('rm_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js');
+		}
 		if($shortcode_found=='register')
                 {
                     //form field clone script and css                
-                    wp_enqueue_script('form-clone',CHURCH_ADMIN_INCLUDE_URL.'jquery-formfields.js');
+                    wp_enqueue_script('form-clone',CHURCH_ADMIN_INCLUDE_URL.'jquery-.js');
                     wp_enqueue_style('church_admin',CHURCH_ADMIN_INCLUDE_URL.'admin.css');
                     if(!isset($_POST['save']))
                     {//ad mapping scripts if still form page!
@@ -200,6 +278,7 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
 	return $posts;
 }
 
+
 function church_admin_init()
 {
         /**
@@ -213,8 +292,13 @@ function church_admin_init()
  * 
  */ 
     //This function add scripts as needed
+wp_enqueue_script('common');
+		wp_enqueue_script('wp-lists');
+		wp_enqueue_script('postbox');
+
     ca_thumbnails();
     wp_enqueue_style('church_admin',CHURCH_ADMIN_INCLUDE_URL.'admin.css');
+
     if(isset($_GET['download'])){church_admin_download($_GET['download']);exit();}
     if ((isset($_GET['action'])&&($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'))||!is_admin())
     {
@@ -234,13 +318,13 @@ function church_admin_init()
         wp_register_script('ca_email', CHURCH_ADMIN_INCLUDE_URL.'email.js', false, '1.0');
         wp_enqueue_script('ca_email');
     }
-    if(isset($_GET['action']) && ($_GET['action']=='church_admin_edit_household'||$_GET['action']=='church_admin_edit_service'))
+    if(!empty($_GET['action']) && ($_GET['action']=='church_admin_edit_household'||$_GET['action']=='church_admin_edit_service'))
     {
         wp_enqueue_script('google_map','http://maps.google.com/maps/api/js?sensor=false');
         wp_enqueue_script('js_map',CHURCH_ADMIN_INCLUDE_URL.'maps.js');
         
     }
-    if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_edit_rota'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_edit_attendance'))
+    if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_edit_attendance'))
     {
         wp_enqueue_script( 'jquery-ui-datepicker' );
         wp_enqueue_style( 'jquery.ui.theme', plugins_url( '/css/jquery-ui-1.8.21.custom.css', __FILE__ ) );
@@ -255,9 +339,15 @@ function church_admin_init()
         wp_enqueue_script( 'farbtastic' );
         wp_enqueue_style('farbtastic');	
     }
-    if(isset($_GET['action'])&&($_GET['action']=='church_admin_member_type'||$_GET['action']=='church_admin_rota_settings_list'||$_GET['action']=='church_admin_add_rota_settings'))
+    if(isset($_GET['action'])&&($_GET['action']=='church_admin_member_type'||$_GET['action']=='church_admin_rota_settings_list'||$_GET['action']=='church_admin_edit_rota_settings'))
     {
         wp_enqueue_script( 'jquery-ui-sortable' );
+    }
+    if(isset($_GET['action'])&& ($_GET['action']=='edit_file'||$_GET['action']=='file_add'||$_GET['action']=='church_admin_edit_rota'))
+    {//autocomplete scripts
+        wp_enqueue_script( 'jquery-ui-datepicker' ); 
+        wp_enqueue_script('jquery-ui-autocomplete');
+	wp_enqueue_style( 'jquery.ui.theme', plugins_url( '/css/jquery-ui-1.8.21.custom.css', __FILE__ ) );
     }
     if(isset($_GET['action'])&&$_GET['action']=='church_admin_update_order')
     {
@@ -265,6 +355,11 @@ function church_admin_init()
         church_admin_update_order($_GET['which']);
         exit();
     }
+    if(isset($_GET['action'])&& $_GET['action']=='get_people')
+    {
+	church_admin_ajax_people();
+    }
+
 }
 
 add_action('init', 'church_admin_init');
@@ -283,7 +378,8 @@ function ca_thumbnails()
  */ 
     add_theme_support( 'post-thumbnails' );
     if ( function_exists( 'add_image_size' ) )
-    { 
+    {
+        add_image_size('ca-people-thumb',75,75);
 	add_image_size( 'ca-email-thumb', 300, 200 ); //300 pixels wide (and unlimited height)
 	add_image_size('ca-120-thumb',120,90);
 	add_image_size('ca-240-thumb',240,180);
@@ -407,91 +503,127 @@ add_action( 'wp_before_admin_bar_render', 'mytheme_admin_bar_render' );
 function church_admin_main() 
 {
     global $wpdb,$church_admin_version;
-    switch($_GET['action'])
+    $id=!empty($_GET['id'])?$_GET['id']:NULL;
+    $date_id=!empty($_GET['date_id'])?$_GET['date_id']:NULL;
+    $event_id=!empty($_GET['event_id'])?$_GET['event_id']:NULL;
+    $people_id=!empty($_GET['people_id'])?$_GET['people_id']:NULL;
+    $household_id=!empty($_GET['household_id'])?$_GET['household_id']:NULL;
+    $service_id=!empty($_REQUEST['service_id'])?$_REQUEST['service_id']:NULL;
+    $attendance_id=!empty($_GET['attendance_id'])?$_GET['attendance_id']:NULL;
+    $department_id=!empty($_GET['department_id'])?$_GET['department_id']:NULL;
+    $funnel_id=!empty($_GET['funnel_id'])?$_GET['funnel_id']:NULL;
+    $people_type_id=!empty($_GET['people_type_id'])?$_GET['people_type_id']:NULL;
+    $member_type_id=!empty($_REQUEST['member_type_id'])?$_REQUEST['member_type_id']:NULL;
+    
+    $file=!empty($_GET['file'])?$_GET['file']:NULL;
+    if(isset($_GET['action']))
     {
-        case 'church_admin_send_sms':if(church_admin_level_check('Bulk SMS')){require(CHURCH_ADMIN_INCLUDE_PATH.'sms.php');church_admin_send_sms();}break;
-        
-        case 'church_admin_send_email':if(church_admin_level_check('Bulk Email')){require(CHURCH_ADMIN_INCLUDE_PATH.'email.php');church_admin_send_email();}break;
-        case'church_admin_people_activity':if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'people_activity.php'); echo church_admin_recent_people_activity();}break;
-        //attendance
-        case 'church_admin_attendance_metrics':require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');church_admin_attendance_metrics($_GET['service_id']);break;   
-        case 'church_admin_attendance_list':require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');church_admin_attendance_list($_GET['service_id']);break;    
-        case 'church_admin_edit_attendance':check_admin_referer('edit_attendance');require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');church_admin_edit_attendance($_GET['attendance_id']);break;         
-        case 'church_admin_delete_attendance':check_admin_referer('delete_attendance');require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');church_admin_delete_attendance($_GET['attendance_id']);break;         
+	switch($_GET['action'])
+	{
+	
+	//sermon podcasts
+	    case'list_speakers':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_list_speakers();break;
+            case'edit_speaker':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_edit_speaker($id);break;
+            case'delete_speaker':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_delete_speaker($id);break;
+            case'list_sermon_series':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_list_series();break;
+            case'edit_series':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_edit_series($id);break;
+            case'delete_series':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_delete_series($id);break;
+            case'list_files':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_list_files();break;
+            case'edit_file':check_admin_referer('edit_podcast_file');require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_edit_file($id);break;
+            case'delete_file':check_admin_referer('delete_podcast_file');require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_delete_file($id);break;
+            case'file_delete':check_admin_referer('file_delete');require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_file_delete($file);break;
+            case'file_add':check_admin_referer('file_add');require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_file_add($file);break;
+            case'check_files':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_check_files();break;
+            case'podcast':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');if(ca_podcast_xml()){echo'<p>Podcast <a href="'.CA_POD_URL.'podcast.xml">feed</a> updated</p>';}break;
+            case'podcast_settings':check_admin_referer('podcast_settings');require_once(CHURCH_ADMIN_INCLUDE_PATH.'podcast-settings.php');ca_podcast_settings();break;
+            
+	    case 'church_admin_send_sms':if(church_admin_level_check('Bulk SMS')){require(CHURCH_ADMIN_INCLUDE_PATH.'sms.php');church_admin_send_sms();}break;
+	    
+	    case 'church_admin_send_email':if(church_admin_level_check('Bulk Email')){require(CHURCH_ADMIN_INCLUDE_PATH.'email.php');church_admin_send_email();}break;
+	    case'church_admin_people_activity':if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'people_activity.php'); echo church_admin_recent_people_activity();}break;
+	    //attendance
+	    case 'church_admin_attendance_metrics':require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');church_admin_attendance_metrics($service_id);break;   
+	    case 'church_admin_attendance_list':require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');church_admin_attendance_list($service_id);break;    
+	    case 'church_admin_edit_attendance':check_admin_referer('edit_attendance');require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');church_admin_edit_attendance($attendance);break;         
+	    case 'church_admin_delete_attendance':check_admin_referer('delete_attendance');require(CHURCH_ADMIN_INCLUDE_PATH.'attendance.php');church_admin_delete_attendance($attendance_id);break;         
+	   
+	    //departments
+	    case 'church_admin_edit_department':check_admin_referer('edit_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_edit_department($department_id);break;         
+	    case 'church_admin_delete_department':check_admin_referer('delete_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_delete_department($department_id);break;         
+	    case 'church_admin_department_list':check_admin_referer('department_list');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_department_list();break;         
        
-        //departments
-        case 'church_admin_edit_department':check_admin_referer('edit_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_edit_department($_GET['department_id']);break;         
-        case 'church_admin_delete_department':check_admin_referer('delete_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_delete_department($_GET['department_id']);break;         
-        case 'church_admin_department_list':check_admin_referer('department_list');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_department_list();break;         
-       
-        //funnel
-        case 'church_admin_funnel_list':require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');church_admin_funnel_list();break;         
-        case 'church_admin_edit_funnel':check_admin_referer('edit_funnel');require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');church_admin_edit_funnel($_GET['funnel_id'],$_GET['people_type_id']);break;
-        case 'church_admin_assign_funnel':require(CHURCH_ADMIN_INCLUDE_PATH.'people_activity.php');church_admin_assign_funnel();
-        case 'church_admin_email_follow_up_activity':check_admin_referer('email_funnels');require(CHURCH_ADMIN_INCLUDE_PATH.'people_activity.php');church_admin_email_follow_up_activity();break;
-        //member_type
-         case 'church_admin_member_type':require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_member_type();break;         
-        case 'church_admin_edit_member_type':check_admin_referer('edit_member_type');require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_edit_member_type($_GET['member_type_id']);break;         
-        case 'church_admin_delete_member_type':check_admin_referer('delete_member_type');require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_delete_member_type($_GET['member_type_id']);break;         
-       
-        //celendar
-        case 'church_admin_calendar_list':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_calendar();}break;         
-        
-        case 'church_admin_add_category':check_admin_referer('add_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_category();}break;         
-        case 'church_admin_edit_category':check_admin_referer('edit_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_edit_category($_GET['id']);}break;
-        case 'church_admin_delete_category':check_admin_referer('delete_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_delete_category($_GET['id']);}break;
-        case 'church_admin_single_event_delete':check_admin_referer('single_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_delete($_GET['date_id'],$_GET['event_id']); }break;
-        case 'church_admin_series_event_delete':check_admin_referer('series_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event_delete($_GET['date_id'],$_GET['event_id']);}break;     
-        case 'church_admin_category_list':if(church_admin_level_check('Calendar'));{require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_category_list();}break;    
-        case 'church_admin_series_event_edit':check_admin_referer('series_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event($_GET['date_id'],$_GET['event_id']);}break;
-        case 'church_admin_single_event_edit':check_admin_referer('single_event_edit');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_edit($_GET['date_id'],$_GET['event_id']);}break;
-        case 'church_admin_add_calendar':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_calendar();}break;
-        //address
-        case 'church_admin_address_list': if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_address_list($_REQUEST['member_type_id']);}else{echo"<p>You don't have permission to do that";}break;
-        case 'church_admin_create_user':check_admin_referer('create_user');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_create_user($_GET['people_id'],$_GET['household_id']);}break;      
-        case 'church_admin_migrate_users':check_admin_referer('migrate_users');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_migrate_users();}break;
-        case 'church_admin_display_household':check_admin_referer('display_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_display_household($_GET['household_id']);}break;
-        case 'church_admin_edit_household':check_admin_referer('edit_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_household($_GET['household_id']);}break;
-        case 'church_admin_delete_household':check_admin_referer('delete_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_delete_household($_GET['household_id']);}break;
-        case 'church_admin_edit_people':check_admin_referer('edit_people');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_people($_GET['people_id'],$_GET['household_id']);}break;
-        case 'church_admin_delete_people':check_admin_referer('delete_people');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_delete_people($_GET['people_id'],$_GET['household_id']);}break;
-        case 'church_admin_search':if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_search($_POST['ca_search']);}break;
-       
-        //rota
-        case 'church_admin_rota_list':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_rota_list($_REQUEST['service_id']);}break;
-        case 'church_admin_rota_settings_list':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');church_admin_rota_settings_list();}break;
-        case 'church_admin_add_rota_settings':check_admin_referer('add_rota_settings');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');church_admin_add_rota_settings();}break;    
-        case 'church_admin_edit_rota_settings':check_admin_referer('edit_rota_settings');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');church_admin_edit_rota_settings($_GET['id']);}break;
-        case 'church_admin_delete_rota_settings':check_admin_referer('delete_rota_settings');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');church_admin_delete_rota_settings($_GET['id']);}break;
-        case 'church_admin_edit_rota':check_admin_referer('edit_rota');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_edit_rota($_GET['id'],$_REQUEST['service_id']); }break;
-        case 'church_admin_delete_rota':check_admin_referer('delete_rota');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_delete_rota($_GET['id']);}break;
-        //visitor
-        case 'church_admin_add_visitor':check_admin_referer('add_visitor');if(church_admin_level_check('Visitor')){require(CHURCH_ADMIN_INCLUDE_PATH.'visitor.php'); church_admin_add_visitor();} break;
-        case 'church_admin_edit_visitor':check_admin_referer('edit_visitor');if(church_admin_level_check('Visitor')){church_admin_edit_visitor($_GET['id']);}break;
-        case 'church_admin_delete_visitor':check_admin_referer('delete_visitor');if(church_admin_level_check('Visitor')){church_admin_delete_visitor($_GET['id']);} break;
-        case 'church_admin_move_visitor':check_admin_referer('move_visitor');if(church_admin_level_check('Visitor')){church_admin_move_visitor($_GET['id']);}break;
-        //small groups
-        case  'church_admin_edit_small_group':check_admin_referer('edit_small_group');if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php');  church_admin_edit_small_group($_GET['id']);}break;
-        case  'church_admin_delete_small_group':check_admin_referer('delete_small_group');if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php'); church_admin_delete_small_group($_GET['id']);}break;
-        case 'church_admin_small_groups':if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php'); church_admin_small_groups();}break;
-        //services
-        case  'church_admin_edit_service':check_admin_referer('edit_service');if(church_admin_level_check('Service')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'services.php');  church_admin_edit_service($_GET['id']);}break;
-        case  'church_admin_delete_service':check_admin_referer('delete_service');if(church_admin_level_check('Service')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'services.php'); church_admin_delete_service($_GET['id']);}break;
-        case 'church_admin_service_list':if(church_admin_level_check('Service')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'services.php'); church_admin_service_list();}break;
-        
-        //setings
-        case 'church_admin_settings':if(current_user_can('manage_options')){require(CHURCH_ADMIN_INCLUDE_PATH.'communication_settings.php');church_admin_settings();}break;    
-        //default
-        default:require(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');church_admin_front_admin();break;
-       
+	    //funnel
+	    case 'church_admin_funnel_list':require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');church_admin_funnel_list();break;         
+	    case 'church_admin_edit_funnel':check_admin_referer('edit_funnel');require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');church_admin_edit_funnel($funnel_id,$people_type_id);break;
+	    case 'church_admin_assign_funnel':require(CHURCH_ADMIN_INCLUDE_PATH.'people_activity.php');church_admin_assign_funnel();
+	    case 'church_admin_email_follow_up_activity':check_admin_referer('email_funnels');require(CHURCH_ADMIN_INCLUDE_PATH.'people_activity.php');church_admin_email_follow_up_activity();break;
+	    //member_type
+	         case 'church_admin_member_type':require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_member_type();break;         
+	    case 'church_admin_edit_member_type':check_admin_referer('edit_member_type');require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_edit_member_type($member_type_id);break;         
+	    case 'church_admin_delete_member_type':check_admin_referer('delete_member_type');require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_delete_member_type($member_type_id);break;         
+	   
+	    //celendar
+	    case 'church_admin_calendar_list':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_calendar();}break;         
+	    
+	    case 'church_admin_add_category':check_admin_referer('add_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_category();}break;         
+	    case 'church_admin_edit_category':check_admin_referer('edit_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_edit_category($id);}break;
+	    case 'church_admin_delete_category':check_admin_referer('delete_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_delete_category($id);}break;
+	    case 'church_admin_single_event_delete':check_admin_referer('single_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_delete($date_id,$event_id); }break;
+	    case 'church_admin_series_event_delete':check_admin_referer('series_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event_delete($date_id,$event_id);}break;     
+	    case 'church_admin_category_list':if(church_admin_level_check('Calendar'));{require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_category_list();}break;    
+	    case 'church_admin_series_event_edit':check_admin_referer('series_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event($date_id,$event_id);}break;
+	    case 'church_admin_single_event_edit':check_admin_referer('single_event_edit');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_edit($date_id,$event_id);}break;
+	    case 'church_admin_add_calendar':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_calendar();}break;
+	    //address
+	    case 'church_admin_move_person':if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_move_person($people_id);}break;
+	    case 'church_admin_address_list': if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_address_list($member_type_id);}else{echo"<p>You don't have permission to do that";}break;
+	    case 'church_admin_create_user':check_admin_referer('create_user');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_create_user($people_id,$household_id);}break;      
+	    case 'church_admin_migrate_users':check_admin_referer('migrate_users');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_migrate_users();}break;
+	    case 'church_admin_display_household':check_admin_referer('display_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_display_household($household_id);}break;
+	    case 'church_admin_edit_household':check_admin_referer('edit_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_household($household_id);}break;
+	    case 'church_admin_delete_household':check_admin_referer('delete_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_delete_household($household_id);}break;
+	    case 'church_admin_edit_people':check_admin_referer('edit_people');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_people($people_id,$household_id);}break;
+	    case 'church_admin_delete_people':check_admin_referer('delete_people');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_delete_people($people_id,$household_id);}break;
+	    case 'church_admin_search':if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_search($_POST['ca_search']);}break;
+	   
+	    //rota
+	    case 'church_admin_email_rota':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_email_rota($service_id);}break;
+	    case 'church_admin_rota_list':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_rota_list($service_id);}break;
+	    case 'church_admin_rota_settings_list':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');church_admin_rota_settings_list();}break;
+	    case 'church_admin_edit_rota_settings':check_admin_referer('edit_rota_settings');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');church_admin_edit_rota_settings($id);}break;
+	    case 'church_admin_delete_rota_settings':check_admin_referer('delete_rota_settings');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');church_admin_delete_rota_settings($id);}break;
+	    case 'church_admin_edit_rota':check_admin_referer('edit_rota');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_edit_rota($id,$service_id); }break;
+	    case 'church_admin_delete_rota':check_admin_referer('delete_rota');if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_delete_rota($id);}break;
+	    //visitor
+	    case 'church_admin_add_visitor':check_admin_referer('add_visitor');if(church_admin_level_check('Visitor')){require(CHURCH_ADMIN_INCLUDE_PATH.'visitor.php'); church_admin_add_visitor();} break;
+	    case 'church_admin_edit_visitor':check_admin_referer('edit_visitor');if(church_admin_level_check('Visitor')){church_admin_edit_visitor($id);}break;
+	    case 'church_admin_delete_visitor':check_admin_referer('delete_visitor');if(church_admin_level_check('Visitor')){church_admin_delete_visitor($id);} break;
+	    case 'church_admin_move_visitor':check_admin_referer('move_visitor');if(church_admin_level_check('Visitor')){church_admin_move_visitor($id);}break;
+	    //small groups
+	    case  'church_admin_edit_small_group':check_admin_referer('edit_small_group');if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php');  church_admin_edit_small_group($id);}break;
+	    case  'church_admin_delete_small_group':check_admin_referer('delete_small_group');if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php'); church_admin_delete_small_group($id);}break;
+	    case 'church_admin_small_groups':if(church_admin_level_check('Small Groups')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'small_groups.php'); church_admin_small_groups();}break;
+	    //services
+	    case  'church_admin_edit_service':check_admin_referer('edit_service');if(church_admin_level_check('Service')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'services.php');  church_admin_edit_service($id);}break;
+	    case  'church_admin_delete_service':check_admin_referer('delete_service');if(church_admin_level_check('Service')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'services.php'); church_admin_delete_service($id);}break;
+	    case 'church_admin_service_list':if(church_admin_level_check('Service')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'services.php'); church_admin_service_list();}break;
+	    
+	    //setings
+	    case 'church_admin_settings':if(current_user_can('manage_options')){require(CHURCH_ADMIN_INCLUDE_PATH.'communication_settings.php');church_admin_settings();}break;    
+	    //default
+	    default:church_admin_front_admin();break;
+	   
+	}
     }
+    else {church_admin_front_admin();}
 }
 
 function church_admin_shortcode($atts, $content = null) 
-	{
+{
 	
-		extract(shortcode_atts(array("type" => 'address-list','category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>1), $atts));
+    extract(shortcode_atts(array("type" => 'address-list','category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>1,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL), $atts));
     cd_posts_logout();
+    $out='';
     global $wpdb;
     $wpdb->show_errors();
     global $wp_query;
@@ -504,7 +636,7 @@ function church_admin_shortcode($atts, $content = null)
     {
 	$text = __('Log out of password protected posts','church-admin');
 	//text for link
-	$link = get_bloginfo(url).'?cd_logout=posts_logout';
+	$link = get_bloginfo('site_url').'?cd_logout=posts_logout';
 	$out.= '<p><a href="' . wp_nonce_url($link, 'posts logout') .'">' . $text . '</a></p>';
 	//output logoutlink
     }
@@ -513,7 +645,10 @@ function church_admin_shortcode($atts, $content = null)
     //grab content
     switch($type)
     {
-       
+	case 'podcast':
+	    require_once(CHURCH_ADMIN_DISPLAY_PATH.'sermon-podcast.php');
+	    $out.=ca_podcast_display($series_id,$speaker_id,$file_id);
+	break;    
         case 'calendar':
 	    
 	    $out.='<table><tr><td>'.__('Year Planner pdfs','church-admin').' </td><td>  <form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="">-- '.__('Choose a pdf','church-admin').' --</option>';
