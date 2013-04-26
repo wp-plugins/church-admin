@@ -190,6 +190,7 @@ Clear out files
 * Move email cache to uploads/church-admin-cache directory and handle redirect
 = 0.51 =
 * DB Backup on upgrade
+
 == Upgrade Notice ==
 * 0.4.73 required
 
