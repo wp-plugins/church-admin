@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.50
+Version: 0.51
 Author: Andy Moyle
 
 
@@ -47,8 +47,10 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.50';
+
+$church_admin_version = '0.51';
 church_admin_constants();
+if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version){church_admin_backup();}
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
 add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
@@ -167,7 +169,7 @@ if(is_dir(OLD_CHURCH_ADMIN_EMAIL_CACHE))
 	        $success=copy(OLD_CHURCH_ADMIN_EMAIL_CACHE.$file,CHURCH_ADMIN_EMAIL_CACHE.$file);
 	        if($success)
 	        {
-	        	echo '<p>Copied '.$file.'</p>';
+	        	
 	        	unlink(OLD_CHURCH_ADMIN_EMAIL_CACHE.$file);
 	        }
 	    }
@@ -520,7 +522,9 @@ function church_admin_main()
     {
 	switch($_GET['action'])
 	{
-	
+	//backups
+	    case'refresh_backup':check_admin_referer('refresh_backup');church_admin_backup();church_admin_front_admin();break;
+	    case'delete_backup':check_admin_referer('delete_backup');church_admin_delete_backup();church_admin_front_admin();break;
 	//sermon podcasts
 	    case'list_speakers':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_list_speakers();break;
             case'edit_speaker':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_edit_speaker($id);break;
@@ -725,7 +729,7 @@ function church_admin_map($atts, $content = null)
     
 }
 add_shortcode("church_admin_register","church_admin_register");
-function church_admin_register()
+function church_admin_register($atts, $content = null)
 {
     extract(shortcode_atts(array('email_verify'=>TRUE,'admin_email'=>TRUE), $atts));
     require_once(CHURCH_ADMIN_INCLUDE_PATH.'front_end_register.php');
@@ -783,4 +787,94 @@ function church_admin_download($file)
         case 'rotacsv':require(CHURCH_ADMIN_INCLUDE_PATH."rota.php");church_admin_rota_csv($_GET['service_id']); break;
     }
 }
+function church_admin_delete_backup(){unlink(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz');}
+function church_admin_backup()
+{
+    global $church_admin_version;
+    $content=church_admin_datadump (CA_ATT_TBL);
+    $content.=church_admin_datadump (CA_BIB_TBL);
+    $content.=church_admin_datadump (CA_CAT_TBL);
+    $content.=church_admin_datadump (CA_FIL_TBL);
+    $content.=church_admin_datadump (CA_FP_TBL);
+    $content.=church_admin_datadump (CA_FUN_TBL);
+    $content.=church_admin_datadump (CA_HOU_TBL);
+    $content.=church_admin_datadump (CA_MET_TBL);
+    $content.=church_admin_datadump (CA_MTY_TBL);
+    $content.=church_admin_datadump (CA_PEO_TBL);
+    $content.=church_admin_datadump (CA_ROT_TBL);
+    $content.=church_admin_datadump (CA_RST_TBL);
+    $content.=church_admin_datadump (CA_SERM_TBL);
+    $content.=church_admin_datadump (CA_SER_TBL);
+    $content.=church_admin_datadump (CA_SMG_TBL);
+    $gzdata = gzencode($content);
+    $file_name = 'Church_Admin_Backup.sql.gz';
+    $fp = fopen(CHURCH_ADMIN_EMAIL_CACHE.$file_name, 'w');
+    fwrite($fp, $gzdata);
+    fclose($fp);
+}
+function church_admin_datadump ($table) {
+
+	global $wpdb;
+	$wpdb->show_errors();
+	$sql="select * from `$table`";
+	$tablequery = $wpdb->get_results($sql,ARRAY_N);
+	$num_fields=$wpdb->num_rows +1;
+	
+	if(!empty($tablequery))
+	{
+	    
+	    $result = "# Dump of $table \r\n";
+	    $result .= "# Dump DATE : " . date("d-M-Y") ."\r\n";
+	    
+	    $increment = $num_fields+1;
+	    //build table structure
+	    $sql = "SHOW COLUMNS FROM `$table`";
+	    $query=$wpdb->get_results($sql);
+	    if(!empty($query))
+	    {
+		$result.="DROP TABLE IF EXISTS `$table`;\r\n CREATE TABLE IF NOT EXISTS `$table` (";
+		foreach($query AS $row)
+		{
+		    $result.="`{$row->Field}` {$row->Type} ";
+		    if(isset($row->NULL)){$result.=" NULL ";}else {$result.=" NOT NULL ";}
+		    if($row->Key=='PRI'){$key=$row->Field;}
+		    if(!empty($row->Default))
+		    {
+			if($row->Default=='CURRENT_TIMESTAMP'){$result.='default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP';}
+			else {$result.=" default '".$row->Default."'";}
+		    }
+		    if(!empty($row->Extra)) $result.=' '.$row->Extra;
+		    $result.=',';
+		}
+	    }
+	    $result.="PRIMARY KEY (`{$key}`)) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=".$increment." ;\r\n";
+	    $result.="-- \r\n -- Dumping data for table `$table`\r\n--\r\n";
+	    //build insert for table
+	    $result.="-- \r\n -- Dumping data for table `$table`\r\n--\r\n";
+	
+	    foreach($tablequery AS $row)
+	    {
+ 
+		$result .= "INSERT INTO `".$table."` VALUES(";
+		for($j=0; $j<count($row); $j++) 
+		{
+		    $row[$j] = addslashes($row[$j]);
+		    $row[$j] = ereg_replace("\n","\\n",$row[$j]);
+		    if (isset($row[$j])) $result .= "'{$row[$j]}'" ; else $result .= "''";
+		    if ($j<(count($row)-1)) $result .= ",";
+		}   
+		$result .= ");\r\n";
+	    }
+	    //add version no
+	    $result.='UPDATE '.$wpdb->prefix.'options SET option_value="'.OLD_CHURCH_ADMIN_VERSION.'" WHERE option_key="church_admin_version";'."\r\n";
+	return $result;
+	}
+}
+    
+    
+	
+	
+	
+
+
 ?>
