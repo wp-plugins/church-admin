@@ -769,7 +769,7 @@ function church_admin_widget_init()
     require(CHURCH_ADMIN_INCLUDE_PATH.'calendar_widget.php');
     wp_register_widget_control('Church Admin Calendar','Church Admin Calendar','church_admin_widget_control');
 }
-//add_action('init','church_admin_widget_init');
+add_action('init','church_admin_widget_init');
 function church_admin_download($file)
 {
     switch($file)
