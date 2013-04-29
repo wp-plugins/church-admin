@@ -473,7 +473,7 @@ if(empty($departments))
     $departments=array('1'=>__('Small Group Leader','church-admin'),'2'=>__('Elder','church-admin'));
     update_option('church_admin_roles',$departments);
 }
-//sermon podcast
+//sermon podcast table install
 
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SERM_TBL.'"') != CA_SERM_TBL)
     {
