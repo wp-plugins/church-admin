@@ -109,7 +109,7 @@ function church_admin_install()
 			{
 			    $sg_leader[]=$people_id;
 			    //give person small group leader role!
-			    church_admin_update_role('1',$people_id);
+			    //church_admin_update_role('1',$people_id);
 			}
 		    }
 		}
