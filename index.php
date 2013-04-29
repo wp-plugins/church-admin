@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.51
+Version: 0.52
 Author: Andy Moyle
 
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
 
-$church_admin_version = '0.51';
+$church_admin_version = '0.52';
 church_admin_constants();
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version){church_admin_backup();}
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
@@ -153,10 +153,7 @@ if(!is_dir(CHURCH_ADMIN_EMAIL_CACHE))
 }
 if(is_dir(OLD_CHURCH_ADMIN_EMAIL_CACHE))
 {
-    //make old directory writeable
-    $old = umask(0);
-    chmod(OLD_CHURCH_ADMIN_EMAIL_CACHE, 0755);
-    umask($old);
+    
     //grab files
     $files=scandir(OLD_CHURCH_ADMIN_EMAIL_CACHE);
     if(!empty($files))

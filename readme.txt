@@ -188,8 +188,8 @@ Clear out files
 * Sermon Podcasting
 * better rota handling (autocomplete) and ability to email weekly service rotas to participants
 * Move email cache to uploads/church-admin-cache directory and handle redirect
-= 0.51 =
-* DB Backup on upgrade
+= 0.52 =
+* Remove redundant chmod on old email cache directory
 
 == Upgrade Notice ==
 * 0.4.73 required

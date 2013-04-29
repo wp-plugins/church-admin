@@ -12,7 +12,7 @@ if (!function_exists ('add_action')) {
 function church_admin_front_admin()
 {
     
-    global $people_type,$member_type,$wpdb,$days,$screen_layout_columns;
+    global $people_type,$member_type,$wpdb,$days,$screen_layout_columns,$church_admin_version;
 
  
     /* Add screen option: user can choose between 1 or 2 columns (default 2) */
@@ -21,17 +21,21 @@ function church_admin_front_admin()
     
     ?>
     <div class="wrap" id="church-admin">
-	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin</h2>
-	<div id="poststuff"><p>
+	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?></h2>
+	<div id="poststuff">
+
+		<p>
 	<?php    echo __('If you like the plugin, please buy me a cup of coffee!','church-admin');?>
 	...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>
-	    <!-- #post-body .metabox-holder goes here -->
+	    <?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){	echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	    <!-- #post-body .metabox-holder goes here -->
 		<div id="post-body" class="metabox-holder columns-2">
 		    <!-- meta box containers here -->
 		    <form  method="get" action="">
 		        <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
 		        <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
 			<?php add_meta_box("church-admin-plugin-news", __('Church Admin Plugin News', 'church-admin'), "church_admin_plugin_news_meta_box", "church-admin");?>
+			<?php add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");?>
+			
 			<?php add_meta_box("church-admin-communications", __('Communications', 'church-admin'), "church_admin_communications_meta_box", "church-admin");?>
 			<?php add_meta_box("church-admin-recent-people-activity", __('Recent People Activity', 'church-admin'), "church_admin_recent_people_activity_meta_box", "church-admin");?>
 			<?php add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");?>
@@ -65,10 +69,25 @@ function church_admin_plugin_news_meta_box()
     require(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');
     echo church_admin_news_feed();
     echo __('If you like the plugin, please buy me a cup of coffee!','church-admin').'...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form>';
+    
+    	
+    
     //show activation errors
     $act_error=get_option('activation_error');
     if(!empty($act_error)) echo '<div class="updated fade"><h2>'.__('You had an activation error','church-admin').'</h2><p>'.__('Please post it to the forum on ','church-admin').'<a href="http://www.themoyles.co.uk">www.themoyles.co.uk</a>.</p>'.$act_error.'</div>';
     //end show activation errors
+}
+function church_admin_backup_meta_box()
+{
+//show backup
+    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=refresh_backup','refresh_backup').'">Refresh Church Admin DB Backup </a></p>';
+		
+    if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz'))
+    {
+		echo'<p><a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.'Church_Admin_Backup.sql.gz">Download Church Admin DB Backup - For recent Updates, it will be for old version</a></p>';
+		echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_backup','delete_backup').'">Delete Church Admin DB Backup - Sensible after download!</a></p>';
+		
+    }
 }
 function church_admin_recent_people_activity_meta_box()
 {
