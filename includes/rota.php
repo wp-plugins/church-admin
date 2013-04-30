@@ -145,7 +145,7 @@ if(!empty($taskresult))
 				if(!is_array(maybe_unserialize($rota_jobs[$id])))
 				{//rota job is in old format
 				    $new_rota[$id]=church_admin_get_people_id($rota_jobs[$id]);
-				    echo'<td>'.esc_html(church_admin_get_people($new_rota[$id])).'</td>';
+				    
 				}
 				 echo'<td>'.esc_html(church_admin_get_people($rota_jobs[$id])).'</td>';
 				
@@ -155,7 +155,7 @@ if(!empty($taskresult))
 				echo'<td>&nbsp;</td>';
 			    }
 		    }
-		    if(!empty($new_rota)){$wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs ="'.esc_sql(seriealise($new_rota)).'" WHERE rota_id="'.esc_sql($date_rows->rota_id).'"');}
+		    if(!empty($new_rota)){$wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs ="'.esc_sql(serialize($new_rota)).'" WHERE rota_id="'.esc_sql($date_rows->rota_id).'"');}
 		}
 		else
 		{
@@ -274,19 +274,21 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    
 	    foreach($task_result as $task_row)
 	    {
+		
 		$job=array();
 	        if(!empty($jobs->rota_jobs))$job=unserialize($jobs->rota_jobs);
 	        echo '<p><label>'.$task_row->rota_task.':</label>';
 		if(!empty($task_row->department_id))
 		{
-		    $current=!empty($job[$task_row->rota_id])?$job[$task_row->rota_id]:NULL;
+		    $current=$job[$task_row->rota_id];
+		    
 		    echo church_admin_autocomplete($task_row->rota_id,'friends'.$task_row->rota_task,'to'.$task_row->rota_task,$current,$task_row->department_id);
 		}
 		else
-		{
+		{	$curr_data='';
 		    if(!empty($job[$task_row->rota_id]))$curr_data=maybe_unserialize($job[$task_row->rota_id]);
 		    $people=array();
-		    if(!empty($curr_data)&&is_array($curr_data))
+		    if(is_array($curr_data))
 		    {
 			foreach($curr_data AS $key=>$value)
 			{
@@ -299,9 +301,11 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 				$people[]=$value;
 			    }//text
 			}
-		    }
+		    }else{$people[]=$curr_data;}
+		    
 		    echo'<input type="text" name="'.$task_row->rota_id.'"';
-		    if(!empty($people))echo 'value="'.esc_html(implode(", ",$people)).'"';
+		    
+		    if(!empty($people)){echo ' value="'.esc_html(implode(", ",$people)).'"';}
 		    echo'/>';
 		}
 		echo'</p>';
@@ -395,7 +399,11 @@ if(!empty($taskresult))
 		{
 		    foreach($rota_order AS $order=>$id)
 		    {
-			if(!empty($rota_jobs[$id])) {$line[]='"'.$rota_jobs[$id].'"';}else {$line[]='""';}
+			if(!empty($rota_jobs[$id]))
+			{
+			    //add entry
+			    $line[]='"'.church_admin_get_people($rota_jobs[$id]).'"';
+			}else {$line[]='""';}
 		    }
 		}
 		if(!empty($line)){$csv.=implode(',',$line)."\r\n";}else{$csv.="\r\n";}

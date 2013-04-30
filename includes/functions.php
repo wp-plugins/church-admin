@@ -17,13 +17,16 @@ function church_admin_autocomplete($name='people',$first_id='friends',$second_id
     if(!empty($current_data))
     {
         $curr_data=maybe_unserialize($current_data);
-        foreach($curr_data AS $key=>$value)
-        {
-            if(ctype_digit($value))$value=church_admin_get_person($value);
-            $current.=$value.', ';
-        }
+        if(is_array($curr_data))
+	{
+	    foreach($curr_data AS $key=>$value)
+	    {
+	        if(ctype_digit($value))$value=church_admin_get_person($value);
+	        $current.=$value.', ';
+	    }
+	}else$current=$current_data;
     }
-    $out= '<input id="'.$first_id.'" class="to" type="text" name="'.$name.'" /> ';
+    $out= '<input id="'.$first_id.'" class="to" type="text" name="'.$name.'" value="'.$current.'"/> ';
     $out.='<script type="text/javascript">
 
 	jQuery(document).ready(function ($){
@@ -104,7 +107,7 @@ function church_admin_get_people($idArray)
  */
     global $wpdb;
     $ids=maybe_unserialize($idArray);
-    
+    if(!is_array($ids))return $ids;
     if(!empty($ids))
     {
         $names=array();

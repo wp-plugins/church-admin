@@ -192,6 +192,10 @@ Clear out files
 * Remove redundant chmod on old email cache directory
 = 0.53 =
 * Bug Fix
+= 0.541 =
+* Comms Setting cron instructions bug fix
+* community.bulksms.co.uk fix
+* Major rota bug fixes for upgrades
 
 == Upgrade Notice ==
 * 0.4.73 required

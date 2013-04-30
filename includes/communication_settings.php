@@ -6,8 +6,9 @@
 
 function church_admin_settings()
 {
+    global $wpdb;
     $levels=get_option('church_admin_levels');
-   $available_levels=get_option('wp_user_roles');
+   $available_levels=get_option($wpdb->prefix.'user_roles');
    $email_settings=get_option('church_admin_smtp');
    echo'<h2>'.__('Church Admin Plugin Settings','church_admin').'</h2>';
       echo'<div class="wrap church_admin">';
@@ -69,8 +70,8 @@ function church_admin_settings()
 	    break;
 	    case 'cron':
 		wp_clear_scheduled_hook('church_admin_bulk_email');
-		echo '<p>'.church_admin_cron_job_instructions().__(' for setting up email queuing on your Linux or Unix webserver','church_admin').'</p></strong></p></div>';
-	    break;
+		echo'<p><a href="'.site_url().'/?download=cron-instructions">'.__('PDF Instructions for email cron setup','church_admin').'</a></p>';
+		break;
 	    default:
 	       wp_clear_scheduled_hook('church_admin_bulk_email');
 	       update_option('church_admin_cron','immediate');
@@ -173,7 +174,7 @@ function church_admin_settings()
         
         
 	echo'<h3>'.__('Bulk SMS Settings','church_admin').'</h3>';
-	echo'<p>'.__('Set up an account with','church_admin').' <a href="www.bulksms.co.uk">www.bulksms.co.uk</a>'.__('Prices start at 3.9 per sms','church_admin').'</p>';
+	echo'<p>'.__('Set up an account with','church_admin').' <a href="http://community.bulksms.co.uk">http://community.bulksms.co.uk</a>'.__('Prices start at 3.9 per sms','church_admin').'</p>';
 	echo'<p>'.__('Once you have registered fill out the form below','church_admin').'</p>';
 	echo'<p><label >'.__('SMS username','church_admin').'</label><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></p>';
 	echo'<p><label>'.__('SMS password','church_admin').'</label><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></p>';
@@ -186,5 +187,39 @@ function church_admin_settings()
    
 }
 
-
+function church_admin_cron_job_instructions()
+{
+    //setup pdf
+    require("fpdf.php");
+    $pdf=new FPDF();
+    $pdf->AddPage('P','mm','A4');
+    $pdf->SetFont('Arial','B',24);
+    $text='How to set up Bulk Email Queuing';
+    $pdf->Cell(0,10,$text,0,2,L);
+    if (PHP_OS=='Linux')
+    {
+    $phppath='/usr/local/bin/php';
+    $cronpath=CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php';
+    $command=$phppath.' -f '.$cronpath;
+    
+    
+    $pdf->SetFont('Arial','',10);
+    $text="Instructions for Linux servers and cpanel.\r\nLog into Cpanel which should be ".get_bloginfo('url')."/cpanel  or ".get_bloginfo('url').":2082 using your username and password. \r\nOne of the options will be Cron Jobs which is usually in 'Advanced Tools' at the bottom of the screen. Click on 'Standard' Experience level. that will bring up something like this... ";
+    
+    $pdf->MultiCell(0, 10, $text );
+ 
+    $pdf->Image(CHURCH_ADMIN_IMAGES_PATH.'cron-job1.jpg','10','65','','','jpg','');
+    $pdf->SetXY(10,180);
+    $text="In the common settings option - select 'Once an Hour'. \r\nIn 'Command to run' put this:\r\n".$command."\r\n and then click Add Cron Job. Job Done. Don't forget to test it by sending an email to yourself at a few minutes before the hour! ";
+    $pdf->MultiCell(0, 10, $text );
+    }
+    else
+    {
+         $pdf->SetFont('Arial','',10);
+        $text="Unfortunately setting up queuing for email using cron is not possible in Windows servers. Please go back to Communication settings and enable the wp-cron option for scheduling sending of queued emails";
+        $pdf->MultiCell(0, 10, $text );
+    }
+    $pdf->Output(CHURCH_ADMIN_CACHE_PATH.'bulk_email_queuing.pdf',F);
+    echo '<a href="'.CHURCH_ADMIN_CACHE_URL.'bulk_email_queuing.pdf">PDF instructions</a>';
+}
 ?> 

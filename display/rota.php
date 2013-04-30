@@ -2,6 +2,7 @@
 function church_admin_front_end_rota()
 {
     global $wpdb,$rota_order;
+    
     $service_id=$_REQUEST['service_id'];
     $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
     if($wpdb->num_rows==1)
@@ -29,14 +30,15 @@ function church_admin_front_end_rota()
 	$out.='<p><a href="'.home_url().'/?download=rotacsv&amp;service_id='.$service_id.'">'.__('Spreadsheet Version of the rota for next 3 months','church-admin').'</a></p>';
 	
 	$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	$out.='<h2>'.__('Who is doing what at the next','church-admin').esc_html($service->service_name).' '.__('on','church-admin').' '.esc_html($days[$service->service_day]).' '.__('at','church-admin').' '.esc_html($service->service_time).' '.esc_html($service->venue).'</h2>';
+	$out.='<h2>'.__('Who is doing what at the next ','church-admin').esc_html($service->service_name).' '.__('on','church-admin').' '.esc_html($days[$service->service_day]).' '.__('at','church-admin').' '.esc_html($service->service_time).' '.esc_html($service->venue).'</h2>';
 	$rota_jobs =unserialize($row->rota_jobs);
 	$rota_tasks=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 	if(!empty($rota_jobs))
 	{
 	    foreach($rota_tasks AS $task_row)
 	    {
-	        if(!empty($rota_jobs[$task_row->rota_id])) $out.='<p><label style="float:left;width:150px;font-weight:bold">'.esc_html($task_row->rota_task).'</label>'.esc_html($rota_jobs[$task_row->rota_id]).'</p>';
+		
+	        if(!empty($rota_jobs[$task_row->rota_id])) $out.='<p><label style="float:left;width:150px;font-weight:bold">'.esc_html($task_row->rota_task).'</label>'.esc_html(church_admin_get_people($rota_jobs[$task_row->rota_id])).'</p>';
 	    }
 	    
 	}
