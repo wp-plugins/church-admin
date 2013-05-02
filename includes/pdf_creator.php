@@ -146,7 +146,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY hous
 	$addresses['address'.$counter]['name']=$last_name.' '.implode(" & ", $adults);
 	$addresses['address'.$counter]['kids']=implode(" , ", $children);
 	if(!empty($address->address))$addresses['address'.$counter]['address']=implode(", ",array_filter(unserialize($address->address)));
-	$addresses['address'.$counter]['email']=implode("\n",array_filter($emails));
+	$addresses['address'.$counter]['email']=implode(",\n",array_filter($emails));
 	$addresses['address'.$counter]['mobile']=implode("\n",array_filter($mobiles));
 	$addresses['address'.$counter]['phone']=$address->phone;
 	$counter++;
@@ -185,7 +185,7 @@ for($z=0;$z<=$counter-1;$z++)
         $pdf->Cell(100,5,$addresses['address'.$z][address],0,0,L);
         if(!empty($addresses['address'.$z][phone])){$pdf->Cell(80,5,$addresses['address'.$z][mobile],0,1,R);}else{$pdf->Ln();}
         
-        $pdf->Cell(0,5,$addresses['address'.$z][email1].' '.$addresses['address'.$z][email2],0,1,L);
+        $pdf->Cell(0,5,$addresses['address'.$z][email],0,1,L);
         $pdf->Ln();
     }
     }

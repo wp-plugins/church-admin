@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.541
+Version: 0.550
 Author: Andy Moyle
 
 
@@ -47,10 +47,14 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-
-$church_admin_version = '0.541';
-church_admin_constants();
-if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version){church_admin_backup();}
+$church_admin_version = '0.550';
+church_admin_constants();//setup constants first
+if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
+{
+	church_admin_backup();
+	require_once(CHURCH_ADMIN_INCLUDE_PATH.'install.php');
+	church_admin_install();
+}
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
 add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
@@ -175,23 +179,20 @@ if(is_dir(OLD_CHURCH_ADMIN_EMAIL_CACHE))
     
 	$htaccess="\r\n RedirectPermanent /wp-content/plugins/church-admin-cache/ /wp-content/uploads/church-admin-cache/\r\n";
 	// Let's make sure the file exists and is writable first.
-	if (is_writable(ABSPATH.'.htaccess'))
+	$htaccess_done=get_option('church_admin_htaccess');
+	if (is_writable(ABSPATH.'.htaccess')&&empty($htaccess_done))
 	{
     
 	    if (!$handle = fopen(ABSPATH.'.htaccess', 'a')) {echo "Cannot open file (ABSPATH.'.htaccess')";}
 	    elseif(fwrite($handle, $htaccess) === FALSE) {echo "Cannot write to file (".ABSPATH.".htaccess)";}
 	    else{fclose($handle);}
-	} else {echo "The file ".ABSPATH.".htaccess is not writable";}
+	    update_option('church_admin_htaccess','1');
+	} 
     }
 }
     
 }//end constants
-//check install is uptodate 
-if (get_option("church_admin_version") != $church_admin_version ) 
-{
-    require(CHURCH_ADMIN_INCLUDE_PATH."install.php");
-    church_admin_install();
-}    
+   
 function ca_rota_order()
 {
  /**
@@ -323,7 +324,7 @@ wp_enqueue_script('common');
         wp_enqueue_script('js_map',CHURCH_ADMIN_INCLUDE_URL.'maps.js');
         
     }
-    if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_edit_attendance'))
+    if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_series_event_edit'||$_GET['action']=='church_admin_single_event_edit'||$_GET['action']=='church_admin_edit_attendance'))
     {
         wp_enqueue_script( 'jquery-ui-datepicker' );
         wp_enqueue_style( 'jquery.ui.theme', plugins_url( '/css/jquery-ui-1.8.21.custom.css', __FILE__ ) );
@@ -572,7 +573,7 @@ function church_admin_main()
 	    case 'church_admin_single_event_delete':check_admin_referer('single_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_delete($date_id,$event_id); }break;
 	    case 'church_admin_series_event_delete':check_admin_referer('series_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event_delete($date_id,$event_id);}break;     
 	    case 'church_admin_category_list':if(church_admin_level_check('Calendar'));{require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_category_list();}break;    
-	    case 'church_admin_series_event_edit':check_admin_referer('series_event_delete');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event($date_id,$event_id);}break;
+	    case 'church_admin_series_event_edit':check_admin_referer('series_event_edit');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event_edit($date_id,$event_id);}break;
 	    case 'church_admin_single_event_edit':check_admin_referer('single_event_edit');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_edit($date_id,$event_id);}break;
 	    case 'church_admin_add_calendar':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_calendar();}break;
 	    //address
@@ -622,8 +623,8 @@ function church_admin_main()
 function church_admin_shortcode($atts, $content = null) 
 {
 	
-    extract(shortcode_atts(array("type" => 'address-list','category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>1,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL), $atts));
-    cd_posts_logout();
+    extract(shortcode_atts(array("type" => 'address-list','photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL), $atts));
+    church_admin_posts_logout();
     $out='';
     global $wpdb;
     $wpdb->show_errors();
@@ -637,7 +638,7 @@ function church_admin_shortcode($atts, $content = null)
     {
 	$text = __('Log out of password protected posts','church-admin');
 	//text for link
-	$link = get_bloginfo('site_url').'?cd_logout=posts_logout';
+	$link = get_bloginfo('site_url').'?church_admin_logout=posts_logout';
 	$out.= '<p><a href="' . wp_nonce_url($link, 'posts logout') .'">' . $text . '</a></p>';
 	//output logoutlink
     }
@@ -672,7 +673,7 @@ function church_admin_shortcode($atts, $content = null)
 	   
             $out.='<p><a href="'.home_url().'/?download=addresslist&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
             require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
-            $out.=church_admin_frontend_directory($member_type_id,$map);
+            $out.=church_admin_frontend_directory($member_type_id,$map,$photo);
         break;
 	case 'small-groups-list':
             require(CHURCH_ADMIN_DISPLAY_PATH."small-group-list.php");
@@ -734,9 +735,9 @@ function church_admin_register($atts, $content = null)
     return $out;
 }
 
-function cd_posts_logout() 
+function church_admin_posts_logout() 
 {
-    if ( isset( $_GET['cd_logout'] ) && ( 'posts_logout' == $_GET['cd_logout'] ) &&check_admin_referer( 'posts logout' )) 
+    if ( isset( $_GET['church_admin_logout'] ) && ( 'posts_logout' == $_GET['church_admin_logout'] ) &&check_admin_referer( 'posts logout' )) 
     {
 	setcookie( 'wp-postpass_' . COOKIEHASH, ' ', time() - 31536000, COOKIEPATH );
 	wp_redirect( wp_get_referer() );
@@ -745,7 +746,7 @@ function cd_posts_logout()
 }
 
 
-add_action( 'init', 'cd_posts_logout' );
+add_action( 'init', 'church_admin_posts_logout' );
 
 //end of logout functions
 
@@ -784,30 +785,33 @@ function church_admin_download($file)
         case 'rotacsv':require(CHURCH_ADMIN_INCLUDE_PATH."rota.php");church_admin_rota_csv($_GET['service_id']); break;
     }
 }
-function church_admin_delete_backup(){unlink(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz');}
+function church_admin_delete_backup(){if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz'))unlink(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz');}
 function church_admin_backup()
 {
-    global $church_admin_version;
-    $content=church_admin_datadump (CA_ATT_TBL);
-    $content.=church_admin_datadump (CA_BIB_TBL);
-    $content.=church_admin_datadump (CA_CAT_TBL);
-    $content.=church_admin_datadump (CA_FIL_TBL);
-    $content.=church_admin_datadump (CA_FP_TBL);
-    $content.=church_admin_datadump (CA_FUN_TBL);
-    $content.=church_admin_datadump (CA_HOU_TBL);
-    $content.=church_admin_datadump (CA_MET_TBL);
-    $content.=church_admin_datadump (CA_MTY_TBL);
-    $content.=church_admin_datadump (CA_PEO_TBL);
-    $content.=church_admin_datadump (CA_ROT_TBL);
-    $content.=church_admin_datadump (CA_RST_TBL);
-    $content.=church_admin_datadump (CA_SERM_TBL);
-    $content.=church_admin_datadump (CA_SER_TBL);
-    $content.=church_admin_datadump (CA_SMG_TBL);
-    $gzdata = gzencode($content);
-    $file_name = 'Church_Admin_Backup.sql.gz';
-    $fp = fopen(CHURCH_ADMIN_EMAIL_CACHE.$file_name, 'w');
-    fwrite($fp, $gzdata);
-    fclose($fp);
+    global $church_admin_version,$wpdb;
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_ATT_TBL.'"') == CA_ATT_TBL)$content=church_admin_datadump (CA_ATT_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_BIB_TBL.'"') == CA_BIB_TBL)$content.=church_admin_datadump (CA_BIB_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_CAT_TBL.'"') == CA_CAT_TBL)$content.=church_admin_datadump (CA_CAT_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_FIL_TBL.'"') == CA_FIL_TBL)$content.=church_admin_datadump (CA_FIL_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_FP_TBL.'"') == CA_FP_TBL)$content.=church_admin_datadump (CA_FP_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_FUN_TBL.'"') == CA_FUN_TBL)$content.=church_admin_datadump (CA_FUN_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOU_TBL.'"') == CA_HOU_TBL)$content.=church_admin_datadump (CA_HOU_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_MET_TBL.'"') == CA_MET_TBL)$content.=church_admin_datadump (CA_MET_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_MTY_TBL.'"') == CA_MTY_TBL)$content.=church_admin_datadump (CA_MTY_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_PEO_TBL.'"') == CA_PEO_TBL)$content.=church_admin_datadump (CA_PEO_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_ROT_TBL.'"') == CA_ROT_TBL)$content.=church_admin_datadump (CA_ROT_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_RST_TBL.'"') == CA_RST_TBL)$content.=church_admin_datadump (CA_RST_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SERM_TBL.'"') == CA_SERM_TBL)$content.=church_admin_datadump (CA_SERM_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SER_TBL.'"') == CA_SER_TBL)$content.=church_admin_datadump (CA_SER_TBL);
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SMG_TBL.'"') == CA_SMG_TBL)$content.=church_admin_datadump (CA_SMG_TBL);
+    if(!empty($content))
+    {
+		$gzdata = gzencode($content);
+		$file_name = 'Church_Admin_Backup.sql.gz';
+		$fp = fopen(CHURCH_ADMIN_EMAIL_CACHE.$file_name, 'w');
+		fwrite($fp, $gzdata);
+		fclose($fp);
+	}
 }
 function church_admin_datadump ($table) {
 
@@ -868,10 +872,5 @@ function church_admin_datadump ($table) {
 	}
 }
     
-    
-	
-	
-	
-
-
+  
 ?>

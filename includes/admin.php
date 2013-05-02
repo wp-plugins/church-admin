@@ -35,6 +35,7 @@ function church_admin_front_admin()
 		        <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
 			<?php add_meta_box("church-admin-plugin-news", __('Church Admin Plugin News', 'church-admin'), "church_admin_plugin_news_meta_box", "church-admin");?>
 			<?php add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");?>
+			<?php  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'), "church_admin_shortcodes_meta_box", "church-admin");?>
 			
 			<?php add_meta_box("church-admin-communications", __('Communications', 'church-admin'), "church_admin_communications_meta_box", "church-admin");?>
 			<?php add_meta_box("church-admin-recent-people-activity", __('Recent People Activity', 'church-admin'), "church_admin_recent_people_activity_meta_box", "church-admin");?>
@@ -272,6 +273,69 @@ function church_admin_attendance_meta_box()
 			    foreach($services AS $service)  echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">'.__('Attendance List for','church-admin').' '.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.'</a></p>';
 			    //echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">'.__('Add Attendance','church-admin').'</a></p>';
 
+}
+
+
+function church_admin_shortcodes_meta_box()
+{
+    global $wpdb,$days;
+    
+    //directory
+    echo'<h2>Directory</h2>';
+    echo'<p>The directory shortcode is <strong>[church_admin type=address-list member_type_id=# map=1]</strong></p>';
+    echo'<p>map=1 shows a map for households that have had a map set</p>';
+    echo'<p>Member type can include more than one member type separated with commas e.g.<strong>[church_admin type=address-list member_type_id=1,2 map=1 photo=1]</strong></p>';
+    
+    $results=$wpdb->get_results('SELECT * FROM '.CA_MTY_TBL.' ORDER BY member_type_id');
+    if($results)
+    {
+        echo '<p>These are your current member types</p>';
+        foreach($results AS $row)
+        {
+            echo'<p><label>'.$row->member_type.': </label>member_type_id='.esc_html($row->member_type_id).'</p>';
+        }
+    }
+    
+    //small groups
+    echo'<h2>Small groups</h2>';
+    echo'<p><strong>[church_admin type=small-groups-list]</strong> lists all your small groups\' details</p>';
+    echo'<p><strong>[church_admin type=small-groups member_type_id=#]</strong> lists all your small groupsand tehir members for a specific member type</p>';
+    
+    //rotas
+    echo'<h2>Rotas</h2>';
+    echo'<p><strong>[church_admin type=rota service_id=1]</strong> lists the upcoming rota for a particular service</p>';
+    $results=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL.' ORDER BY service_id');
+    if($results)
+    {
+        echo '<p>These are your current services</p>';
+        foreach($results AS $row)
+        {
+            echo'<p><label>'.$row->service_name.' on '.$days[$row->service_day].' at '.$row->service_time.' </label>service_id='.esc_html($row->service_id).'</p>';
+        }
+    }
+    
+    //calendar
+    echo'<h2>Calendar</h2>';
+    $results=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_calendar_category");
+    if($results)
+    {
+        foreach($results AS $row)
+        {
+             $shortcode='<strong>[church_admin type=calendar-list category='.$row->cat_id.' weeks=4]</strong>';
+            echo'<p><label>Calendar List by Category '.esc_html($row->category).'</label>'.$shortcode.'</p>';
+        }
+    }
+    //user registration
+    echo'<h2>User Registration</h2>';
+    echo'<p><strong>[church_admin_register]</strong></p>';
+    
+    //recent activity
+    echo'<h2>Recent Directory Activity</h2>';
+    echo'<p><strong>[church_admin_recent]</strong></p>';
+    
+    //member map
+    echo'<h2>Member Map</h2>';
+    echo'<p><strong>[church_admin_map member_type_id=# zoom=13]</strong> - zoom is Google map zoom level</p>';
 }
 
 ?>

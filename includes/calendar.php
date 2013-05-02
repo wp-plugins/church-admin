@@ -112,7 +112,7 @@ function church_admin_calendar()
     echo'</div>';
 }
 
-function church_admin_series_event($date_id,$event_id)
+function church_admin_series_event_edit($date_id,$event_id)
 {
 
     global $wpdb,$sqlsafe;

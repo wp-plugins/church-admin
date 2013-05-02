@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
 Tested up to: 3.5.1
-Stable tag: 0.53
+Stable tag: 0.50
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -36,15 +36,15 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 
 1. Upload the `church_admin` directory to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Place [church_admin type=address-list member_type_id=# map=1] on the page you want the address book displayed, member_type=1 for members, map=1 toshow map for geocoded addresses. The member_type_id can be comma separated  e.g. member_type_id=1,2,3 
+3. Place [church_admin type=address-list member_type_id=# map=1 photo=1] on the page you want the address book displayed, member_type=1 for members, map=1 toshow map for geocoded addresses. The member_type_id can be comma separated  e.g. member_type_id=1,2,3 
 4. Place [church_admin type=small-groups-list] on the page you want the small group list displayed
-5. Place [church_admin type=small-groups] on the page you want the list of small groups and their members displayed
+5. Place [church_admin type=small-groups ] on the page you want the list of small groups and their members displayed
 6. Place [church_admin type=rota] on the page you want the rota displayed
 7. Place [church_admin type=calendar category=# weeks=#] on the page you want a page per month calendar displayed
 8. Place [church_admin type=calendar-list] on the page you want a agenda view calendar - option category and weeks options pastable from category admin page
 9. There is a calendar widget with customisable title, how many events you want to show and an option for it to look like a post-it note
 10. Place [church_admin_map member_type_id=#] to show a map of colour coded small groups - need to set a service venue first to centre map and geolocate member's addresses by editing them.
-We recommend password protecting the pages - if it is password protected. A link is provided to logout
+We recommend password protecting the pages - if it is password protected, a link is provided to logout
 
 
 == Frequently Asked Questions ==
@@ -196,6 +196,11 @@ Clear out files
 * Comms Setting cron instructions bug fix
 * community.bulksms.co.uk fix
 * Major rota bug fixes for upgrades
+= 0.542 = 
+* Activation headers error on new installs bug fix
+= 0.550 =
+* Option of Photos on address list shortcode
+* List of all shortcodes on main admin page
 
 == Upgrade Notice ==
 * 0.4.73 required

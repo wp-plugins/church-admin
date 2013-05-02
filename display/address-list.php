@@ -1,6 +1,6 @@
 <?php
 
-function church_admin_frontend_directory($member_type_id=1,$map=1)
+function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL)
 {
   global $wpdb;
   $out='';
@@ -68,7 +68,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=1)
   {
       $address=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'"');
       $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
-      $adults=$children=$emails=$mobiles=array();
+      $adults=$children=$emails=$mobiles=$photos=array();
       foreach($people_results AS $people)
 	{
 	  if($people->people_type_id=='1')
@@ -77,10 +77,12 @@ function church_admin_frontend_directory($member_type_id=1,$map=1)
 	    $adults[]=$people->first_name;
 	    if($people->email!=end($emails)) $emails[]=$people->email;
 	    if($people->mobile!=end($mobiles))$mobiles[]=$people->mobile;
+	    if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
 	  }
 	  else
 	  {
 	    $children[]=$people->first_name;
+	    if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
 	  }
 	  
 	}
@@ -89,7 +91,19 @@ function church_admin_frontend_directory($member_type_id=1,$map=1)
     $out .= '<div class="church_admin_address"><div style="width:49%; float:left"><div style="clear:both;"></div><div style="margin-bottom: 10px;"><span style="font-size:larger;font-variant: small-caps"><strong>'.esc_html(implode(" &amp; ",$adults)).' '.esc_html($last_name).'</strong></span><br />';
     if(!empty($children))$out.=esc_html(implode(", ",$children)).'<br/>';
     $out.='</div>';
-    if(!empty($address->address)){$out.=implode(",<br/> ",array_filter(unserialize($address->address))).'</div><div align="right">';}
+    if(!empty($address->address)){$out.=implode(",<br/> ",array_filter(unserialize($address->address)));
+	if(!empty($photos)&& !empty($photo))
+    {
+		$images='';
+		foreach($photos AS $key=>$value)
+		{
+				$attr=array('alt'=>$key,'title'=>$key);
+				$image.=wp_get_attachment_image( $value, 'ca-people-thumb',0,$attr ).'&nbsp;';
+		}
+		$out.='<p >'.$image.'</p>';
+	}
+	$out.='</div>';
+	$out.=	'<div align="right">';}
     if (!empty($emails))
     foreach($emails AS $email)
     {
@@ -101,8 +115,11 @@ function church_admin_frontend_directory($member_type_id=1,$map=1)
     {
       $out.=esc_html($mobile)."<br/>\n";
     }
-    if($map&&!empty($address->lng)){$out.='<a href="http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&t=m&z=16"><img src="http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&zoom=15&markers='.$address->lat.','.$address->lng.'&size=200x200&sensor=false" height="200px" width="200px"/></a>';}
-    $out.='</div><div style="clear:both"></div><div class="cn-meta" align="left" style="margin-top: 6px"><span><a href="'.home_url().'/?download=vcf&amp;id='.$ordered_row->household_id.'">V-Card</a></span>'.        '  <span style="font-size:x-small; font-variant: small-caps; position: absolute; right: 26px; bottom: 8px;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></div></div>';
+    if(!empty($map)&&!empty($address->lng)){$out.='<a href="http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&t=m&z=16"><img src="http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&zoom=15&markers='.$address->lat.','.$address->lng.'&size=200x200&sensor=false" height="200px" width="200px"/></a>';}
+    $out.='</div>';
+    	
+    $out.='<div style="clear:both"></div>';
+    $out.='<div class="cn-meta" align="left" style="margin-top: 6px"><span><a href="'.home_url().'/?download=vcf&amp;id='.$ordered_row->household_id.'">V-Card</a></span>'.        '  <span style="font-size:x-small; font-variant: small-caps; position: absolute; right: 26px; bottom: 8px;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></div></div>';
   }
   return $out;
 }

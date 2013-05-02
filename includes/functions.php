@@ -122,7 +122,7 @@ function church_admin_get_people($idArray)
                 $names[]=$id;
             }//end is text
         }
-        return implode(", ", $names);
+        return implode(", ", array_filter($names));
     }
     else
     return " ";
