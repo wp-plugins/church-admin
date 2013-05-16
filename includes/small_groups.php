@@ -59,7 +59,7 @@ function church_admin_edit_small_group($id)
 {
     global $wpdb;
     $wpdb->show_errors();
-    if(isset($_POST['edit_small_group'])&&ctype_digit($_POST['leader1'])&&ctype_digit($_POST['leader2']))
+    if(isset($_POST['edit_small_group'])&&ctype_digit($_POST['leader1']))
     {
 	$form=array();
 	foreach($_POST AS $key=>$value)$form[$key]=stripslashes($value);
@@ -75,7 +75,7 @@ function church_admin_edit_small_group($id)
 	    $wpdb->query('INSERT INTO  '.CA_SMG_TBL.' (group_name,leader,whenwhere) VALUES("'.esc_sql($form['group_name']).'","'.$leaders.'","'.esc_sql($form['whenwhere']).'")');
 	}//insert
 	
-	echo'<div class="wrap church_admin"><div id="message" class="updated fade"><p><strong>Small Group Edited</strong></p></div>';
+	echo'<div class="wrap church_admin"><div id="message" class="updated fade"><p><strong>'.__('Small Group Edited','church-admin').'</strong></p></div>';
 	church_admin_small_groups();
     }
     else
@@ -83,17 +83,17 @@ function church_admin_edit_small_group($id)
 	$data=$wpdb->get_row('SELECT * FROM '.CA_SMG_TBL.' WHERE id="'.esc_sql($id).'"');
 	$leaders=$wpdb->get_results('SELECT a.people_id, CONCAT_WS(" ", b.first_name,b.last_name) AS leader  FROM '.CA_MET_TBL.' a, '.CA_PEO_TBL.' b WHERE a.department_id=1 AND a.people_id=b.people_id');
 	
-	    echo'<div class="wrap church_admin"><h2>Add/Edit Small Group</h2><form action="" method="post">';
-	    echo'<p><label>Small group name</label><input type="text" name="group_name"';
+	    echo'<div class="wrap church_admin"><h2>'.__('Add/Edit Small Group','church-admin').'</h2><form action="" method="post">';
+	    echo'<p><label>'.__('Small group name','church-admin').'</label><input type="text" name="group_name"';
 	    if(!empty($data->group_name)) echo ' value="'.$data->group_name.'" ';
 	    echo'/></p>';
-	    echo'<p><label>Where &amp; When</label><input type="text" name="whenwhere"';
+	    echo'<p><label>'.__('Where and When','church-admin').'</label><input type="text" name="whenwhere"';
 	    if(!empty($data->whenwhere)) echo ' value="'.$data->whenwhere.'" ';
 	    echo'/></p>';
 	    if($leaders)
 	    {//leaders available
 		$curr_leaders=unserialize($data->leader);
-		echo'<p><label>Leader</label>';
+		echo'<p><label>'.__('Leader','church-admin').'</label>';
 		echo'<select name="leader1">';
 		foreach($leaders AS $leader)
 		{
@@ -104,6 +104,7 @@ function church_admin_edit_small_group($id)
 		echo'</select></p>';
 		echo'<p><label>Leader</label>';
 		echo'<select name="leader2">';
+		echo'<option value="">'.__('Second Leader','church-admin').'</option>';
 		foreach($leaders AS $leader)
 		{
 		    echo'<option value="'.$leader->people_id.'" ';
@@ -112,7 +113,7 @@ function church_admin_edit_small_group($id)
 		}
 		echo'</select></p>';
 	    }//leaders available
-	    echo'<p class="submit"><input type="submit" name="edit_small_group" value="Edit Small Group &raquo;" /></p></form></div>';
+	    echo'<p class="submit"><input type="submit" name="edit_small_group" value="'.__('Edit Small Group','church-admin').' &raquo;" /></p></form></div>';
 	
 	
     }

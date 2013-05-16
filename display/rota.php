@@ -35,12 +35,14 @@ function church_admin_front_end_rota()
 	$rota_tasks=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 	if(!empty($rota_jobs))
 	{
+		$table='<table>';
 	    foreach($rota_tasks AS $task_row)
 	    {
-		
-	        if(!empty($rota_jobs[$task_row->rota_id])) $out.='<p><label style="float:left;width:150px;font-weight:bold">'.esc_html($task_row->rota_task).'</label>'.esc_html(church_admin_get_people($rota_jobs[$task_row->rota_id])).'</p>';
+			$people=church_admin_get_people($rota_jobs[$task_row->rota_id]);
+	        if(!empty($people)) $table.='<tr><td><strong>'.esc_html($task_row->rota_task).'</strong></td><td>'.esc_html($people).'</td></tr>';
 	    }
-	    
+	    $table.='</table>';
+	    $out.=$table;
 	}
 	else
 	{

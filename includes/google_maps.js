@@ -1,4 +1,4 @@
-function load(lat,lng) {
+function load(lat,lng,xml_url) {
         var myOptions = {
           center: new google.maps.LatLng(lat, lng),
           zoom: 13,

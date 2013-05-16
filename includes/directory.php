@@ -126,7 +126,7 @@ function church_admin_edit_household($household_id=NULL)
 {
     global $wpdb,$member_type;
     $wpdb->show_errors();
-    if($household_id){$data=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($household_id).'"');}else{$data=NULL;}
+    if(!empty($household_id)){$data=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($household_id).'"');}else{$data=NULL;}
     if(!empty($_POST['edit_household']))
     {//process form
 	
@@ -211,7 +211,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	if(empty($household_id))
 	{
 	    $wpdb->query('INSERT INTO '.CA_HOU_TBL.' (lat,lng) VALUES("52.000","0.000")');
-	    $household_id=$wpdb->insert_id();
+	    $household_id=$wpdb->insert_id;
 	}
 	$sql=array();
 	foreach($_POST AS $key=>$value)$sql[$key]=esc_sql(stripslashes_deep($value));
@@ -487,7 +487,7 @@ $out.= '; var beginLng =';
     if(!empty($data->lng)) {$out.=$data->lng;}else {$out.='-0.148193359375';}
     $out.=';</script>';
     //end initialise coordinates
-    if(!empty($address))$address=maybe_unserialize($data->address);
+    $address=maybe_unserialize($data->address);
     $out.= '<p><label>'.__('Address Line 1','church-admin').'</label><input type="text" id="address_line1" name="address_line1" ';
     if(!empty($address['address_line1']))$out.=' value="'.esc_html($address['address_line1']).'" ';
     if(!empty($error['address_line1'])) $out.= ' class="red" ';

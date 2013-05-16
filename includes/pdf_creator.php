@@ -550,7 +550,7 @@ foreach($results AS $row)
 	foreach($jobs AS $key=>$value)    
 	{
 	    $w=round(280*$widths[$key]);
-	    if(empty($value)){$text=' ';}else{$text=church_admin_get_people($value);}
+	    $text=church_admin_get_people($value);
 	    $pdf->Cell($w,$h,"$text",1,0,'C',0);
 	}
     }
@@ -564,6 +564,10 @@ $pdf->Output();
 function church_admin_address_xml($member_type_id=1)
 {
     global $wpdb;
+	$memb=explode(',',esc_sql($member_type_id));
+	foreach($memb AS $key=>$value){$membsql[]='member_type_id='.$value;}
+	if(!empty($membsql)) {$memb_sql=implode(' || ',$membsql).' ';}else{$memb_sql='';}
+
     $color_def = array
 	('1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",
 
@@ -581,8 +585,11 @@ function church_admin_address_xml($member_type_id=1)
     
     
     // Select all the rows in the markers table
-    $sql = 'SELECT a.lat, a.lng,  b.smallgroup_id,c.group_name FROM '.CA_PEO_TBL.' b, '.CA_HOU_TBL.' a,'.CA_SMG_TBL.' c WHERE c.id=b.smallgroup_id AND b.smallgroup_id!="" AND b.member_type_id="'.esc_sql($member_type_id).'" AND a.household_id = b.household_id
-GROUP BY a.household_id, b.smallgroup_id';
+    $membsql=array();
+    $memb=explode(',',esc_sql($member_type_id));
+	foreach($memb AS $key=>$value){$membsql[]='b.member_type_id='.$value;}
+	if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).' )';}else{$memb_sql='';}
+    $sql = 'SELECT a.lat, a.lng, b.smallgroup_id,c.group_name FROM '.CA_HOU_TBL.' a, '.CA_PEO_TBL.' b, '.CA_SMG_TBL.' c WHERE a.household_id = b.household_id AND a.lng != "0" AND a.lat != "52.0" AND b.smallgroup_id=c.id'.$memb_sql;
    
     $result = $wpdb->get_results($sql);
     // Iterate through the rows, adding XML nodes for each

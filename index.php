@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.550
+Version: 0.552
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.550';
+$church_admin_version = '0.552';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -271,7 +271,7 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
                 else
                 {
                     wp_enqueue_script('google_map_script', 'http://maps.googleapis.com/maps/api/js?sensor=false');
-                        wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'google_maps.js');
+                    wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'google_maps.js');
                 }
 	}
  
@@ -663,29 +663,29 @@ function church_admin_shortcode($atts, $content = null)
 	    
             
 
-            include(CHURCH_ADMIN_DISPLAY_PATH.'calendar.php');
+            require_once(CHURCH_ADMIN_DISPLAY_PATH.'calendar.php');
             
         break;
         case 'calendar-list':
-            include(CHURCH_ADMIN_DISPLAY_PATH.'calendar-list.php');
+            require_once(CHURCH_ADMIN_DISPLAY_PATH.'calendar-list.php');
         break;
         case 'address-list':
 	   
             $out.='<p><a href="'.home_url().'/?download=addresslist&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
-            require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
+            require_once(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
             $out.=church_admin_frontend_directory($member_type_id,$map,$photo);
         break;
 	case 'small-groups-list':
-            require(CHURCH_ADMIN_DISPLAY_PATH."small-group-list.php");
+            require_once(CHURCH_ADMIN_DISPLAY_PATH."small-group-list.php");
             $out.= church_admin_small_group_list();
         break;
 	case 'small-groups':
             $out.='<p><a href="'.home_url().'/?download=smallgroup&amp;member_type='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
-            require(CHURCH_ADMIN_DISPLAY_PATH."small-groups.php");
+            require_once(CHURCH_ADMIN_DISPLAY_PATH."small-groups.php");
             $out.=church_admin_frontend_small_groups($member_type_id);
         break;
 	case 'rota':
-            include(CHURCH_ADMIN_DISPLAY_PATH."rota.php");
+            require_once(CHURCH_ADMIN_DISPLAY_PATH."rota.php");
             $out.=church_admin_front_end_rota();
         break;
         
@@ -696,7 +696,8 @@ function church_admin_shortcode($atts, $content = null)
 	    if(file_exists(CHURCH_ADMIN_CACHE_PATH.'rolling_average_attendance.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png" alt="'.__('Average Attendance Graph','church-admin').'"/>';
         break;
 	default:
-            require(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
+            require_once(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
+            $out.=church_admin_frontend_directory($member_type_id,$map,$photo);
         break;
     }
 //output content instead of shortcode!
@@ -720,7 +721,7 @@ function church_admin_map($atts, $content = null)
     $out.=' var lat='.$service->lat.';';
     $out.=' var lng='.$service->lng.';';
     $out.='jQuery(document).ready(function(){
-    load(lat,lng);});</script><div id="map"></div><div id="groups"></div>';
+    load(lat,lng,xml_url);});</script><div id="map"></div><div id="groups"></div>';
     
     
     return $out;
