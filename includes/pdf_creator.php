@@ -48,7 +48,7 @@ $leader=array();
 
 //grab people
 $memb=explode(',',esc_sql($member_type_id));
-foreach($memb AS $key=>$value){$membsql[]='a.member_type_id='.$value;}
+foreach($memb AS $key=>$value){if(ctype_digit($value))$membsql[]='a.member_type_id='.$value;}
 if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
 $sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE a.people_type_id="1"  '.$memb_sql.' AND a.smallgroup_id=b.id ORDER BY a.smallgroup_id,a.last_name ';
 $results = $wpdb->get_results($sql);
@@ -114,10 +114,10 @@ function church_admin_address_pdf($member_type_id=1)
 //address book cache
 require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
 $memb=explode(',',esc_sql($member_type_id));
-foreach($memb AS $key=>$value){$membsql[]='member_type_id='.$value;}
-if(!empty($membsql)) {$memb_sql=implode(' || ',$membsql);}else{$memb_sql='member_type_id=1';}
+foreach($memb AS $key=>$value){if(ctype_digit($value)) $membsql[]='member_type_id='.$value;}
+if(!empty($membsql)) {$memb_sql=' WHERE '.implode(' || ',$membsql);}else{$memb_sql='';}
 //grab addresses
-$sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
+$sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
   $results=$wpdb->get_results($sql);
 
   $counter=1;
@@ -203,9 +203,9 @@ $wpdb->show_errors();
 //grab addresses
 //get alphabetic order
 $memb=explode(',',esc_sql($member_type_id));
-foreach($memb AS $key=>$value){$membsql[]='member_type_id='.$value;}
-if(!empty($membsql)) {$memb_sql=implode(' || ',$membsql).' ';}else{$memb_sql='';}
-$sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.' GROUP BY last_name ORDER BY last_name';
+foreach($memb AS $key=>$value){if(ctype_digit($value))$membsql[]='member_type_id='.$value;}
+if(!empty($membsql)) {$memb_sql=' WHERE '.implode(' || ',$membsql).' ';}else{$memb_sql='';}
+$sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.' GROUP BY last_name ORDER BY last_name';
 $results = $wpdb->get_results($sql);
 if($results)
 {
@@ -561,7 +561,7 @@ $pdf->Output();
 
 }
 
-function church_admin_address_xml($member_type_id=1)
+function church_admin_address_xml($member_type_id=1,$small_group=1)
 {
     global $wpdb;
 	$memb=explode(',',esc_sql($member_type_id));
@@ -605,9 +605,16 @@ function church_admin_address_xml($member_type_id=1)
 	    echo '<marker ';
 	    echo 'lat="' . $row->lat . '" ';
 	    echo 'lng="' . $row->lng . '" ';
-	    echo 'pinColor="'.$color_def[$row->smallgroup_id].'" ';
-	    echo 'smallgroup_id="'.$row->smallgroup_id.'" ';
-	    echo 'smallgroup_name="'.htmlentities($row->group_name).'" ';
+	    if(!empty($small_group))
+	    {
+			echo 'pinColor="'.$color_def[$row->smallgroup_id].'" ';
+			echo 'smallgroup_id="'.$row->smallgroup_id.'" ';
+			echo 'smallgroup_name="'.htmlentities($row->group_name).'" ';
+		}
+		else
+		{
+			echo 'pinColor="FF0000" ';
+		}	
 	    echo '/>';
 	}
 	// End XML file

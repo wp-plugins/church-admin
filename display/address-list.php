@@ -7,10 +7,11 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
   $out.='<p><label style="width:75px;float:left;">'.__('Search','church-admin').'</label><form name="ca_search" action="" method="POST"><input name="ca_search" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></form></p>';
     if(empty($_POST['ca_search']))
     {
+		$membsql=array();
       $memb=explode(',',$member_type_id);
-      foreach($memb AS $key=>$value){$membsql[]='member_type_id='.$value;}
-      if(!empty($membsql)) {$memb_sql=' ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
-      $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
+      foreach($memb AS $key=>$value){if(ctype_digit($value))  $membsql[]='member_type_id='.$value;}
+      if(!empty($membsql)) {$memb_sql=' WHERE ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+      $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
       $results=$wpdb->get_results($sql);
       $items=$wpdb->num_rows;
       // number of total rows in the database
@@ -47,7 +48,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
       //Pagination
       }
       //grab household_id in last name order
-      $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC '.$limit;
+      $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC '.$limit;
       $results=$wpdb->get_results($sql);
     }
     else
@@ -92,15 +93,15 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
     if(!empty($children))$out.=esc_html(implode(", ",$children)).'<br/>';
     $out.='</div>';
     if(!empty($address->address)){$out.=implode(",<br/> ",array_filter(unserialize($address->address)));
-	if(!empty($photos)&& !empty($photo))
+	if(!empty($photos))
     {
 		$images='';
 		foreach($photos AS $key=>$value)
 		{
 				$attr=array('alt'=>$key,'title'=>$key);
-				$image.=wp_get_attachment_image( $value, 'ca-people-thumb',0,$attr ).'&nbsp;';
+				$images.=wp_get_attachment_image( $value, 'ca-people-thumb',0,$attr ).'&nbsp;';
 		}
-		$out.='<p >'.$image.'</p>';
+		$out.='<p >'.$images.'</p>';
 	}
 	$out.='</div>';
 	$out.=	'<div align="right">';}

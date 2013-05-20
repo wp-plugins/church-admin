@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.552
+Version: 0.554
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.552';
+$church_admin_version = '0.554';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -714,14 +714,16 @@ add_shortcode("church_admin_map","church_admin_map");
 
 function church_admin_map($atts, $content = null) 
 {
-    extract(shortcode_atts(array('zoom'=>13,'member_type_id'=>1), $atts));
+    extract(shortcode_atts(array('zoom'=>13,'member_type_id'=>1,'small_group'=>1), $atts));
     global $wpdb;
     $service=$wpdb->get_row('SELECT lat,lng FROM '.CA_SER_TBL.' LIMIT 1');
-    $out.='<script type="text/javascript">var xml_url="'.site_url().'?download=address-xml&member_type_id='.$member_type_id.'";';
+    $out.='<script type="text/javascript">var xml_url="'.site_url().'?download=address-xml&member_type_id='.$member_type_id.'&small_group='.$small_group.'";';
     $out.=' var lat='.$service->lat.';';
     $out.=' var lng='.$service->lng.';';
+    
     $out.='jQuery(document).ready(function(){
-    load(lat,lng,xml_url);});</script><div id="map"></div><div id="groups"></div>';
+    load(lat,lng,xml_url);});</script><div id="map"></div>';
+    if(empty($small_group)){$out.='<div id="groups" style="display:none"></div>';}else{$out.='<div id="groups" ></div>';}
     
     
     return $out;
@@ -775,7 +777,7 @@ add_action('init','church_admin_widget_init');
 function church_admin_download($file)
 {
     switch($file)
-    {   case 'address-xml':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_xml($_GET['member_type_id']);break;
+    {   case 'address-xml':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_xml($_GET['member_type_id'],$_GET['small_group']);break;
         case'cron-instructions':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_cron_pdf();break;
 	case'rota':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_rota_pdf();break;
         case'yearplanner':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_year_planner_pdf($_GET['year']);break;

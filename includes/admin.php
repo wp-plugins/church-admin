@@ -335,7 +335,7 @@ function church_admin_shortcodes_meta_box()
     
     //member map
     echo'<h2>Member Map</h2>';
-    echo'<p><strong>[church_admin_map member_type_id=# zoom=13]</strong> - zoom is Google map zoom level</p>';
+    echo'<p><strong>[church_admin_map member_type_id=# zoom=13 small_group=1]</strong> - zoom is Google map zoom level, small_group=1 for different colours for small groups, 0 for all in red</p>';
 }
 
 ?>
