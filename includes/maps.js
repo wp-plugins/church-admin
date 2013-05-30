@@ -3,19 +3,13 @@
 jQuery(document).ready(function($){
   var map, marker;
   var markers = [];
-  var inputAddress = $('#address_line1').val() + ', ' + $('#address_line2').val()+ ', ' +  $('#town').val()  + ', '+  $('#county').val()  + ', ' + $('#postcode').val() ;
-  
+  var inputAddress = $('#address').val();
   console.log(inputAddress);
   var inputLat = '#lat';
   var inputLng = '#lng';
   var finalise ='#finalise';
   // these are the links to activate the map plotting
   var domAddressConverter = '#geocode_address';
-
-  
-  
- 
-  
   var contMap = '#map';
   var geocoder = new google.maps.Geocoder();
   
@@ -118,8 +112,7 @@ jQuery(document).ready(function($){
     // handle geocoding of given address
     jQuery(domAddressConverter).click(function(e){
       e.preventDefault();
-      var inputAddress = $('#address_line1').val() + ', ' + $('#address_line2').val()+ ', ' +  $('#town').val()  + ', '+  $('#county').val()  + ', ' + $('#postcode').val() ;
-  
+      var inputAddress = $('#address').val();
       if(inputAddress== '')
       {
         alert('No address specified!');

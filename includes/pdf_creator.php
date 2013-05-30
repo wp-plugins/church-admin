@@ -143,11 +143,11 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 	  }
 	  
 	}
-	$addresses['address'.$counter]['name']=$last_name.' '.implode(" & ", $adults);
+	$addresses['address'.$counter]['name']=$last_name.', '.implode(" & ", $adults);
 	$addresses['address'.$counter]['kids']=implode(" , ", $children);
-	if(!empty($address->address))$addresses['address'.$counter]['address']=implode(", ",array_filter(unserialize($address->address)));
-	$addresses['address'.$counter]['email']=implode(",\n",array_filter($emails));
-	$addresses['address'.$counter]['mobile']=implode("\n",array_filter($mobiles));
+	if(!empty($address->address))$addresses['address'.$counter]['address']=$address->address;
+	$addresses['address'.$counter]['email']=implode(", \n",array_filter($emails));
+	$addresses['address'.$counter]['mobile']=implode(", \n",array_filter($mobiles));
 	$addresses['address'.$counter]['phone']=$address->phone;
 	$counter++;
   }
@@ -560,7 +560,46 @@ $pdf->Output();
 
 
 }
+function church_admin_small_group_xml()
+{
+	global $wpdb;
+	$results=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL.' WHERE lat!="" AND lng!=""');
+	if(!empty($results))
+	{
+		$color_def = array
+	('1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",
 
+		8  => "FF7F00",	9  => "7F7F7F",	10 => "BFBFBF",	11 => "007F00",
+		12 => "7FFF00",	13 => "00007F",	14 => "7F0000",	15 => "7F4000",
+		16 => "FF9933",	17 => "007F7F",	18 => "7F007F",	19 => "007F7F",
+		20 => "7F00FF",	21 => "3399CC",	22 => "CCFFCC",	23 => "006633",
+		24 => "FF0033",	25 => "B21919",	26 => "993300",	27 => "CC9933",
+		28 => "999933",	29 => "FFFFBF",	30 => "FFFF7F",31  => "000000"
+	);
+		
+		header("Content-type: text/xml;charset=utf-8");
+		echo '<markers>';
+		foreach($results AS $row)
+		{
+
+			// Iterate through the rows, printing XML nodes for each
+
+			// ADD TO XML DOCUMENT NODE
+				echo '<marker ';
+				echo 'pinColor="'.$color_def[$row->id].'" ';
+				echo 'lat="' . $row->lat . '" ';
+				echo 'lng="' . $row->lng . '" ';
+				echo 'smallgroup_name="'.htmlentities($row->group_name).'" ';
+				echo 'address="'.htmlentities($row->address).'" ';
+				echo 'when="'.htmlentities($row->whenwhere).'" ';
+				echo 'smallgroup_id="'.$row->id.'" ';
+				echo '/>';
+		}
+		// End XML file
+		echo '</markers>';
+				
+	}
+}
 function church_admin_address_xml($member_type_id=1,$small_group=1)
 {
     global $wpdb;
@@ -610,6 +649,9 @@ function church_admin_address_xml($member_type_id=1,$small_group=1)
 			echo 'pinColor="'.$color_def[$row->smallgroup_id].'" ';
 			echo 'smallgroup_id="'.$row->smallgroup_id.'" ';
 			echo 'smallgroup_name="'.htmlentities($row->group_name).'" ';
+				echo 'address="'.htmlentities($row->address).'" ';
+				echo 'when="'.htmlentities($row->whenwhere).'" ';
+				echo 'smallgroup_id="'.$row->id.'" ';
 		}
 		else
 		{

@@ -23,7 +23,8 @@ function load(lat,lng,xml_url) {
             );
       var pinColor =markers[i].getAttribute("pinColor");
       var id =markers[i].getAttribute("smallgroup_id");
-      smallgroup[id]='<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|' + pinColor +'"/> '+markers[i].getAttribute("smallgroup_name") +'<br/>';
+      var details=markers[i].getAttribute("when")+ ' at ' +markers[i].getAttribute("address");
+      smallgroup[id]='<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|' + pinColor +'"/> '+markers[i].getAttribute("smallgroup_name") + ': ' +details +'<br/>';
       
       
       var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,

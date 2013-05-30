@@ -92,7 +92,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
     $out .= '<div class="church_admin_address"><div style="width:49%; float:left"><div style="clear:both;"></div><div style="margin-bottom: 10px;"><span style="font-size:larger;font-variant: small-caps"><strong>'.esc_html(implode(" &amp; ",$adults)).' '.esc_html($last_name).'</strong></span><br />';
     if(!empty($children))$out.=esc_html(implode(", ",$children)).'<br/>';
     $out.='</div>';
-    if(!empty($address->address)){$out.=implode(",<br/> ",array_filter(unserialize($address->address)));
+    if(!empty($address->address)){$out.=str_replace(', ',',<br/> ',$address->address);//implode(",<br/> ",array_filter(unserialize($address->address)));
 	if(!empty($photos))
     {
 		$images='';

@@ -210,6 +210,10 @@ Clear out files
 * Image bug fix on address list display
 = 0.554 =
 * Address list still displays if member_type_id=# is used!
+= 0.555 =
+* Small Group geocoding
+* More international friendly address storage and use
+
 
 == Upgrade Notice ==
 * 0.4.73 required

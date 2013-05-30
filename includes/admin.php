@@ -298,8 +298,8 @@ function church_admin_shortcodes_meta_box()
     
     //small groups
     echo'<h2>Small groups</h2>';
-    echo'<p><strong>[church_admin type=small-groups-list]</strong> lists all your small groups\' details</p>';
-    echo'<p><strong>[church_admin type=small-groups member_type_id=#]</strong> lists all your small groupsand their members for a specific member type</p>';
+    echo'<p><strong>[church_admin type=small-groups-list map=1]</strong> lists all your small groups\' details in map form (map=1)or as a list (map=0)</p>';
+    echo'<p><strong>[church_admin type=small-groups member_type_id=# ]</strong> lists all your small groups and their members for a specific member type</p>';
     
     //rotas
     echo'<h2>Rotas</h2>';

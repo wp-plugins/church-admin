@@ -59,20 +59,23 @@ function church_admin_edit_small_group($id)
 {
     global $wpdb;
     $wpdb->show_errors();
-    if(isset($_POST['edit_small_group'])&&ctype_digit($_POST['leader1']))
+    if(isset($_POST['edit_small_group']))
     {
 	$form=array();
 	foreach($_POST AS $key=>$value)$form[$key]=stripslashes($value);
-	if(!empty($_POST['leader1'])){$leaders=esc_sql(serialize(array(1=>$_POST['leader1'],2=>$_POST['leader2'])));}else{$leaders=esc_sql(serialize(array(1=>'',2=>'')));}
-	if(!$id)$id=$wpdb->get_var('SELECT id FROM '.CA_SMG_TBL.' WHERE leader="'.$leaders.'" AND whenwhere="'.esc_sql($form['whenwhere']).'" AND group_name="'.esc_sql($form['group_name']).'"');
+	$ldr=array();
+	if(!empty($_POST['leader1'])&&ctype_digit($_POST['leader1'])){$ldr['1']=$_POST['leader1'];}else{$ldr['1']='';}
+	if(!empty($_POST['leader2'])&&ctype_digit($_POST['leader2'])){$ldr['2']=$_POST['leader2'];}else{$ldr['2']='';}
+	$leaders=esc_sql(maybe_serialize($ldr));
+	if(!$id)$id=$wpdb->get_var('SELECT id FROM '.CA_SMG_TBL.' WHERE leader="'.$leaders.'" AND whenwhere="'.esc_sql($form['whenwhere']).'" AND group_name="'.esc_sql($form['group_name']).'" AND lat="'.esc_sql($form['lat']).'" AND lng="'.esc_sql($form['lng']).'" AND address="'.esc_sql($form['address']).'"');
 	if($id)
 	{//update
-	    $wpdb->query('UPDATE '.CA_SMG_TBL.' SET leader="'.$leaders.'",group_name="'.esc_sql($form['group_name']).'",whenwhere="'.esc_sql($form['whenwhere']).'" WHERE id="'.esc_sql($id).'"');
+	    $wpdb->query('UPDATE '.CA_SMG_TBL.' SET lat="'.esc_sql($form['lat']).'",lng="'.esc_sql($form['lng']).'",address="'.esc_sql($form['address']).'", leader="'.$leaders.'",group_name="'.esc_sql($form['group_name']).'",whenwhere="'.esc_sql($form['whenwhere']).'" WHERE id="'.esc_sql($id).'"');
    
 	}//end update
 	else
 	{//insert
-	    $wpdb->query('INSERT INTO  '.CA_SMG_TBL.' (group_name,leader,whenwhere) VALUES("'.esc_sql($form['group_name']).'","'.$leaders.'","'.esc_sql($form['whenwhere']).'")');
+	    $wpdb->query('INSERT INTO  '.CA_SMG_TBL.' (group_name,leader,whenwhere,address,lat,lng) VALUES("'.esc_sql($form['group_name']).'","'.$leaders.'","'.esc_sql($form['whenwhere']).'","'.esc_sql($form['address']).'","'.esc_sql($form['lat']).'","'.esc_sql($form['lng']).'")');
 	}//insert
 	
 	echo'<div class="wrap church_admin"><div id="message" class="updated fade"><p><strong>'.__('Small Group Edited','church-admin').'</strong></p></div>';
@@ -87,9 +90,23 @@ function church_admin_edit_small_group($id)
 	    echo'<p><label>'.__('Small group name','church-admin').'</label><input type="text" name="group_name"';
 	    if(!empty($data->group_name)) echo ' value="'.$data->group_name.'" ';
 	    echo'/></p>';
-	    echo'<p><label>'.__('Where and When','church-admin').'</label><input type="text" name="whenwhere"';
+	    echo'<p><label>'.__('When','church-admin').'</label><input type="text" name="whenwhere"';
 	    if(!empty($data->whenwhere)) echo ' value="'.$data->whenwhere.'" ';
 	    echo'/></p>';
+	    echo'<script type="text/javascript"> var beginLat =';
+		if(empty($data->lat))  {$data->lat='51.50351129583287';}
+		echo $data->lat;
+		echo '; var beginLng =';
+		if(empty($data->lng)) {$data->lng='-0.148193359375';}
+		echo $data->lng;
+		echo';</script>';
+	
+	    echo'<p><label>'.__('Address','church-admin').'</label><input type="text" id="address" name="address"';
+	    if(!empty($data->address)) echo ' value="'.$data->address.'" ';
+	    echo'/></p>';
+		echo '<p><a href="#" id="geocode_address">'.__('Please click here to update map location','church-admin').'...</a><br/><span id="finalise" >Once you have updated your address, this map will show roughly where your address is.</span><input type="hidden" name="lat" id="lat" value="'.$data->lat.'"/><input type="hidden" name="lng" id="lng" value="'.$data->lng.'"/></p><div id="map" style="width:500px;height:300px"></div>';
+		
+  
 	    if($leaders)
 	    {//leaders available
 		$curr_leaders=unserialize($data->leader);
@@ -113,7 +130,7 @@ function church_admin_edit_small_group($id)
 		}
 		echo'</select></p>';
 	    }//leaders available
-	    echo'<p class="submit"><input type="submit" name="edit_small_group" value="'.__('Edit Small Group','church-admin').' &raquo;" /></p></form></div>';
+	    echo'<p class="submit"><input type="submit" name="edit_small_group" value="'.__('Save Small Group','church-admin').' &raquo;" /></p></form></div>';
 	
 	
     }

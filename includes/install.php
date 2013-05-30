@@ -87,7 +87,7 @@ function church_admin_install()
 	{
 	    
 	    //split off household
-	    $address=esc_sql(serialize(array('address_line1'=>stripslashes($row->address_line1),'address_line2'=>stripslashes($row->address_line2),'town'=>stripslashes($row->city),'county'=>stripslashes($row->state),'postcode'=>stripslashes($row->zipcode))));
+	    $address=esc_sql(implode(", ",array('address_line1'=>stripslashes($row->address_line1),'address_line2'=>stripslashes($row->address_line2),'town'=>stripslashes($row->city),'county'=>stripslashes($row->state),'postcode'=>stripslashes($row->zipcode))));
 	    $wpdb->query('INSERT INTO '.$wpdb->prefix.'church_admin_household (address,lat,lng,phone,member_type_id)VALUES("'.$address.'","52.0","0","'.esc_sql($row->homephone).'","1")');
 	    $household_id=$wpdb->insert_id;
 	    $member_data=esc_sql(serialize(array('member'=>mysql2date('Y-m-d',$row->ts))));
@@ -198,13 +198,24 @@ function church_admin_install()
 	
 	$wpdb->query('RENAME TABLE '.$wpdb->prefix.'church_admin_visitors TO '.$wpdb->prefix.'church_admin_visitors_old');
     }
+    
+    //make sure addresses are stored not as an array from v0.554
+    $result=$wpdb->get_results('SELECT * FROM '. CA_HOU_TBL);
+    if(!empty($result))
+    {
+		foreach($result AS $row)
+		{
+			$address=maybe_unserialize($row->address);
+			if(!empty($address) && is_array($address))$wpdb->query('UPDATE '.CA_HOU_TBL.' SET address="'.esc_sql(implode(", ",$address)).'" WHERE household_id="'.esc_sql($row->household_id).'"');
+		}
+    }
 //end migrate old tables
     
     //install small group table
     $table_name = $wpdb->prefix."church_admin_smallgroup";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
     {
-	$sql="CREATE TABLE  ". $table_name ." (leader int(11) NOT NULL,group_name varchar(255) NOT NULL,whenwhere tinytext NOT NULL,id int(11) NOT NULL AUTO_INCREMENT,PRIMARY KEY (id));";
+	$sql="CREATE TABLE  ". $table_name ." (leader int(11) NOT NULL,group_name varchar(255) NOT NULL,whenwhere TEXT NOT NULL,address TEXT, lat VARCHAR(30),lng VARCHAR(30), id int(11) NOT NULL AUTO_INCREMENT,PRIMARY KEY (id));";
         $wpdb->query ($sql);
 	$wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_smallgroup (leader,group_name,whenwhere,id)VALUES ('0', 'Unattached', '', '1');");
     }
@@ -383,7 +394,22 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
     }
     
 } 
-    
+
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_SMG_TBL.' LIKE "lat"')!='lat')
+{
+    $sql='ALTER TABLE  '.CA_SMG_TBL.' ADD lat VARCHAR(30)';
+    $wpdb->query($sql);
+}
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_SMG_TBL.' LIKE "lng"')!='lng')
+{
+    $sql='ALTER TABLE  '.CA_SMG_TBL.' ADD lng VARCHAR(30)';
+    $wpdb->query($sql);
+}    
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_SMG_TBL.' LIKE "address"')!='address')
+{
+    $sql='ALTER TABLE  '.CA_SMG_TBL.' ADD address TEXT';
+    $wpdb->query($sql);
+}
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "last_updated"')!='last_updated')
 {
     $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD last_updated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP';

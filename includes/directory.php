@@ -8,17 +8,19 @@ function church_admin_address_list($member_type_id=1)
    
     
     //show header
-    
-    echo'<div class="wrap church_admin">';
+    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
+    add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
+    echo'<div class="wrap" id="church-admin">
+	<div id="icon-index" class="icon32"><br/></div><h2>Address List for '.$member_type[$member_type_id].'</h2>
+	<div id="poststuff"><div id="post-body" class="metabox-holder columns-1">';
     require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
-	    add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
-	    do_meta_boxes('church-admin','advanced',null);
-    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">'.__('Add Household','church-admin').'</a></p>';
-    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people','edit_people').'">'.__('Add a new person (not connected to a current household)','church-admin').'</a></p>';
-        echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_migrate_users','migrate_users').'">'.__('Migrate Wordpress Users into Directory','church-admin').'</a></p>';
-   
-   
-    
+    echo'<form  method="get" action="">';
+	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
+	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
+		echo'</form>';
+	add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
+	do_meta_boxes('church-admin','advanced',null);
+
     //end show header
     
     
@@ -91,35 +93,23 @@ function church_admin_address_list($member_type_id=1)
 	    
 	    if(!empty($adults)){$adult=implode(" & ",$adults);}else{ $adult=__("Add Name",'church-admin');}
 	    if(!empty($children)){$kids=' ('.implode(", ",$children).')';}else{$kids='';}
-	    if(is_array(maybe_unserialize($add_row->address))){$add=implode(', ',array_filter(maybe_unserialize($add_row->address)));}else $add=NULL;
-	    
-	    if(!empty($add)&& $add!=', , , , '){$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">'.esc_html($add).'</a>';}else{$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">Add Address</a>';}
 	    
 	    $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_household&amp;household_id='.$row->household_id,'delete_household').'">'.__('Delete','church-admin').'</a>';
-	    echo '<tr><td>'.$delete.'</td><td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_display_household&amp;household_id='.$row->household_id,'display_household').'">'.esc_html($last_name).'</a></td><td>'.$adult.' '.$kids.'</td><td>'.$address.'</td><td>'.mysql2date('d/M/Y',$add_row->ts).'</td></tr>';
+	    if(empty($add_row->address))$add_row->address=__('Add Address','church-admin');
+	    echo '<tr><td>'.$delete.'</td><td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_display_household&amp;household_id='.$row->household_id,'display_household').'">'.esc_html($last_name).'</a></td><td>'.$adult.' '.$kids.'</td><td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_display_household&amp;household_id='.$row->household_id,'display_household').'">'.esc_html($add_row->address).'</a></td><td>'.mysql2date('d/M/Y',$add_row->ts).'</td></tr>';
 	    
 	    
 	}
 	echo '</tbody></table>';
     echo '<div class="tablenav"><div class="tablenav-pages">';
     echo $p->show();  
-    echo '</div></div>';
+    
     }//end of items>0
     }	
 
-    else
-    {
-	echo  '<div class="updated fade"><p>'.__('No address records yet for','church-admin').' '.$member_type[$member_type_id].'</p></div>';
-	echo'<p><label>'.__('Select Address List Type to view','church-admin').'</label><form name="address" action="admin.php?page=church_admin/index.php&action=church_admin_address_list" method="POST"><select onchange="this.form.submit();" name="member_type_id" >';
-    echo '<option value="">'.__('Choose Member Type','church-admin').'...</option>';
-    foreach($member_type AS $key=>$value)
-    {
-	echo '<option value="'.$key.'" >'.$value.'</option>';
-    }
-    echo'</select></form></p>';   
-    }
-   
-    echo '</div>';
+    
+	echo '</div><!--post-body--></div><!--poststuff--></div><!--wrap-->';
+    
 }
 
 function church_admin_edit_household($household_id=NULL)
@@ -131,17 +121,16 @@ function church_admin_edit_household($household_id=NULL)
     {//process form
 	
 	$form=array();
-	foreach ($_POST AS $key=>$value)$form[$key]=stripslashes($value);
-	$address=esc_sql(serialize(array('address_line1'=>$form['address_line1'],'address_line2'=>$form['address_line2'],'town'=>$form['town'],'county'=>$form['county'],'postcode'=>$form['postcode'])));
-	if(!$household_id)$household_id=$wpdb->get_var('SELECT household_id FROM '.CA_HOU_TBL.' WHERE address="'.$address.'" AND lat="'.esc_sql($form['lat']).'" AND lng="'.esc_sql($form['lng']).'" AND phone="'.esc_sql($form['phone']).'"');
+	foreach ($_POST AS $key=>$value)$sql[$key]=esc_sql(stripslashes($value));
+	if(!$household_id)$household_id=$wpdb->get_var('SELECT household_id FROM '.CA_HOU_TBL.' WHERE address="'.$sql['address'].'" AND lat="'.$sql['lat'].'" AND lng="'.$sql['lng'].'" AND phone="'.$sql['phone'].'"');
 	if(!$household_id)
 	{//insert
-	    $success=$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (address,lat,lng,phone) VALUES("'.$address.'", "'.esc_sql($form['lat']).'","'.esc_sql($form['lng']).'","'.esc_sql($form['phone']).'" )');
+	    $success=$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (address,lat,lng,phone) VALUES("'.$sql['address'].'", "'.$sql['lat'].'","'.$sql['lng'].'","'.$sql['phone'].'" )');
 	    $household_id=$wpdb->insert_id;
 	}//end insert
 	else
 	{//update
-	   $success=$wpdb->query('UPDATE '.CA_HOU_TBL.' SET address="'.$address.'" , lat="'.esc_sql($form['lat']).'" , lng="'.esc_sql($form['lng']).'" , phone="'.esc_sql($form['phone']).'" WHERE household_id="'.esc_sql($household_id).'"');
+	   $success=$wpdb->query('UPDATE '.CA_HOU_TBL.' SET address="'.$sql['address'].'" , lat="'.$sql['lat'].'" , lng="'.$sql['lng'].'" , phone="'.$sql['phone'].'" WHERE household_id="'.esc_sql($household_id).'"');
 	}//update
 	if($success)
 	{
@@ -157,6 +146,11 @@ function church_admin_edit_household($household_id=NULL)
     {//household form
 	if(!empty($household_id)){$text='Edit ';}else{$text='Add ';}
 	echo ' <div class="wrap church_admin" ><h2>'.$text.' '.__('Address','church-admin').'</h2><form action="" method="post">';
+	//clean out old style address data
+	if(!empty($data)&&is_array(maybe_unserialize($data->address)))
+	{
+		$data->address=implode(", ",array_filter(maybe_unserialize($data->address)));
+	}
 	echo church_admin_address_form($data,$error=NULL);
 	//Phone
     if(!isset($data->phone))$data->phone='';
@@ -486,27 +480,11 @@ function church_admin_address_form($data,$error)
 $out.= '; var beginLng =';
     if(!empty($data->lng)) {$out.=$data->lng;}else {$out.='-0.148193359375';}
     $out.=';</script>';
-    //end initialise coordinates
-    $address=maybe_unserialize($data->address);
-    $out.= '<p><label>'.__('Address Line 1','church-admin').'</label><input type="text" id="address_line1" name="address_line1" ';
-    if(!empty($address['address_line1']))$out.=' value="'.esc_html($address['address_line1']).'" ';
-    if(!empty($error['address_line1'])) $out.= ' class="red" ';
-    $out.= '/></p>';
-    $out.= '<p><label>'.__('Address Line 2','church-admin').'</label><input type="text" id="address_line2" name="address_line2" ';
-    if(!empty($address['address_line2']))$out.=' value="'.esc_html($address['address_line2']).'" ';
-    if(!empty($error['address_line2'])) $out.= ' class="red" ';
-    $out.= '/></p>';
-    $out.= '<p><label>'.__('City','church-admin').'</label><input type="text" id="town" name="town" ';
-    if(!empty($address['town'])) $out.=' value="'.esc_html($address['town']).'" ';
-    if(!empty($error['town'])) $out.= ' class="red" ';
-   $out.= '/></p>';
-    $out.= '<p><label>'.__('County','church-admin').'</label><input type="text" id="county" name="county" ';
-    if(!empty($address['county'])) $out.=' value="'.esc_html($address['county']).'" ';
-    if(!empty($error['county']))$out.= ' class="red" ';
-    $out.= '/></p>';
-   $out.= '<p><label>'.__('Postcode','church-admin').'</label><input type="text" id="postcode" name="postcode" ';
-    if(!empty($address['postcode'])) $out.=' value="'.esc_html($address['postcode']).'" ';
-    if(!empty($error['postcode'])) $out.= ' class="red" ';
+    
+   
+    $out.= '<p><label>'.__('Address','church-admin').'</label><input type="text" id="address" name="address" ';
+    if(!empty($data->address)) $out.=' value="'.esc_html($data->address).'" ';
+    if(!empty($error['address'])) $out.= ' class="red" ';
     $out.= '/></p>';
     if(!isset($data->lng))$data->lng='51.50351129583287';
     if(!isset($data->lat))$data->lat='-0.148193359375';
@@ -524,7 +502,13 @@ function church_admin_display_household($household_id)
     
     if($add_row)
     {//address stored
-	if(!empty($add_row->address)){$address=implode(', ',array_filter(maybe_unserialize($add_row->address)));}else{$address='Add Address';}
+	if(!empty($add_row->address))
+	{ 
+		//old style <v0.554
+		if(is_array(maybe_unserialize($add_row->address))) $address=implode(', ',array_filter(maybe_unserialize($add_row->address)));
+		//>v0.553
+		else{$address=$add_row->address;}
+	}else{$address='Add Address';}
 	if(!empty($add_row->lng))$map='<img src="http://maps.google.com/maps/api/staticmap?center='.$add_row->lat.','.$add_row->lng.'&zoom=15&markers='.$add_row->lat.','.$add_row->lng.'&size=500x300&sensor=false" alt="'.$address.'"/>';
 	echo'<h2>Household Details</h2>';
 	
@@ -727,11 +711,12 @@ function church_admin_get_capabilities($id)
     if(empty($id))return FALSE;
     $user_info=get_userdata($id);
     if(empty($user_info))return FALSE;
-    $cap=$user_info->wp_capabilities;
-	if (array_key_exists('subscriber',$cap))return 'Subscriber';
-	if (array_key_exists('author',$cap))return 'Author';
-	if (array_key_exists('editor',$cap))return  'Editor';
-	if (array_key_exists('administrator',$cap)) return 'Administrator';
+    $cap=$user_info->roles;
+    
+	if (in_array('subscriber',$cap))return 'Subscriber';
+	if (in_array('author',$cap))return 'Author';
+	if (in_array('editor',$cap))return  'Editor';
+	if (in_array('administrator',$cap)) return 'Administrator';
 	return FALSE;
 }
 
@@ -767,9 +752,9 @@ function church_admin_search($search)
 	    }
 	    $adult=implode(" & ",$adults);
 	    if(!empty($children)){$kids=' ('.implode(", ",$children).')';}else{$kids='';}
-	    if(!empty($add_row->address))$add=esc_html(implode(', ',maybe_unserialize($add_row->address)));
+	    if(!empty($add_row->address))$add=esc_html($add_row->address);
 	    
-	    if(!empty($add)&& $add!=', , , , '){$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">'.esc_html($add).'</a>';}else{$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">Add Address</a>';}
+	    if(!empty($add)){$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">'.esc_html($add).'</a>';}else{$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">Add Address</a>';}
 	    
 	    $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_household&amp;household_id='.$row->household_id,'delete_household').'">Delete</a>';
 	    echo '<tr><td>'.$delete.'</td><td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_display_household&amp;household_id='.$row->household_id,'display_household').'">'.esc_html($last_name).'</a></td><td>'.$adult.' '.$kids.'</td><td>'.$address.'</td><td>'.mysql2date('d/M/Y',$add_row->ts).'</td></tr>';
