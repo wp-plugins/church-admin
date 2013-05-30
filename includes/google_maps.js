@@ -44,7 +44,7 @@ function load(lat,lng,xml_url) {
           });
          
         }
-        var sg='<h2>Smallgroup Key</h2><p>';
+        var sg='<h2>Smallgroups</h2><p>';
         for(var index in smallgroup) {sg= sg + smallgroup[index];console.log(index);}
         var container = document.getElementById("groups");
             container.innerHTML = sg + '</p>';

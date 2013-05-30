@@ -116,6 +116,7 @@ function church_admin_edit_household($household_id=NULL)
 {
     global $wpdb,$member_type;
     $wpdb->show_errors();
+    $member_type_id=$wpdb->get_var('SELECT member_type_id FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($household_id).'"  ORDER BY people_type_id ASC LIMIT 1');
     if(!empty($household_id)){$data=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($household_id).'"');}else{$data=NULL;}
     if(!empty($_POST['edit_household']))
     {//process form
@@ -134,7 +135,7 @@ function church_admin_edit_household($household_id=NULL)
 	}//update
 	if($success)
 	{
-	    echo '<div class="updated fade"><p><strong>'.__('Address saved','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$household_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
+	    echo '<div class="updated fade"><p><strong>'.__('Address saved','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
 	}
 	    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 	    add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");

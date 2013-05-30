@@ -14,7 +14,7 @@ foreach ($sg_results as $sg_row)
 	//build leader array
 	$leaders=maybe_unserialize($sg_row->leader);
 	$ldr=array();
-	if(!empty($leaders))
+	if(!empty($leaders) &&is_array($leaders))
 	{
 	    foreach($leaders AS $key=>$value)
 	    {
@@ -22,7 +22,7 @@ foreach ($sg_results as $sg_row)
 	        $ldr[] = $wpdb->get_var($leader_sql);
 	    }
 	}
-	if(empty($ldr))$ldr=array(1=>'No leaders assigned yet');
+	if(empty($ldr[0])&&empty($ldr[2]))$ldr=array(1=>'No leaders assigned yet');
 	$edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_small_group&amp;id='.$sg_row->id;
 	$delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_small_group&amp;id='.$sg_row->id;
         

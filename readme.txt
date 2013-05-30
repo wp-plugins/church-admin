@@ -213,7 +213,8 @@ Clear out files
 = 0.555 =
 * Small Group geocoding
 * More international friendly address storage and use
-
+= 0.556
+* minor bug fixes
 
 == Upgrade Notice ==
 * 0.4.73 required
