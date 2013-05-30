@@ -215,6 +215,8 @@ Clear out files
 * More international friendly address storage and use
 = 0.556
 * minor bug fixes
+= 0.557
+* Dutch prefix support
 
 == Upgrade Notice ==
 * 0.4.73 required

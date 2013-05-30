@@ -128,11 +128,13 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
       
       $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
       $adults=$children=$emails=$mobiles=array();
+      $prefix='';
       foreach($people_results AS $people)
 	{
 	  if($people->people_type_id=='1')
 	  {
-	    $last_name=$people->last_name;
+		if(!empty($people->prefix))$prefix= $people->prefix.' '; 
+	    $last_name=$prefix.$people->last_name;
 	    $adults[]=$people->first_name;
 	    if($people->email!=end($emails)) $emails[]=$people->email;
 	    if($people->mobile!=end($mobiles))$mobiles[]=$people->mobile;

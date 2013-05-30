@@ -415,7 +415,11 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "last_updated"')!='last
     $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD last_updated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP';
     $wpdb->query($sql);
 }
-
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "prefix"')!='prefix')
+{
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD prefix TEXT ';
+    $wpdb->query($sql);
+}
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "funnels"')!='funnels')
 {
     $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD funnels TEXT';
