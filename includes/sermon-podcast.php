@@ -237,12 +237,12 @@ function ca_podcast_edit_file($id=NULL)
         
         if(!empty($id))
         {//update
-            $sql='UPDATE '.CA_FIL_TBL.' SET pub_date="'.$sqlsafe['pub_date'].'",length="'.$length.'", private="'.$private.'",last_modified="'.date("Y-m-d H:i:s" ).'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , service_id="'.$sqlsafe['service_id'].'",series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
+            $sql='UPDATE '.CA_FIL_TBL.' SET file_subtitle="'.$sqlsafe['file_subtitle'].'",pub_date="'.$sqlsafe['pub_date'].'",length="'.$length.'", private="'.$private.'",last_modified="'.date("Y-m-d H:i:s" ).'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , service_id="'.$sqlsafe['service_id'].'",series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
             $wpdb->query($sql);
         }//end update
         else
         {//insert
-            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqldafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'")';
+            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqldafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'")';
             $wpdb->query($sql);
         }//end insert
         
@@ -260,6 +260,9 @@ function ca_podcast_edit_file($id=NULL)
         echo '<form action="" method="POST"  enctype="multipart/form-data" id="churchAdminForm">';
         echo'<p><label for="file_title">File Title</label><input type="text" name="file_title" id="file_title" ';
         if(!empty($current_data->file_title)) echo 'value="'.esc_html($current_data->file_title).'"';
+        echo'/></p>';
+        echo'<p><label for="file_subtitle">File SubTitle (a few words)</label><input type="text" name="file_subtitle" id="file_subtitle" ';
+        if(!empty($current_data->file_subtitle)) echo 'value="'.esc_html($current_data->file_subtitle).'"';
         echo'/></p>';
         echo'<p><label for="file_description">File Description</label></p>';
         echo '<textarea name="file_description">';
@@ -441,13 +444,13 @@ function ca_podcast_file_add($file_name=NULL)
         if(empty($id))$id=$wpdb->get_var('SELECT file_id FROM '.CA_FIL_TBL.' WHERE file_name="'.$file_name.'"' );
         if(!empty($id))
         {//update
-            $sql='UPDATE '.CA_FIL_TBL.' SET pub_date="'.$pub_date.'", length="'.$length.'", last_modified="'.date("Y-m-d H:i:s" ).'",private="'.$private.'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
+            $sql='UPDATE '.CA_FIL_TBL.' SET pub_date="'.$pub_date.'", length="'.$length.'", last_modified="'.date("Y-m-d H:i:s" ).'",private="'.$private.'",file_name="'.$file_name.'" ,file_subtitle= "'.$sql['file_subtitle'].'",file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
             
             $wpdb->query($sql);
         }//end update
         else
         {//insert
-            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_description,private,length,series_id,speaker,pub_date,last_modified)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$pub_date.'","'.date("Y-m-d H:i:s" ).'")';
+            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_subtitle,file_title,file_description,private,length,series_id,speaker,pub_date,last_modified)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sql['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$pub_date.'","'.date("Y-m-d H:i:s" ).'")';
            
             $wpdb->query($sql);
         }//end insert
@@ -460,6 +463,9 @@ function ca_podcast_file_add($file_name=NULL)
         echo '<form action="" method="POST" id="churchAdminForm" enctype="multipart/form-data">';
         echo'<p><label for="file_title">File Title</label><input type="text" name="file_title" id="file_title" ';
         if(!empty($current_data->file_title)) echo 'value="'.esc_html($current_data->file_title).'"';
+        echo'/></p>';
+        echo'<p><label for="file_subtitle">File SubTitle (a few words)</label><input type="text" name="file_subtitle" id="file_subtitle" ';
+        if(!empty($current_data->file_subtitle)) echo 'value="'.esc_html($current_data->file_subtitle).'"';
         echo'/></p>';
         echo'<p><label for="file_description">File Description</label></p>';
         echo '<textarea name="file_description">';
@@ -537,7 +543,7 @@ function ca_podcast_xml()
         $output .='<itunes:image href="'.$settings['image'].'" />';
         if(!empty($settings['category']))
         {
-            $cat=explode(" - ",$settings['category']);
+            $cat=explode("-",$settings['category']);
             if(count($cat)==2){$output .='<itunes:category text="'.$cat[0].'"><itunes:category text="'.$cat[1].'"/></itunes:category>';}
             elseif(count($cat)==1){$output .='<itunes:category text="'.$cat[0].'"/>';}
             
@@ -555,7 +561,7 @@ function ca_podcast_xml()
             $output .= '<item>';
             $output .= '<title>'.$row->file_title.'</title>';
             $output .= '<itunes:author>'.$names.'</itunes:author>';
-            $output .= '<itunes:subtitle>'.$service.'</itunes:subtitle>';
+            $output .= '<itunes:subtitle>'.$row->file_subtitle.'</itunes:subtitle>';
             $output .= '<itunes:summary>'.$row->file_description.'</itunes:summary>';
             //$output .=  '<itunes:image href="'..'" />';
             $output .= '<enclosure url="'.CA_POD_URL.$row->file_name.'" length="'.filesize(CA_POD_PTH.$row->file_name).'" type="audio/mpeg" />';

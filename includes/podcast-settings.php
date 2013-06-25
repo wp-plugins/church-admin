@@ -15,7 +15,7 @@ function ca_podcast_settings()
     global $wpdb,$ca_podcast_settings;
     $settings=get_option('ca_podcast_settings');
 $language_codes = array(
-		'en_GB' => 'English UK' ,
+		'en-GB' => 'English UK' ,
                 'en_US' => 'English US' ,
 		'aa' => 'Afar' , 
 		'ab' => 'Abkhazian' , 
@@ -247,7 +247,7 @@ $language_codes = array(
                 default:$xml['explicit']='no';
             }
             //only allow valid category
-            if(!in_array($xml['category'],$cats))$xml['category']='';
+            if(in_array($_POST['category'],$cats)){$xml['category']=xmlentities(stripslashes($_POST['category']));}else{$xml['category']='Religion & Spirituality -Christianity';}
             if(!array_key_exists($xml['language'],$language_codes))$xml['language']='en';
             $new_settings=array(
                 'title'=>$xml['title'],  
@@ -264,6 +264,7 @@ $language_codes = array(
             'language'=>$xml['language'],
             'explicit'=>$xml['explicit']
             );
+            
             update_option('ca_podcast_settings',$new_settings);
             update_option('ca_podcast_file_template',stripslashes($_POST['file_template']));
             update_option('ca_podcast_speaker_template',stripslashes($_POST['speaker_template']));

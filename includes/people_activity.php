@@ -154,11 +154,11 @@ if($results)
         {
             $message.='<h2>'.$f_row->action.' '.__('assigned on','church-admin').' '.mysql2date(get_option('date_format'),$f_row->assigned_date).'</h2>';
             $message.='<table><tr><td>Name</td><td>'.$f_row->name.'</td></tr>';
+            if(!empty($f_row->address))$message.='<tr><td>Address</td><td>'.$f_row->address.'</td></tr>';
             if(!empty($f_row->email))$message.='<tr><td>Email</td><td><a href="mailto:'.$f_row->email.'">'.$f_row->email.'</a></td></tr>';
             if(!empty($f_row->mobile))$message.='<tr><td>Mobile</td><td>'.$f_row->mobile.'</td></tr>';
             if(!empty($f_row->phone))$message.='<tr><td>Phone</td><td>'.$f_row->phone.'</td></tr>';
-            if(!empty($f_row->address))$message.='<tr><td>Address</td><td>'.implode(", ",array_filter(unserialize($f_row->address))).'</td></tr>';
-            $message.='</table>';
+           $message.='</table>';
             
         }
         echo $assign->first_name.' '.$assign->last_name.'<br/>';

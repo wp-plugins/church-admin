@@ -148,6 +148,7 @@ function church_admin_get_people_id($name)
     {
         foreach($names AS $key=>$value)
         {
+			$value=trim($value);
             if(!empty($value))
             {//only look if a name stored!
                 $sql='SELECT people_id FROM '.CA_PEO_TBL.' WHERE CONCAT_WS(" ",first_name,last_name) REGEXP "^'.esc_sql($value).'" LIMIT 1';

@@ -435,7 +435,11 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_ATT_TBL.' LIKE "service_id"')!='servic
     $sql='ALTER TABLE  '.CA_ATT_TBL.' ADD service_id INT(11) DEFAULT "1"';
     $wpdb->query($sql);
 }
-
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "file_subtitle"')!='file_subtitle')
+{
+    $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD file_subtitle TEXT';
+    $wpdb->query($sql);
+}
 //make sure tables are UTF8  
     $sql='ALTER TABLE '. CA_ATT_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';

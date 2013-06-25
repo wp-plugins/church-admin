@@ -78,7 +78,7 @@ for($x=0;$x<=$limit;$x++)
     $sqlnow=date('Y-m-d',$current+($x*60*60*24));
  
     //query
-$sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.start_date, TIME_FORMAT(".$wpdb->prefix."church_admin_calendar_date.start_time,'%h:%i%p')AS start_time, ".$wpdb->prefix."church_admin_calendar_date.end_time, ".$wpdb->prefix."church_admin_calendar_event.title, ".$wpdb->prefix."church_admin_calendar_event.description,".$wpdb->prefix."church_admin_calendar_category.category
+$sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.start_date, TIME_FORMAT(".$wpdb->prefix."church_admin_calendar_date.start_time,'%h:%i%p')AS start_time, ".$wpdb->prefix."church_admin_calendar_date.end_time, ".$wpdb->prefix."church_admin_calendar_event.title,".$wpdb->prefix."church_admin_calendar_event.location, ".$wpdb->prefix."church_admin_calendar_event.description,".$wpdb->prefix."church_admin_calendar_category.category
 FROM ".$wpdb->prefix."church_admin_calendar_date, ".$wpdb->prefix."church_admin_calendar_event,".$wpdb->prefix."church_admin_calendar_category
 WHERE ".$cat."  ".$wpdb->prefix."church_admin_calendar_date.start_date='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.event_id = ".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_event.cat_id=".$wpdb->prefix."church_admin_calendar_category.cat_id
 ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date,".$wpdb->prefix."church_admin_calendar_date.start_time
@@ -90,7 +90,7 @@ if(!empty($result))
   foreach($result AS $row)
     {
     $date=mysql2date('D j M Y',$row->start_date);
-    $thisday.='<br/>'.strtolower($row->start_time)." <strong>".$row->title."</strong>";
+    $thisday.='<div itemscope itemtype="http://data-vocabulary.org/Event"><time itemprop="startDate" datetime="'.date('c',strtotime($row->start_date.' '.$row->start_time)) .'">'.strtolower($row->start_time).' </time><strong><span itemprop="summary">'.$row->title.'</span></strong> ​(<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/​Organization"><span itemprop="name">'.$row->location.'</span></span>)</div>';
     }
     $out.='<li><strong>'.$date.'</strong>'.$thisday.'</li>';
     unset($date,$thisday);

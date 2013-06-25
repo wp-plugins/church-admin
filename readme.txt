@@ -45,7 +45,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 9. There is a calendar widget with customisable title, how many events you want to show and an option for it to look like a post-it note
 10. Place [church_admin_map member_type_id=#] to show a map of colour coded small groups - need to set a service venue first to centre map and geolocate member's addresses by editing them.
 We recommend password protecting the pages - if it is password protected, a link is provided to logout
-
+The # should be replaced with which member types you want displayed as a comma separated list e.g. member_type=1,2
 
 == Frequently Asked Questions ==
 
@@ -217,6 +217,16 @@ Clear out files
 * minor bug fixes
 = 0.557
 * Dutch prefix support
+= 0.558
+* Tidy up the rota - no extra commas
+= 0.559
+* Add Subtitle to Itunes podcasts
+= 0.560
+* Added Google metadata to events in calendar widget (event details should show in search results)
+* Tidied up how autocomplete people are shown
+* Fixed Itunes Category
+* Added Itunes File Subtitle
+* Fixed address not showing in follow up activity emails
 
 == Upgrade Notice ==
 * 0.4.73 required
