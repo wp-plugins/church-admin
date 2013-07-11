@@ -222,4 +222,4 @@ function church_admin_cron_job_instructions()
     $pdf->Output(CHURCH_ADMIN_CACHE_PATH.'bulk_email_queuing.pdf',F);
     echo '<a href="'.CHURCH_ADMIN_CACHE_URL.'bulk_email_queuing.pdf">PDF instructions</a>';
 }
-?> 
+?>

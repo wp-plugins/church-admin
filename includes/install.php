@@ -440,6 +440,11 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "file_subtitle"')!='fil
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD file_subtitle TEXT';
     $wpdb->query($sql);
 }
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "transcript"')!='transcript')
+{
+    $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD transcript TEXT';
+    $wpdb->query($sql);
+}
 //make sure tables are UTF8  
     $sql='ALTER TABLE '. CA_ATT_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
@@ -516,7 +521,7 @@ if(empty($departments))
     }
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_FIL_TBL.'"') != CA_FIL_TBL)
     {
-        $sql='CREATE TABLE  '.CA_FIL_TBL.' (`file_name` TEXT NOT NULL ,`file_title` TEXT NOT NULL ,`file_description` TEXT NOT NULL ,`service_id` INT(11),`bible_passages` TEXT NOT NULL,`private` INT(1) NOT NULL DEFAULT "0",`length` TEXT NOT NULL, `pub_date` DATETIME, last_modified DATETIME, `series_id` INT( 11 ) NOT NULL , `speaker` TEXT NOT NULL,`file_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
+        $sql='CREATE TABLE  '.CA_FIL_TBL.' (`file_name` TEXT NOT NULL ,`file_title` TEXT NOT NULL ,`file_description` TEXT NOT NULL ,`service_id` INT(11),`bible_passages` TEXT NOT NULL,`private` INT(1) NOT NULL DEFAULT "0",`length` TEXT NOT NULL, `pub_date` DATETIME, last_modified DATETIME, `series_id` INT( 11 ) NOT NULL ,`transcript` TEXT, `speaker` TEXT NOT NULL,`file_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
         $wpdb->query($sql);
     }
     if($wpdb->get_var('SHOW TABLES LIKE "'.CA_BIB_TBL.'"') != CA_BIB_TBL)

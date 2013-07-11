@@ -172,7 +172,7 @@ if  ($_FILES['userfile3']['size']>0)
     //add posts
     $message=str_replace('[posts]',$post_section,$message);
     //RSS URL
-    $RSS='<a href="'.get_bloginfo('rss2_url' ).'" style="text_decoration:none" title="RSS"><img src="'.CHURCH_ADMIN_IMAGES_URL.'/rss.png" width="32" height="32"  style="border:none" alt="RSS Feed"/></a>';
+    $RSS='<a href="'.get_bloginfo('rss2_url' ).'" style="text_decoration:none" title="RSS"><img src="'.CHURCH_ADMIN_IMAGES_URL.'rss.png" width="32" height="32"  style="border:none" alt="RSS Feed"/></a>';
      $message=str_replace('[RSS]',$RSS,$message);
     //twitter url
     if(get_option('church_admin_twitter')){$twitter='<a href="http://twitter.com/#!/'.get_option('church_admin_twitter').'" style="text_decoration:none" title="Follow us on Twitter"><img src="'.CHURCH_ADMIN_IMAGES_URL.'twitter.png" width="32" height="32"  style="border:none" alt="Twitter"/></a> ';}else{$twitter='';}

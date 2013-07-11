@@ -128,7 +128,7 @@ function ca_podcast_list_files()
     $results=$wpdb->get_results('SELECT a.* FROM '.CA_FIL_TBL.' a  ORDER BY pub_date DESC');
     if($results)
     {//results
-        $table='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>File</th><th>File Okay?</th><th>Length</th><th>Event</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>File</th><th>File Okay?</th><th>Length</th><th>Event</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
+        $table='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>Mp3 File</th></th><th>File Okay?</th><th>Length</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>File</th><th>File Okay?</th><th>Length</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
         foreach($results AS $row)
         {
             if(file_exists(CA_POD_PTH.$row->file_name)){$okay='<img src="'.CHURCH_ADMIN_IMAGES_URL.'green.png" width="32" height="32"/>';}else{$okay='<img src="'.CHURCH_ADMIN_IMAGES_URL.'red.png" width="32" height="32"/>';}
@@ -136,7 +136,9 @@ function ca_podcast_list_files()
             $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_file&amp;id='.$row->file_id,'delete_podcast_file').'">Delete</a>';
             $series_name=$wpdb->get_var('SELECT series_name FROM '.CA_SERM_TBL.' WHERE series_id="'.esc_sql($row->series_id).'"');
             if(file_exists(CA_POD_PTH.$row->file_name)){$file='<a href="'.CA_POD_URL.$row->file_name.'">'.esc_html($row->file_name).'</a>';$okay='<img src="'.CHURCH_ADMIN_IMAGES_URL.'green.png"/>';}else{$file='&nbsp;';$okay='<img src="'.CHURCH_ADMIN_IMAGES_URL.'red.png"/>';}
-            $table.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.date(get_option('date_format'),strtotime($row->pub_date)).'</td><td>'.esc_html($row->file_title).'</td><td>'.esc_html(church_admin_get_people($row->speaker)).'</td><td>'.$file.'</td><td>'.$okay.'</td><td>'.esc_html($row->length).'</td><td>'.$series_name.'</td><td>[church_admin type="podcast" file_id="'.$row->file_id.'"]</td></tr>';
+            $table.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.date(get_option('date_format'),strtotime($row->pub_date)).'</td><td>'.esc_html($row->file_title).'</td><td>'.esc_html(church_admin_get_people($row->speaker)).'</td><td>'.$file.'</td><td>'.$okay.'</td><td>'.esc_html($row->length).'</td>';
+            if(file_exists(CA_POD_PTH.$row->transcript)){$table.='<td><a href="'.CA_POD_URL.$row->transcript.'">'.esc_html($row->transcript).'</a></td>';}else{$table.='<td>&nbsp;</td>';}
+            $table.='<td>'.$series_name.'</td><td>[church_admin type="podcast" file_id="'.$row->file_id.'"]</td></tr>';
         }
         
         $table.='</tbody></table>';
@@ -178,7 +180,7 @@ function ca_podcast_edit_file($id=NULL)
         
         
         //handle upload
-        
+        //mp3s
         $arr_file_type = wp_check_filetype(basename($_FILES['file']['name']));
         $uploaded_file_type = $arr_file_type['type'];
        
@@ -208,7 +210,32 @@ function ca_podcast_edit_file($id=NULL)
             $m = new mp3file(CA_POD_PTH.$file_name);
             $a = $m->get_metadata();
             $length=esc_sql($a['Length mm:ss']);
-        
+        //end mp3
+        //transcript
+        $arr_file_type = wp_check_filetype(basename($_FILES['transcript']['name']));
+        $uploaded_file_type = $arr_file_type['type'];
+       
+        // Set an array containing a list of acceptable formats
+        $allowed_file_types = array('application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        // If the uploaded file is the right format
+        if(in_array($uploaded_file_type, $allowed_file_types))
+        {//valid image
+            $tmp_name = $_FILES["transcript"]["tmp_name"];
+            $name = $_FILES["transcript"]["name"];
+            $x=1;
+            $type=substr($name,-3);
+            $split=sanitize_title(substr($name,0,-4));
+            $transcript=$split.'.'.$type;
+            while(file_exists(CA_POD_PTH.$transcript))
+            {
+                
+                $transcript=$split.$x.'.'.$type;
+                $x++;
+            }
+            
+            if(!move_uploaded_file($tmp_name, CA_POD_PTH.$transcript)) echo"<p>File Upload issue</p>";
+             
+        } 
            
         //end handle upload
         
@@ -237,12 +264,12 @@ function ca_podcast_edit_file($id=NULL)
         
         if(!empty($id))
         {//update
-            $sql='UPDATE '.CA_FIL_TBL.' SET file_subtitle="'.$sqlsafe['file_subtitle'].'",pub_date="'.$sqlsafe['pub_date'].'",length="'.$length.'", private="'.$private.'",last_modified="'.date("Y-m-d H:i:s" ).'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , service_id="'.$sqlsafe['service_id'].'",series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
+            $sql='UPDATE '.CA_FIL_TBL.' SET transcript="'.$transcript.'",file_subtitle="'.$sqlsafe['file_subtitle'].'",pub_date="'.$sqlsafe['pub_date'].'",length="'.$length.'", private="'.$private.'",last_modified="'.date("Y-m-d H:i:s" ).'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , service_id="'.$sqlsafe['service_id'].'",series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
             $wpdb->query($sql);
         }//end update
         else
         {//insert
-            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqldafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'")';
+            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified,transcript)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqldafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'","'.$transcript.'")';
             $wpdb->query($sql);
         }//end insert
         
@@ -332,7 +359,9 @@ function ca_podcast_edit_file($id=NULL)
 	echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#pub_date\').datepicker({dateFormat : "yy-mm-dd", changeYear: true ,yearRange: "1910:'.date('Y').'"});});</script>';
 	//javascript to bring up date picker
         echo'<p><label for="pub_date">'.__('Publication Date','church-admin').'</label><input type="text" name="pub_date" id="pub_date" value="'.date('Y-m-d',strtotime($current_data->pub_date)).'"/></p>';
-        echo'<p><label for="file">'.__('File to Upload','church-admin').'</label><input type="file" name="file" id="file"/></p>';
+        echo'<p><label for="file">'.__('Mp3 File to Upload','church-admin').'</label><input type="file" name="file" id="file"/></p>';
+        echo'<p><label for="transcript">'.__('Transcript to Upload ','church-admin').'</label><input type="file" name="transcript" id="transcript"/></p>';
+        
         echo '<p><input type="hidden" name="save_file" value="save_file"/><input type="submit" id="submit" class="primary-button" value="Save File"/></p></form>';
     }//form
     

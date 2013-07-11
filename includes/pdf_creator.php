@@ -222,7 +222,7 @@ if($results)
 	
 	$add='';
 	$address_row=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($row->household_id).'"');
-	if($address_row){$address=array_filter(unserialize($address_row->address));}else{$address=NULL;}
+	$address=$address_row->address;
 	if(!empty($address))
 	{
 	    $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
@@ -236,7 +236,7 @@ if($results)
 	    }
 	    }	
 	    
-	    $add=html_entity_decode(implode(" & ",$adults))." ".$last_name."\n".stripslashes(implode(",\n",$address));
+	    $add=html_entity_decode(implode(" & ",$adults))." ".$last_name."\n".str_replace(",",",\n",$address);
 	    
 	    $pdflabel->Add_Label($add);
 	}
@@ -477,7 +477,7 @@ $pdf->AddFont('Verdana','','verdana.php');
 $pdf->SetFont('Verdana','',16);
 $text='Sunday Rota '.date("d-m-Y");
 $pdf->Cell(0,10,$text,0,2,C);
-$pdf->SetFont('Verdana','',6);
+$pdf->SetFont('Verdana','',5);
 
 //column headers query
 $colres=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');

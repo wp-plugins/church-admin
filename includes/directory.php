@@ -307,6 +307,8 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	
 	//update meta
 	$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
+	//if new small group then add small group leader to person's meta
+	if(!empty($_POST['group_name'])){church_admin_update_department('1',$people_id);}
 	if(!empty($_POST['department']))
 	{ 
 	    foreach($_POST['department'] AS $a=>$key)

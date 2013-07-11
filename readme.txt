@@ -4,7 +4,7 @@ Donate link: http://www.themoyles.co.uk/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
 Tested up to: 3.5.1
-Stable tag: 0.554
+Stable tag: 0.562
 
 A church admin plugin with calendar,address book, small group categories,sunday rota and bulk sms and mailshot facilities. 
 
@@ -213,20 +213,26 @@ Clear out files
 = 0.555 =
 * Small Group geocoding
 * More international friendly address storage and use
-= 0.556
+= 0.556 =
 * minor bug fixes
-= 0.557
+= 0.557 =
 * Dutch prefix support
-= 0.558
+= 0.558 =
 * Tidy up the rota - no extra commas
-= 0.559
+= 0.559 =
 * Add Subtitle to Itunes podcasts
-= 0.560
+= 0.560 =
 * Added Google metadata to events in calendar widget (event details should show in search results)
 * Tidied up how autocomplete people are shown
 * Fixed Itunes Category
 * Added Itunes File Subtitle
 * Fixed address not showing in follow up activity emails
+= 0.561 =
+* Add Word/PDF file upload to sermon podcasting
+= 0.562 =
+* Fix Address label bug
+* Fix creating new small group in edit people form not saving the person as a small group leader
+
 
 == Upgrade Notice ==
 * 0.4.73 required

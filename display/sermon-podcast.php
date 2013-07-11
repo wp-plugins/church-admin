@@ -70,6 +70,16 @@ function ca_display_file($file_id=NULL)
         $template=str_replace('[FILE_TITLE]',$data->file_title,$template);
         $template=str_replace('[FILE_NAME]',CA_POD_URL.$data->file_name,$template);
         $template=str_replace('[FILE_DOWNLOAD]','<a href="'.CA_POD_URL.$data->file_name.'" title="'.esc_html($data->file_title).'">'.esc_html($data->file_title).'</a>',$template);
+        if(file_exists(CA_POD_PTH.$data->transcript))
+        {
+			$template=str_replace('[TRANSCRIPTION]','<a href="'.CA_POD_URL.$data->transcript.'" title="'.esc_html($data->transcript).'">'.esc_html($data->transcript).'</a>',$template);
+        
+		}
+		else
+		{
+			$template=str_replace('[TRANSCRIPTION]','',$template);
+        
+		}	
         $template=str_replace('[FILE_DESCRIPTION]',$data->file_description,$template);
         $template=str_replace('[SERIES_NAME]',$data->series_name,$template);
         $template=str_replace('[SPEAKER_NAME]',$data->speaker_name,$template);
