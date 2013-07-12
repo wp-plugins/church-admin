@@ -124,7 +124,7 @@ function church_admin_assign_funnel()
         $member_type_id=(int)$_POST['member_type_id'];
         $assign_date=date('Y-m-d');
         $sql='INSERT INTO '.CA_FP_TBL .'(funnel_id,people_id,member_type_id,assign_id,assigned_date,completion_date)VALUES("'.$funnel_id.'","'.$people_id.'","'.$member_type_id.'","'.$assign_id.'","'.$assign_date.'","0000-00-00")';
-        
+        echo $sql;
         $wpdb->query($sql);
         echo'<div class="updated fade"><p><strong>'.__('Follow Up Funnel Assigned','church-admin').'</strong></p></div>';
         church_admin_recent_people_activity();
@@ -147,17 +147,18 @@ if($results)
     {
         
         $assign=$wpdb->get_row('SELECT * FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($row->assign_id).'"');
-        $sql='SELECT a.*,b.action,CONCAT_WS(" ",c.first_name,c.last_name) AS name,c.email,c.mobile,d.address,d.phone FROM '.CA_FP_TBL.' a, '.CA_FUN_TBL.' b,'.CA_PEO_TBL.' c,'.CA_HOU_TBL.' d WHERE a.id=b.funnel_id AND a.people_id=c.people_id AND c.household_id=d.household_id';
+        $sql='SELECT * FROM '.CA_FP_TBL.'  LEFT JOIN '.CA_FUN_TBL.' ON '.CA_FP_TBL.'.funnel_id = '.CA_FUN_TBL.'.funnel_id LEFT JOIN '.CA_PEO_TBL.' ON '.CA_FP_TBL.'.people_id = '.CA_PEO_TBL.'.people_id LEFT JOIN '.CA_HOU_TBL.' ON '.CA_PEO_TBL.'.household_id = '.CA_HOU_TBL.'.household_id WHERE '.CA_FP_TBL.'.assign_id="'.$row->assign_id.'" AND '.CA_FP_TBL.'.email="0000-00-00"';
+        
         $re=$wpdb->get_results($sql);
         $message='<p>Hi '.$assign->first_name.' '.$assign->last_name.',</p><p>'.__("You've been assigned some follow up actions",'church-admin').'</p>';
         foreach($re AS $f_row)
         {
             $message.='<h2>'.$f_row->action.' '.__('assigned on','church-admin').' '.mysql2date(get_option('date_format'),$f_row->assigned_date).'</h2>';
-            $message.='<table><tr><td>Name</td><td>'.$f_row->name.'</td></tr>';
-            if(!empty($f_row->address))$message.='<tr><td>Address</td><td>'.$f_row->address.'</td></tr>';
+            $message.='<table><tr><td>Name</td><td>'.esc_html($f_row->first_name.' '.$f_row->last_name).'</td></tr>';
+            if(!empty($f_row->address))$message.='<tr><td>Address</td><td>'.esc_html($f_row->address).'</td></tr>';
             if(!empty($f_row->email))$message.='<tr><td>Email</td><td><a href="mailto:'.$f_row->email.'">'.$f_row->email.'</a></td></tr>';
-            if(!empty($f_row->mobile))$message.='<tr><td>Mobile</td><td>'.$f_row->mobile.'</td></tr>';
-            if(!empty($f_row->phone))$message.='<tr><td>Phone</td><td>'.$f_row->phone.'</td></tr>';
+            if(!empty($f_row->mobile))$message.='<tr><td>Mobile</td><td>'.esc_html($f_row->mobile).'</td></tr>';
+            if(!empty($f_row->phone))$message.='<tr><td>Phone</td><td>'.esc_html($f_row->phone).'</td></tr>';
            $message.='</table>';
             
         }

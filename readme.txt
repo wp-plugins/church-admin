@@ -232,7 +232,8 @@ Clear out files
 = 0.562 =
 * Fix Address label bug
 * Fix creating new small group in edit people form not saving the person as a small group leader
-
+= 0.563 =
+* Fix Follow up email not sending all information
 
 == Upgrade Notice ==
 * 0.4.73 required
