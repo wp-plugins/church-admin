@@ -593,7 +593,7 @@ echo '</select><input type="submit" value="'.__('Go to date','church-admin').'"/
     //sort out category
     
      $table.='<tr><td>'.$single_edit_url.'</td><td>'.$series_edit_url.'</td><td>'.$single_delete_url.'</td><td>'.$series_delete_url.'</td><td>'.mysql2date('j F Y',$row->start_date).'</td><td>'.$row->start_time.'</td><td>'.$row->end_time.'</td><td>'.htmlentities($row->title).'</td><td style="background:'.$row->bgcolor.'">'.htmlentities($row->category).'</td><td>';
-     if($row->year_planner){$table.=__('Yes','church_admin');}else{$table.='&nbsp;';}
+     if($row->year_planner){$table.=__('Yes','church-admin');}else{$table.='&nbsp;';}
      $table.='</td></tr>';
     }
     $table.='</tbody></table>';
@@ -632,7 +632,7 @@ if(!function_exists(array_to_object)) {
 
 function nthday($nth,$day,$date)
 {
-    $days=array(0=>__('Sunday','church_admin'),1=>__('Monday','church_admin'),2=>__('Tuesday','church_admin'),3=>__('Wednesday','church_admin'),4=>__('Thursday','church_admin'),5=>__('Friday','church_admin'),6=>__('Saturday','church_admin'));
+    $days=array(0=>__('Sunday','church-admin'),1=>__('Monday','church-admin'),2=>__('Tuesday','church-admin'),3=>__('Wednesday','church-admin'),4=>__('Thursday','church-admin'),5=>__('Friday','church-admin'),6=>__('Saturday','church-admin'));
     $month=date('M',strtotime($date));
     $year=date('Y',strtotime($date));
     return date('Y-m-d',strtotime("+$nth {$days[$day]} $month $year"));

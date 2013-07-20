@@ -7,7 +7,7 @@ function church_admin_cron_pdf()
     $pdf=new FPDF();
     $pdf->AddPage('P','A4');
     $pdf->SetFont('Arial','B',24);
-    $text=__('How to set up Bulk Email Queuing','church_admin');
+    $text=__('How to set up Bulk Email Queuing','church-admin');
     $pdf->Cell(0,10,$text,0,2,L);
     if (PHP_OS=='Linux')
     {
@@ -75,7 +75,7 @@ $next_sunday=strtotime("this sunday");
 $whichtype=array();
 foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
 
-$text=implode(", ",$whichtype).' '.__('Small Group List','church_admin').' '.date("d-m-Y",$next_sunday);
+$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y",$next_sunday);
 $pdf->Cell(0,10,$text,0,2,C);
 $pageno+=1;
 

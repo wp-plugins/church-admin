@@ -17,17 +17,17 @@ function  church_admin_member_type()
     
     foreach($member_type AS $id=>$membertype)
     {
-        $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_member_type&amp;member_type_id='.$id,'edit_member_type').'">'.__('Edit','church_admin').'</a>';
+        $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_member_type&amp;member_type_id='.$id,'edit_member_type').'">'.__('Edit','church-admin').'</a>';
         $check=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($id).'"');    
         if(!$check)
         {
-            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_member_type&member_type_id='.$id,'delete_member_type').'">'.__('Delete','church_admin').'</a>';
+            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_member_type&member_type_id='.$id,'delete_member_type').'">'.__('Delete','church-admin').'</a>';
             $reassign='';
         }
         else
         {
-            $delete=$check .' '.__('people who are','church_admin').' '.$membertype;
-            $reassign='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_member_type" method="post">'.__('Reassign people to','church_admin').' ';
+            $delete=$check .' '.__('people who are','church-admin').' '.$membertype;
+            $reassign='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_member_type" method="post">'.__('Reassign people to','church-admin').' ';
             $reassign.='<select name="reassign">';
             foreach($member_type AS $mtid=>$value)if($mtid!=$id && $mtid!=$_POST['current']) $reassign.='<option value="'.$mtid.'">'.$value.'</option>';
             $reassign.='</select><input type="hidden" name="current" value="'.$id.'"/><input type="submit" value="Reassign"/></form>';
@@ -96,7 +96,7 @@ function church_admin_edit_member_type($member_type_id=NULL)
             $wpdb->query('INSERT INTO '.CA_MTY_TBL.'(member_type_order,member_type)VALUES("'.esc_sql($nextorder).'","'.esc_sql(stripslashes($_POST['member_type'])).'")');
         }
         
-        echo'<div class="updated fade"><p>'.__('Member Type Updated','church_admin').'</p></div>';
+        echo'<div class="updated fade"><p>'.__('Member Type Updated','church-admin').'</p></div>';
         church_admin_member_type();
     }
     else
@@ -104,16 +104,16 @@ function church_admin_edit_member_type($member_type_id=NULL)
 	
         
         echo'<div class="wrap church_admin"><h2>';
-        if($member_type_id){echo' '.__('Edit','church_admin').' ';}else{echo __('Add','church_admin').' ';}
-        echo _e('Member Type','church_admin').'</h2><form action="" method="POST">';
-        echo'<p><label>'.__('Member Type','church_admin').'</label><input type="text" name="member_type" ';
+        if($member_type_id){echo' '.__('Edit','church-admin').' ';}else{echo __('Add','church-admin').' ';}
+        echo __('Member Type','church-admin').'</h2><form action="" method="POST">';
+        echo'<p><label>'.__('Member Type','church-admin').'</label><input type="text" name="member_type" ';
         if(!empty($member_type_id))
 	{
 	    $type=$wpdb->get_var('SELECT member_type FROM '.CA_MTY_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'"');
 	    echo'value="'.$type.'" ';
 	}
         echo'/></p>';
-        echo'<p class="submit"><input type="hidden" name="edit_member_type" value="yes"/><input type="submit" value="'.__('Save Member Type','church_admin').' &raquo;" /></p></form></div>';
+        echo'<p class="submit"><input type="hidden" name="edit_member_type" value="yes"/><input type="submit" value="'.__('Save Member Type','church-admin').' &raquo;" /></p></form></div>';
         
     }
 }
@@ -124,7 +124,7 @@ function church_admin_delete_member_type($member_type_id=NULL)
     if($member_type_id)
     {
         $wpdb->query('DELETE FROM '.CA_MTY_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'"');
-        echo'<div class="updated fade"><p><strong>'.__('Member Type Deleted','church_admin').'</strong></p></div>';
+        echo'<div class="updated fade"><p><strong>'.__('Member Type Deleted','church-admin').'</strong></p></div>';
     }
     church_admin_member_type();
 }

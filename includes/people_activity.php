@@ -10,8 +10,8 @@ function church_admin_recent_people_activity()
     $items=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL);
     if($items > 0)
     {
-        echo '<h2>'.__('Recent People Activity','church_admin').'</h2>';
-        echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_email_follow_up_activity','email_funnels').'">'.__('Email newly assigned follow-up activity','church_admin').'</a></p>';
+        echo '<h2>'.__('Recent People Activity','church-admin').'</h2>';
+        echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_email_follow_up_activity','email_funnels').'">'.__('Email newly assigned follow-up activity','church-admin').'</a></p>';
 	$p = new pagination;
 	$p->items($items);
 	$p->limit(10); // Limit entries per page
@@ -93,7 +93,7 @@ function church_admin_funnel_assign($people_id,$funnel_id,$member_type_id)
             $fun_display.='<input type="hidden" name="people_id" value="'.$people_id.'"/>';
             $fun_display.='<input type="hidden" name="funnel_id" value="'.$funnel_id.'"/>';
             $fun_display.='<input type="hidden" name="member_type_id" value="'.$member_type_id.'"/>';
-            $fun_display.='<p>Assign '.$funnel_details->action.' to: <select name="assign_id" onchange="this.form.submit()">';
+            $fun_display.='<p>'.__('Assign','church-admin').' '.$funnel_details->action.' '.__('to','church-admin').': <select name="assign_id" onchange="this.form.submit()">';
             $fun_display.='<option value="">Select someone...</option>';
             foreach ($people AS $person)
             {
@@ -155,10 +155,10 @@ if($results)
         {
             $message.='<h2>'.$f_row->action.' '.__('assigned on','church-admin').' '.mysql2date(get_option('date_format'),$f_row->assigned_date).'</h2>';
             $message.='<table><tr><td>Name</td><td>'.esc_html($f_row->first_name.' '.$f_row->last_name).'</td></tr>';
-            if(!empty($f_row->address))$message.='<tr><td>Address</td><td>'.esc_html($f_row->address).'</td></tr>';
-            if(!empty($f_row->email))$message.='<tr><td>Email</td><td><a href="mailto:'.$f_row->email.'">'.$f_row->email.'</a></td></tr>';
-            if(!empty($f_row->mobile))$message.='<tr><td>Mobile</td><td>'.esc_html($f_row->mobile).'</td></tr>';
-            if(!empty($f_row->phone))$message.='<tr><td>Phone</td><td>'.esc_html($f_row->phone).'</td></tr>';
+            if(!empty($f_row->address))$message.='<tr><td>'.__('Address','church-admin').'</td><td>'.esc_html($f_row->address).'</td></tr>';
+            if(!empty($f_row->email))$message.='<tr><td>'.__('Email','church-admin').'</td><td><a href="mailto:'.$f_row->email.'">'.$f_row->email.'</a></td></tr>';
+            if(!empty($f_row->mobile))$message.='<tr><td>'.__('Mobile','church-admin').'</td><td>'.esc_html($f_row->mobile).'</td></tr>';
+            if(!empty($f_row->phone))$message.='<tr><td>'.__('Phone','church-admin').'</td><td>'.esc_html($f_row->phone).'</td></tr>';
            $message.='</table>';
             
         }

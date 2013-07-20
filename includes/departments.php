@@ -2,10 +2,10 @@
 function church_admin_department_list()
 {
     global $departments;
-    echo'<h2>Departments</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department','edit_department').'">'.__('Add a department','church_admin').'</a></p>';
+    echo'<h2>Departments</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department','edit_department').'">'.__('Add a department','church-admin').'</a></p>';
     if(!empty($departments))
     {
-        echo'<table class="widefat"><thead><tr><th>'.__('Edit','church_admin').'</th><th>'.__('Delete','church_admin').'</th><th>'.__('Department Name','church_admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church_admin').'</th><th>'.__('Delete','church_admin').'</th><th>'.__('Department Name','church_admin').'</th></tr></tr></tfoot><tbody>';
+        echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Department Name','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Department Name','church-admin').'</th></tr></tr></tfoot><tbody>';
         foreach($departments AS $id=>$department)
         {
             $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department&amp;department_id='.$id,'edit_department').'">'.__('Edit','church-admin').'</a>';

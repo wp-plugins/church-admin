@@ -25,11 +25,11 @@ function church_admin_widget_control_form()
     $wpdb->show_errors;
     
     $option=get_option('church_admin_widget');
-    echo '<p><label for="title">'.__('Title','church_admin').':</label><input type="text" name="title" value="'.$option['title'].'" /></p>';
-    echo '<p><label for="postit">'.__('Postit Note style','church_admin').'?:</label><input type="checkbox" name="postit" value="1"';
+    echo '<p><label for="title">'.__('Title','church-admin').':</label><input type="text" name="title" value="'.$option['title'].'" /></p>';
+    echo '<p><label for="postit">'.__('Postit Note style','church-admin').'?:</label><input type="checkbox" name="postit" value="1"';
     if($option['postit']==1) echo ' checked="checked" ';
     echo '/></p>';
-    echo'<p><label for="category">'.__('Select a Category','church_admin').'</label>';
+    echo'<p><label for="category">'.__('Select a Category','church-admin').'</label>';
     $sql='SELECT * FROM '.CA_CAT_TBL;
     
     $results=$wpdb->get_results($sql );
@@ -39,10 +39,10 @@ function church_admin_widget_control_form()
         $opt=$wpdb->get_var('SELECT category FROM '.CA_CAT_TBL. 'WHERE cat_id="'.esc_sql($option['cat_id']).'"');
         '<option value="'.$option['cat_id'].'" selected="selected">'.$opt.'</option>';
     }
-    echo'<option value="0">'.__('All events','church_admin').'</option>';
+    echo'<option value="0">'.__('All events','church-admin').'</option>';
     foreach($results AS $row)echo'<option value="'.$row->cat_id.'">'.$row->category.'</option>';
     echo'</select></p>';
-    echo '<p><label for="howmany">'.__('How many events to show','church_admin').'?</label><select name="events">';
+    echo '<p><label for="howmany">'.__('How many events to show','church-admin').'?</label><select name="events">';
     if(isset($option['events'])) echo '<option value="'.$option['events'].'">'.$option['events'].'</option>';
     for($x=1;$x<=10;$x++){echo '<option value="'.$x.'">'.$x.'</option>';}
     echo'</select><input type="hidden" name="widget_submit" value="1"/>';

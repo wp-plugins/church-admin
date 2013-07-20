@@ -203,13 +203,13 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	}
 	else
 	{
-	    echo'<form action="" method="POST"><p><label>'.__('Which Service?','church_admin').'</label><select name="service_id">';
+	    echo'<form action="" method="POST"><p><label>'.__('Which Service?','church-admin').'</label><select name="service_id">';
 	    foreach($services AS $service)
 	    {
-		echo'<option value="'.$service->service_id.'">'.$service->service_name.' '.__('on','church_admin').' '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</option>';
+		echo'<option value="'.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</option>';
 	    }
 	    echo'</select></p>';
-	    echo'<p class="submit"><input type="submit" name="choose_service" value="'.__('Choose service','church_admin').' &raquo;" /></p></form></div>';
+	    echo'<p class="submit"><input type="submit" name="choose_service" value="'.__('Choose service','church-admin').' &raquo;" /></p></form></div>';
 	}
     }
     if($service_id)
@@ -243,7 +243,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    }//end insert
 	    
 	    $wpdb->query($sql);
-	    echo'<div class="wrap"><div class="updated fade"><p><strong>'.__('Rota updated','church_admin').' </strong></p></div>';
+	    echo'<div class="wrap"><div class="updated fade"><p><strong>'.__('Rota updated','church-admin').' </strong></p></div>';
 	    church_admin_rota_list($service_id);
 	}
 	else
@@ -310,7 +310,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 		}
 		echo'</p>';
 	}
-	    echo'<p class="submit"><input type="submit" name="edit_rota" value="'.__('Save','church_admin').' &raquo;" /></p></form>';
+	    echo'<p class="submit"><input type="submit" name="edit_rota" value="'.__('Save','church-admin').' &raquo;" /></p></form>';
 	}//end form
     
     }//service chosen
@@ -326,7 +326,7 @@ function church_admin_delete_rota($id)
 {
     global $wpdb;
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_id='".esc_sql($id)."'");
-    echo'<div class="updated fade"><p>'.__('Rota Deleted','church_admin').'</p></div>';
+    echo'<div class="updated fade"><p>'.__('Rota Deleted','church-admin').'</p></div>';
     church_admin_rota_list();
     
 }

@@ -234,6 +234,8 @@ Clear out files
 * Fix creating new small group in edit people form not saving the person as a small group leader
 = 0.563 =
 * Fix Follow up email not sending all information
+= 0.564 =
+* Updated Internationalisation
 
 == Upgrade Notice ==
 * 0.4.73 required
