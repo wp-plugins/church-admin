@@ -4,11 +4,11 @@
  #smallgroup{display:none;}
  #individuals{display:none;}
  #roles{display:none;}
-.church_admin .red{border:1px solid #f00!important;}
-.church_admin .roles{display:inline-block;}
-.church_admin form li {width:700px;}
-.church_admin label{width:200px; float:left;font-weight:bold;}
-.church_admin input[type="text"]{width:300px;}
+#church-admin .red{border:1px solid #f00!important;}
+#church-admin .roles{display:inline-block;}
+#church-admin form li {width:700px;}
+#church-admin label{width:200px; float:left;font-weight:bold;}
+#church-admin input[type="text"]{width:300px;}
 .note{display:inline-block;height: 100%;}
 #church_admin_phone
     {

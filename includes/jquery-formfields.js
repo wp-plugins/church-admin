@@ -11,11 +11,14 @@ jQuery(document).ready(function($) {
 				// manipulate the name/id values of the input inside the new element
 				newElem.find('.first_name').attr('id', 'first_name' + newNum).val('');
 				newElem.find('.last_name').attr('id', 'last_name' + newNum).val('');
+				newElem.find('.prefix').attr('id', 'prefix' + newNum).val('');
 				newElem.find('.mobile').attr('id', 'mobile' + newNum).val('');
 				newElem.find('.email').attr('id', 'email' + newNum).val('');
 				newElem.find('.male').attr('id', 'male' + newNum).val('');
-                                newElem.find('.female').attr('id', 'female' + newNum).val('');
-                                newElem.find('select').attr('id', 'people_type_id' + newNum).val('');
+                newElem.find('.female').attr('id', 'female' + newNum).val('');
+                newElem.find('.male').attr('name', 'sex' + newNum).val('male');
+                newElem.find('.female').attr('name', 'sex' + newNum).val('female');
+                newElem.find('select').attr('id', 'people_type_id' + newNum).val('');
 				// insert the new element after the last "duplicatable" input field
 				$('#input' + num).after(newElem);
 				

@@ -1,4 +1,15 @@
 <?php
+function church_admin_collapseBoxForUser($userId, $boxId) {
+    $optionName = "closedpostboxes_church-admin";
+    $close = get_user_option($optionName, $userId);
+    $closeIds = explode(',', $close);
+    $closeIds[] = $boxId;
+    $closeIds = array_unique($clodeIds); // remove duplicate Ids
+    $close = implode(',', $closeIds);
+    update_user_option($userId, $optionName, $close);
+}
+
+
 
 function church_admin_autocomplete($name='people',$first_id='friends',$second_id='to',$current_data=array(),$department_id=NULL)
 {

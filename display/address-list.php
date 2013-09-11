@@ -7,6 +7,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
   $out.='<p><label style="width:75px;float:left;">'.__('Search','church-admin').'</label><form name="ca_search" action="" method="POST"><input name="ca_search" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></form></p>';
     if(empty($_POST['ca_search']))
     {
+		$limit='';
 		$membsql=array();
       $memb=explode(',',$member_type_id);
       foreach($memb AS $key=>$value){if(ctype_digit($value))  $membsql[]='member_type_id='.$value;}
@@ -74,7 +75,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 	{
 	  if($people->people_type_id=='1')
 	  {
-		  if(!empty($people->prefix)){$prefix=$people->prefix.' ';}
+		  if(!empty($people->prefix)){$prefix=$people->prefix.' ';}else{$prefix='';}
 	    $last_name=$prefix.$people->last_name;
 	    $adults[]=$people->first_name;
 	    if($people->email!=end($emails)) $emails[]=$people->email;

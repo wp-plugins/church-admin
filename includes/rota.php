@@ -10,11 +10,28 @@ function church_admin_email_rota($service_id=1,$date=NULL)
  * @return   html string
  * @version  0.1
  * 
- */     
-    echo '<h2>'.__('Email service rota','church-admin').'</h2>';
+ */   
+	global $church_admin_version;
+    
+        /* Add screen option: user can choose between 1 or 2 columns (default 2) */
+    add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
+    ?>
+    <div class="wrap" id="church-admin">
+	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
+	<div id="poststuff">
+    <?php
     require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
-    add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
-    do_meta_boxes('church-admin','advanced',null);
+    echo'<form  method="get" action="">';
+	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
+	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
+		
+		echo'</form></div> <script type="text/javascript">
+		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
+			       
+				postboxes.add_postbox_toggles( "church-admin");
+				});
+		</script><!-- End Meta Box Section-->';
+
     if(empty($date))$date=date('Y-m-d',strtotime('This Sunday'));
     global $wpdb;
     $rota_tasks=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
@@ -70,6 +87,32 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 function church_admin_rota_list($service_id=NULL)
 {
 global$wpdb,$rota_order,$days;
+global $church_admin_version;
+    //Meta Box
+    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
+    add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
+    ?>
+    <div class="wrap" id="church-admin">
+	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
+	<div id="poststuff">
+    <?php
+    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+    echo'<form  method="get" action="">';
+	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
+	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
+		
+	//church_admin_collapseBoxForUser($current_user->ID,"church-admin-people-functions");
+	add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
+	do_meta_boxes('church-admin','advanced',null);
+	echo'</form></div> <script type="text/javascript">
+		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
+			       
+				postboxes.add_postbox_toggles( "church-admin");
+				});
+		</script><!-- End Meta Box Section-->';
+	//Meta Box
+
+
 //check rota settings!
 $rota_jobs=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_jobs FROM ".$wpdb->prefix."church_admin_rota_settings");
 
@@ -77,10 +120,7 @@ $rota_list=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_list FROM ".$wpdb->pref
 
 if($rota_jobs>0&&$rota_list>0)
 {
-    echo '<h2>'.__('Rota List','church-admin').'</h2>';
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
-    add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
-    do_meta_boxes('church-admin','advanced',null);
+
     //grab rota tasks
 $taskresult=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings  ORDER by rota_order");
 if(!empty($taskresult))
@@ -185,15 +225,15 @@ if ($rota_jobs>0 && $rota_list==0) {
 
 }//end of rota list function
     
-    
+    ?></div><?php
 }
 
 
 function church_admin_edit_rota($id=NULL,$service_id=NULL)
 {
-    global $wpdb,$days,$rota_order;
+    global $wpdb,$days,$rota_order,$church_admin_version;
    
-    echo'';
+     
     if(!$service_id)
     {
 	$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
@@ -224,7 +264,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    }
 	    
 	    $jobs=array();
-	    foreach($task_result AS $task){$jobs[$task->rota_id]=church_admin_get_people_id($_POST[urlencode($task->rota_id)]);}
+	    foreach($task_result AS $task){$jobs[$task->rota_id]=church_admin_get_people_id(stripslashes($_POST[urlencode($task->rota_id)]));}
 	    
 	    if(!$id)
 	    {
@@ -314,7 +354,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	}//end form
     
     }//service chosen
-    
+    ?></div><?php
 
 
 }
@@ -325,10 +365,33 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 function church_admin_delete_rota($id)
 {
     global $wpdb;
+     //Meta Box
+    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
+    add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
+    ?>
+    <div class="wrap" id="church-admin">
+	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
+	<div id="poststuff">
+    <?php
+    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+    echo'<form  method="get" action="">';
+	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
+	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
+		
+	//church_admin_collapseBoxForUser($current_user->ID,"church-admin-people-functions");
+	add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
+	do_meta_boxes('church-admin','advanced',null);
+	echo'</form></div> <script type="text/javascript">
+		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
+			       
+				postboxes.add_postbox_toggles( "church-admin");
+				});
+		</script><!-- End Meta Box Section-->';
+	//Meta Box
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_id='".esc_sql($id)."'");
     echo'<div class="updated fade"><p>'.__('Rota Deleted','church-admin').'</p></div>';
     church_admin_rota_list();
-    
+    ?></div></div><?php
 }
 
 function church_admin_rota_csv($service_id=NULL)

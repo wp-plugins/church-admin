@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.564
+Version: 0.565
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.564';
+$church_admin_version = '0.565';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -262,7 +262,7 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
 		if($shortcode_found=='register')
                 {
                     //form field clone script and css                
-                    wp_enqueue_script('form-clone',CHURCH_ADMIN_INCLUDE_URL.'jquery-.js');
+                    wp_enqueue_script('form-clone',CHURCH_ADMIN_INCLUDE_URL.'jquery-formfields.js');
                     wp_enqueue_style('church_admin',CHURCH_ADMIN_INCLUDE_URL.'admin.css');
                     if(!isset($_POST['save']))
                     {//ad mapping scripts if still form page!
@@ -734,7 +734,7 @@ function church_admin_map($atts, $content = null)
 add_shortcode("church_admin_register","church_admin_register");
 function church_admin_register($atts, $content = null)
 {
-    extract(shortcode_atts(array('email_verify'=>TRUE,'admin_email'=>TRUE), $atts));
+    extract(shortcode_atts(array('email_verify'=>TRUE,'admin_email'=>TRUE,'member_type_id'=>1), $atts));
     require_once(CHURCH_ADMIN_INCLUDE_PATH.'front_end_register.php');
     $out=church_admin_front_end_register();
     return $out;

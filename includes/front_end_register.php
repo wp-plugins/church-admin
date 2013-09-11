@@ -1,26 +1,61 @@
 <?php
 
 
-function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE)
+function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$member_type_id=1)
 {
+	        /**
+ *
+ * Front End Registration
+ * 
+ * @author  Andy Moyle
+ * @param    $email_verify,$admin_email
+ * @return   
+ * @version  0.3
+ *
+ * 0.2 fixed address save
+ * 0.3 added recaptcha service
+ * 
+ */
     global $wpdb,$people_type;
+    if(!ctype_digit($member_type_id))$member_type_id=1;
+    require_once(CHURCH_ADMIN_INCLUDE_PATH.'recaptchalib.php');
     $out='';
-    if(!empty($_POST['save']) && wp_verify_nonce($_POST['church_admin_register'], 'church_admin_register')   )//add verify nonce
+    $privatekey = "6LclNecSAAAAAG2iyW5voI-9oaVwfgjix59dTeJN";
+	if(!empty($_POST))$resp = recaptcha_check_answer ($privatekey,$_SERVER["REMOTE_ADDR"],$_POST["recaptcha_challenge_field"],$_POST["recaptcha_response_field"]);
+
+    if(!empty($_POST['save']) &&($resp->is_valid) && wp_verify_nonce($_POST['church_admin_register'], 'church_admin_register')   )//add verify nonce
     {//process
         
-        $out.=print_r($_POST);
-        $address=esc_sql(serialize(array('address_line1'=>stripslashes($_POST['address_line1']),'address_line2'=>stripslashes($_POST['address_line2']),'town'=>stripslashes($_POST['town']),'county'=>stripslashes($_POST['county']),'postcode'=>stripslashes($_POST['postcode']))));
-        $lat=esc_sql($_POST['lat']);
-        $lng=esc_sql($_POST['lng']);
-        $phone=esc_sql($_POST['phone']);
-        $household_id=$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (address,lat,lng)VALUES("'.$address.'","'.$lat.'","'.$lng.'","'.$phone.'")');
-        $sql=array();
-        for($x=0;$x<=count($_POST['first_name']);$x++)
+	
+	$sql=array();
+	foreach ($_POST AS $key=>$value)$sql[$key]=esc_sql(stripslashes_deep($value));
+	$household_id=$wpdb->get_var('SELECT household_id FROM '.CA_HOU_TBL.' WHERE address="'.$sql['address'].'" AND lat="'.$sql['lat'].'" AND lng="'.$sql['lng'].'" AND phone="'.$sql['phone'].'"');
+	if(empty($household_id))
+	{//insert
+	    $success=$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (address,lat,lng,phone) VALUES("'.$sql['address'].'", "'.$sql['lat'].'","'.$sql['lng'].'","'.$sql['phone'].'" )');
+	    $household_id=$wpdb->insert_id;
+	}//end insert
+	else
+	{//update
+	   $success=$wpdb->query('UPDATE '.CA_HOU_TBL.' SET address="'.$sql['address'].'" , lat="'.$sql['lat'].'" , lng="'.$sql['lng'].'" , phone="'.$sql['phone'].'" WHERE household_id="'.esc_sql($household_id).'"');
+	}//update
+	$sql=array();
+        for($x=0;$x<count($_POST['first_name']);$x++)
         {
-            if($_POST['sex'][$x]=='male'){$sex=1;}else{$sex=0;}
-            $sql[]='("'.esc_sql(stripslashes($_POST['first_name'][$x])).'","'.esc_sql(stripslashes($_POST['last_name'][$x])).'","'.esc_sql(stripslashes($_POST['mobile'][$x])).'","'.esc_sql(stripslashes($_POST['email'][$x])).'","'.$sex.'","'.esc_sql($household_id).'","'.esc_sql((int)$_POST['people_type_id']).'","0")';
+			$y=$x+1;
+            if($_POST['sex'.$y]=='male'){$sex=1;}else{$sex=0;}
+            if(!empty($_POST['first_name'][$x])){$first_name=$_POST['first_name'][$x];}else{$first_name='';}
+			if(!empty($_POST['prefix'][$x])){$prefix=$_POST['prefix'][$x];}else{$prefix='';}
+            if(!empty($_POST['last_name'][$x])){$last_name=$_POST['last_name'][$x];}else{$last_name='';}
+            if(!empty($_POST['mobile'][$x])){$mobile=$_POST['mobile'][$x];}else{$mobile='';}
+            if(!empty($_POST['email'][$x])){$email=$_POST['email'][$x];}else{$email='';}
+            if(!empty($_POST['people_type_id'][$x])){$people_type_id=$_POST['people_type_id'][$x];}else{$people_type_id='';}
+            $sql[]='("'.esc_sql(stripslashes($first_name)).'","'.esc_sql(stripslashes($prefix)).'","'.esc_sql(stripslashes($last_name)).'","'.esc_sql(stripslashes($mobile)).'","'.esc_sql(stripslashes($email)).'","'.$sex.'","'.esc_sql($household_id).'","'.esc_sql((int)$people_type_id).'","'.$member_type_id.'")';
+        
         }
-        $wpdb->query('INSERT INTO '.CA_PEO_TBL.' (first_name,last_name,mobile,email,sex,household_id,people_type_id,member_type_id) VALUES '.implode(",",$sql));
+        $query='INSERT INTO '.CA_PEO_TBL.' (first_name,prefix,last_name,mobile,email,sex,household_id,people_type_id,member_type_id) VALUES '.implode(",",$sql);
+        
+        $wpdb->query($query);
         
         if($admin_email)
         {
@@ -34,23 +69,27 @@ function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE)
     {//form
         $out.='<div class="church_admin"><h2>'.__('Registration','church-admin').'</h2>';
         $out.='<form action="" method="post"><input type="hidden" name="save" value="yes"/>';
-        $out.=wp_nonce_field('church_admin_register','church_admin_register');
+        $out.=wp_nonce_field('church_admin_register','church_admin_register',TRUE,FALSE);
         $out.='<div class="clonedInput" id="input1">';
         $out.='<p><label>'.__('First Name','church-admin').'</label><input type="text" class="first_name" id="first_name1" name="first_name[]"/></p>';
+        $out.='<p><label>'.__('Prefix (e.g.van der)','church-admin').'</label><input type="text" class="prefix" id="prefix1" name="prefix[]" /></p>';
         $out.='<p><label>'.__('Last Name','church-admin').'</label><input type="text" class="last_name" id="last_name1" name="last_name[]"/></p>';
         $out.='<p><label>'.__('Mobile','church-admin').'</label><input type="text" class="mobile" id="mobile1" name="mobile[]"/></p>';
-        $out.='<p><label>'.__('Person type','church-admin').'</label><select name="people_type_id" id="people_type1" class="people_type_id">';
+        $out.='<p><label>'.__('Person type','church-admin').'</label><select name="people_type_id[]" id="people_type1" class="people_type_id">';
         foreach($people_type AS $id=>$type){$out.='<option value="'.$id.'">'.$type.'</option>';}
         $out.='</select></p>';
         $out.='<p><label>'.__('Email','church-admin').'</label><input type="text" class="email" id="email1" name="email[]"/></p>';
-        $out.='<p><label>'.__('Sex','church-admin').'</label><input type="radio" name="sex" class="male" id="male1" value="male"/>'.__('Male','church-admin').' <input type="radio" name="sex" class="male" id="male1" value="female"/>'.__('Female','church-admin').'</p>';
+        $out.='<p><label>'.__('Sex','church-admin').'</label><input type="radio" name="sex1" class="male" id="male1" value="male"/>'.__('Male','church-admin').' <input type="radio" name="sex1" class="female" id="female1" value="female"/>'.__('Female','church-admin').'</p>';
         $out.='</div>';
         
         $out.='<p id="jquerybuttons"><input type="button" id="btnAdd" value="'.__('Add another person','church-admin').'" /><input type="button" id="btnDel" value="'.__('Remove person','church-admin').'" /></p>';;
-        
+        $out.='<p><label>'.__('Phone','church-admin').'</label><input name="phone" type="text"/></p>';
         require_once(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
         $out.= church_admin_address_form(NULL,NULL);
-        $out.='<p><label>'.__('Phone','church-admin').'</label><input name="phone" type="text"/></p>';
+        //recaptcha service
+        
+		$out.='<div class="clear"></div>';
+		$out.= '<p><label>'.__('To prevent automated registration','church-admin').'</label>'.recaptcha_get_html('6LclNecSAAAAACStrXZYLozPCWO1BP7h8X27R54h').'</p>';
         $out.= '<p><input type="submit" value="'.__('Register','church-admin').'"/></form></div>';
         
     }//form

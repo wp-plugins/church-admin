@@ -236,6 +236,8 @@ Clear out files
 * Fix Follow up email not sending all information
 = 0.564 =
 * Updated Internationalisation
+= 0.565 =
+* Fixed front end registration with reCaptcha protection
 
 == Upgrade Notice ==
 * 0.4.73 required

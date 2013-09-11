@@ -65,6 +65,7 @@ function ca_display_file($file_id=NULL)
     
     $data=$wpdb->get_row($sql);
     $data->speaker_name=church_admin_get_people($data->speaker);
+    if(empty($data->speaker_description))$data->speaker_description='';
     if($data)
     {
         $template=str_replace('[FILE_TITLE]',$data->file_title,$template);

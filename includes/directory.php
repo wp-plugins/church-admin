@@ -116,8 +116,13 @@ function church_admin_address_list($member_type_id=1)
 
 function church_admin_edit_household($household_id=NULL)
 {
-    global $wpdb,$member_type;
+    global $wpdb,$member_type,$church_admin_version;
     $wpdb->show_errors();
+    ?>
+    <div class="wrap" id="church-admin">
+	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> - Edit Household Address</h2>
+	<div id="poststuff">
+    <?php
     $member_type_id=$wpdb->get_var('SELECT member_type_id FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($household_id).'"  ORDER BY people_type_id ASC LIMIT 1');
     if(!empty($household_id)){$data=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($household_id).'"');}else{$data=NULL;}
     if(!empty($_POST['edit_household']))
@@ -139,16 +144,28 @@ function church_admin_edit_household($household_id=NULL)
 	{
 	    echo '<div class="updated fade"><p><strong>'.__('Address saved','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
 	}
-	    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
-	    add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
-	    do_meta_boxes('church-admin','advanced',null);
-	    church_admin_display_household($household_id);
+	    echo'<div id="post-body" class="metabox-holder columns-2"><!-- meta box containers here -->';
+		echo'<form  method="get" action="">'. wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
+		require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+		//church_admin_collapseBoxForUser($current_user->ID,"church-admin-people-functions");
+			add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
+			do_meta_boxes('church-admin','advanced',null);
+		echo'</form></div> <script type="text/javascript">
+		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
+			       
+				postboxes.add_postbox_toggles( "church-admin");
+				});
+		</script><!-- End Meta Box Section-->';
+		
+		echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
+	
+		church_admin_display_household($household_id);
 	
     }//end process form
     else
     {//household form
 	if(!empty($household_id)){$text='Edit ';}else{$text='Add ';}
-	echo ' <div class="wrap church_admin" ><h2>'.$text.' '.__('Address','church-admin').'</h2><form action="" method="post">';
+	echo '<form action="" method="post">';
 	//clean out old style address data
 	if(!empty($data)&&is_array(maybe_unserialize($data->address)))
 	{
@@ -160,8 +177,10 @@ function church_admin_edit_household($household_id=NULL)
     echo '<p><label>'.__('Phone','church-admin').'</label><input type="text" name="phone" value="'.$data->phone.'"';
     if(!empty($errors['phone']))echo' class="red" ';
     echo '/></p>';
-	echo'<p class="submit"><input type="hidden" name="edit_household" value="yes"/><input type="submit" value="'.__('Save Address','church-admin').'&raquo;" /></p></form></div>';
+	echo'<p class="submit"><input type="hidden" name="edit_household" value="yes"/><input type="submit" value="'.__('Save Address','church-admin').'&raquo;" /></p></form>';
     }//end household form
+
+	?></div></div><?php
 }
 function church_admin_delete_household($household_id=NULL)
 {
@@ -181,6 +200,7 @@ function church_admin_delete_household($household_id=NULL)
 	    do_meta_boxes('church-admin','advanced',null);
     church_admin_address_list($member_type_id);
 }
+
 function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 {
         /**
@@ -196,274 +216,290 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
  * 
  */    
     
-    global $wpdb,$people_type,$member_type,$departments;
-
+    global $wpdb,$people_type,$member_type,$departments,$current_user,$church_admin_version;
+    get_currentuserinfo();
     $wpdb->show_errors();
+    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
+    add_screen_option('layout_columns', array('max' => 2, 'default' => 2) );
     
+    
+    ?>
+    <div class="wrap" id="church-admin">
+	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> - Edit Person</h2>
+	<div id="poststuff">
+    <?php
     if($people_id)$data=$wpdb->get_row('SELECT * FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
   
     if(!empty($data->household_id))$household_id=$data->household_id;
     if(!empty($_POST['edit_people']))
     {//process
-	if(empty($household_id))
-	{
-	    $wpdb->query('INSERT INTO '.CA_HOU_TBL.' (lat,lng) VALUES("52.000","0.000")');
-	    $household_id=$wpdb->insert_id;
-	}
-	$sql=array();
-	foreach($_POST AS $key=>$value)$sql[$key]=esc_sql(stripslashes_deep($value));
+		if(empty($_POST['smallgroup_id']))$_POST['smallgroup_id']=0;
+		if(empty($household_id))
+		{
+			$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (lat,lng) VALUES("52.000","0.000")');
+			$household_id=$wpdb->insert_id;
+		}
+		$sql=array();
+		foreach($_POST AS $key=>$value)$sql[$key]=esc_sql(stripslashes_deep($value));
 	
-	//handle date of birth
-	if(!empty($_POST['date_of_birth']))$dob=esc_sql(date('Y-m-d',strtotime($_POST['date_of_birth'])));
+		//handle date of birth
+		if(!empty($_POST['date_of_birth'])){$dob=esc_sql(date('Y-m-d',strtotime($_POST['date_of_birth'])));}else{$dob='0000-00-00';}
 	
-	if(!$people_id)$people_id=$wpdb->get_var('SELECT people_id FROM '.CA_PEO_TBL.' WHERE first_name="'.$sql['first_name'].'" AND prefix="'.$sql['prefix'].'" AND last_name="'.$sql['last_name'].'" AND email="'.$sql['email'].'" AND mobile="'.$sql['mobile'].'" AND sex="'.$sql['sex'].'" AND people_type_id="'.$sql['people_type_id'].'" AND  member_type_id="'.$sql['member_type_id'].'" AND date_of_birth="'.$dob.'" AND household_id="'.esc_sql($household_id).'"');
-	$member_data=array();
-	foreach($member_type AS $no=>$type)
-	{
-	    
-	    if($no==$_POST['member_type_id'] && $_POST['member_type_id']!=$data->member_type_id){$member_data[$type]=date('Y-m-d');}
-	    if(!empty($_POST[$type])){$member_data[$type]=date('Y-m-d',strtotime($_POST[$type]));}else{$member_data[$type]=NULL;}
-	}
+		if(!$people_id)$people_id=$wpdb->get_var('SELECT people_id FROM '.CA_PEO_TBL.' WHERE first_name="'.$sql['first_name'].'" AND prefix="'.$sql['prefix'].'" AND last_name="'.$sql['last_name'].'" AND email="'.$sql['email'].'" AND mobile="'.$sql['mobile'].'" AND sex="'.$sql['sex'].'" AND people_type_id="'.$sql['people_type_id'].'" AND  member_type_id="'.$sql['member_type_id'].'" AND date_of_birth="'.$dob.'" AND household_id="'.esc_sql($household_id).'"');
+		$member_data=array();
+		foreach($member_type AS $no=>$type)
+		{
+			if($no==$_POST['member_type_id'] && $_POST['member_type_id']!=$data->member_type_id){$member_data[$type]=date('Y-m-d');}
+			if(!empty($_POST[$type])){$member_data[$type]=date('Y-m-d',strtotime($_POST[$type]));}else{$member_data[$type]=NULL;}
+		}
 	
-	$member_data=serialize($member_data);
+		$member_data=serialize($member_data);
 	
-	//handle upload
-	if(empty($data->attachment_id)){$attachment_id=NULL;}else{$attachment_id=$data->attachment_id;}
+		//handle upload
+		if(empty($data->attachment_id)){$attachment_id=NULL;}else{$attachment_id=$data->attachment_id;}
 	
-	if(!empty($_FILES) && $_FILES['uploadfiles']['error'] == 0)
-	{
-	    $filetmp = $_FILES['uploadfiles']['tmp_name'];
+		if(!empty($_FILES) && $_FILES['uploadfiles']['error'] == 0)
+		{
+			$filetmp = $_FILES['uploadfiles']['tmp_name'];
+	
+			//clean filename and extract extension
+			$filename = $_FILES['uploadfiles']['name'];
 
-	    //clean filename and extract extension
-	    $filename = $_FILES['uploadfiles']['name'];
-
-		// get file info
-	    $filetype = wp_check_filetype( basename( $filename ), null );
-	    $filetitle = preg_replace('/\.[^.]+$/', '', basename( $filename ) );
-	    $filename = $filetitle . '.' . $filetype['ext'];
-	    $upload_dir = wp_upload_dir();
-	    /**
-	    * Check if the filename already exist in the directory and rename the
-	    * file if necessary
-	    */
-	    $i = 0;
-	    while ( file_exists( $upload_dir['path'] .'/' . $filename ) )
-	    {
-		$filename = $filetitle . '_' . $i . '.' . $filetype['ext'];
-		$i++;
-	    }
+			// get file info
+			$filetype = wp_check_filetype( basename( $filename ), null );
+			$filetitle = preg_replace('/\.[^.]+$/', '', basename( $filename ) );
+			$filename = $filetitle . '.' . $filetype['ext'];
+			$upload_dir = wp_upload_dir();
+			/**
+			* Check if the filename already exist in the directory and rename the
+			* file if necessary
+			*/
+			$i = 0;
+			while ( file_exists( $upload_dir['path'] .'/' . $filename ) )
+			{
+				$filename = $filetitle . '_' . $i . '.' . $filetype['ext'];
+				$i++;
+			}
 	    
-	    $filedest = $upload_dir['path'] . '/' . $filename;
+			$filedest = $upload_dir['path'] . '/' . $filename;
 	    
-	    move_uploaded_file($filetmp, $filedest);
-	    $attachment = array('post_mime_type' => $filetype['type'],'post_title' => $filetitle,'post_content' => '','post_status' => 'inherit');
-            $attachment_id = wp_insert_attachment( $attachment, $filedest );
+			move_uploaded_file($filetmp, $filedest);
+			$attachment = array('post_mime_type' => $filetype['type'],'post_title' => $filetitle,'post_content' => '','post_status' => 'inherit');
+			$attachment_id = wp_insert_attachment( $attachment, $filedest );
 	    
             require_once( ABSPATH . "wp-admin" . '/includes/image.php' );
             $attach_data = wp_generate_attachment_metadata( $attachment_id, $filedest );
 	    
             wp_update_attachment_metadata( $attachment_id,  $attach_data );
-	
-	}
-	//handle upload
-	
-	
-	if($people_id)
-	{//update
-	    $query='UPDATE '.CA_PEO_TBL.' SET first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'", attachment_id="'.$attachment_id.'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
-		    $wpdb->query($query);
-	}//end update
-	else
-	{
-	    $wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,attachment_id) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$attachment_id.'")');
-	    $people_id=$wpdb->insert_id;
-	}
-	//new small group
-	if(!empty($_POST['group_name']))
-	{
 		
-		
-		$check=$wpdb->get_row('SELECT * FROM '.CA_SMG_TBL.' WHERE group_name="'.$sql['group_name'].'" AND whenwhere="'.$sql['whenwhere'].'"');
-		
-		if(!empty($check))
+		}// end handle upload
+	
+	
+		if($people_id)
 		{//update
-			if(!empty($check->leader))$leaders=maybe_unserialize($check->leader);
-			if(is_array($leaders)&&!in_array($people_id,$leaders)) {$leaders[]=$people_id;}else{$leaders=array(1=>$people_id);}
-			$ldrs=esc_sql(maybe_serialize($leaders));
-			$query='UPDATE '.CA_SMG_TBL.' SET leader="'.$ldrs.'",group_name="'.$sql['group_name'].'",whenwhere="'.$sql['whenwhere'].'" WHERE id="'.esc_sql($check->id).'"';
-			$wpdb->query($query);
-			$sg_id=$check->id;
-   		}//end update
+			$query='UPDATE '.CA_PEO_TBL.' SET first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'", attachment_id="'.$attachment_id.'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
+		    $wpdb->query($query);
+		}//end update
 		else
-		{//insert
-			$leaders=esc_sql(maybe_serialize(array(1=>$people_id)));
-			$query='INSERT INTO  '.CA_SMG_TBL.' (group_name,leader,whenwhere) VALUES("'.$sql['group_name'].'","'.$leaders.'","'.$sql['whenwhere'].'")';
-			
-			$wpdb->query($query);
-			$sg_id=$wpdb->insert_id;
-		}//insert
-		$wpdb->query('UPDATE '.CA_PEO_TBL.' SET smallgroup_id="'.esc_sql($sg_id).'" WHERE people_id="'.$people_id.'"');	
-	}
-	
-	//update meta
-	$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
-	//if new small group then add small group leader to person's meta
-	if(!empty($_POST['group_name'])){church_admin_update_department('1',$people_id);}
-	if(!empty($_POST['department']))
-	{ 
-	    foreach($_POST['department'] AS $a=>$key)
-	    {
-	        if(array_key_exists($key,$departments)){church_admin_update_department($key,$people_id);}
-	    }
-	}
-	if(!empty($_POST['new_department'])&&$_POST['new_department']!='Add a new ministry')
-	{
-	    
-	    if(!in_array(stripslashes($_POST['new_department']),$departments))
-	    {
-		$departments[]=stripslashes($_POST['new_department']);
-		update_option('church_admin_departments',$departments);
+		{
+			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,attachment_id) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$attachment_id.'")');
+			$people_id=$wpdb->insert_id;
+		}
+		//new small group
+		if(!empty($_POST['group_name']))
+		{
+			$check=$wpdb->get_row('SELECT * FROM '.CA_SMG_TBL.' WHERE group_name="'.$sql['group_name'].'" AND whenwhere="'.$sql['whenwhere'].'"');
 		
-		church_admin_update_department(key($departments),$people_id);
-	    }
-	}
-	echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
+			if(!empty($check))
+			{//update
+				if(!empty($check->leader))$leaders=maybe_unserialize($check->leader);
+				if(is_array($leaders)&&!in_array($people_id,$leaders)) {$leaders[]=$people_id;}else{$leaders=array(1=>$people_id);}
+				$ldrs=esc_sql(maybe_serialize($leaders));
+				$query='UPDATE '.CA_SMG_TBL.' SET leader="'.$ldrs.'",group_name="'.$sql['group_name'].'",whenwhere="'.$sql['whenwhere'].'" WHERE id="'.esc_sql($check->id).'"';
+				$wpdb->query($query);
+				$sg_id=$check->id;
+			}//end update
+			else
+			{//insert
+				$leaders=esc_sql(maybe_serialize(array(1=>$people_id)));
+				$query='INSERT INTO  '.CA_SMG_TBL.' (group_name,leader,whenwhere) VALUES("'.$sql['group_name'].'","'.$leaders.'","'.$sql['whenwhere'].'")';
+				$wpdb->query($query);
+				$sg_id=$wpdb->insert_id;
+			}//insert
+			$wpdb->query('UPDATE '.CA_PEO_TBL.' SET smallgroup_id="'.esc_sql($sg_id).'" WHERE people_id="'.$people_id.'"');	
+		}
 	
+		//update meta
+		$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
+		//if new small group then add small group leader to person's meta
+		if(!empty($_POST['group_name'])){church_admin_update_department('1',$people_id);}
+		if(!empty($_POST['department']))
+		{ 
+			foreach($_POST['department'] AS $a=>$key)
+			{
+				if(array_key_exists($key,$departments)){church_admin_update_department($key,$people_id);}
+			}
+		}
+		if(!empty($_POST['new_department'])&&$_POST['new_department']!='Add a new ministry')
+		{
+	    
+			if(!in_array(stripslashes($_POST['new_department']),$departments))
+			{
+				$departments[]=stripslashes($_POST['new_department']);
+				update_option('church_admin_departments',$departments);
+				church_admin_update_department(key($departments),$people_id);
+			}
+		}
+		//end of process into db, now output...		
+		
+		echo'<div id="post-body" class="metabox-holder columns-2"><!-- meta box containers here -->';
+		echo'<form  method="get" action="">'. wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
+		require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+		//church_admin_collapseBoxForUser($current_user->ID,"church-admin-people-functions");
+			add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
+			do_meta_boxes('church-admin','advanced',null);
+		echo'</form></div> <script type="text/javascript">
+		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
+			       
+				postboxes.add_postbox_toggles( "church-admin");
+				});
+		</script><!-- End Meta Box Section-->';
+		
+		echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
 	
-	require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
-	    add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
-	    do_meta_boxes('church-admin','advanced',null);
-    church_admin_display_household($household_id);
+		church_admin_display_household($household_id);
     }//end process
     else
-    {
-	echo'<div class="wrap church_admin"><h2>'.__('People Form','church-admin').'</h2>';
-	echo'<form action="" method="POST" enctype="multipart/form-data">';
-	//first name
-	echo'<p><label>'.__('First Name','church-admin').'</label><input type="text" name="first_name" ';
-	if(!empty($data->first_name)) echo ' value="'.esc_html($data->first_name).'" ';
-	echo'</p>';
-	//prefix
-	echo'<p><label>'.__('Prefix (e.g.van der)','church-admin').'</label><input type="text" name="prefix" ';
-	if(!empty($data->prefix)) echo ' value="'.esc_html($data->prefix).'" ';
-	echo'</p>';
-	//last name
-	echo'<p><label>'.__('Last Name','church-admin').'</label><input type="text" name="last_name" ';
-	if(!empty($data->last_name)) echo ' value="'.esc_html($data->last_name).'" ';
-	echo'</p>';
-	//photo
-	echo'<p><label for="photo">'.__('Photo','church-admin').'</label><input type="file" id="photo" name="uploadfiles" size="35" class="uploadfiles" /></p><p><label>&nbsp;</label>';
-	if(!empty($data->attachment_id))
-	{//photo available
-	    echo wp_get_attachment_image( $data->attachment_id,'ca-people-thumb' );
-	}//photo available
-	else
-	{
-	    echo '<img src="'.CHURCH_ADMIN_IMAGES_URL.'default-avatar.jpg" width="75" height="75"/>';
-	}
-	echo '</p>';
-	//email
-	echo'<p><label>'.__('Email Address','church-admin').'</label><input type="text" name="email" ';
-	if(!empty($data->email)) echo ' value="'.esc_html($data->email).'" ';
-	echo'</p>';
-	//mobile
-	echo'<p><label>'.__('Mobile','church-admin').'</label><input type="text" name="mobile" ';
-	if(!empty($data->mobile)) echo ' value="'.esc_html($data->mobile).'" ';
-	echo'</p>';
-	//sex
-	echo'<p><label>Sex</label>'.__('Male','church-admin').' <input type="radio" name="sex" value="1"';
-	if(!empty($data->sex) && $data->sex==1) echo' checked="checked" ';
-	echo ' /> '.__('Female','church-admin').' <input type="radio" name="sex" value="0"';
-	if($data->sex==0)  echo' checked="checked" ';
-	echo'/></p>';
-	//people_type
-	echo'<p><label>'.__('People Type','church-admin').'</label><select name="people_type_id">';
-	foreach($people_type AS $key=>$value)
-	{
-	    echo'<option value="'.$key.'" ';
-	    selected($key,$data->people_type_id);
-	    echo'>'.$value.'</option>';
-	}
-	echo'</select></p>';
-	//date of birth
-	echo'<p><label>'.__('Date of Birth','church-admin').'</label><input type=="text" name="date_of_birth" class="date_of_birth" ';
-	if(!empty($data->date_of_birth)&&$data->date_of_birth!='0000-00-00') echo ' value="'.mysql2date(get_option('date_format'),$data->date_of_birth).'" ';
-	echo'/></p>';
-	echo'<script type="text/javascript">
-      jQuery(document).ready(function(){
-         jQuery(\'.date_of_birth\').datepicker({
+    {//form
+	
+		echo'<form action="" method="POST" enctype="multipart/form-data">';
+		//first name
+		echo'<p><label>'.__('First Name','church-admin').'</label><input type="text" name="first_name" ';
+		if(!empty($data->first_name)) echo ' value="'.esc_html($data->first_name).'" ';
+		echo'/></p>';
+		//prefix
+		echo'<p><label>'.__('Prefix (e.g.van der)','church-admin').'</label><input type="text" name="prefix" ';
+		if(!empty($data->prefix)) echo ' value="'.esc_html($data->prefix).'" ';
+		echo'/></p>';
+		//last name
+		echo'<p><label>'.__('Last Name','church-admin').'</label><input type="text" name="last_name" ';
+		if(!empty($data->last_name)) echo ' value="'.esc_html($data->last_name).'" ';
+		echo'/></p>';
+		//photo
+		echo'<p><label for="photo">'.__('Photo','church-admin').'</label><input type="file" id="photo" name="uploadfiles" size="35" class="uploadfiles" /></p><p><label>&nbsp;</label>';
+		if(!empty($data->attachment_id))
+		{//photo available
+			echo wp_get_attachment_image( $data->attachment_id,'ca-people-thumb' );
+		}//photo available
+		else
+		{
+			echo '<img src="'.CHURCH_ADMIN_IMAGES_URL.'default-avatar.jpg" width="75" height="75"/>';
+		}
+		echo '</p>';
+		//email
+		echo'<p><label>'.__('Email Address','church-admin').'</label><input type="text" name="email" ';
+		if(!empty($data->email)) echo ' value="'.esc_html($data->email).'" ';
+		echo'/></p>';
+		//mobile
+		echo'<p><label>'.__('Mobile','church-admin').'</label><input type="text" name="mobile" ';
+		if(!empty($data->mobile)) echo ' value="'.esc_html($data->mobile).'" ';
+		echo'/></p>';
+		//sex
+		echo'<p><label>Sex</label>'.__('Male','church-admin').' <input type="radio" name="sex" value="1"';
+		if(!empty($data->sex) && $data->sex==1) echo' checked="checked" ';
+		echo ' /> '.__('Female','church-admin').' <input type="radio" name="sex" value="0"';
+		if($data->sex==0)  echo' checked="checked" ';
+		echo'/></p>';
+		//people_type
+		echo'<p><label>'.__('People Type','church-admin').'</label><select name="people_type_id">';
+		foreach($people_type AS $key=>$value)
+		{
+			echo'<option value="'.$key.'" ';
+			selected($key,$data->people_type_id);
+			echo'>'.$value.'</option>';
+		}
+		echo'</select></p>';
+		//date of birth
+		echo'<p><label>'.__('Date of Birth','church-admin').'</label><input type=="text" name="date_of_birth" class="date_of_birth" ';
+		if(!empty($data->date_of_birth)&&$data->date_of_birth!='0000-00-00') echo ' value="'.mysql2date(get_option('date_format'),$data->date_of_birth).'" ';
+		echo'/></p>';
+		echo'<script type="text/javascript">
+		jQuery(document).ready(function(){
+			jQuery(\'.date_of_birth\').datepicker({
             dateFormat : "d MM yy", changeYear: true ,yearRange: "1910:'.date('Y').'"
          });
-      });
-   </script>';
+		});
+		</script>';
 	
-	echo'<p><label>'.__('Current Member Type','church-admin').'</label><span style="display:inline-block">';
-	$first=$option='';
-	foreach($member_type AS $key=>$value)
-	{
-	    echo'<input type="radio" name="member_type_id" value="'.$key.'"';
-	    if($data->member_type_id==$key)echo' checked="checked" ';
-	    echo ' />'.$value.'<br/>';
+		echo'<p><label>'.__('Current Member Type','church-admin').'</label><span style="display:inline-block">';
+		$first=$option='';
+		foreach($member_type AS $key=>$value)
+		{
+			echo'<input type="radio" name="member_type_id" value="'.$key.'"';
+			if($data->member_type_id==$key)echo' checked="checked" ';
+			echo ' />'.$value.'<br/>';
 	   
-	}
+		}
 	
-	echo'</span></p>';
+		echo'</span></p>';
 	
 	
-	$prev_member_types=unserialize($data->member_data);
+		$prev_member_types=unserialize($data->member_data);
 	
 	    echo'<p><label>'.__('Dates of Member Levels','church-admin').'</label><span style="display:inline-block">	';
 	    foreach($member_type AS $key=>$value)
 	    {
-		//if no value for member type date make sure no value is given
-		if($prev_member_types[$value]=='0000-00-00'|| $prev_member_types[$value]=='1970-01-01'){$date='';}else{$date=mysql2date(get_option('date_format'),$prev_member_types[$value]);}
-		 echo '<span style="float:left;width:150px">'.$value.'</span> <input type="text" id="'.sanitize_title($value).'" name="'.$value.'" value="'.$date.'"/><br style="clear:left"/>';
-		//javascript to bring up date picker
-		echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#'.sanitize_title($value).'\').datepicker({dateFormat : "d MM yy", changeYear: true ,yearRange: "1910:'.date('Y').'"});});</script>';
-		//javascript to bring up date picker
-	    }
-	    echo'</span></p>';
+			//if no value for member type date make sure no value is given
+			if($prev_member_types[$value]=='0000-00-00'|| $prev_member_types[$value]=='1970-01-01'){$date='';}else{$date=mysql2date(get_option('date_format'),$prev_member_types[$value]);}
+			echo '<span style="float:left;width:150px">'.$value.'</span> <input type="text" id="'.sanitize_title($value).'" name="'.$value.'" value="'.$date.'"/><br style="clear:left"/>';
+			//javascript to bring up date picker
+			echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#'.sanitize_title($value).'\').datepicker({dateFormat : "d MM yy", changeYear: true ,yearRange: "1910:'.date('Y').'"});});</script>';
+			//javascript to bring up date picker
+			}
+			echo'</span></p>';
 	
-	echo'<p><label>'.__('Ministries','church-admin').'</label><span style="display:inline-block">';
-	if(!empty($departments))
-	{
-	    foreach($departments AS $key=>$value)
-	    {
-	        echo'<span style="float:left;width:150px">'.$value.'</span><input type="checkbox" name="department[]" value="'.$key.'" ';
-	        if(!empty($data->people_id))
-	        {
-			$check=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($data->people_id).'" AND department_id="'.esc_sql($key).'"');
-			if($check)echo ' checked="checked" ';
-	        }
-	        echo '/><br style="clear:left"/>';
-	    }
-	}
-	echo '<input type="text" name="new_department" value="'.__('Add a new ministry','church-admin').'" onfocus="javascript:this.value=\'\';"/></p>';
-	//small group
-	echo'<p><label>'.__('Small Group','church-admin').'</label><span style="display:inline-block">';
-	$smallgroups=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
-	$first=$option='';
-	foreach($smallgroups AS $smallgroup)
-	{
-	    
-	   echo'<input type="radio" name="smallgroup_id" value="'.$smallgroup->id.'"';
-	   if($smallgroup->id==$data->smallgroup_id) echo' checked="checked" ';
-	   echo'/>'.$smallgroup->group_name.'<br/>';
-	}
-	echo '</span></p>';
-	echo'<p><label>Or create new Small Group</label><span style="display:inline-block"><span style="float:left;width:150px">Group Name</span><input type="text" name="group_name"/><br style="clear:left"/><span style="float:left;width:150px">Leader?</span><input type="checkbox" name="leading"/><br style="clear:left;"/><span style="float:left;width:150px">Where &amp; When</span><input type="text" name="whenwhere"/></span></p>';
-	echo'<p><label>'.__('Wordpress User','church-admin').'</label>';
-	if($data->user_id )
-	{
-	   $user_info=get_userdata($data->user_id);
-	   echo $user_info->wp_capabilities['0'].'</p>';
-	}
-	elseif(!empty($household_id))
-	{
-	    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_create_user&amp;people_id='.$people_id.'&amp;household_id='.$household_id,'create_user').'">'.__('Create WP User').'</a></p>';
-	}
-	echo'<p class="submit"><input type="hidden" name="edit_people" value="yes"/><input type="submit" value="'.__('Save Details','church-admin').'&raquo;" /></p></form></div>';
+		echo'<p><label>'.__('Ministries','church-admin').'</label><span style="display:inline-block">';
+		if(!empty($departments))
+		{
+			foreach($departments AS $key=>$value)
+			{
+				echo'<span style="float:left;width:150px">'.$value.'</span><input type="checkbox" name="department[]" value="'.$key.'" ';
+				if(!empty($data->people_id))
+				{
+					$check=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($data->people_id).'" AND department_id="'.esc_sql($key).'"');
+					if($check)echo ' checked="checked" ';
+				}
+				echo '/><br style="clear:left"/>';
+			}
+		}
+		echo '<input type="text" name="new_department" value="'.__('Add a new ministry','church-admin').'" onfocus="javascript:this.value=\'\';"/></p>';
+		//small group
+		echo'<p><label>'.__('Small Group','church-admin').'</label><span style="display:inline-block">';
+		$smallgroups=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
+		$first=$option='';
+		foreach($smallgroups AS $smallgroup)
+		{
+			
+			echo'<input type="radio" name="smallgroup_id" value="'.$smallgroup->id.'"';
+			if($smallgroup->id==$data->smallgroup_id) echo' checked="checked" ';
+		echo'/>'.$smallgroup->group_name.'<br/>';
+		}
+		echo '</span></p>';
+		echo'<p><label>Or create new Small Group</label><span style="display:inline-block"><span style="float:left;width:150px">Group Name</span><input type="text" name="group_name"/><br style="clear:left"/><span style="float:left;width:150px">Leader?</span><input type="checkbox" name="leading"/><br style="clear:left;"/><span style="float:left;width:150px">Where &amp; When</span><input type="text" name="whenwhere"/></span></p>';
+		echo'<p><label>'.__('Wordpress User','church-admin').'</label>';
+		if($data->user_id )
+		{
+			$user_info=get_userdata($data->user_id);
+			echo $user_info->wp_capabilities['0'].'</p>';
+		}	
+		elseif(!empty($household_id))
+		{
+			echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_create_user&amp;people_id='.$people_id.'&amp;household_id='.$household_id,'create_user').'">'.__('Create WP User').'</a></p>';
+		}
+		echo'<p class="submit"><input type="hidden" name="edit_people" value="yes"/><input type="submit" value="'.__('Save Details','church-admin').'&raquo;" /></p></form>';
     }
+    ?></div></div>
+    <?php
 }
 function church_admin_delete_people($people_id=NULL,$household_id)
 {
@@ -482,6 +518,7 @@ function church_admin_delete_people($people_id=NULL,$household_id)
 function church_admin_address_form($data,$error)
 {
     //echos form contents where $data is object of address data and $error is array of errors if applicable
+    if(empty($data))$data=(object)'';
     $out='';
     if(!empty($errors))$out.='<p>'.__('There were some errors marked in red','church-admin').'</p>';
     $out.='<script type="text/javascript"> var beginLat =';
@@ -498,6 +535,7 @@ $out.= '; var beginLng =';
     if(!isset($data->lng))$data->lng='51.50351129583287';
     if(!isset($data->lat))$data->lat='-0.148193359375';
     $out.= '<p><a href="#" id="geocode_address">'.__('Please click here to update map location','church-admin').'...</a><br/><span id="finalise" >Once you have updated your address, this map will show roughly where your address is.</span><input type="hidden" name="lat" id="lat" value="'.$data->lat.'"/><input type="hidden" name="lng" id="lng" value="'.$data->lng.'"/></p><div id="map" style="width:500px;height:300px"></div>';
+    $out.='<div style="clear:left"></div>';
     return $out;
     
 }
@@ -518,6 +556,11 @@ function church_admin_display_household($household_id)
 		//>v0.553
 		else{$address=$add_row->address;}
 	}else{$address='Add Address';}
+	 echo'<script type="text/javascript"> var beginLat =';
+    if(!empty($data->lat)) {echo $data->lat;}else {echo '51.50351129583287';}
+$out.= '; var beginLng =';
+    if(!empty($data->lng)) {echo $data->lng;}else {echo'-0.148193359375';}
+    echo';</script>';
 	if(!empty($add_row->lng))$map='<img src="http://maps.google.com/maps/api/staticmap?center='.$add_row->lat.','.$add_row->lng.'&zoom=15&markers='.$add_row->lat.','.$add_row->lng.'&size=500x300&sensor=false" alt="'.$address.'"/>';
 	echo'<h2>Household Details</h2>';
 	
