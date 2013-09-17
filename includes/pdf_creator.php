@@ -23,13 +23,13 @@ function church_admin_cron_pdf()
  
     $pdf->Image(CHURCH_ADMIN_IMAGES_PATH.'cron-job1.jpg','10','65','','','jpg','');
     $pdf->SetXY(10,180);
-    $text="In the common settings option - select 'Once an Hour'. \r\nIn 'Command to run' put this:\r\n".$command."\r\n and then click Add Cron Job. Job Done. Don't forget to test it by sending an email to yourself at a few minutes before the hour! ";
+    $text=__("In the common settings option - select 'Once an Hour'. \r\nIn 'Command to run' put this:\r\n".$command."\r\n and then click Add Cron Job. Job Done. Don't forget to test it by sending an email to yourself at a few minutes before the hour! ",'church-admin');
     $pdf->MultiCell(0, 10, $text );
     }
     else
     {
          $pdf->SetFont('Arial','',10);
-        $text="Unfortunately setting up queuing for email using cron is not possible in Windows servers. Please go back to Communication settings and enable the wp-cron option for scheduling sending of queued emails";
+        $text=__("Unfortunately setting up queuing for email using cron is not possible in Windows servers. Please go back to Communication settings and enable the wp-cron option for scheduling sending of queued emails",'church-admin');
         $pdf->MultiCell(0, 10, $text );
     }
     $pdf->Output();
@@ -50,13 +50,18 @@ $leader=array();
 $memb=explode(',',esc_sql($member_type_id));
 foreach($memb AS $key=>$value){if(ctype_digit($value))$membsql[]='a.member_type_id='.$value;}
 if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
-$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE a.people_type_id="1"  '.$memb_sql.' AND a.smallgroup_id=b.id ORDER BY a.smallgroup_id,a.last_name ';
+$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE a.people_type_id="1"  '.$memb_sql.' AND a.smallgroup_id=b.id ORDER BY b.smallgroup_order,a.last_name ';
 $results = $wpdb->get_results($sql);
 $gp=0;
+$count=array();
+$person=1;
 foreach ($results as $row) 
     {
         $row->name=stripslashes($row->name);
-        $smallgroups[$row->group_name].=$row->name."\n";
+        
+        if(empty($count[$row->group_name])){$count[$row->group_name]=1;}else{$count[$row->group_name]++;}
+        $smallgroups[$row->group_name].=$count[$row->group_name].') '.iconv('UTF-8', 'ISO-8859-1',$row->name)."\n";
+        $person++;
 
     }
 $groupname=array_keys($smallgroups);
@@ -75,7 +80,7 @@ $next_sunday=strtotime("this sunday");
 $whichtype=array();
 foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
 
-$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y",$next_sunday);
+$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y",$next_sunday).'  '.$person.' '.__('people','church-admin');
 $pdf->Cell(0,10,$text,0,2,C);
 $pageno+=1;
 
@@ -88,7 +93,7 @@ for($z=0;$z<=$counter-1;$z++)
 	  $pdf->AddPage('L','A4');
 	  $pdf->SetFont('Arial','B',16);
 	  $next_sunday=strtotime("this sunday");
-	  $text='Small Group List '.date("d-m-Y",$next_sunday);
+	  $text=__('Small Group List','church-admin').' '.date("d-m-Y",$next_sunday);
 	  $pdf->Cell(0,10,$text,0,2,C);
 	  $x=10;
 	  $y=30;
@@ -98,10 +103,10 @@ for($z=0;$z<=$counter-1;$z++)
 	if($pageno>1) {$newx=$x+(($z-($pageno*5))*$width);}
 	$pdf->SetXY($newx,$y);
 	$pdf->SetFont('Arial','B',10);
-	$pdf->Cell($width,10,$groupname[$z],1,0,C);
+	$pdf->Cell($width,10,iconv('UTF-8', 'ISO-8859-1',$groupname[$z]),1,1,C);
 	$pdf->SetFont('Arial','',10);
 	$pdf->SetXY($newx,$y+10);
-	$pdf->MultiCell($width,7,$smallgroups[$groupname[$z]],1,L);
+	$pdf->MultiCell($width,5,iconv('UTF-8', 'ISO-8859-1',$smallgroups[$groupname[$z]]),1,L);
 	$w++;
 	}
 $pdf->Output();
@@ -134,23 +139,23 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 	  if($people->people_type_id=='1')
 	  {
 		if(!empty($people->prefix))$prefix= $people->prefix.' '; 
-	    $last_name=$prefix.$people->last_name;
-	    $adults[]=$people->first_name;
-	    if($people->email!=end($emails)) $emails[]=$people->email;
-	    if($people->mobile!=end($mobiles))$mobiles[]=$people->mobile;
+	    $last_name=iconv('UTF-8', 'ISO-8859-1', $prefix.$people->last_name);
+	    $adults[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name);
+	    if($people->email!=end($emails)) iconv('UTF-8', 'ISO-8859-1',$emails[]=$people->email);
+	    if($people->mobile!=end($mobiles))$mobiles[]=iconv('UTF-8', 'ISO-8859-1',$people->mobile);
 	  }
 	  else
 	  {
-	    $children[]=$people->first_name;
+	    $children[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name);
 	  }
 	  
 	}
 	$addresses['address'.$counter]['name']=$last_name.', '.implode(" & ", $adults);
 	$addresses['address'.$counter]['kids']=implode(" , ", $children);
-	if(!empty($address->address))$addresses['address'.$counter]['address']=$address->address;
-	$addresses['address'.$counter]['email']=implode(", \n",array_filter($emails));
-	$addresses['address'.$counter]['mobile']=implode(", \n",array_filter($mobiles));
-	$addresses['address'.$counter]['phone']=$address->phone;
+	if(!empty($address->address))$addresses['address'.$counter]['address']=iconv('UTF-8', 'ISO-8859-1',$address->address);
+	$addresses['address'.$counter]['email']=iconv('UTF-8', 'ISO-8859-1',implode(", \n",array_filter($emails)));
+	$addresses['address'.$counter]['mobile']=iconv('UTF-8', 'ISO-8859-1',implode(", \n",array_filter($mobiles)));
+	$addresses['address'.$counter]['phone']=iconv('UTF-8', 'ISO-8859-1',$address->phone);
 	$counter++;
   }
   
@@ -197,6 +202,56 @@ $pdf->Output();
 
 //end of cache address list
 }
+function church_admin_people_csv($member_type_id=1,$people_type_id=1,$sex=1,$add=0,$sg=1)
+{
+	
+	global $wpdb;
+	$wpdb->show_errors();
+	if(!empty($add))$address=' LEFT JOIN '.CA_HOU_TBL.' ON '.CA_PEO_TBL.'.household_id='.CA_HOU_TBL.'.household_id ';
+	if(!empty($sg))$sg=' LEFT JOIN '.CA_SMG_TBL.' ON '.CA_PEO_TBL.'.smallgroup_id='.CA_SMG_TBL.'.id ';
+	if(!empty($sex))foreach($sex AS $key=>$value)$gender[]=CA_PEO_TBL.'.sex="'.$value.'"';
+	if(!empty($gender)){$genders=' WHERE ('.implode(' || ',$gender).') ';}else{$genders=' WHERE  ('.CA_PEO_TBL.'.sex=1 || '.CA_PEO_TBL.'.sex =0) ';}
+
+	
+	if(!empty($people_type_id))foreach($people_type_id AS $key=>$value){if(ctype_digit($value))$peoplesql[]=CA_PEO_TBL.'.people_type_id='.$value;}
+	if(!empty($peoplesql)) {$people_sql=' AND ('.implode(' || ',$peoplesql).') ';}else{$people_sql='';}
+	
+	if(!empty($member_type_id))foreach($member_type_id AS $key=>$value){if(ctype_digit($value))$membsql[]=CA_PEO_TBL.'.member_type_id='.$value;}
+	if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).') ';}else{$memb_sql='';}
+	$sql='SELECT '.CA_PEO_TBL.'.*';
+	if(!empty($sg)) $sql.=','.CA_SMG_TBL.'.group_name';
+	if(!empty($add))$sql.=','.CA_HOU_TBL.'.address FROM '.CA_PEO_TBL.$address.$sg.$genders.$people_sql.$memb_sql.'  ORDER BY last_name';
+	
+	$results = $wpdb->get_results($sql);
+	if($results)
+	{
+		$csv="First Name, Last Name, Email, Mobile";
+		if(!empty($add))$csv.=',Address';
+		if(!empty($sg))$csv.=',Small Group';
+		$csv.="\r\n";
+		foreach($results AS $row)
+		{
+			
+			$csv.='"'.$row->first_name.'","';
+			if(!empty($row->prefix))$csv.=$row->prefix.' ';
+			$csv.=$row->last_name.'","'.$row->email.'","'.$row->mobile.'"';
+			if(!empty($add))$csv.=',"'.$row->address.'"';
+			if(!empty($sg))$csv.=',"'.$row->group_name.'"';
+			$csv.="\r\n";
+		}
+		
+		    header('Content-Description: File Transfer');
+			header('Content-Type: application/octet-stream');
+			header('Content-Disposition: attachment; filename='.basename($file));
+			header('Content-Transfer-Encoding: binary');
+			header('Expires: 0');
+			header('Cache-Control: must-revalidate');
+			header('Pragma: public');
+			header("Content-Disposition: attachment; filename=\"people.csv\"");
+			echo $csv;
+			exit();
+	}		
+}
 
 function church_admin_label_pdf($member_type_id=1)
 {
@@ -222,7 +277,7 @@ if($results)
 	
 	$add='';
 	$address_row=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($row->household_id).'"');
-	$address=$address_row->address;
+	$address=iconv('UTF-8', 'ISO-8859-1',$address_row->address);
 	if(!empty($address))
 	{
 	    $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
@@ -231,8 +286,8 @@ if($results)
 	    {
 	      if($people->people_type_id=='1')
 	      {
-	        $last_name=$people->last_name;
-	        $adults[]=$people->first_name;
+	        $last_name=iconv('UTF-8', 'ISO-8859-1',$people->last_name);
+	        $adults[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name);
 	    }
 	    }	
 	    
@@ -552,7 +607,7 @@ foreach($results AS $row)
 	foreach($jobs AS $key=>$value)    
 	{
 	    $w=round(280*$widths[$key]);
-	    $text=church_admin_get_people($value);
+	    $text=iconv('UTF-8', 'ISO-8859-1',church_admin_get_people($value));
 	    $pdf->Cell($w,$h,"$text",1,0,'C',0);
 	}
     }

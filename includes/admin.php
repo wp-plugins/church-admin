@@ -32,25 +32,24 @@ function church_admin_front_admin()
 		<div id="post-body" class="metabox-holder columns-2">
 		    <!-- meta box containers here -->
 		    <form  method="get" action="">
-		        <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
-		        <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
-			<?php add_meta_box("church-admin-plugin-news", __('Church Admin Plugin News', 'church-admin'), "church_admin_plugin_news_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");?>
-			<?php  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'), "church_admin_shortcodes_meta_box", "church-admin");?>
-			
-			<?php add_meta_box("church-admin-communications", __('Communications', 'church-admin'), "church_admin_communications_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-recent-people-activity", __('Recent People Activity', 'church-admin'), "church_admin_recent_people_activity_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-sermons", __('Sermon mp3 podcasting', 'church-admin'), "church_admin_sermons_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-departments", __('Ministries', 'church-admin'), "church_admin_departments_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-member-types", __('Member Types', 'church-admin'), "church_admin_member_types_meta_box", "church-admin");?>
-			<?php add_meta_box("churchadmin-follow-up", __('Follow Up', 'church-admin'), "church_admin_followup_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-calendar", __('Calendar', 'church-admin'), "church_admin_calendar_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-small_groups", __('Small Groups', 'church-admin'), "church_admin_smallgroups_meta_box", "church-admin");?>
-			<?php add_meta_box("church-admin-attendance", __('Attendance', 'church-admin'), "church_admin_attendance_meta_box", "church-admin");?>
-			<?php  add_meta_box("church-admin-services", __('Services', 'church-admin'), "church_admin_services_meta_box", "church-admin");?>
-			<?php do_meta_boxes('church-admin','advanced',null);?>
+		        <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
+		    wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
+			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-plugin-news", __('Church Admin Plugin News', 'church-admin'), "church_admin_plugin_news_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'), "church_admin_shortcodes_meta_box", "church-admin");
+			if(church_admin_level_check('Bulk Email')){	add_meta_box("church-admin-communications", __('Communications', 'church-admin'), "church_admin_communications_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-recent-people-activity", __('Recent People Activity', 'church-admin'), "church_admin_recent_people_activity_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");}
+			if(church_admin_level_check('Sermons'))	add_meta_box("church-admin-sermons", __('Sermon mp3 podcasting', 'church-admin'), "church_admin_sermons_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){ 	add_meta_box("church-admin-departments", __('Ministries', 'church-admin'), "church_admin_departments_meta_box", "church-admin");}
+			if(church_admin_level_check('Member Type')){	add_meta_box("church-admin-member-types", __('Member Types', 'church-admin'), "church_admin_member_types_meta_box", "church-admin");}
+			if(church_admin_level_check('Funnel')){ 	add_meta_box("churchadmin-follow-up", __('Follow Up', 'church-admin'), "church_admin_followup_meta_box", "church-admin");}
+			if(church_admin_level_check('Rota')){ 		add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");}
+			if(church_admin_level_check('Calendar')){ 	add_meta_box("church-admin-calendar", __('Calendar', 'church-admin'), "church_admin_calendar_meta_box", "church-admin");}
+			if(church_admin_level_check('Small Groups')){ 	add_meta_box("church-admin-small_groups", __('Small Groups', 'church-admin'), "church_admin_smallgroups_meta_box", "church-admin");}
+			if(church_admin_level_check('Attendance')){	add_meta_box("church-admin-attendance", __('Attendance', 'church-admin'), "church_admin_attendance_meta_box", "church-admin");}
+			if(church_admin_level_check('Service')){  add_meta_box("church-admin-services", __('Services', 'church-admin'), "church_admin_services_meta_box", "church-admin");}
+			do_meta_boxes('church-admin','advanced',null);?>
 		    </form>
 		</div>
 	</div>
@@ -111,7 +110,7 @@ function church_admin_recent_people_activity_meta_box()
 }
 function church_admin_people_functions_meta_box()
 {
-    global $member_type;
+    global $member_type,$people_type;
     		global $wpdb;
 		//check to see if directory is populated!
     $check=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL);
@@ -125,7 +124,9 @@ echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;acti
     }
     else
     {//people stored in directory
-		echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_migrate_users','migrate_users').'">'.__('Import Wordpress Users (only new ones added)','church-admin').'</a></p>';
+				echo'<p><label>'.__('Search','church-admin').'</label><form name="ca_search" action="admin.php?page=church_admin/index.php&amp;action=church_admin_search" method="POST"><input name="ca_search" style="width:100px;" type="text"/><input type="submit" value="Go"/></form></p>';
+			    
+				echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_migrate_users','migrate_users').'">'.__('Import Wordpress Users (only new ones added)','church-admin').'</a></p>';
 			    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a></p>';
 			    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people','edit_people').'">'.__('Add a new person (not connected to a current household)','church-admin').'</a></p>';
 			    echo'<p><label>Select Address List</label><form name="address" action="admin.php?page=church_admin/index.php&amp;action=church_admin_address_list" method="POST"><select onchange="this.form.submit();" name="member_type_id" >';
@@ -135,7 +136,6 @@ echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;acti
 				echo '<option value="'.$key.'" >'.$value.'</option>';
 			    }
 			    echo'</select></form></p>';
-			    echo'<p><label>'.__('Search','church-admin').'</label><form name="ca_search" action="admin.php?page=church_admin/index.php&amp;action=church_admin_search" method="POST"><input name="ca_search" style="width:100px;" type="text"/><input type="submit" value="Go"/></form></p>';
 			    echo '<p>'.__('Download an address list PDF','church-admin').'</p><p>';
 			    if(!empty($member_type))
 			    {
@@ -149,6 +149,24 @@ echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;acti
 				}
 			    }
 			    echo'</p>';
+			    echo'<h2>'.__('Download an csv of people','church-admin').'</h2>';
+			    echo'<form action="'.home_url().'" method="get">';
+			    foreach($member_type AS $key=>$value)
+				{
+						echo '<p><label>'.$value.'</label><input type="checkbox" name="member_type_id[]" value="'.$key.'"/></p>';
+				}
+				foreach($people_type AS $key=>$value)
+				{
+						echo '<p><label>'.$value.'</label><input type="checkbox" name="people_type_id[]" value="'.$key.'"/></p>';
+				}
+				echo'<p><label>Male</label><input type="checkbox" name="sex[]" value="1" /><br/>';
+				echo'<p><label>Female</label><input type="checkbox" name="sex[]" value="0" /><br/>';
+				echo'<p><label>Include Address</label><input type="checkbox" name="address" value="1" /><br/>';
+				echo'<p><label>Include Small Group</label><input type="checkbox" name="small_group" value="1" /><br/>';
+				echo'<input type="hidden" name="download" value="people-csv"/><input type="submit" value="Download"/></p>';
+			    echo'</form>';
+			    
+			    
     }//people in directory
 }
 

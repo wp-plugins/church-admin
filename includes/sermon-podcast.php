@@ -490,7 +490,7 @@ function ca_podcast_file_add($file_name=NULL)
     else
     {//form
         echo '<form action="" method="POST" id="churchAdminForm" enctype="multipart/form-data">';
-        echo'<p><label for="file_title">File Title</label><input type="text" name="file_title" id="file_title" ';
+        echo'<p><label for="file_title">File Title</label><input type="text" name="file_title" id="file_name" ';
         if(!empty($current_data->file_title)) echo 'value="'.esc_html($current_data->file_title).'"';
         echo'/></p>';
         echo'<p><label for="file_subtitle">File SubTitle (a few words)</label><input type="text" name="file_subtitle" id="file_subtitle" ';

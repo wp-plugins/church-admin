@@ -1,4 +1,30 @@
 <?php
+
+function church_admin_level_check($what)
+{
+    global $current_user;
+    get_currentuserinfo();
+    $user_permissions=get_option('church_admin_user_permissions');
+    $level=get_option('church_admin_levels');
+    if(!empty($user_permissions)&&!empty($user_permissions[$what])&& is_array($user_permissions[$what]))
+    {//user permissions have been set for $what
+		$people_id=church_admin_user($current_user->ID);
+		if(!empty($people_id)&& in_array($people_id,$user_permissions[$what]))return TRUE;
+	}//end user permissions have been set
+    elseif($level[$what]=="administrator"){return current_user_can('manage_options');}
+    elseif($level[$what]=="editor"){return current_user_can('delete_others_pages');}
+    elseif($level[$what]=="author"){return current_user_can('publish_posts');}
+    elseif($level[$what]=="contributor"){return current_user_can('edit_posts');}
+    elseif($level[$what]=="subscriber"){return current_user_can('read');}
+    else{ return false;}
+}
+
+function church_admin_user($ID)
+{
+		global $wpdb;
+		$people_id=$wpdb->get_var('SELECT people_id FROM '.CA_PEO_TBL.' WHERE user_id="'.esc_sql($ID).'"');
+		if(!empty($people_id)) {return $people_id;}else{return FALSE;}
+}
 function church_admin_collapseBoxForUser($userId, $boxId) {
     $optionName = "closedpostboxes_church-admin";
     $close = get_user_option($optionName, $userId);
@@ -216,6 +242,7 @@ function church_admin_update_order($which='member_type')
         {
             case'member_type':$tb=CA_MTY_TBL;$field='member_type_order';$id='member_type_id';break;
             case'rota_settings':$tb=CA_RST_TBL;$field='rota_order';$id='rota_id';break;
+            case'small_groups':$tb=CA_SMG_TBL;$field='smallgroup_order';$id='id';break;
         }
         $order=explode(",",$_POST['order']);
         foreach($order AS $order=>$row_id)

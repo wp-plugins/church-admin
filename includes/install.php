@@ -352,6 +352,13 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
     $sql='ALTER TABLE  '.CA_RST_TBL.' ADD department_id INT(11) DEFAULT 1';
     $wpdb->query($sql);
  }
+  if($wpdb->get_var('SHOW COLUMNS FROM '.CA_SMG_TBL.' LIKE "smallgroup_order"')!='smallgroup_order')
+{
+    $sql='ALTER TABLE  '.CA_SMG_TBL.' ADD smallgroup_order INT(11)';
+    $wpdb->query($sql);
+    
+ }
+ 
  if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "rota_order"')!='rota_order')
 {
     $sql='ALTER TABLE  '.CA_RST_TBL.' ADD rota_order INT(11)';

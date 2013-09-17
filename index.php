@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.565
+Version: 0.567
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.565';
+$church_admin_version = '0.567';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -225,7 +225,17 @@ $rota_order=ca_rota_order();
     $member_type=church_admin_member_type_array();
     $departments=get_option('church_admin_departments');
     $level=get_option('church_admin_levels');
-    if(empty($level)||count($level)<10){$level=array(__('Directory','church-admin')=>'administrator',__('Small Groups','church-admin')=>'administrator',__('Rota','church-admin')=>'administrator',__('Funnel','church-admin')=>'administrator',__('Bulk Email','church-admin')=>'administrator',__('Bulk SMS','church-admin')=>'administrator','Vistor'=>'administrator','Calendar'=>'administrator','Attendance'=>'administrator','Service'=>'administrator');update_option('church_admin_levels',$level);}
+    if(empty($level['Directory']))$level['Directory']='administrator';
+    if(empty($level['Small Groups']))$level['Small Groups']='administrator';
+    if(empty($level['Rota']))$level['Rota']='administrator';
+    if(empty($level['Funnel'])) $level['Funnel']='administrator';
+    if(empty($level['Bulk Email']))$level['Bulk Email']='administrator';
+    if(empty($level['Bulk SMS']))$level['Bulk SMS']='administrator';
+    if(empty($level['Calendar']))$level['Calendar']='administrator';
+    if(empty($level['Attendance']))$level['Attendance']='administrator';
+    if(empty($level['Member Type']))$level['Member Type']='administrator';
+    if(empty($level['Service']))$level['Service']='administrator';
+    update_option('church_admin_levels',$level);
     
     $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
     
@@ -389,18 +399,7 @@ function ca_thumbnails()
     
 }
 /* Thumbnails */
-function church_admin_level_check($what)
-{
-    global $current_user;
-    $level=get_option('church_admin_levels');
-    // print_r($level);
-    if($level[$what]=="administrator"){return current_user_can('manage_options');}
-    elseif($level[$what]=="editor"){return current_user_can('delete_others_pages');}
-    elseif($level[$what]=="author"){return current_user_can('publish_posts');}
-    elseif($level[$what]=="contributor"){return current_user_can('edit_posts');}
-    elseif($level[$what]=="subscriber"){return current_user_can('read');}
-    else{ return false;}
-}
+
 
 
 
@@ -780,6 +779,7 @@ function church_admin_download($file)
 {
     switch($file)
     {
+		case 'people-csv':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_people_csv($_GET['member_type_id'],$_GET['people_type_id'],$_GET['sex'],$_GET['address'],$_GET['small_group']);break;
 		case 'small-group-xml':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_small_group_xml();break;
 		case 'address-xml':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_xml($_GET['member_type_id'],$_GET['small_group']);break;
         case'cron-instructions':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_cron_pdf();break;

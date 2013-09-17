@@ -5,9 +5,9 @@ function church_admin_small_groups()
 //function to output small group list	
 global $wpdb;
 $out='<div class="wrap church_admin"><h2>Small Groups</h2><p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_small_group",'edit_small_group').'">Add a small group</a></p>
-<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Group Name</th><th>Leaders</th><th>When</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Group Name</th><th>Leaders</th><th>When</th></tr></tfoot><tbody>';
+<table  id="sortable" class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Group Name</th><th>Leaders</th><th>When</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Group Name</th><th>Leaders</th><th>When</th></tr></tfoot><tbody class="content">';
 //grab small group information
-$sg_sql = 'SELECT * FROM '.CA_SMG_TBL.' ORDER BY id';
+$sg_sql = 'SELECT * FROM '.CA_SMG_TBL.' ORDER BY smallgroup_order';
 $sg_results = $wpdb->get_results($sg_sql);
 foreach ($sg_results as $sg_row) 
     {
@@ -28,16 +28,56 @@ foreach ($sg_results as $sg_row)
         
         if($sg_row->id!=1)
 	{
-	    $out.='<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_small_group').'">[Edit]</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_small_group').'">[Delete]</a></td><td>'.esc_html(stripslashes($sg_row->group_name)).'</td><td>'.implode(", ",$ldr).'</td><td>'.esc_html(stripslashes($sg_row->whenwhere)).'</td></tr>';
+	    $out.='<tr class="sortable-row" id="'.$sg_row->id.'"><td><a href="'.wp_nonce_url($edit_url, 'edit_small_group').'">[Edit]</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_small_group').'">[Delete]</a></td><td>'.esc_html(stripslashes($sg_row->group_name)).'</td><td>'.implode(", ",$ldr).'</td><td>'.esc_html(stripslashes($sg_row->whenwhere)).'</td></tr>';
        
 	}
         else
 	{
-	   $out.='<tr><td>&nbsp;</td><td>&nbsp;</td><td>'.esc_html(stripslashes($sg_row->group_name)).'</td><td>&nbsp;</td><td>'.esc_html(stripslashes($sg_row->whenwhere)).'</td></tr>';
+	   $out.='<tr class="sortable-row" id="'.$sg_row->id.'"><td>&nbsp;</td><td>&nbsp;</td><td>'.esc_html(stripslashes($sg_row->group_name)).'</td><td>&nbsp;</td><td>'.esc_html(stripslashes($sg_row->whenwhere)).'</td></tr>';
        
 	}
     } 
 $out.="</tbody></table></div>";
+$out.= '
+    <script type="text/javascript">
+  
+ jQuery(document).ready(function($) {
+ 
+    var fixHelper = function(e,ui){
+            ui.children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
+        };
+    var sortable = $("#sortable tbody.content").sortable({
+    helper: fixHelper,
+    stop: function(event, ui) {
+        //create an array with the new order
+        
+       
+				var Order = "order="+$(this).sortable(\'toArray\').toString();
+
+        console.log(Order);
+        
+        $.ajax({
+            url: "admin.php?page=church_admin/index.php&action=church_admin_update_order&which=small_groups",
+            type: "post",
+            data:  Order,
+            error: function() {
+                console.log("theres an error with AJAX");
+            },
+            success: function() {
+                console.log("Saved.");
+            }
+        });}
+});
+$("#sortable tbody.content").disableSelection();
+});
+
+   
+   
+    </script>
+';
 echo $out;	
 }
 //end of small group information function
