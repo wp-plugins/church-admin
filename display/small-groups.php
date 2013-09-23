@@ -11,7 +11,7 @@ function church_admin_frontend_small_groups($member_type_id=1)
 	//show small groups 
 	$leader=array();
 	
-	$sql='SELECT * FROM '.CA_SMG_TBL;
+	$sql='SELECT * FROM '.CA_SMG_TBL .' ORDER BY smallgroup_order';
 
 	$results = $wpdb->get_results($sql);    
 	foreach ($results as $row) 

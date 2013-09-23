@@ -1,21 +1,25 @@
 <?php
-
+function church_admin_checkdate($date)
+{
+		$d=explode('-',$date);
+		if(is_array($d) && count($d)==3 && checkdate($d[1],$d[2],$d[0])){return TRUE;}else{return FALSE;}
+}
 function church_admin_level_check($what)
 {
     global $current_user;
     get_currentuserinfo();
     $user_permissions=get_option('church_admin_user_permissions');
     $level=get_option('church_admin_levels');
-    if(!empty($user_permissions)&&!empty($user_permissions[$what])&& is_array($user_permissions[$what]))
+    if(!empty($user_permissions))
     {//user permissions have been set for $what
-		$people_id=church_admin_user($current_user->ID);
-		if(!empty($people_id)&& in_array($people_id,$user_permissions[$what]))return TRUE;
+		
+		if( in_array($current_user->ID,maybe_unserialize($user_permissions[$what]))){return TRUE;}else{return FALSE;}
 	}//end user permissions have been set
-    elseif($level[$what]=="administrator"){return current_user_can('manage_options');}
-    elseif($level[$what]=="editor"){return current_user_can('delete_others_pages');}
-    elseif($level[$what]=="author"){return current_user_can('publish_posts');}
-    elseif($level[$what]=="contributor"){return current_user_can('edit_posts');}
-    elseif($level[$what]=="subscriber"){return current_user_can('read');}
+    elseif(!empty($level[$what]) && $level[$what]=="administrator"){return current_user_can('manage_options');}
+    elseif(!empty($level[$what]) && $level[$what]=="editor"){return current_user_can('delete_others_pages');}
+    elseif(!empty($level[$what]) &&$level[$what]=="author"){return current_user_can('publish_posts');}
+    elseif(!empty($level[$what]) &&$level[$what]=="contributor"){return current_user_can('edit_posts');}
+    elseif(!empty($level[$what]) &&$level[$what]=="subscriber"){return current_user_can('read');}
     else{ return false;}
 }
 
@@ -37,7 +41,7 @@ function church_admin_collapseBoxForUser($userId, $boxId) {
 
 
 
-function church_admin_autocomplete($name='people',$first_id='friends',$second_id='to',$current_data=array(),$department_id=NULL)
+function church_admin_autocomplete($name='people',$first_id='friends',$second_id='to',$current_data=array(),$user_id=FALSE)
 {
             /**
  *
@@ -54,14 +58,26 @@ function church_admin_autocomplete($name='people',$first_id='friends',$second_id
     if(!empty($current_data))
     {
         $curr_data=maybe_unserialize($current_data);
+        
         if(is_array($curr_data))
-	{
-	    foreach($curr_data AS $key=>$value)
-	    {
-	        if(ctype_digit($value))$value=church_admin_get_person($value);
-	        $current.=$value.', ';
-	    }
-	}else$current=$current_data;
+		{
+			foreach($curr_data AS $key=>$value)
+			{
+				
+				if(ctype_digit($value))
+				{
+						if(!$user_id)
+						{//people_id
+							$peoplename=church_admin_get_person($value);
+						}
+						else
+						{//user_id
+							$peoplename=church_admin_get_name_from_user($value);
+						}	
+				}
+				$current.=$peoplename.', ';
+			}
+		}else$current=$current_data;
     }
     $out= '<input id="'.$first_id.'" class="to" type="text" name="'.$name.'" value="'.$current.'"/> ';
     $out.='<script type="text/javascript">
@@ -129,7 +145,24 @@ function church_admin_get_person($id)
     $name=$wpdb->get_var('SELECT CONCAT_WS(" ",first_name,last_name) FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($id).'"');
     if($name){return $name;}else{return FALSE;}
 }
-
+function church_admin_get_name_from_user($id)
+{
+             /**
+ *
+ * Returns person's names from user_id
+ * 
+ * @author  Andy Moyle
+ * @param    $id
+ * @return   string
+ * @version  0.1
+ *
+ *
+*/
+ global $wpdb;
+ $wpdb->show_errors;
+    $name=$wpdb->get_var('SELECT CONCAT_WS(" ",first_name,last_name) FROM '.CA_PEO_TBL.' WHERE user_id="'.esc_sql($id).'"');
+    if($name){return $name;}else{return FALSE;}
+}
 function church_admin_get_people($idArray)
 {
          /**
@@ -197,7 +230,38 @@ function church_admin_get_people_id($name)
     
     return maybe_serialize(array_filter($people_ids));
 }
-
+function church_admin_get_user_id($name)
+{
+        /**
+ *
+ * Returns serialized array of user_id if $name is in DB
+ * 
+ * @author  Andy Moyle
+ * @param    $name
+ * @return   serialized array
+ * @version  0.1
+ * 
+ */
+    global $wpdb;    
+    $names=explode(',',$name);
+    
+    $user_ids=array();
+    if(!empty($names))
+    {
+        foreach($names AS $key=>$value)
+        {
+			$value=trim($value);
+            if(!empty($value))
+            {//only look if a name stored!
+                $sql='SELECT user_id FROM '.CA_PEO_TBL.' WHERE CONCAT_WS(" ",first_name,last_name) REGEXP "^'.esc_sql($value).'" LIMIT 1';
+                $result=$wpdb->get_var($sql);
+                if($result){$user_ids[]=$result;}else{echo '<p>'.esc_html($value).' is not stored by Church Admin as  Wordpress User</p>';}
+            }
+        }
+    }
+    
+    return maybe_serialize(array_filter($user_ids));
+}
 
 function church_admin_ajax_people()
 {

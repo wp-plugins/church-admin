@@ -503,7 +503,7 @@ $out.='</select></p>
 $out.='<script type="text/javascript">
       jQuery(document).ready(function(){
          jQuery(\'#start_date\').datepicker({
-            dateFormat : "'." d MM yy".'", changeYear: true ,yearRange: "2011:'.date('Y',time()+60*60*24*365*10).'"
+            dateFormat : "'."yy-mm-dd".'", changeYear: true ,yearRange: "2011:'.date('Y',time()+60*60*24*365*10).'"
          });
       });
    </script>';

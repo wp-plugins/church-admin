@@ -257,10 +257,11 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	$task_result=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 	if(!empty($_POST['edit_rota']))
     	{
+			
 	    	    
-	    if(!empty($_POST['rota_date']))
+	    if(!empty($_POST['rota_date'])&& church_admin_checkdate($_POST['rota_date']))
 	    {
-	        $date=date('Y-m-d',strtotime($_POST['rota_date']));
+	        $date=$_POST['rota_date'];
 	    }
 	    
 	    $jobs=array();
@@ -295,13 +296,13 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    {
 	        
 	        $next_date=$wpdb->get_var('SELECT DATE_ADD(MAX(rota_date), INTERVAL 7 DAY) FROM '.$wpdb->prefix.'church_admin_rotas LIMIT 1');
-	        if(empty($next_date))$next_date=date("D, d MM yy",strtotime("next Sunday"));
+	        if(empty($next_date))$next_date=date("Y-m-d",strtotime("next Sunday"));
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
 	         echo'<h2>Add to rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
 		echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#rota_date\').datepicker({dateFormat : "yy-mm-dd", changeYear: true });});</script>';
 	
 		 echo'<p><label>Rota Date:</label><input type="text" id="rota_date" name="rota_date" ';
-	        if(!empty($next_date)) echo ' value="'.mysql2date("d M Y",$next_date).'" ';
+	        if(!empty($next_date)) echo ' value="'.$next_date.'" ';
 		echo'/></p>';
 	    
 	    }else
@@ -320,7 +321,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	        echo '<p><label>'.$task_row->rota_task.':</label>';
 		if(!empty($task_row->department_id))
 		{
-		    $current=$job[$task_row->rota_id];
+		    if(!empty($job[$task_row->rota_id])){$current=$job[$task_row->rota_id];}else{$current='';}
 		    
 		    echo church_admin_autocomplete($task_row->rota_id,'friends'.$task_row->rota_task,'to'.$task_row->rota_task,$current,$task_row->department_id);
 		}
@@ -354,7 +355,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	}//end form
     
     }//service chosen
-    ?></div><?php
+    
 
 
 }

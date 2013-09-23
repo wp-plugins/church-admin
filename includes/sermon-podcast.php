@@ -479,7 +479,7 @@ function ca_podcast_file_add($file_name=NULL)
         }//end update
         else
         {//insert
-            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_subtitle,file_title,file_description,private,length,series_id,speaker,pub_date,last_modified)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sql['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$pub_date.'","'.date("Y-m-d H:i:s" ).'")';
+            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_subtitle,file_title,file_description,private,length,series_id,speaker,pub_date,last_modified)VALUES("'.$file_name.'","'.$sqlsafe['file_subtitle'].'","'.$sql['file_title'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$pub_date.'","'.date("Y-m-d H:i:s" ).'")';
            
             $wpdb->query($sql);
         }//end insert

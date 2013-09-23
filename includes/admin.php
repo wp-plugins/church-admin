@@ -18,6 +18,7 @@ function church_admin_front_admin()
     /* Add screen option: user can choose between 1 or 2 columns (default 2) */
     add_screen_option('layout_columns', array('max' => 2, 'default' => 2) );
     
+    $user_permissions=get_option('church_admin_user_permissions');
     
     ?>
     <div class="wrap" id="church-admin">
@@ -355,6 +356,13 @@ function church_admin_shortcodes_meta_box()
     //member map
     echo'<h2>Member Map</h2>';
     echo'<p><strong>[church_admin_map member_type_id=# zoom=13 small_group=1]</strong> - zoom is Google map zoom level, small_group=1 for different colours for small groups, 0 for all in red</p>';
+
+	//Attendance
+	 echo'<h2>Attendance</h2>';
+    echo'<p><strong>[church_admin type="weekly-attendance" year=# service_id=# ]</strong> - Displays graph image 700x500px; year is a single year currently eg 2013, service_id which service</p>';
+    echo'<p><strong>[church_admin type="monthly-attendance" year=# service_id=# ]</strong> -Displays graph image 700x500px, year is a single year currently eg 2013, service_id which service</p>';
+    
+
 }
 
 ?>

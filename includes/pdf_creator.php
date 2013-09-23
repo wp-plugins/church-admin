@@ -23,7 +23,7 @@ function church_admin_cron_pdf()
  
     $pdf->Image(CHURCH_ADMIN_IMAGES_PATH.'cron-job1.jpg','10','65','','','jpg','');
     $pdf->SetXY(10,180);
-    $text=__("In the common settings option - select 'Once an Hour'. \r\nIn 'Command to run' put this:\r\n".$command."\r\n and then click Add Cron Job. Job Done. Don't forget to test it by sending an email to yourself at a few minutes before the hour! ",'church-admin');
+    $text="In the common settings option - select 'Once an Hour'. \r\nIn 'Command to run' put this:\r\n".$command."\r\n and then click Add Cron Job. Job Done. Don't forget to test it by sending an email to yourself at a few minutes before the hour! ";
     $pdf->MultiCell(0, 10, $text );
     }
     else
@@ -531,7 +531,7 @@ $pdf->AddPage('L',get_option('church_admin_pdf_size'));
 $pdf->AddFont('Verdana','','verdana.php');
 $pdf->SetFont('Verdana','',16);
 $text='Sunday Rota '.date("d-m-Y");
-$pdf->Cell(0,10,$text,0,2,C);
+$pdf->Cell(0,10,$text,0,2,'C');
 $pdf->SetFont('Verdana','',5);
 
 //column headers query
@@ -574,7 +574,7 @@ foreach($size AS $key=>$value)$widths[$key]=$size[$key]/$totalcharas;
 $h=12;
 $w=280*(12/$totalcharas);
 
-$pdf->Cell($w,$h,"Date",1,0,C,0);
+$pdf->Cell($w,$h,"Date",1,0,'C',0);
 foreach($colres AS $colrow)
 {
     if($widths[$colrow->rota_id]>0)
@@ -583,7 +583,7 @@ foreach($colres AS $colrow)
             $w=round(280*$widths[$colrow->rota_id]);
        
         
-        $pdf->Cell($w,$h,"{$colrow->rota_task}",1,0,'C',0);
+        $pdf->Cell($w,$h,iconv('UTF-8', 'ISO-8859-1',$colrow->rota_task),1,0,'C',0);
     } 
     
 }

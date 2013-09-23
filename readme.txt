@@ -244,6 +244,9 @@ Clear out files
 * People CSV spreadsheet download added into admin people meta box
 * Fix diacritics (language accents) misprinting in pdfs
 * Admin meta boxes only show for those with permissions
+= 0.568 =
+* Add individual user permissions
+* Fix date picker to force ISO to internationalise
 
 == Upgrade Notice ==
 * 0.566 required

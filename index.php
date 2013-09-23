@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.567
+Version: 0.568
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.567';
+$church_admin_version = '0.568';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -339,12 +339,12 @@ wp_enqueue_script('common');
     if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_series_event_edit'||$_GET['action']=='church_admin_single_event_edit'||$_GET['action']=='church_admin_edit_attendance'))
     {
         wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_enqueue_style( 'jquery.ui.theme', plugins_url( '/css/jquery-ui-1.8.21.custom.css', __FILE__ ) );
+        wp_enqueue_style( 'jquery.ui.theme', CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css' );
     }
     if(isset($_GET['page']) &&$_GET['page']=='church_admin_add_attendance')
     {
         wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_enqueue_style( 'jquery.ui.theme', plugins_url( '/css/jquery-ui-1.8.21.custom.css', __FILE__ ) );
+        wp_enqueue_style( 'jquery.ui.theme', CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css' );
     }
     if(isset($_GET['action']) &&$_GET['action']=='church_admin_add_category')
     {
@@ -355,11 +355,17 @@ wp_enqueue_script('common');
     {
         wp_enqueue_script( 'jquery-ui-sortable' );
     }
-    if(isset($_GET['action'])&& ($_GET['action']=='edit_file'||$_GET['action']=='file_add'||$_GET['action']=='church_admin_edit_rota'))
+    if(isset($_GET['action'])&& ($_GET['action']=='permissions'||$_GET['action']=='edit_file'||$_GET['action']=='file_add'||$_GET['action']=='church_admin_edit_rota'))
     {//autocomplete scripts
         wp_enqueue_script( 'jquery-ui-datepicker' ); 
         wp_enqueue_script('jquery-ui-autocomplete');
-	wp_enqueue_style( 'jquery.ui.theme', plugins_url( '/css/jquery-ui-1.8.21.custom.css', __FILE__ ) );
+	wp_enqueue_style( 'jquery.ui.theme',  CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css' );
+    }
+    if(isset($_GET['page'])&& $_GET['page']=='church_admin_permissions')
+    {//autocomplete scripts
+        wp_enqueue_script( 'jquery-ui-datepicker' ); 
+        wp_enqueue_script('jquery-ui-autocomplete');
+	wp_enqueue_style( 'jquery.ui.theme',  CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css');
     }
     if(isset($_GET['action'])&&$_GET['action']=='church_admin_update_order')
     {
@@ -422,6 +428,7 @@ if(isset($_GET['page'])&&$_GET['page']=='church_admin_service_list')require(CHUR
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_funnel_list'){require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');}
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_member_type')require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_department_list')require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');
+if(isset($_GET['page'])&&$_GET['page']=='church_admin_permissions')require(CHURCH_ADMIN_INCLUDE_PATH.'permissions.php');
 //Build Admin Menus
 add_action('admin_menu', 'church_admin_menus');
 function church_admin_menus() 
@@ -438,20 +445,12 @@ function church_admin_menus()
  * 
  */ 
     global $level;
-    add_menu_page('church_admin:Administration', __('Church Admin','church-admin'),  'administrator', 'church_admin/index.php', 'church_admin_main');
-/*    add_submenu_page('church_admin/index.php', 'Directory List', 'Directory List', $level['Directory'], 'church_admin_address_list', 'church_admin_address_list');
-    add_submenu_page('church_admin/index.php', 'Follow Up Funnels', 'Follow Up Funnels', $level['Funnel'], 'church_admin_funnel_list', 'church_admin_funnel_list');
-    add_submenu_page('church_admin/index.php', 'Church Departments', 'Church Departments', 'administrator', 'church_admin_department_list', 'church_admin_department_list');
-    add_submenu_page('church_admin/index.php', 'Small Group List', 'Small Group List', $level['Small Groups'], 'church_admin_small_groups', 'church_admin_small_groups');
-    add_submenu_page('church_admin/index.php', 'Rota List', 'Rota List', $level['Rota'], 'church_admin_rota_list', 'church_admin_rota_list');
-    add_submenu_page('church_admin/index.php', 'Calendar', 'Calendar', $level['Calendar'], 'church_admin_calendar', 'church_admin_calendar');
-    add_submenu_page('church_admin/index.php', 'Attendance', 'Attendance', $level['Attendance'], 'church_admin_attendance_metrics', 'church_admin_attendance_metrics');
-    add_submenu_page('church_admin/index.php', 'Services', 'Services', $level['Service'], 'church_admin_service_list', 'church_admin_service_list');
-    if(get_option('church_admin_sms_username'))add_submenu_page('church_admin/index.php', 'Send Bulk SMS', 'Send Bulk SMS', $level['Bulk SMS'], 'church_admin_send_sms', 'church_admin_send_sms');
-    if( get_option('church_admin_cron')=='wp-cron'||file_exists(CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php')) add_submenu_page('church_admin/index.php', 'Bulk Email', 'Send Bulk Email', $level['Bulk Email'], 'church_admin_send_email', 'church_admin_send_email');    
-    add_submenu_page('church_admin/index.php', 'Member Types', 'Member Types', 'administrator', 'church_admin_member_type', 'church_admin_member_type');
-*/
-    add_submenu_page('church_admin/index.php', __('Settings','church-admin'), 'Settings', 'administrator', 'church_admin_settings', 'church_admin_settings');
+    $user_permissions=get_option('church_admin_user_permissions');
+    //let plugin decide level of showing admin menu
+    if(!empty($user_permissions)){$level='read';}else{$level='manage_options';}
+    add_menu_page('church_admin:Administration', __('Church Admin','church-admin'),  $level, 'church_admin/index.php', 'church_admin_main');
+    add_submenu_page('church_admin/index.php', __('Permissions','church-admin'), 'Permissions', 'manage_options', 'church_admin_permissions', 'church_admin_permissions');
+    add_submenu_page('church_admin/index.php', __('Settings','church-admin'), 'Settings', 'manage_options', 'church_admin_settings', 'church_admin_settings');
 
 }
 
@@ -472,7 +471,8 @@ function mytheme_admin_bar_render() {
  // Here we add a customer support URL link
  $wp_admin_bar->add_menu( array('parent' => false, 'id' => 'church_admin', 'title' => __('Church Admin','church-admin'), 'href' => admin_url().'admin.php?page=church_admin/index.php' ));
  $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'church_admin_settings', 'title' => __('Settings','church-admin'), 'href' => admin_url().'admin.php?page=church_admin/index.php&action=church_admin_settings' ));
- $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'plugin_support', 'title' => __('Plugin Support','church-admin'), 'href' => 'http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support' ));
+	$wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'church_admin_permissions', 'title' => __('Permissions','church-admin'), 'href' => admin_url().'admin.php?page=church_admin_permissions' ));
+  $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'plugin_support', 'title' => __('Plugin Support','church-admin'), 'href' => 'http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support' ));
 }
 
 // Finally we add our hook function
@@ -521,6 +521,8 @@ function church_admin_main()
     {
 	switch($_GET['action'])
 	{
+		//premissions
+		case'permissions':require_once(CHURCH_ADMIN_INCLUDE_PATH.'permissions.php');church_admin_permissions();break;
 	//backups
 	    case'refresh_backup':check_admin_referer('refresh_backup');church_admin_backup();church_admin_front_admin();break;
 	    case'delete_backup':check_admin_referer('delete_backup');church_admin_delete_backup();church_admin_front_admin();break;
@@ -624,7 +626,7 @@ function church_admin_main()
 function church_admin_shortcode($atts, $content = null) 
 {
 	
-    extract(shortcode_atts(array("type" => 'address-list','photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL), $atts));
+    extract(shortcode_atts(array("type" => 'address-list','year'=>date('Y'),'service_id'=>1,'photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL), $atts));
     church_admin_posts_logout();
     $out='';
     global $wpdb;
@@ -690,9 +692,33 @@ function church_admin_shortcode($atts, $content = null)
             require_once(CHURCH_ADMIN_DISPLAY_PATH."rota.php");
             $out.=church_admin_front_end_rota();
         break;
-        
-		case 'monthly-average':
-			if(file_exists(CHURCH_ADMIN_CACHE_PATH.'attendance-graph.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'attendance-graph.png" alt="'.__('Average Attendance Graph','church-admin').'"/>';
+        case 'rolling-average-attendance':
+		
+			if(!file_exists(CHURCH_ADMIN_EMAIL_CACHE.'rolling-average-attendance.png'))
+			{
+				require(CHURCH_ADMIN_INCLUDE_PATH.'graph.php');
+				church_admin_rolling_attendance_graph($service_id);
+			}
+			$out.='<img src="'.CHURCH_ADMIN_EMAIL_CACHE_URL.'rolling-average-attendance.png" alt="'.__('Rolling Average Attendance Graph','church-admin').'" width="700" height="500"/>';
+        break;
+
+        case 'monthly-attendance':
+		
+			if(!file_exists(CHURCH_ADMIN_EMAIL_CACHE.'monthly-attendance'.$year.'.png'))
+			{
+				require(CHURCH_ADMIN_INCLUDE_PATH.'graph.php');
+				church_admin_monthly_attendance_graph($year,$service_id);
+			}
+			$out.='<img src="'.CHURCH_ADMIN_EMAIL_CACHE_URL.'monthly-attendance'.$year.'.png" alt="'.__('Monthly Attendance Graph','church-admin').'" width="700" height="500"/>';
+        break;
+		case 'weekly-attendance':
+		
+			if(!file_exists(CHURCH_ADMIN_EMAIL_CACHE.'weekly-attendance'.$year.'.png'))
+			{
+				require(CHURCH_ADMIN_INCLUDE_PATH.'graph.php');
+				church_admin_weekly_attendance_graph($year,$service_id);
+			}
+			$out.='<img src="'.CHURCH_ADMIN_EMAIL_CACHE_URL.'weekly-attendance'.$year.'.png" alt="'.__('Weekly Attendance Graph','church-admin').'" width="700" height="500"/>';
         break;
 		case 'rolling-average':
 			if(file_exists(CHURCH_ADMIN_CACHE_PATH.'rolling_average_attendance.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png" alt="'.__('Average Attendance Graph','church-admin').'"/>';

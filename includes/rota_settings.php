@@ -19,7 +19,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
 {
     
     $rota_task=esc_sql(stripslashes($_POST['rota_task']));
-    if(!empty($_POST['department_id'])){(int)$department_id=esc_sql(stripslashes($_POST['department_id']));}else{$department_id="NULL";}
+    if(!empty($_POST['department_id'])){(int)$department_id=esc_sql(stripslashes($_POST['department_id']));}else{$department_id="1";}
     if(!$id)
     {//insert
         $id=$wpdb->get_var('SELECT rota_id FROM '.CA_RST_TBL.' WHERE rota_task="'.$rota_task.'"' );

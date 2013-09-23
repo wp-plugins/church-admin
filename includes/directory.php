@@ -243,14 +243,14 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		foreach($_POST AS $key=>$value)$sql[$key]=esc_sql(stripslashes_deep($value));
 	
 		//handle date of birth
-		if(!empty($_POST['date_of_birth'])){$dob=esc_sql(date('Y-m-d',strtotime($_POST['date_of_birth'])));}else{$dob='0000-00-00';}
+		if(!empty($_POST['date_of_birth'])&& church_admin_checkdate($_POST['date_of_birth'])){$dob=esc_sql($_POST['date_of_birth']);}else{$dob='0000-00-00';}
 	
 		if(!$people_id)$people_id=$wpdb->get_var('SELECT people_id FROM '.CA_PEO_TBL.' WHERE first_name="'.$sql['first_name'].'" AND prefix="'.$sql['prefix'].'" AND last_name="'.$sql['last_name'].'" AND email="'.$sql['email'].'" AND mobile="'.$sql['mobile'].'" AND sex="'.$sql['sex'].'" AND people_type_id="'.$sql['people_type_id'].'" AND  member_type_id="'.$sql['member_type_id'].'" AND date_of_birth="'.$dob.'" AND household_id="'.esc_sql($household_id).'"');
 		$member_data=array();
 		foreach($member_type AS $no=>$type)
 		{
 			if($no==$_POST['member_type_id'] && $_POST['member_type_id']!=$data->member_type_id){$member_data[$type]=date('Y-m-d');}
-			if(!empty($_POST[$type])){$member_data[$type]=date('Y-m-d',strtotime($_POST[$type]));}else{$member_data[$type]=NULL;}
+			if(!empty($_POST[$type])&&church_admin_checkdate($_POST['type'])){$member_data[$type]=$_POST[$type];}else{$member_data[$type]=NULL;}
 		}
 	
 		$member_data=serialize($member_data);
@@ -294,16 +294,20 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		
 		}// end handle upload
 	
-	
+		if(!empty($_POST['user_id'])&&ctype_digit($_POST['user_id'])){$sql['user_id']=$_POST['user_id'];}else{$sql['user_id']='';}
 		if($people_id)
 		{//update
-			$query='UPDATE '.CA_PEO_TBL.' SET first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'", attachment_id="'.$attachment_id.'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
+			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'", attachment_id="'.$attachment_id.'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
 		    $wpdb->query($query);
 		}//end update
 		else
 		{
 			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,attachment_id) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$attachment_id.'")');
 			$people_id=$wpdb->insert_id;
+		}
+		if(!empty($_POST['create_user']))
+		{
+			church_admin_create_user($people_id,$household_id);
 		}
 		//new small group
 		if(!empty($_POST['group_name']))
@@ -426,7 +430,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		echo'<script type="text/javascript">
 		jQuery(document).ready(function(){
 			jQuery(\'.date_of_birth\').datepicker({
-            dateFormat : "d MM yy", changeYear: true ,yearRange: "1910:'.date('Y').'"
+            dateFormat : "yy-mm-dd", changeYear: true ,yearRange: "1910:'.date('Y').'"
          });
 		});
 		</script>';
@@ -450,10 +454,10 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	    foreach($member_type AS $key=>$value)
 	    {
 			//if no value for member type date make sure no value is given
-			if($prev_member_types[$value]=='0000-00-00'|| $prev_member_types[$value]=='1970-01-01'){$date='';}else{$date=mysql2date(get_option('date_format'),$prev_member_types[$value]);}
+			if(empty($prev_member_types[$value])||$prev_member_types[$value]=='0000-00-00'|| $prev_member_types[$value]=='1970-01-01'){$date='';}else{$date=mysql2date(get_option('date_format'),$prev_member_types[$value]);}
 			echo '<span style="float:left;width:150px">'.$value.'</span> <input type="text" id="'.sanitize_title($value).'" name="'.$value.'" value="'.$date.'"/><br style="clear:left"/>';
 			//javascript to bring up date picker
-			echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#'.sanitize_title($value).'\').datepicker({dateFormat : "d MM yy", changeYear: true ,yearRange: "1910:'.date('Y').'"});});</script>';
+			echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#'.sanitize_title($value).'\').datepicker({dateFormat : "yy-mm-dd", changeYear: true ,yearRange: "1910:'.date('Y').'"});});</script>';
 			//javascript to bring up date picker
 			}
 			echo'</span></p>';
@@ -486,15 +490,22 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		}
 		echo '</span></p>';
 		echo'<p><label>Or create new Small Group</label><span style="display:inline-block"><span style="float:left;width:150px">Group Name</span><input type="text" name="group_name"/><br style="clear:left"/><span style="float:left;width:150px">Leader?</span><input type="checkbox" name="leading"/><br style="clear:left;"/><span style="float:left;width:150px">Where &amp; When</span><input type="text" name="whenwhere"/></span></p>';
-		echo'<p><label>'.__('Wordpress User','church-admin').'</label>';
 		if($data->user_id )
 		{
+			echo'<p><label>'.__('Wordpress User','church-admin').'</label>';
 			$user_info=get_userdata($data->user_id);
-			echo $user_info->wp_capabilities['0'].'</p>';
+			if(!empty($user_info)){echo $user_info->roles['0'].'</p>';}
 		}	
 		elseif(!empty($household_id))
 		{
-			echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_create_user&amp;people_id='.$people_id.'&amp;household_id='.$household_id,'create_user').'">'.__('Create WP User').'</a></p>';
+			$users=$wpdb->get_results('SELECT user_login,ID FROM '.$wpdb->prefix.'users WHERE `ID` NOT IN (SELECT user_id FROM '.CA_PEO_TBL.')');
+			if(!empty($users))
+			{
+					echo'<p><label>Choose a Wordpress account to associate</label><select name="ID"><option value="">Select a user...</option>';
+					foreach($users AS $user) echo'<option value="'.$user->ID.'">'.$user->user_login.'</option>';
+					echo'</select></p>';
+			}
+			echo'<p><label>Create a new Wordpress User</label><input type="checkbox" name="create_user" value="yes"/></p>';
 		}
 		echo'<p class="submit"><input type="hidden" name="edit_people" value="yes"/><input type="submit" value="'.__('Save Details','church-admin').'&raquo;" /></p></form>';
     }
@@ -660,7 +671,7 @@ function church_admin_move_person($id)
 	    
 	    //remove household entry if only one person was in it.
 	    $no=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($data->household_id).'"');
-	    if($no==1)$wpdb->query('DELETE FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($data->household_id).'"');
+	    if($no==1)$wpdb->query('DELETE FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($data->household_id).'"');
 	    //move the person to the new household
 	    $wpdb->query('UPDATE '.CA_PEO_TBL.' SET household_id="'.esc_sql($_POST['household_id']).'" WHERE people_id="'.esc_sql($id).'"');
 	    echo'<div class="updated fade"><p><strong>'.$data->first_name.' '.$data->last_name.' has been moved!</strong></p></div>';
@@ -717,9 +728,9 @@ function church_admin_create_user($people_id,$household_id)
 	    }
 	    elseif(!empty($user_id) && $user->user_id!=$user_id)
 	    {//wp user exists, update plugin
-		$wpdb->query('UPDATE '.CA_PEO_TBL.' SET user_id="'.esc_sql($user_id).'" WHERE people_id="'.esc_sql($people_id).'"');
-		echo'<div class="updated fade">'.__('User updated','church-admin').'</p></div>';
-		church_admin_display_household($household_id);
+			$wpdb->query('UPDATE '.CA_PEO_TBL.' SET user_id="'.esc_sql($user_id).'" WHERE people_id="'.esc_sql($people_id).'"');
+			echo'<div class="updated fade">'.__('User updated','church-admin').'</p></div>';
+		
 	    }
 	    else
 	    {//wp user needs creating!
