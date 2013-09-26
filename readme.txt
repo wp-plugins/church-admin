@@ -247,7 +247,9 @@ Clear out files
 = 0.568 =
 * Add individual user permissions
 * Fix date picker to force ISO to internationalise
-
+* Improve wordpress user functions when editing people
+= 0.569 =
+* Birthdays Shortcode and widget
 == Upgrade Notice ==
 * 0.566 required
 

@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.568';
+$church_admin_version = '0.569';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -626,7 +626,7 @@ function church_admin_main()
 function church_admin_shortcode($atts, $content = null) 
 {
 	
-    extract(shortcode_atts(array("type" => 'address-list','year'=>date('Y'),'service_id'=>1,'photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL), $atts));
+    extract(shortcode_atts(array("type" => 'address-list','days'=>30,'year'=>date('Y'),'service_id'=>1,'photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL), $atts));
     church_admin_posts_logout();
     $out='';
     global $wpdb;
@@ -723,6 +723,7 @@ function church_admin_shortcode($atts, $content = null)
 		case 'rolling-average':
 			if(file_exists(CHURCH_ADMIN_CACHE_PATH.'rolling_average_attendance.png'))$out.='<img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png" alt="'.__('Average Attendance Graph','church-admin').'"/>';
         break;
+		case 'birthdays':require_once(CHURCH_ADMIN_INCLUDE_PATH.'birthdays.php');$out.=church_admin_frontend_birthdays($member_type_id, $days);break;
 	default:
             require_once(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
             $out.=church_admin_frontend_directory($member_type_id,$map,$photo);
@@ -801,6 +802,33 @@ function church_admin_widget_init()
     wp_register_widget_control('Church Admin Calendar','Church Admin Calendar','church_admin_widget_control');
 }
 add_action('init','church_admin_widget_init');
+
+function church_admin_birthday_widget($args)
+{
+    global $wpdb;
+    $wpdb->show_errors();
+    extract($args);
+	$options=get_option('church_admin_birthday_widget');
+	
+    $title=$options['title'];
+	if(empty($options['member_type_id']))$options['member_type_id']=1;
+	if(empty($options['days']))$options['days']=14;
+	
+   
+    echo $before_widget;
+    if (!empty( $options['title']) )echo $before_title . $options['title'] . $after_title;
+	require_once(CHURCH_ADMIN_INCLUDE_PATH.'birthdays.php');
+    echo church_admin_frontend_birthdays($options['member_type_id'], $options['days']);
+    echo $after_widget;
+}
+function church_admin_birthday_widget_init()
+{
+    wp_register_sidebar_widget('Church Admin Birthdays','Church Admin Birthdays','church_admin_birthday_widget');
+    require(CHURCH_ADMIN_INCLUDE_PATH.'birthdays.php');
+    wp_register_widget_control('Church Admin Birthdays','Church Admin Birthdays','church_admin_birthday_widget_control');
+}
+add_action('init','church_admin_birthday_widget_init');
+
 function church_admin_download($file)
 {
     switch($file)

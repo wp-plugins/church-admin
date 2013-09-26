@@ -361,7 +361,10 @@ function church_admin_shortcodes_meta_box()
 	 echo'<h2>Attendance</h2>';
     echo'<p><strong>[church_admin type="weekly-attendance" year=# service_id=# ]</strong> - Displays graph image 700x500px; year is a single year currently eg 2013, service_id which service</p>';
     echo'<p><strong>[church_admin type="monthly-attendance" year=# service_id=# ]</strong> -Displays graph image 700x500px, year is a single year currently eg 2013, service_id which service</p>';
-    
+    //Birthdays
+	echo'<h2>'.__('Birthdays','church-admin').'</h2>';
+	echo'<p><strong>[church_admin type="birthdays" member_type_id=# days=#]</strong> - Displays upcoming birthdays for the next # days for member_types_ids #</p>';
+	
 
 }
 
