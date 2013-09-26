@@ -25,7 +25,6 @@ function church_admin_front_admin()
 	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?></h2>
 	<div id="poststuff">
 
-		<h2>Can you help translate the plugin? Please <a href="https://poeditor.com/join/project?hash=560ac8e50c315bc16d072fe439b89696">Join</a> the project to translate it online</h2>
 			<p>
 	<?php    echo __('If you like the plugin, please buy me a cup of coffee!','church-admin');?>
 	...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>
