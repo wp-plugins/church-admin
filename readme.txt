@@ -250,6 +250,10 @@ Clear out files
 * Improve wordpress user functions when editing people
 = 0.570 =
 * Birthdays Shortcode and widget
+= 0.571 =
+* Fix people csv download bug
+
+
 == Upgrade Notice ==
 * 0.566 required
 

@@ -220,7 +220,8 @@ function church_admin_people_csv($member_type_id=1,$people_type_id=1,$sex=1,$add
 	if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).') ';}else{$memb_sql='';}
 	$sql='SELECT '.CA_PEO_TBL.'.*';
 	if(!empty($sg)) $sql.=','.CA_SMG_TBL.'.group_name';
-	if(!empty($add))$sql.=','.CA_HOU_TBL.'.address FROM '.CA_PEO_TBL.$address.$sg.$genders.$people_sql.$memb_sql.'  ORDER BY last_name';
+	if(!empty($add))$sql.=','.CA_HOU_TBL.'.address ';
+	$sql.=' FROM '.CA_PEO_TBL.$address.$sg.$genders.$people_sql.$memb_sql.'  ORDER BY last_name';
 	
 	$results = $wpdb->get_results($sql);
 	if($results)
@@ -232,11 +233,11 @@ function church_admin_people_csv($member_type_id=1,$people_type_id=1,$sex=1,$add
 		foreach($results AS $row)
 		{
 			
-			$csv.='"'.$row->first_name.'","';
-			if(!empty($row->prefix))$csv.=$row->prefix.' ';
-			$csv.=$row->last_name.'","'.$row->email.'","'.$row->mobile.'"';
-			if(!empty($add))$csv.=',"'.$row->address.'"';
-			if(!empty($sg))$csv.=',"'.$row->group_name.'"';
+			$csv.='"'.iconv('UTF-8', 'ISO-8859-1',$row->first_name).'","';
+			if(!empty($row->prefix))$csv.=iconv('UTF-8', 'ISO-8859-1',$row->prefix).' ';
+			$csv.=iconv('UTF-8', 'ISO-8859-1',$row->last_name).'","'.iconv('UTF-8', 'ISO-8859-1',$row->email).'","'.$row->mobile.'"';
+			if(!empty($add))$csv.=',"'.iconv('UTF-8', 'ISO-8859-1',$row->address).'"';
+			if(!empty($sg))$csv.=',"'.iconv('UTF-8', 'ISO-8859-1',$row->group_name).'"';
 			$csv.="\r\n";
 		}
 		

@@ -173,8 +173,9 @@ function church_admin_edit_household($household_id=NULL)
 	}
 	echo church_admin_address_form($data,$error=NULL);
 	//Phone
-    if(!isset($data->phone))$data->phone='';
-    echo '<p><label>'.__('Phone','church-admin').'</label><input type="text" name="phone" value="'.$data->phone.'"';
+    
+    echo '<p><label>'.__('Phone','church-admin').'</label><input type="text" name="phone" ';
+	if(!empty($data->phone)) echo ' value="'.$data->phone.'"';
     if(!empty($errors['phone']))echo' class="red" ';
     echo '/></p>';
 	echo'<p class="submit"><input type="hidden" name="edit_household" value="yes"/><input type="submit" value="'.__('Save Address','church-admin').'&raquo;" /></p></form>';

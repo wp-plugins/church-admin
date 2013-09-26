@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.570
+Version: 0.571
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.570';
+$church_admin_version = '0.571';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -230,7 +230,8 @@ $rota_order=ca_rota_order();
     if(empty($level['Rota']))$level['Rota']='administrator';
     if(empty($level['Funnel'])) $level['Funnel']='administrator';
     if(empty($level['Bulk Email']))$level['Bulk Email']='administrator';
-    if(empty($level['Bulk SMS']))$level['Bulk SMS']='administrator';
+    if(empty($level['Sermons']))$level['Sermons']='administrator';
+	if(empty($level['Bulk SMS']))$level['Bulk SMS']='administrator';
     if(empty($level['Calendar']))$level['Calendar']='administrator';
     if(empty($level['Attendance']))$level['Attendance']='administrator';
     if(empty($level['Member Type']))$level['Member Type']='administrator';
@@ -339,12 +340,12 @@ wp_enqueue_script('common');
     if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_series_event_edit'||$_GET['action']=='church_admin_single_event_edit'||$_GET['action']=='church_admin_edit_attendance'))
     {
         wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_enqueue_style( 'jquery.ui.theme', CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css' );
+        wp_enqueue_style( 'jquery.ui.theme',WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' );
     }
     if(isset($_GET['page']) &&$_GET['page']=='church_admin_add_attendance')
     {
         wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_enqueue_style( 'jquery.ui.theme', CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css' );
+        wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' );
     }
     if(isset($_GET['action']) &&$_GET['action']=='church_admin_add_category')
     {
