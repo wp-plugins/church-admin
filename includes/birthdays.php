@@ -76,5 +76,4 @@ function church_admin_birthday_widget_control_form()
     echo'</select><input type="hidden" name="widget_submit" value="1"/>';
 }
 
-?>	
-
+?>
