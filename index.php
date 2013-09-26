@@ -813,13 +813,15 @@ function church_admin_birthday_widget($args)
     $title=$options['title'];
 	if(empty($options['member_type_id']))$options['member_type_id']=1;
 	if(empty($options['days']))$options['days']=14;
-	
-   
-    echo $before_widget;
-    if (!empty( $options['title']) )echo $before_title . $options['title'] . $after_title;
-	require_once(CHURCH_ADMIN_INCLUDE_PATH.'birthdays.php');
-    echo church_admin_frontend_birthdays($options['member_type_id'], $options['days']);
-    echo $after_widget;
+	$out=church_admin_frontend_birthdays($options['member_type_id'], $options['days']);
+   if(!empty($out))
+   {
+		echo $before_widget;
+		if (!empty( $options['title']) )echo $before_title . $options['title'] . $after_title;
+		require_once(CHURCH_ADMIN_INCLUDE_PATH.'birthdays.php');
+		echo $out;
+		echo $after_widget;
+	}
 }
 function church_admin_birthday_widget_init()
 {
