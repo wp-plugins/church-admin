@@ -12,7 +12,7 @@ function church_admin_frontend_birthdays($member_type_id=1, $deltadays=30)
 	$sql='SELECT first_name, last_name, prefix, date_of_birth, 
 		FLOOR((UNIX_TIMESTAMP(CONCAT(((RIGHT(date_of_birth, 5) < RIGHT(CURRENT_DATE, 5)) 
 		+ YEAR(CURRENT_DATE)), RIGHT(date_of_birth, 6))) - UNIX_TIMESTAMP(CURRENT_DATE)) / 86400) 
-		AS upcoming_days FROM '.CA_PEO_TBL.
+		AS upcoming_days FROM '.CA_PEO_TBL.$memb_sql.
 		' HAVING (upcoming_days >=0 AND upcoming_days <= '.$deltadays.') order by upcoming_days';
 		
 		$people_results=$wpdb->get_results($sql);
