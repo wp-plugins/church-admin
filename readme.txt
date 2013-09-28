@@ -252,7 +252,10 @@ Clear out files
 * Birthdays Shortcode and widget
 = 0.571 =
 * Fix people csv download bug
-
+* Fix Date Picker CSS
+= 0.572 =
+* Birthdays bug fix
+* Fix previous date shown in wrong format for editing people
 
 == Upgrade Notice ==
 * 0.566 required

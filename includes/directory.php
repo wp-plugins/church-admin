@@ -250,8 +250,10 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		$member_data=array();
 		foreach($member_type AS $no=>$type)
 		{
-			if($no==$_POST['member_type_id'] && $_POST['member_type_id']!=$data->member_type_id){$member_data[$type]=date('Y-m-d');}
-			if(!empty($_POST[$type])&&church_admin_checkdate($_POST['type'])){$member_data[$type]=$_POST[$type];}else{$member_data[$type]=NULL;}
+		
+			if(!empty($_POST[$type]) && church_admin_checkdate($_POST[$type])){$member_data[$type]=$_POST[$type];}else{$member_data[$type]="0000-00-00";}
+			//if($no==$_POST['member_type_id'] && $_POST['member_type_id']!=$data->member_type_id){$member_data[$type]=date('Y-m-d');}
+			//if(!empty($_POST[$type])&&church_admin_checkdate($_POST['type'])){$member_data[$type]=$_POST[$type];}else{$member_data[$type]=NULL;}
 		}
 	
 		$member_data=serialize($member_data);
@@ -300,6 +302,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		{//update
 			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'", attachment_id="'.$attachment_id.'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
 		    $wpdb->query($query);
+			
 		}//end update
 		else
 		{
@@ -426,7 +429,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		echo'</select></p>';
 		//date of birth
 		echo'<p><label>'.__('Date of Birth','church-admin').'</label><input type=="text" name="date_of_birth" class="date_of_birth" ';
-		if(!empty($data->date_of_birth)&&$data->date_of_birth!='0000-00-00') echo ' value="'.mysql2date(get_option('date_format'),$data->date_of_birth).'" ';
+		if(!empty($data->date_of_birth)&&$data->date_of_birth!='0000-00-00') echo ' value="'.$data->date_of_birth.'" ';
 		echo'/></p>';
 		echo'<script type="text/javascript">
 		jQuery(document).ready(function(){
@@ -455,7 +458,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	    foreach($member_type AS $key=>$value)
 	    {
 			//if no value for member type date make sure no value is given
-			if(empty($prev_member_types[$value])||$prev_member_types[$value]=='0000-00-00'|| $prev_member_types[$value]=='1970-01-01'){$date='';}else{$date=mysql2date(get_option('date_format'),$prev_member_types[$value]);}
+			if(empty($prev_member_types[$value])||$prev_member_types[$value]=='0000-00-00'|| $prev_member_types[$value]=='1970-01-01'){$date='';}else{$date=$prev_member_types[$value];}
 			echo '<span style="float:left;width:150px">'.$value.'</span> <input type="text" id="'.sanitize_title($value).'" name="'.$value.'" value="'.$date.'"/><br style="clear:left"/>';
 			//javascript to bring up date picker
 			echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#'.sanitize_title($value).'\').datepicker({dateFormat : "yy-mm-dd", changeYear: true ,yearRange: "1910:'.date('Y').'"});});</script>';

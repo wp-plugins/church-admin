@@ -7,7 +7,7 @@ function church_admin_frontend_birthdays($member_type_id=1, $deltadays=30)
 	
 	$memb=explode(',',$member_type_id);
       foreach($memb AS $key=>$value){if(ctype_digit($value))  $membsql[]='member_type_id='.$value;}
-      if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+      if(!empty($membsql)) {$memb_sql=' WHERE ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
 	
 	$sql='SELECT first_name, last_name, prefix, date_of_birth, 
 		FLOOR((UNIX_TIMESTAMP(CONCAT(((RIGHT(date_of_birth, 5) < RIGHT(CURRENT_DATE, 5)) 
