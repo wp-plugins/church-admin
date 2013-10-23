@@ -110,7 +110,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
     if (!empty($emails))
     foreach($emails AS $email)
     {
-      $out.='<a class="email" href="'.clean_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n";
+      $out.='<a class="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n";
     }
     if ($address->phone)$out.=esc_html($address->phone)."<br />\n";
     if (!empty($mobiles))

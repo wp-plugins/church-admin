@@ -17,7 +17,7 @@ function church_admin_address_list($member_type_id=1)
     echo'<form  method="get" action="">';
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
 	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
-		echo'</form>';
+	echo'</form>';
 	add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
 	do_meta_boxes('church-admin','advanced',null);
 
@@ -362,6 +362,8 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		
 		echo'<div id="post-body" class="metabox-holder columns-2"><!-- meta box containers here -->';
 		echo'<form  method="get" action="">'. wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
+		echo'</form>';
+		
 		require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 		//church_admin_collapseBoxForUser($current_user->ID,"church-admin-people-functions");
 			add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
@@ -667,20 +669,33 @@ function church_admin_migrate_users()
 function church_admin_move_person($id)
 {
     global $wpdb;
+	$wpdb->show_errors();
     $data=$wpdb->get_row('SELECT * FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($id).'"');
     if(!empty($data))
     {
 	if(!empty($_POST['move_person']))
 	{
-	    
-	    //remove household entry if only one person was in it.
-	    $no=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($data->household_id).'"');
-	    if($no==1)$wpdb->query('DELETE FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($data->household_id).'"');
-	    //move the person to the new household
-	    $wpdb->query('UPDATE '.CA_PEO_TBL.' SET household_id="'.esc_sql($_POST['household_id']).'" WHERE people_id="'.esc_sql($id).'"');
-	    echo'<div class="updated fade"><p><strong>'.$data->first_name.' '.$data->last_name.' has been moved!</strong></p></div>';
-	   
-	    church_admin_display_household($_POST['household_id']);
+	    if(!empty($_POST['create']))
+		{
+			$sql='INSERT INTO '.CA_HOU_TBL.' ( address,lat,lng,phone ) SELECT address,lat,lng,phone FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($data->household_id).'";';
+			
+			$wpdb->query($sql);
+			$household_id=$wpdb->insert_id;
+			$wpdb->query('UPDATE '.CA_PEO_TBL.' SET household_id="'.esc_sql($household_id).'" WHERE people_id="'.esc_sql($id).'"');
+			echo'<div class="updated fade"><p><strong>'.$data->first_name.' '.$data->last_name.' has been moved to a new household with the same address details!</strong></p></div>';
+			
+		}
+		else
+		{
+			//remove household entry if only one person was in it.
+			$no=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($data->household_id).'"');
+			if($no==1)$wpdb->query('DELETE FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($data->household_id).'"');
+			//move the person to the new household
+			$wpdb->query('UPDATE '.CA_PEO_TBL.' SET household_id="'.esc_sql($_POST['household_id']).'" WHERE people_id="'.esc_sql($id).'"');
+			echo'<div class="updated fade"><p><strong>'.$data->first_name.' '.$data->last_name.' has been moved!</strong></p></div>';
+			$household_id=(int)$_POST['household_id'];
+		}
+	    church_admin_display_household($household_id);
 	     require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 	    add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
 	    do_meta_boxes('church-admin','advanced',null);
@@ -693,7 +708,8 @@ function church_admin_move_person($id)
 	    if(!empty($results))
 	    {
 		echo'<form action="" method="post">';
-		echo'<p><label>Move to household</label><select name="household_id">';
+		echo'<p><label>Create a new household with same address</label><input type="checkbox" name="create" value="yes"/></p>';
+		echo'<p><label>Move to household</label><select name="household_id"><option value="">Select a new household...</option>';
 		foreach($results AS $row)
 		{
 		    echo'<option value="'.$row->household_id.'">'.esc_html($row->last_name).' ('.$row->member_type.')</option>';

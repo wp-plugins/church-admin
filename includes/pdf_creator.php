@@ -311,9 +311,11 @@ function ca_vcard($id)
 {
   global $wpdb;
  $wpdb->show_errors();
-    $add_row = $wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($id).'"');
-    $address=unserialize($add_row->address);
-    
+    $query='SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($id).'"';
+	
+	$add_row = $wpdb->get_row($query);
+    $address=$add_row->address;
+    $phone=$add_row->phone;
     $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($id).'"');
     $adults=$children=$emails=$mobiles=array();
       foreach($people_results AS $people)
@@ -324,24 +326,42 @@ function ca_vcard($id)
 	    $adults[]=$people->first_name;
 	    if($people->email!=end($emails)) $emails[]=$people->email;
 	    if($people->mobile!=end($mobiles))$mobiles[]=$people->mobile;
+		
 	  }
 	  else
 	  {
 	    $children[]=$people->first_name;
 	  }
-	  
+	  if(!empty($people->attachment_id))
+		{
+			$photo=wp_get_attachment_image_src( $people->attachment_id, 'ca-people-thumb',0,$attr );
+			
+		}
 	}
   //prepare vcard
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'vcf.php');
 $v = new vCard();
-if(!empty($add_row->homephone))$v->setPhoneNumber("{$add_row->phone}", "PREF;HOME;VOICE");
+if(!empty($add_row->phone))$v->setPhoneNumber($add_row->phone, "PREF;HOME;VOICE");
 if(!empty($mobiles))$v->setPhoneNumber("{$mobiles['0']}", "CELL;VOICE");
 $v->setName("{$last_name}", implode(" & ",$adults), "", "");
 
-$v->setAddress("", stripslashes($address['address_line1']), stripslashes($address['address_line2']), stripslashes($address['town']), stripslashes($address['county']),stripslashes($address['postcode']),'','HOME;POSTAL' );
+$v->setAddress('',$add_row->address,'','','','','','HOME;POSTAL' );
 $v->setEmail("{$emails['0']}");
 
 if(!empty($children)){$v->setNote("Children: ".implode(", ",$children));}
+if(!empty($photo))
+{
+	
+	$t=exif_imagetype($photo['0']); 		
+	switch($t)
+		{
+			case 1:$type='GIF';break;
+			case 2:$type='JPG';break;
+			
+		}
+	if(!empty($type))$v->setPhoto($type,$photo[0]);
+}
+
 $output = $v->getVCard();
 $filename=$last_name.'.vcf';
 

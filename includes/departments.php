@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 function church_admin_department_list()
 {
     global $departments;
@@ -70,7 +70,7 @@ function church_admin_edit_department($id)
         if($id){echo __('Update','church-admin').' ';}else {echo __('Add','church-admin').' ';}
         echo __('Ministry','church-admin').'</h2>';
         echo'<form action="" method="post">';
-        echo'<p><label>'.__('Ministry Name','church-admin').'</label><input type="text" name="department_name" ';
+        echo'<p><label>'.__('Ministry Name','church-admin').'</label><input type="text" name="department_name" ';
         if($id) echo ' value="'.$departments[$id].'" ';
         echo'/></p>';
         echo'<p class="submit"><input type="hidden" name="edit_department" value="yes"/><input type="submit" value="'.__('Save Ministry','church-admin').'&raquo;" /></p></form></div>';

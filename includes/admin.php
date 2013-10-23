@@ -26,7 +26,7 @@ function church_admin_front_admin()
 	<div id="poststuff">
 
 			<p>
-	<?php    echo __('If you like the plugin, please buy me a cup of coffee!','church-admin');?>
+	<?php    echo __('We are saving up to visit our friends planting in China - if you find the plugin helpful, please contribute!','church-admin');?>
 	...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>
 	    <?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){	echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	    <!-- #post-body .metabox-holder goes here -->
 		<div id="post-body" class="metabox-holder columns-2">
@@ -34,6 +34,7 @@ function church_admin_front_admin()
 		    <form  method="get" action="">
 		        <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
 		    wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
+			echo'</form>';
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-plugin-news", __('Church Admin Plugin News', 'church-admin'), "church_admin_plugin_news_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'), "church_admin_shortcodes_meta_box", "church-admin");
@@ -69,7 +70,7 @@ function church_admin_plugin_news_meta_box()
     echo'<p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">'.__('Get Support','church-admin').'</a><br/><strong>'.__('Latest News','church-admin').'</strong></p>';
     require(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');
     echo church_admin_news_feed();
-    echo __('If you like the plugin, please buy me a cup of coffee!','church-admin').'...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form>';
+    echo __('We are saving up to visit friends planting in China, if you like the plugin, please donate towards flights!','church-admin').'...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form>';
     
     	
     
@@ -124,7 +125,7 @@ echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;acti
     }
     else
     {//people stored in directory
-				echo'<p><label>'.__('Search','church-admin').'</label><form name="ca_search" action="admin.php?page=church_admin/index.php&amp;action=church_admin_search" method="POST"><input name="ca_search" style="width:100px;" type="text"/><input type="submit" value="Go"/></form></p>';
+				echo'<form name="ca_search" action="admin.php?page=church_admin/index.php" method="POST"><p><label>'.__('Search','church-admin').'</label><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="Go"/></p></form>';
 			    
 				echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_migrate_users','migrate_users').'">'.__('Import Wordpress Users (only new ones added)','church-admin').'</a></p>';
 			    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a></p>';

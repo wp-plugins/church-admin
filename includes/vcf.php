@@ -83,7 +83,7 @@ class vCard {
 	
 	// UNTESTED !!!
 	function setPhoto($type, $photo) { // $type = "GIF" | "JPEG"
-		$this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
+		$this->properties["PHOTO;$type"] = $photo;
 	}
 	
 	function setFormattedName($name) {
