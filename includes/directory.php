@@ -297,16 +297,17 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		
 		}// end handle upload
 	
-		if(!empty($_POST['user_id'])&&ctype_digit($_POST['user_id'])){$sql['user_id']=$_POST['user_id'];}else{$sql['user_id']='';}
+		if(!empty($_POST['ID'])&&ctype_digit($_POST['ID'])){$sql['user_id']=$_POST['ID'];}else{$sql['user_id']='';}
 		if($people_id)
 		{//update
-			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'", attachment_id="'.$attachment_id.'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
+			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
 		    $wpdb->query($query);
+			
 			
 		}//end update
 		else
 		{
-			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,attachment_id) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$attachment_id.'")');
+			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,attachment_id,user_id) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$attachment_id.'","'.$sql['user_id'].'")');
 			$people_id=$wpdb->insert_id;
 		}
 		if(!empty($_POST['create_user']))
@@ -502,9 +503,13 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			$user_info=get_userdata($data->user_id);
 			if(!empty($user_info)){echo $user_info->roles['0'].'</p>';}
 		}	
-		elseif(!empty($household_id))
+		elseif(!empty($people_id))
 		{
-			$users=$wpdb->get_results('SELECT user_login,ID FROM '.$wpdb->prefix.'users WHERE `ID` NOT IN (SELECT user_id FROM '.CA_PEO_TBL.')');
+			//check any user_ids stored
+			$us=$wpdb->get_results('SELECT user_id FROM '.CA_PEO_TBL.' WHERE user_id!="0"');
+			if(!empty($us))	{$where='WHERE `ID` NOT IN (SELECT user_id FROM '.CA_PEO_TBL.')';}else{$where='';}
+			$users=$wpdb->get_results('SELECT user_login,ID FROM '.$wpdb->prefix.'users '.$where);
+				
 			if(!empty($users))
 			{
 					echo'<p><label>Choose a Wordpress account to associate</label><select name="ID"><option value="">Select a user...</option>';
@@ -601,7 +606,7 @@ $out.= '; var beginLng =';
 		if($person->user_id)
 		{
 		    $user_info=get_userdata($person->user_id);
-		    $person_user= church_admin_get_capabilities($person->user_id);
+		    $person_user= $user_info->user_login.'<br/>('.church_admin_get_capabilities($person->user_id).')';
 		}
 		else
 		{

@@ -166,7 +166,8 @@ if  ($_FILES['userfile3']['size']>0)
     $message=str_replace('class="alignleft','style="float:left;margin:5px;" class="',$message);
     $message=str_replace('class="alignright','style="float:right;margin:5px;" class="',$message);
     $message=str_replace('class="aligncenter','style="  display: block;  margin-left: auto;  margin-right: auto;" class="',$message);
-    
+     $message=str_replace('<ol>','<ol style="margin-left:5px;">',$message);
+	 $message=str_replace('<ul>','<ul style="margin-left:5px;">',$message);
     //add subject
     $message=str_replace('[subject]',$_POST['subject'],$message);
     //add posts
