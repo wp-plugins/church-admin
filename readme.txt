@@ -265,7 +265,9 @@ Clear out files
 * Change donate message
 = 0.575 =
 * Fix for associating wordpress logins with directory people
-
+= 0.579 =
+* Add attachment page link for directory photos
+* Add play counter for sermon mp3 played with <audio> and download, but not flash
 == Upgrade Notice ==
 * 0.566 required
 

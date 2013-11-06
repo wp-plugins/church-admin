@@ -101,7 +101,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		foreach($photos AS $key=>$value)
 		{
 				$attr=array('alt'=>$key,'title'=>$key);
-				$images.=wp_get_attachment_image( $value, 'ca-people-thumb',0,$attr ).'&nbsp;';
+				$images.='<a href="'.get_attachment_link($value).'">'.wp_get_attachment_image( $value, 'ca-people-thumb',0,$attr ).'</a>&nbsp;';
 		}
 		$out.='<p >'.$images.'</p>';
 	}

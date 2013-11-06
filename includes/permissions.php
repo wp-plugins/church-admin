@@ -12,7 +12,7 @@ function church_admin_permissions()
 	$check=$wpdb->get_var('SELECT COUNT(user_id) FROM '.CAP_PEO_TBL);
 	if(empty($check))
 	{
-		echo'<div class="updated fade"><p><strong>'.__('Please create or connect Wordpress User accounts for people in the directory first.','church-admin').'</strong></p></div>';
+		echo'<div class="updated fade"><p><strong>'.__('Please create or connect Wordpress User accounts for people in teh directory first.','church-admin').'</strong></p></div>';
 	}
 	else
 	{//proceed

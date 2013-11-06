@@ -452,6 +452,11 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "transcript"')!='transc
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD transcript TEXT';
     $wpdb->query($sql);
 }
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
+{
+    $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD plays INT(11)';
+    $wpdb->query($sql);
+}
 //make sure tables are UTF8  
     $sql='ALTER TABLE '. CA_ATT_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
@@ -542,9 +547,19 @@ if(empty($departments))
     $file_template=get_option('ca_podcast_file_template');
     if(empty($file_template))
     {
-        $file_template='<div class="ca_podcast_file"><h3>[FILE_TITLE]</h3><p><audio src="[FILE_NAME]" preload="none"/></p><p>[FILE_DOWNLOAD][FILE_TITLE]</a><br/>[FILE_DESCRIPTION]<br/><span style="font-size:smaller">[SERIES_NAME]: [SPEAKER_NAME]</span></p></div>';
-        update_option('ca_podcast_file_template',$file_template);
+        $file_template='<div class="ca_podcast_file">
+<h3>[FILE_TITLE] </h3>
+<p><audio class="sermonmp3" id="[FILE_ID]" src="[FILE_NAME]" preload="none"/></p><p>[FILE_DOWNLOAD]</a> 
+<br/>[FILE_DESCRIPTION] 
+<br/><span style="font-size:smaller">[SERIES_NAME]: [SPEAKER_NAME] ([FILE_PLAYS]) </span> </p></div>';
+        
     }
+	else
+	{
+		if(!strpos($file_template,'class="sermonmp3"'))$file_template=str_replace('<audio ','<audio class="sermonmp3" id="[FILE_ID]" ',$file_template);
+		if(!strpos($file_template,'[FILE_PLAYS'))$file_template=str_replace('[SPEAKER_NAME]','[SPEAKER_NAME] ([FILE_PLAYS]) ',$file_template);
+	}
+	update_option('ca_podcast_file_template',$file_template);
     $series_template=get_option('ca_podcast_series_template');
     if(empty($series_template))
     {

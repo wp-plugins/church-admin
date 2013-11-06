@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.575
+Version: 0.579
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.575';
+$church_admin_version = '0.579';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -267,8 +267,12 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
 		// enqueue here
 		if($shortcode_found=='podcast')
 		{
-		    wp_enqueue_script('rm_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js');
-		    wp_enqueue_script('rm_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js');
+			$ajax_nonce = wp_create_nonce("church_admin_mp3_play");			
+			
+		    wp_enqueue_script('ca_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js');
+		    wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js');
+			wp_localize_script( 'ca_podcast_audio_use', 'ChurchAdminAjax', array('security'=>$ajax_nonce, 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+
 		}
 		if($shortcode_found=='register')
                 {
@@ -290,6 +294,7 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
  
 	return $posts;
 }
+
 
 
 function church_admin_init()
@@ -655,6 +660,8 @@ function church_admin_shortcode($atts, $content = null)
 	case 'podcast':
 	    require_once(CHURCH_ADMIN_DISPLAY_PATH.'sermon-podcast.php');
 	    $out.=ca_podcast_display($series_id,$speaker_id,$file_id);
+		
+		
 	break;    
         case 'calendar':
 	    
@@ -936,6 +943,25 @@ function church_admin_datadump ($table) {
 	    	return $result;
 	}
 }
-    
+ 
+
+
+
+add_action('wp_ajax_ca_mp3_action', 'church_admin_action_callback');
+add_action('wp_ajax_nopriv_ca_mp3_action', 'church_admin_action_callback');
+
+function church_admin_action_callback() {
+	$nonce = $_POST['data']['security'];
+ 	if ( ! wp_verify_nonce( $nonce, 'church_admin_mp3_play' ) )die('busted');
+
+	global $wpdb;
+	$file_id = esc_sql($_POST['data']['file_id']);
+	$sql='UPDATE '.CA_FIL_TBL.' SET plays = plays+1 WHERE file_id = "'.$file_id.'"';
+	$wpdb->query($sql);
+	$plays=$wpdb->get_var('SELECT plays FROM '.CA_FIL_TBL.' WHERE file_id = "'.$file_id.'"');
+	
+	echo $plays;
+	die();
+} 
   
 ?>

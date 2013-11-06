@@ -26,9 +26,10 @@ function church_admin_front_admin()
 	<div id="poststuff">
 
 			<p>
-	<?php    echo __('We are saving up to visit our friends planting in China - if you find the plugin helpful, please contribute!','church-admin');?>
+	<?php    echo __('We are saving up to visit our friends ch. planting in China - if you find the plugin helpful, please contribute!','church-admin');?>
 	...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>
-	    <?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){	echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	    <!-- #post-body .metabox-holder goes here -->
+	    <script id='fb67321'>(function(i){var f,s=document.getElementById(i);f=document.createElement('iframe');f.src='//api.flattr.com/button/view/?uid=TheMoyle&button=compact&url='+encodeURIComponent(document.URL);f.title='Church Admin Plugin';f.height=20;f.width=110;f.style.borderWidth=0;s.parentNode.insertBefore(f,s);})('fb67321');</script>
+		<?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){	echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	    <!-- #post-body .metabox-holder goes here -->
 		<div id="post-body" class="metabox-holder columns-2">
 		    <!-- meta box containers here -->
 		    <form  method="get" action="">

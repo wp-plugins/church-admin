@@ -69,8 +69,10 @@ function ca_display_file($file_id=NULL)
     if($data)
     {
         $template=str_replace('[FILE_TITLE]',$data->file_title,$template);
+		$template=str_replace('[FILE_ID]',$data->file_id,$template);
+		$template=str_replace('[FILE_PLAYS]','Played: <span class="plays'.$data->file_id.'">'.church_admin_plays($data->file_id).'</span> times',$template);
         $template=str_replace('[FILE_NAME]',CA_POD_URL.$data->file_name,$template);
-        $template=str_replace('[FILE_DOWNLOAD]','<a href="'.CA_POD_URL.$data->file_name.'" title="'.esc_html($data->file_title).'">'.esc_html($data->file_title).'</a>',$template);
+        $template=str_replace('[FILE_DOWNLOAD]','<a href="'.CA_POD_URL.$data->file_name.'"  title="'.esc_html($data->file_title).'">'.esc_html($data->file_title).'</a>',$template);
         if(file_exists(CA_POD_PTH.$data->transcript))
         {
 			$template=str_replace('[TRANSCRIPTION]','<a href="'.CA_POD_URL.$data->transcript.'" title="'.esc_html($data->transcript).'">'.esc_html($data->transcript).'</a>',$template);
@@ -85,6 +87,7 @@ function ca_display_file($file_id=NULL)
         $template=str_replace('[SERIES_NAME]',$data->series_name,$template);
         $template=str_replace('[SPEAKER_NAME]',$data->speaker_name,$template);
         $template=str_replace('[SPEAKER_DESCRIPTION]',$data->speaker_description,$template);
+
         return $template;
     }
     else
@@ -93,5 +96,10 @@ function ca_display_file($file_id=NULL)
     }
     
 }
-
+function church_admin_plays($file_id)
+{
+	global $wpdb;
+	$plays=$wpdb->get_var('SELECT plays FROM '.CA_FIL_TBL.' WHERE file_id="'.esc_sql($file_id).'"');
+	return $plays;
+}
 ?>
