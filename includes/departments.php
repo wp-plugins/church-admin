@@ -1,19 +1,76 @@
 ﻿<?php
 function church_admin_department_list()
 {
-    global $departments;
-    echo'<h2>Departments</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department','edit_department').'">'.__('Add a department','church-admin').'</a></p>';
+    $departments=get_option('church_admin_departments');
+    echo'<h2>Ministries</h2><p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department','edit_department').'">'.__('Add a department','church-admin').'</a></p>';
     if(!empty($departments))
     {
-        echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Department Name','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Department Name','church-admin').'</th></tr></tr></tfoot><tbody>';
+        echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Department Name (Click to view people)','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Department Name','church-admin').'</th></tr></tr></tfoot><tbody>';
         foreach($departments AS $id=>$department)
         {
             $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department&amp;department_id='.$id,'edit_department').'">'.__('Edit','church-admin').'</a>';
             if($id!=1){$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_department&amp;department_id='.$id,'delete_department').'">'.__('Delete','church-admin').'</a>';}else{$delete=__("Can't be deleted",'church-admin');}
-            echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$department.'</td></tr>';
+            $view='<a title="'.__('View people doing that ministry','church-admin').'" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_view_department&amp;department_id='.$id,'view_department').'">'.$department.'</a>';
+            
+			echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$view.'</td></tr>';
         }
         echo'</tbody></table>';
     }
+
+}
+
+function church_admin_view_department($id)
+{
+		global $wpdb;$departments;
+		$departments=get_option('church_admin_departments');
+		$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" ORDER BY a.last_name ASC';
+		
+		$results=$wpdb->get_results($sql);
+		
+		if(!empty($results))
+		{
+			if(!empty($_POST['view_departments']))
+			{
+				
+				foreach($results AS $row)
+				{
+					if(!empty($_POST[$row->people_id]))
+					{
+						$sql='DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($row->people_id).'" AND department_id="'.esc_sql($id).'"';
+						
+						$wpdb->query($sql);
+					}
+					
+				}
+				$peoples_id=maybe_unserialize(church_admin_get_people_id($_POST['people']));
+					
+				if(!empty($peoples_id)) 
+				{
+					foreach($peoples_id AS $key=>$people_id)
+					{
+						$check=$wpdb->get_var('SELECT people_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND department_id="'.esc_sql($id).'"');
+						$sql='INSERT INTO '.CA_MET_TBL.' (people_id,department_id)VALUES("'.esc_sql($people_id).'","'.esc_sql($id).'")';
+						if(empty($check))$wpdb->query($sql);
+					}
+				}
+				
+			
+			}		
+		}	//department contains people
+	$results=$wpdb->get_results('SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" ORDER BY a.last_name,a.first_name ASC');
+		if(!empty($results))
+		{
+			echo '<h2>'.sprintf(__('Viewing who is in "%1s" ministry','church-admin'),$departments[$id]).'</h2><form action="" method="POST"><table class="widefat" ><thead><tr><th>'.__('Remove','church-admin').'</th><th>'.__('Person','church-admin').'</th></tr></thead><tbody>';
+			foreach($results AS $row)
+			{
+				$delete='<input type="checkbox" name="'.$row->people_id.'" value="x"/>';
+				echo'<tr><td>'.$delete.'</td><td>'.$row->name.'</td></tr>';
+			}
+			echo'</table>';
+			echo'<p>Add people:'.church_admin_autocomplete('people','friends','to',NULL).'</p>';
+			echo'<p><input type="hidden" name="view_departments" value="yes"/><input type="submit" value="'.__('Update','church-admin').'"/></p></form>';
+		}//department contains people
+		
 
 }
 function church_admin_delete_department($id)

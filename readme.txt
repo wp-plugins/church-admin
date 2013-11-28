@@ -268,6 +268,8 @@ Clear out files
 = 0.579 =
 * Add attachment page link for directory photos
 * Add play counter for sermon mp3 played with <audio> and download, but not flash
+= 0.580 =
+* Directly update who is in a ministry on the ministry page
 == Upgrade Notice ==
 * 0.566 required
 

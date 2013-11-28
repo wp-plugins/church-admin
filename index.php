@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.579
+Version: 0.580
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.579';
+$church_admin_version = '0.580';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -373,6 +373,10 @@ wp_enqueue_script('common');
         wp_enqueue_script('jquery-ui-autocomplete');
 	wp_enqueue_style( 'jquery.ui.theme',  CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css');
     }
+	if(isset($_GET['action'])&&$_GET['action']=='church_admin_view_department')
+	{
+		wp_enqueue_script('jquery-ui-autocomplete');
+	}
     if(isset($_GET['action'])&&$_GET['action']=='church_admin_update_order')
     {
          
@@ -563,7 +567,7 @@ function church_admin_main()
 	    case 'church_admin_edit_department':check_admin_referer('edit_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_edit_department($department_id);break;         
 	    case 'church_admin_delete_department':check_admin_referer('delete_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_delete_department($department_id);break;         
 	    case 'church_admin_department_list':check_admin_referer('department_list');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_department_list();break;         
-       
+       case 'church_admin_view_department':check_admin_referer('view_department');require(CHURCH_ADMIN_INCLUDE_PATH.'departments.php');church_admin_view_department($department_id);break;
 	    //funnel
 	    case 'church_admin_funnel_list':require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');church_admin_funnel_list();break;         
 	    case 'church_admin_edit_funnel':check_admin_referer('edit_funnel');require(CHURCH_ADMIN_INCLUDE_PATH.'funnel.php');church_admin_edit_funnel($funnel_id,$people_type_id);break;
