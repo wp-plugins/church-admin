@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.580
+Version: 0.581
 Author: Andy Moyle
 
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.580';
+$church_admin_version = '0.581';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -365,13 +365,13 @@ wp_enqueue_script('common');
     {//autocomplete scripts
         wp_enqueue_script( 'jquery-ui-datepicker' ); 
         wp_enqueue_script('jquery-ui-autocomplete');
-	wp_enqueue_style( 'jquery.ui.theme',  CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css' );
+		wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' );
     }
     if(isset($_GET['page'])&& $_GET['page']=='church_admin_permissions')
     {//autocomplete scripts
         wp_enqueue_script( 'jquery-ui-datepicker' ); 
         wp_enqueue_script('jquery-ui-autocomplete');
-	wp_enqueue_style( 'jquery.ui.theme',  CHURCH_ADMIN_INCLUDE_PATH.'/css/jquery-ui-1.8.21.custom.css');
+		wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' );
     }
 	if(isset($_GET['action'])&&$_GET['action']=='church_admin_view_department')
 	{

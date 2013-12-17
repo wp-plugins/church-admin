@@ -44,3 +44,5 @@
 .friends span a{ position:absolute !important; right:8px !important; top:2px !important; color:#666 !important;  text-decoration:none; }
 .friends span a:hover{ color:#ff0000 !important; }
 .ui-menu .ui-menu-item { white-space:nowrap; padding:0 10px 0 0; }
+.widefat td,.widefat th{border: 1px solid #e1e1e1;}
+.widefat th{background:#e1e1e1;color:#FFF;font-weight:700;}
