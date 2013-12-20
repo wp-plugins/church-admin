@@ -513,7 +513,7 @@ if(!get_option('church_admin_page_limit'))update_option('church_admin_page_limit
 if(get_option('church_admin_cron')=='wp-cron')
 {
     add_action('church_admin_bulk_email','church_admin_cron');
-   $timestamp=mktime();
+   $timestamp=time();
     wp_schedule_event($timestamp, 'hourly', 'church_admin_bulk_email');
 }
 
