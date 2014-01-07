@@ -762,7 +762,7 @@ function church_admin_create_user($people_id,$household_id)
 		//create unique username
 		$username=strtolower(str_replace(' ','',$user->first_name).str_replace(' ','',$user->last_name));
 		$x='';
-		while(username_exists( $user_name.$x ))
+		while(username_exists( $username.$x ))
 		{
 		    $x+=1;
 		}
@@ -772,7 +772,7 @@ function church_admin_create_user($people_id,$household_id)
 		$message='<p>'.__('The web team at','church-admin').' <a href="'.site_url().'">'.site_url().'</a>'.__('have just created a user login for you','church-admin').'</p>';
 		$message.='<p>'.__('Your username is','church-admin').' <strong>'.$username.$x.'</strong></p>';
 		$message.='<p>'.__('Your password is','church-admin').' <strong>'.$random_password.'</strong></p>';
-		echo '<div class="updated fade">'.__('User created with username','church-admin').' <strong>'.$username.'</strong>,'.__('password','church-admin').': <strong>'.$random_password.'</strong> '.__('and this message was queued to them','church-admin').'<br/>'.$message;
+		echo '<div class="updated fade">'.__('User created with username','church-admin').' <strong>'.$username.$x.'</strong>,'.__('password','church-admin').': <strong>'.$random_password.'</strong> '.__('and this message was queued to them','church-admin').'<br/>'.$message;
 		$headers=array();
 		$headers[] = 'From: Web team at '.site_url() .'<'.get_option('admin_email').'>';
 		$headers[] = 'Cc: Web team at '.site_url() .'<'.get_option('admin_email').'>';

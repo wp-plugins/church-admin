@@ -137,6 +137,7 @@ function church_admin_series_event_edit($date_id,$event_id)
             
         //put event details into church_admin_calender_event table
         $sql="INSERT INTO ".$wpdb->prefix."church_admin_calendar_event (title,description,location,cat_id,year_planner,recurring)VALUES('{$sqlsafe['title']}','{$sqlsafe['description']}','{$sqlsafe['location']}','{$sqlsafe['category']}','{$sqlsafe['year_planner']}','{$sqlsafe['recurring']}')";
+		
         $wpdb->query($sql);
         $event_id=$wpdb->insert_id;
         //handle event types
@@ -165,13 +166,15 @@ function church_admin_series_event_edit($date_id,$event_id)
         $values[]="('{$sqlsafe['start_date']}','{$sqlsafe['start_time']}','{$sqlsafe['end_time']}','$event_id')";
         for($x=1;$x<$sqlsafe['how_many'];$x++)
         {
-        $start=date('Y-m-d',strtotime("{$sqlsafe['start_date']}+$x $int"));
+			$start=date('Y-m-d',strtotime("{$sqlsafe['start_date']} +$x $int"));
+		
     
-        $values[]="('$start','{$sqlsafe['start_time']}','{$sqlsafe['end_time']}','$event_id')";
+			$values[]="('$start','{$sqlsafe['start_time']}','{$sqlsafe['end_time']}','$event_id')";
         }
         }
-        $sql="INSERT INTO ".$wpdb->prefix."church_admin_calendar_date (start_date,start_time,end_time,event_id) VALUES".implode(',',$values);
-        $wpdb->query($sql);
+        $sql='INSERT INTO '.$wpdb->prefix.'church_admin_calendar_date (start_date,start_time,end_time,event_id) VALUES '.implode(',',$values);
+		
+		$wpdb->query($sql);
       
       //end of process
         echo '<div id="message" class="updated fade">';
@@ -390,11 +393,11 @@ function church_admin_calendar_error_check($data)
 {
     global $error,$sqlsafe;
      //check startdate
-      $start_date=date('Y-m-d',strtotime($data['start_date']));
+      $start_date=church_admin_dateCheck($data['start_date']);
       
       $end_date=church_admin_dateCheck($data['end_date'], $yearepsilon=50);
       
-      if($start_date){$sqlsafe['start_date']=mysql_real_escape_string($start_date);}else{$error['start_date']==1;}
+      if($start_date){$sqlsafe['start_date']=esc_sql($start_date);}else{$error['start_date']==1;}
       
       //check start time
    if (preg_match ("/([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1})/", $data['start_time'])){$sqlsafe['start_time']=$data['start_time'];}else{$error['start_time']='1';}
@@ -433,7 +436,7 @@ function church_admin_calendar_error_check($data)
       $sqlsafe['location']=esc_sql($data['location']);
       if(!empty($_POST['category'])&&ctype_digit($data['category'])){$sqlsafe['category']=$data['category'];}else{$error['category']=1;}
       if($data['year_planner']=='1'){$sqlsafe['year_planner']=1;}else{$sqlsafe['year_planner']=0;}
-      
+     
     return $error;  
 }
 function church_admin_calendar_form($data,$error,$recurring=1)
@@ -499,7 +502,7 @@ foreach($result3 AS $row)
 
 $out.=$first.$select;//have original value first!
 $out.='</select></p>
-<p><label >'.__('Start Date','church-admin').'</label><input name="start_date" id="start_date" type="text" '.$error['start_date'].' value="'.mysql2date('d M Y',$data->start_date).'" size="25" />';
+<p><label >'.__('Start Date','church-admin').'</label><input name="start_date" id="start_date" type="text" '.$error['start_date'].' value="'.mysql2date('Y-m-d',$data->start_date).'" size="25" />';
 $out.='<script type="text/javascript">
       jQuery(document).ready(function(){
          jQuery(\'#start_date\').datepicker({
@@ -603,11 +606,11 @@ echo '</select><input type="submit" value="'.__('Go to date','church-admin').'"/
 }
 
 
-function church_admin_dateCheck($date, $yearepsilon=5000) { // inputs format is "DD/MM/YYYY" ONLY !
-if (count($datebits=explode('/',$date))!=3) return false;
-$year = intval($datebits[2]);
+function church_admin_dateCheck($date, $yearepsilon=5000) { // inputs format is "yyyy-mm-dd" ONLY !
+if (count($datebits=explode('-',$date))!=3) return false;
+$year = intval($datebits[0]);
 $month = intval($datebits[1]);
-$day = intval($datebits[0]);
+$day = intval($datebits[2]);
 if ((abs($year-date('Y'))>$yearepsilon) || // year outside given range
 ($month<1) || ($month>12) || ($day<1) ||
 (($month==2) && ($day>28+(!($year%4))-(!($year%100))+(!($year%400)))) ||
