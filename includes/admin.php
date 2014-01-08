@@ -211,7 +211,7 @@ function church_admin_rota_meta_box()
     global $wpdb,$days;
     $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
     
-    echo'<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_email_rota" method="POST">';
+    echo'<form action="'.admin_url().'" method="GET"><input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="action" value="church_admin_email_rota"/>';
     echo'<p><label>Email out service rota</label><select name="service_id">';
     echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
     foreach($services AS $service)

@@ -11,19 +11,88 @@ function church_admin_email_rota($service_id=1,$date=NULL)
  * @version  0.1
  * 
  */   
-	global $church_admin_version;
-    
-        /* Add screen option: user can choose between 1 or 2 columns (default 2) */
-    add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
-    ?>
-    <div class="wrap" id="church-admin">
-	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
-	<div id="poststuff">
-    <?php
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
-    echo'<form  method="get" action="">';
-	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
-	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
+	global $church_admin_version,$wpdb,$days;
+	//grab service details
+	$sql='SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"';
+	$service=$wpdb->get_row($sql);
+    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
+		add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
+		echo'<div class="wrap" id="church-admin"><div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v'.$church_admin_version.' -Rota</h2><div id="poststuff">    ';
+	
+	
+	if(!empty($_POST['rota_email']))
+	{//process form and send email
+     
+
+		if(empty($date))$date=date('Y-m-d',strtotime('This Sunday'));
+
+		$rota_tasks=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
+		$results=$wpdb->get_row('SELECT * FROM '.CA_ROT_TBL.' WHERE service_id="'.esc_Sql($service_id).'" AND rota_date="'.esc_sql($date).'"');
+		if(!empty($results))
+		{
+			$rota_jobs=maybe_unserialize($results->rota_jobs);
+			//build rota with jobs
+			$user_message.=stripslashes($_POST['message']);
+			//fix floated images for email
+			$user_message=str_replace('class="alignleft ','style="float:left;margin-right:20px;" class="',$user_message);
+			$user_message=str_replace('class="alignright ','style="float:right;margin-left:20px;" class="',$user_message);
+			$message=$user_message.'<p>'.__('Here is the rota for ','church-admin').'</p>';
+			$message.='<table><thead><tr><th>'.__('Job','church-admin').'</th><th>'.__('Who','church-admin').'</th></tr></thead><tbody>';
+			if(!empty($rota_jobs))
+			{
+				foreach($rota_tasks AS $task_row)
+				{
+					if(!empty($rota_jobs[$task_row->rota_id])) $message.='<tr><td><strong>'.esc_html($task_row->rota_task).': </strong></td><td>'.esc_html(church_admin_get_people($rota_jobs[$task_row->rota_id])).'</td></tr>';
+				}
+				$message.='</tbody></table>';
+			}
+			//grab unique people_ids
+			$people_ids=array();
+	
+			foreach( $rota_jobs AS $key=>$value)
+			{
+				if(!empty($value))
+				{
+					$jobs=maybe_unserialize($value);
+					foreach($jobs AS $k=>$id)
+					{
+						if(!in_array($id,$people_ids))$people_ids[]=$id;//only add unique ids
+					}
+				}
+			}
+	
+			//start emailing the message
+			$message.='<p>&nbsp;</p><p><a href="'.site_url().'?download=service_rota&amp;service_id='.$service_id.'">Download PDF of rota</a></p>';
+			if(!empty($people_ids))
+			{
+				echo'<div class="updated fade"<p><strong>Building email list for service</strong></p></div>';
+				foreach($people_ids AS $key=>$people_id)
+				{
+					$row=$wpdb->get_row('SELECT CONCAT_WS(" ", first_name,last_name) AS name, email FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
+					if(!empty($row->email))
+					{
+		    		    if(!empty($row->name))$email_content='<p>'.__('Dear','church-admin').' '.$row->name.',</p>'.$message;
+						$whenToSend=get_option('church_admin_cron');
+						if($whenToSend=='immediate')
+						{
+							add_filter( 'wp_mail_content_type', 'set_html_content_type' );
+							$headers = 'From: '.get_option('blogname').' <'.get_option('admin_email').'>' . "\r\n";
+							if(wp_mail($row->email,"This week's service rota",$email_content,$headers)){echo'<p>Email to '.$row->name.' send immediately</p>';}
+							remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+						}
+						else
+						{			      
+							if(QueueEmail($row->email,"This week's service rota",$email_content,'',get_option('blogname'),get_option('admin_email'),'',''))echo'<p>Email to '.$row->name.' queued</p>';
+						}
+					}
+				}	
+			}
+		}
+		require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+		add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
+		echo'<form  method="get" action="">';
+		wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
+		wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
 		
 		echo'</form></div> <script type="text/javascript">
 		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
@@ -31,58 +100,20 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 				postboxes.add_postbox_toggles( "church-admin");
 				});
 		</script><!-- End Meta Box Section-->';
-
-    if(empty($date))$date=date('Y-m-d',strtotime('This Sunday'));
-    global $wpdb;
-    $rota_tasks=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
-    $results=$wpdb->get_row('SELECT * FROM '.CA_ROT_TBL.' WHERE service_id="'.esc_Sql($service_id).'" AND rota_date="'.esc_sql($date).'"');
-    if(!empty($results))
-    {
-	$rota_jobs=maybe_unserialize($results->rota_jobs);
-	//build rota with jobs
-	$message=__('Here is the rota for ','church-admin');
-	if(!empty($rota_jobs))
+		do_meta_boxes('church-admin','advanced',null);
+		
+	}//end send out email
+	else
 	{
-	    foreach($rota_tasks AS $task_row)
-	    {
-	        if(!empty($rota_jobs[$task_row->rota_id])) $message.='<p><label style="float:left;width:150px;font-weight:bold">'.esc_html($task_row->rota_task).'</label>'.esc_html(church_admin_get_people($rota_jobs[$task_row->rota_id])).'</p>';
-	    }
-	    
+		
+		
+		echo'<h2>Email service rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2><form action="" method="post">';
+		echo'<p>The email will contain a salutation, the service rota and a pdf download link. Please add your own message</p>';
+		the_editor('','message',"", true);
+		echo'<p><input type="hidden" name="rota_email" value="yes"/><input type="submit" class="primary-button" value="Send to rota participants"/></p>';
+		echo'</form>';
 	}
-	//grab unique people_ids
-	$people_ids=array();
-	
-	foreach( $rota_jobs AS $key=>$value)
-	{
-	    if(!empty($value))
-	    {
-	    
-		$jobs=maybe_unserialize($value);
-		foreach($jobs AS $k=>$id)
-		{
-		    if(!in_array($id,$people_ids))$people_ids[]=$id;//only add unique ids
-		}
-	    }
-	}
-	//start emailing the message
-	$download_link=site_url().'?download=service_rota&amp;service_id='.$service_id;
-	if(!empty($people_ids))
-	{
-	    echo'<div class="updated fade"<p><strong>Building email list for service</strong></p></div>';
-	    foreach($people_ids AS $key=>$people_id)
-	    {
-		$row=$wpdb->get_row('SELECT CONCAT_WS(" ", first_name,last_name) AS name, email FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
-		if(!empty($row->email))
-		{
-		    
-		    if(!empty($row->name))$email_content='<p>'.__('Dear','church-admin').$row->name.',</p>'.$message;
-		    
-		    
-		    if(QueueEmail($row->email,"This week's service rota",$email_content,'',get_option('blogname'),get_option('admin_email'),'',''))echo'<p>Email to '.$row->name.' queued</p>';
-		}
-	    }
-	}
-    }
+	echo'</div></div>';	
 }
 function church_admin_rota_list($service_id=NULL)
 {

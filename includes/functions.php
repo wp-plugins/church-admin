@@ -375,10 +375,10 @@ function QueueEmail($to,$subject,$message,$copy,$from_name,$from_email,$attachme
     $sqlsafe['copy']=mysql_real_escape_string($copy);
     $result=$wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_email (recipient,from_name,from_email,copy,subject,message,sent,attachment)VALUES('{$sqlsafe['to']}','{$sqlsafe['from_name']}','{$sqlsafe['from_email']}','{$sqlsafe['copy']}','{$sqlsafe['subject']}','{$sqlsafe['message']}',NOW(),'{$sqlsafe['attachment']}')");
 
-    if($result) {return TRUE;}else{return FALSE;}
+    if($result) {return $wpdb->insert_id;}else{return FALSE;}
 }
 
-
+if(!function_exists('set_html_content_type')){function set_html_content_type() {return 'text/html';}}
 
 
 

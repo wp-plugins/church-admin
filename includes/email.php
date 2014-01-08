@@ -332,7 +332,7 @@ function church_admin_send_message($email_id)
                 {//queue the emails
                     if(!empty($row->email)&& !in_array($row->email,$addresses))
                     {
-			$addresses[]=$row->email;
+						$addresses[]=$row->email;
                         if(QueueEmail($row->email,$email_data->subject,str_replace("<!--salutation-->",__('Dear','church-admin').' '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
                     }
                     
