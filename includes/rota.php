@@ -62,7 +62,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 			}
 	
 			//start emailing the message
-			$message.='<p>&nbsp;</p><p><a href="'.site_url().'?download=service_rota&amp;service_id='.$service_id.'">Download PDF of rota</a></p>';
+			$message.='<p>&nbsp;</p><p><a href="'.site_url().'?download=rota&amp;service_id='.$service_id.'">Download PDF of rota</a></p>';
 			if(!empty($people_ids))
 			{
 				echo'<div class="updated fade"<p><strong>Building email list for service</strong></p></div>';
