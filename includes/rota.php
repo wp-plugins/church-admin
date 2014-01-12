@@ -354,7 +354,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 		{
 		    if(!empty($job[$task_row->rota_id])){$current=$job[$task_row->rota_id];}else{$current='';}
 		    
-		    echo church_admin_autocomplete($task_row->rota_id,'friends'.$task_row->rota_task,'to'.$task_row->rota_task,$current,$task_row->department_id);
+		    echo church_admin_autocomplete($task_row->rota_id,'friends'.$task_row->rota_task,'to'.$task_row->rota_task,$current,FALSE);
 		}
 		else
 		{	$curr_data='';
