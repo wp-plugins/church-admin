@@ -14,10 +14,15 @@ function church_admin_settings()
       echo'<div class="wrap church_admin">';
    if(!empty($_POST['save_setting']))
    {
-      
+      switch($_POST['sms_type'])
+	  {
+		case'community':update_option('church_admin_bulksms','http://community.bulksms.co.uk');break;
+		case'normal':update_option('church_admin_bulksms','http://bulksms.co.uk');break;
+	  }
       if(isset($_POST['church_admin_page_limit']))update_option('church_admin_page_limit',$_POST['church_admin_page_limit']);
       if(isset($_POST['church_admin_facebook']))update_option('church_admin_facebook',$_POST['church_admin_facebook']);
       if(isset($_POST['church_admin_twitter']))update_option('church_admin_twitter',$_POST['church_admin_twitter']);
+	  if(isset($_POST['church_admin_feedburner']))update_option('church_admin_feedburner',$_POST['church_admin_feedburner']);
       if(isset($_POST['church_admin_calendar_width']) && ctype_digit($_POST['church_admin_calendar_width']))update_option('church_admin_calendar_width',$_POST['church_admin_calendar_width']);	
       if(isset($_POST['church_admin_pdf_size']) && ($_POST['church_admin_pdf_size']=='Legal'||$_POST['church_admin_pdf_size']=='Letter'||$_POST['church_admin_pdf_size']=='A4'))
 	{
@@ -114,6 +119,7 @@ function church_admin_settings()
 	//end email template top image
 	echo'<p><label>'.__('Facebook page URL','church-admin').'</label><input type="text" name="church_admin_facebook" value="'.get_option('church_admin_facebook').'"/></p>';
 	echo'<p><label>'.__('Twitter Username','church-admin').'</label><input type="text" name="church_admin_twitter" value="'.get_option('church_admin_twitter').'"/></p>';
+	echo'<p><label>'.__('Feedburner uri','church-admin').'</label><input type="text" name="church_admin_feedburner" value="'.get_option('church_admin_feedburner').'"/></p>';
 	//mailing label size
 	echo '<p><label>Avery &#174; Label</label><select name="church_admin_label">';
 
@@ -176,6 +182,13 @@ function church_admin_settings()
 	echo'<h3>'.__('Bulk SMS Settings','church-admin').'</h3>';
 	echo'<p>'.__('Set up an account with','church-admin').' <a href="http://community.bulksms.co.uk">http://community.bulksms.co.uk</a>'.__('Prices start at 3.9 per sms','church-admin').'</p>';
 	echo'<p>'.__('Once you have registered fill out the form below','church-admin').'</p>';
+	$sms_type=get_option('church_admin_bulksms');
+	
+	echo'<p><label>Which bulksms.co.uk account type are you using?</label><input type="radio" name="sms_type" value="community"';
+	if(empty($sms_type)||$sms_type=='http://community.bulksms.co.uk') echo' checked="checked" ';
+	echo'/>Community or <input type="radio" name="sms_type" value="normal"';
+	if($sms_type=='http://bulksms.co.uk') echo' checked="checked" ';
+	echo' />Normal';
 	echo'<p><label >'.__('SMS username','church-admin').'</label><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></p>';
 	echo'<p><label>'.__('SMS password','church-admin').'</label><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></p>';
 	echo'<p><label >'.__('SMS reply eg:447777123456','church-admin').'</label><input type="text" name="sms_reply" value="'.get_option('church_admin_sms_reply').'" /></p>';

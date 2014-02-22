@@ -1,12 +1,13 @@
-<?php
+﻿<?php
 
 /*
 
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5842
+Version: 0.5851
 Author: Andy Moyle
+Text Domain: church-admin
 
 
 Author URI:http://www.themoyles.co.uk
@@ -47,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5842';
+$church_admin_version = '0.5851';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -58,25 +59,16 @@ if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
 add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
-add_action('activated_plugin','save_error');
+
 add_action('load-church-admin', 'church_admin_add_screen_meta_boxes');
 
-function save_error(){
-    update_option('plugin_error',  ob_get_contents());
-}
+// add localisation
 
-//add localisation
-$my_translator_domain   = 'church-admin';
-$my_translator_is_setup = 0;
-function ca_loc_setup(){
-  global $my_translator_domain, $my_translator_is_setup;
-  if($my_translator_is_setup) {
-    return;
-  }
-  load_plugin_textdomain( 'church-admin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-  $my_translator_is_setup = 1;
+function ca_myplugin_init() {
+  load_plugin_textdomain( 'church-admin', false, dirname( plugin_basename( __FILE__ ) ). '/languages/' ); 
 }
-add_action('plugins_loaded', 'ca_loc_setup');
+add_action('init', 'ca_myplugin_init');
+
 //end add localisation
 
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
@@ -330,7 +322,7 @@ wp_enqueue_script('common');
         wp_register_script('ca_email', CHURCH_ADMIN_INCLUDE_URL.'email.js', false, '1.0');
         wp_enqueue_script('ca_email');
     }
-    if(isset($_GET['action']) && $_GET['action']=='church_admin_send_email')
+    if(isset($_GET['action']) && ($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_send_sms'))
     {
         wp_enqueue_script('jquery');
         wp_register_script('ca_email', CHURCH_ADMIN_INCLUDE_URL.'email.js', false, '1.0');
@@ -532,6 +524,8 @@ function church_admin_main()
     {
 	switch($_GET['action'])
 	{
+		//mailchimp
+		case'mailchimp_sync':if(church_admin_level_check('Directory')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'mailchimp.php');church_admin_mailchimp_sync();}break;
 		//premissions
 		case'permissions':require_once(CHURCH_ADMIN_INCLUDE_PATH.'permissions.php');church_admin_permissions();break;
 	//backups

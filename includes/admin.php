@@ -198,7 +198,7 @@ function church_admin_communications_meta_box()
 {
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_send_sms">'.__('Send Bulk SMS','church-admin').'</a></p>';
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_send_email">'.__('Send Bulk Email','church-admin').'</a></p>';
-
+	echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=mailchimp_sync">'.__('Sync Mailchimp Account','church-admin').'</a></p>';
 }
 function church_admin_followup_meta_box()
 {
