@@ -69,7 +69,7 @@ function church_admin_front_admin()
 function church_admin_plugin_news_meta_box()
 {
     echo'<p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">'.__('Get Support','church-admin').'</a><br/><strong>'.__('Latest News','church-admin').'</strong></p>';
-    require(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');
+    require_once(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');
     echo church_admin_news_feed();
     echo __('We are saving up to visit friends planting in China, if you like the plugin, please donate towards flights!','church-admin').'...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form>';
     
