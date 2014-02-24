@@ -1,4 +1,5 @@
-﻿<?php
+<?php
+//2014-02-24 fixed encoding error
 function church_admin_send_email()
 
 {

@@ -1,4 +1,5 @@
-﻿<?php
+<?php
+//fixed encoding error
 function church_admin_checkdate($date)
 {
 		$d=explode('-',$date);
