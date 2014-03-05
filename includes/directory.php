@@ -145,6 +145,11 @@ function church_admin_edit_household($household_id=NULL)
 	    echo '<div class="updated fade"><p><strong>'.__('Address saved','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
 	}
 	    echo'<div id="post-body" class="metabox-holder columns-2"><!-- meta box containers here -->';
+		
+		echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
+	
+		church_admin_display_household($household_id);
+	
 		echo'<form  method="get" action="">'. wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
 		require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 		//church_admin_collapseBoxForUser($current_user->ID,"church-admin-people-functions");
@@ -157,10 +162,6 @@ function church_admin_edit_household($household_id=NULL)
 				});
 		</script><!-- End Meta Box Section-->';
 		
-		echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
-	
-		church_admin_display_household($household_id);
-	
     }//end process form
     else
     {//household form
@@ -362,6 +363,11 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		//end of process into db, now output...		
 		
 		echo'<div id="post-body" class="metabox-holder columns-2"><!-- meta box containers here -->';
+		
+		echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
+	
+		church_admin_display_household($household_id);
+		
 		echo'<form  method="get" action="">'. wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
 		echo'</form>';
 		
@@ -376,9 +382,6 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 				});
 		</script><!-- End Meta Box Section-->';
 		
-		echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/><a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a></strong></p></div>';
-	
-		church_admin_display_household($household_id);
     }//end process
     else
     {//form
@@ -531,10 +534,11 @@ function church_admin_delete_people($people_id=NULL,$household_id)
     $wpdb->query('DELETE FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
     $wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
     echo'<div class="updated fade"><p><strong>'.__('Person Deleted','church-admin').'</strong></p></div>';
+	church_admin_display_household($household_id);
     require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 	    add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
 	    do_meta_boxes('church-admin','advanced',null);
-    church_admin_display_household($household_id);
+    
 }
 
 function church_admin_address_form($data,$error)
