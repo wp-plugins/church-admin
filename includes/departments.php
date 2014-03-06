@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 function church_admin_department_list()
 {
     $departments=get_option('church_admin_departments');

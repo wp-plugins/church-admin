@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 function church_admin_front_admin()
 {

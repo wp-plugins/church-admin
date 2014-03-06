@@ -4,7 +4,9 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 {
   global $wpdb;
   $out='';
-  $out.='<p><label style="width:75px;float:left;">'.__('Search','church-admin').'</label><form name="ca_search" action="" method="POST"><input name="ca_search" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></form></p>';
+  $out.='<p><label style="width:75px;float:left;">'.__('Search','church-admin').'</label><form name="ca_search" action="" method="POST"><input name="ca_search" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/>';
+  $out.='<input type="hidden" name="ca_search_nonce" value="'.wp_create_nonce('ca_search_nonce').'"/>';
+  $out.='</form></p>';
     if(empty($_POST['ca_search']))
     {
 		$limit='';
