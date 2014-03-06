@@ -1,13 +1,4 @@
-<?php
-//avoid direct calls to this file where wp core files not present
-if (!function_exists ('add_action')) {
-		header('Status: 403 Forbidden');
-		header('HTTP/1.1 403 Forbidden');
-		exit();
-}
-
-
-
+﻿<?php
 
 function church_admin_front_admin()
 {
@@ -69,7 +60,7 @@ function church_admin_front_admin()
 function church_admin_plugin_news_meta_box()
 {
     echo'<p><a href="http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support">'.__('Get Support','church-admin').'</a><br/><strong>'.__('Latest News','church-admin').'</strong></p>';
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');
+    require(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');
     echo church_admin_news_feed();
     echo __('We are saving up to visit friends planting in China, if you like the plugin, please donate towards flights!','church-admin').'...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form>';
     
@@ -143,16 +134,17 @@ echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;acti
 			    {
 				foreach($member_type AS $key=>$value)
 				{
-				    echo'<a href="'.home_url().'/?download=mailinglabel&amp;member_type_id='.$key.'">'.$value.' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</a><br/>';
+				    echo'<a href="'.home_url().'/?download=mailinglabel&amp;mailinglabel='.wp_create_nonce('mailinglabel').'&amp;member_type_id='.$key.'">'.$value.' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</a><br/>';
 				}
 				foreach($member_type AS $key=>$value)
 				{
-				    echo'<a href="'.home_url().'/?download=addresslist&amp;member_type_id='.$key.'">'.$value.' '.__('Address List PDF','church-admin').'</a><br/>';
+				    echo'<a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce('addresslist').'&amp;member_type_id='.$key.'">'.$value.' '.__('Address List PDF','church-admin').'</a><br/>';
 				}
 			    }
 			    echo'</p>';
 			    echo'<h2>'.__('Download an csv of people','church-admin').'</h2>';
 			    echo'<form action="'.home_url().'" method="get">';
+				echo wp_nonce_field('people-csv','people-csv');
 			    foreach($member_type AS $key=>$value)
 				{
 						echo '<p><label>'.$value.'</label><input type="checkbox" name="member_type_id[]" value="'.$key.'"/></p>';
@@ -246,7 +238,7 @@ function church_admin_rota_meta_box()
 			    $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 			    foreach($services AS $service)
 			    {
-				echo'<a href="'.home_url().'/?download=rotacsv&amp;service_id='.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.' '.$service->venue.'</a><br/>';}
+				echo'<a href="'.home_url().'/?download=rotacsv&amp;rotacsv='.wp_create_nonce('rotacsv').'&amp;service_id='.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.' '.$service->venue.'</a><br/>';}
 			    echo'</p>';
 }
 function church_admin_calendar_meta_box()
@@ -257,11 +249,11 @@ function church_admin_calendar_meta_box()
     			    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_add_category','add_category').'">'.__('Add a category','church-admin').'</a></p>';
 			    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_category_list','category_list').'">'.__('Category List','church-admin').'</a></p>';
 			    echo '<p><label>'.__('Download a year planner PDF','church-admin').'</label><form name="calendar_form" action="" method="get"><select name="calendar_form_links" onchange="window.location=document.calendar_form.calendar_form_links.options[document.calendar_form.calendar_form_links.selectedIndex].value">';
-			    echo'<option selected="selected" value="'.home_url().'/?download=yearplanner&amp;year='.date('Y').'">-- '.__('Choose a pdf','church-admin').' --</option>';
+			    echo'<option selected="selected" value="'.home_url().'/?download=yearplanner&amp;yearplanner='.wp_create_nonce('yearplanner').'&amp;year='.date('Y').'">-- '.__('Choose a pdf','church-admin').' --</option>';
 			    for($x=0;$x<5;$x++)
 			    {
 				$y=date('Y')+$x;
-				echo '<option value="'.home_url().'/?download=yearplanner&amp;year='.$y.'">'.$y.' '.__('Year Planner','church-admin').'</option>';
+				echo '<option value="'.home_url().'/?download=yearplanner&amp;yearplanner='.wp_create_nonce('yearplanner').'&amp;year='.$y.'">'.$y.' '.__('Year Planner','church-admin').'</option>';
 			    }
 			    echo'</select></form></p>';
 }
@@ -271,12 +263,13 @@ function church_admin_smallgroups_meta_box()
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_small_group",'edit_small_group').'">'.__('Add a small group','church-admin').'</a></p>';
 			    echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_small_groups">'.__('Small Group List','church-admin').'</a></p>';
 			    echo '<p><label>'.__('Download an small group PDF','church-admin').'</label><form name="address_list_form" action="'.home_url().'" method="get"><input type="hidden" name="download" value="smallgroup"/><select name="member_type_id" onchange="this.form.submit()">';
-			    echo'<option selected="selected" value="1">-- '.__('Choose a pdf','church-admin').' --</option>';
+			    echo wp_nonce_field('smallgroup','smallgroup');
+				echo'<option selected="selected" value="1">-- '.__('Choose a pdf','church-admin').' --</option>';
 			    foreach($member_type AS $key=>$value)
 			    {
 				echo'<option value="'.$key.'">'.$value.' '.__('Small group PDF','church-admin').'</option>';
 			    }
-			    echo '<option value="'.home_url().'/?download=smallgroups&amp;member_type_id='.implode(",",array_keys($member_type)).'">'.__('All member types Small group PDF','church-admin').'</option>';
+			    echo '<option value="'.home_url().'/?download=smallgroup&amp;smallgroup='.wp_create_nonce('smallgroup').'&amp;member_type_id='.implode(",",array_keys($member_type)).'">'.__('All member types Small group PDF','church-admin').'</option>';
 			    echo'</select></form></p>';
 
 }

@@ -62,7 +62,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 			}
 	
 			//start emailing the message
-			$message.='<p>&nbsp;</p><p><a href="'.site_url().'?download=rota&amp;service_id='.$service_id.'">Download PDF of rota</a></p>';
+			$message.='';
 			if(!empty($people_ids))
 			{
 				echo'<div class="updated fade"<p><strong>Building email list for service</strong></p></div>';
@@ -108,7 +108,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 		
 		
 		echo'<h2>Email service rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2><form action="" method="post">';
-		echo'<p>The email will contain a salutation, the service rota and a pdf download link. Please add your own message</p>';
+		echo'<p>The email will contain a salutation and the service rota. Please add your own message</p>';
 		the_editor('','message',"", true);
 		echo'<p><input type="hidden" name="rota_email" value="yes"/><input type="submit" class="primary-button" value="Send to rota participants"/></p>';
 		echo'</form>';

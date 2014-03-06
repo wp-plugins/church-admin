@@ -122,7 +122,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
     $out.='</div>';
     	
     $out.='<div style="clear:both"></div>';
-    $out.='<div class="cn-meta" align="left" style="margin-top: 6px"><span><a href="'.home_url().'/?download=vcf&amp;id='.$ordered_row->household_id.'">V-Card</a></span>'.        '  <span style="font-size:x-small; font-variant: small-caps; position: absolute; right: 26px; bottom: 8px;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></div></div>';
+    $out.='<div class="cn-meta" align="left" style="margin-top: 6px"><span><a href="'.home_url().'/?download=vcf&amp;vcf='.wp_create_nonce('vcf').'&amp;id='.$ordered_row->household_id.'">V-Card</a></span>'.        '  <span style="font-size:x-small; font-variant: small-caps; position: absolute; right: 26px; bottom: 8px;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></div></div>';
   }
   return $out;
 }

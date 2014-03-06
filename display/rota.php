@@ -26,8 +26,8 @@ function church_admin_front_end_rota()
 	$sql='SELECT * FROM '.CA_ROT_TBL.'  WHERE rota_date>"'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date ASC LIMIT 1';
 	
 	$row=$wpdb->get_row($sql);
-	$out='<p><a href="'.home_url().'/?download=rota&amp;service_id='.$service_id.'">'.__('PDF Version of the rota for next 3 months','church-admin').'</a></p>';
-	$out.='<p><a href="'.home_url().'/?download=rotacsv&amp;service_id='.$service_id.'">'.__('Spreadsheet Version of the rota for next 3 months','church-admin').'</a></p>';
+	$out='<p><a href="'.home_url().'/?download=rota&amp;rota='.wp_create_nonce('rota').'&amp;service_id='.$service_id.'">'.__('PDF Version of the rota for next 3 months','church-admin').'</a></p>';
+	$out.='<p><a href="'.home_url().'/?download=rotacsv&amp;rotacsv='.wp_create_nonce('rotacsv').'&amp;service_id='.$service_id.'">'.__('Spreadsheet Version of the rota for next 3 months','church-admin').'</a></p>';
 	
 	$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
 	$out.='<h2>'.__('Who is doing what at the next ','church-admin').esc_html($service->service_name).' '.__('on','church-admin').' '.esc_html($days[$service->service_day]).' '.__('at','church-admin').' '.esc_html($service->service_time).' '.esc_html($service->venue).'</h2>';

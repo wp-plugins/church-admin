@@ -75,7 +75,7 @@ function church_admin_settings()
 	    break;
 	    case 'cron':
 		wp_clear_scheduled_hook('church_admin_bulk_email');
-		echo'<p><a href="'.site_url().'/?download=cron-instructions">'.__('PDF Instructions for email cron setup','church-admin').'</a></p>';
+		echo'<p><a href="'.site_url().'/?download=cron-instructions&amp;cron-instructions='.wp_create_nonce('cron-instructions').'">'.__('PDF Instructions for email cron setup','church-admin').'</a></p>';
 		break;
 	    default:
 	       wp_clear_scheduled_hook('church_admin_bulk_email');
@@ -96,7 +96,7 @@ function church_admin_settings()
 	 
 	 unset($_POST);
 	 echo'<div class="updated fade"><p>'.__('Settings Updated','church-admin').'</p></div>';
-	 echo'<p><a href="'.site_url().'/?download=cron-instructions">'.__('PDF Instructions for email cron setup','church-admin').'</a></p>';
+	 echo'<p><a href="'.site_url().'/?download=cron-instructions&amp;cron-instructions='.wp_create_nonce('cron-instructions').'&amp;">'.__('PDF Instructions for email cron setup','church-admin').'</a></p>';
 	 church_admin_settings();
 	 echo'</div>';
    }
