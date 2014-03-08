@@ -531,10 +531,90 @@ function html2rgb($color)
 
     return array($r, $g, $b);
 }
-
 function church_admin_rota_pdf($service_id=1)
 {
     
+    global $wpdb,$days;
+    $wpdb->show_errors();
+	$percent=array();
+	$headers=array();
+	require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
+	
+	$pdf=new FPDF();
+	$pdf->AddPage('L',get_option('church_admin_pdf_size'));
+	$pdf->AddFont('Verdana','','verdana.php');
+	$pdf->SetFont('Verdana','',16);
+	
+	//Grab Service details
+	$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
+	$text=__('Who is doing what this month at  ','church-admin').esc_html($service->service_name).' '.__('on','church-admin').' '.esc_html($days[$service->service_day]).' '.__('at','church-admin').' '.esc_html($service->service_time).' '.esc_html($service->venue);
+	//$text=__('Sunday Rota produced','church-admin').date("d-m-Y");
+	$pdf->Cell(0,10,$text,0,2,'C');
+	$pdf->SetFont('Arial','B',12);
+	//left hand column shows
+	//Main rota
+	$jobs=array();
+	$rota_tasks=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
+	//grab this months services
+	$sql='SELECT * FROM '.CA_ROT_TBL.'  WHERE  MONTH(rota_date)="'.date('m').'" AND YEAR(rota_date)="'.date('Y').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date ASC';
+	$rota_results=$wpdb->get_results($sql);
+	if(!empty($rota_results))
+	{
+		//Top left cell empty!
+		$pdf->Cell(45,7,'',1,0,'C');
+		$jobs=array();
+		foreach($rota_results AS $rota_row)
+		{
+			
+			//Output date
+			$pdf->SetFont('Arial','B',8);
+			$pdf->Cell(45,7,mysql2date('d/m/Y',$rota_row->rota_date),1,0,'C',0);
+			//put that service's jobs in an array with date and job_id for key
+			$jobs_for_day=maybe_unserialize($rota_row->rota_jobs);
+			
+			foreach($jobs_for_day AS $job_key=>$job_who) 
+			{
+				
+				$jobs[$job_key][$rota_row->rota_date]=maybe_unserialize($job_who);
+				
+			}
+					
+		}
+	}
+	
+	//grab rota order
+	$order=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
+	$x=0;
+	
+	foreach($order AS $rota_job)
+	{
+		//1st Column
+		$pdf->Ln(7);//line break
+		$pdf->SetFont('Arial','B',6);
+		$pdf->Cell(45,7,$rota_job->rota_task,1,0,'C',0);
+		//that job for each date
+		
+		$pdf->SetFont('Arial','',6);
+		foreach($jobs[$rota_job->rota_id] AS $date=>$people)
+		{
+			
+			if($x %2 == 0){$pdf->SetFillColor(200,200,200);$fill=1;}else{$fill=0;}
+			
+			if(!empty($rota_job->initials)){$ppl=iconv('UTF-8', 'ISO-8859-1',church_admin_initials($people));}else{$ppl=iconv('UTF-8', 'ISO-8859-1',church_admin_get_people($people));}
+			$pdf->Cell(45,7,$ppl,1,0,'C',$fill);
+			$x++;
+		}
+		$x=0;
+	}
+		
+	$pdf->Output();
+	
+}
+
+function church_admin_rota_pdf_old($service_id=1)
+{
+/*
+//deprecated    
     global $wpdb;
     $wpdb->show_errors();
 $percent=array();
@@ -580,16 +660,11 @@ foreach($results AS $row)
 	    if(empty($size[$job])||$people>$size[$job])$size[$job]=$people;
 	}
     }
+
 }
-
-
 $totalcharas=array_sum($size)+12;
-
 $widths=array();//array with proportions for each key
 foreach($size AS $key=>$value)$widths[$key]=$size[$key]/$totalcharas;
-
-
-
 //Date as first header
 
 $h=12;
@@ -636,7 +711,7 @@ foreach($results AS $row)
 
 $pdf->Output();
 
-
+*/
 }
 function church_admin_small_group_xml()
 {

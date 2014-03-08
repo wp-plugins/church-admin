@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5901
+Version: 0.5920
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5901';
+$church_admin_version = '0.5920';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -507,6 +507,8 @@ function church_admin_main()
 {
     global $wpdb,$church_admin_version;
     $id=!empty($_GET['id'])?$_GET['id']:NULL;
+	$rota_id=!empty($_GET['rota_id'])?$_GET['rota_id']:NULL;
+	$copy_id=!empty($_GET['copy_id'])?$_GET['copy_id']:NULL;
     $date_id=!empty($_GET['date_id'])?$_GET['date_id']:NULL;
     $event_id=!empty($_GET['event_id'])?$_GET['event_id']:NULL;
     $people_id=!empty($_GET['people_id'])?$_GET['people_id']:NULL;
@@ -572,7 +574,7 @@ function church_admin_main()
 	    case 'church_admin_edit_member_type':check_admin_referer('edit_member_type');require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_edit_member_type($member_type_id);break;         
 	    case 'church_admin_delete_member_type':check_admin_referer('delete_member_type');require(CHURCH_ADMIN_INCLUDE_PATH.'member_type.php');church_admin_delete_member_type($member_type_id);break;         
 	   
-	    //celendar
+	    //calendar
 	    case 'church_admin_calendar_list':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_calendar();}break;         
 	    
 	    case 'church_admin_add_category':check_admin_referer('add_category');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_category();}break;         
@@ -597,6 +599,7 @@ function church_admin_main()
 	    case 'church_admin_search':if(wp_verify_nonce('ca_search_nonce','ca_search_nonce')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_search($_POST['ca_search']);}break;
 	   
 	    //rota
+		case 'copy_rota_data':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_copy_rota($copy_id,$rota_id);}break;
 	    case 'church_admin_email_rota':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_email_rota($service_id);}break;
 	    case 'church_admin_rota_list':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_rota_list($service_id);}break;
 	    case 'church_admin_rota_settings_list':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota_settings.php');church_admin_rota_settings_list();}break;
@@ -682,7 +685,7 @@ function church_admin_shortcode($atts, $content = null)
         break;
         case 'address-list':
 	   
-            $out.='<p><a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce('addresslist' ).'&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
+            $out.='<p><a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce($member_type_id ).'&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
             require_once(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
             $out.=church_admin_frontend_directory($member_type_id,$map,$photo);
         break;
@@ -733,6 +736,7 @@ function church_admin_shortcode($atts, $content = null)
         break;
 		case 'birthdays':require_once(CHURCH_ADMIN_INCLUDE_PATH.'birthdays.php');$out.=church_admin_frontend_birthdays($member_type_id, $days);break;
 	default:
+			$out.='<p><a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce($member_type_id ).'&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
             require_once(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
             $out.=church_admin_frontend_directory($member_type_id,$map,$photo);
         break;
@@ -753,7 +757,7 @@ function church_admin_map($atts, $content = null)
     extract(shortcode_atts(array('zoom'=>13,'member_type_id'=>1,'small_group'=>1), $atts));
     global $wpdb;
     $service=$wpdb->get_row('SELECT lat,lng FROM '.CA_SER_TBL.' LIMIT 1');
-    $out.='<script type="text/javascript">var xml_url="'.site_url().'/?download=address-xml&amp;address-xml='.wp_create_nonce('address-xml').'&amp;&member_type_id='.$member_type_id.'&small_group='.$small_group.'";';
+    $out.='<script type="text/javascript">var xml_url="'.site_url().'/?download=address-xml&amp;address-xml='.wp_create_nonce('address-xml').'&amp;member_type_id='.$member_type_id.'&small_group='.$small_group.'";';
     $out.=' var lat='.$service->lat.';';
     $out.=' var lng='.$service->lng.';';
     
@@ -850,8 +854,8 @@ function church_admin_download($file)
 		case'rota':if(wp_verify_nonce($_GET['rota'],'rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_rota_pdf();}else{echo'<p>You can only download if coming from a valid link</p>';}break;
         case'yearplanner':if(wp_verify_nonce($_GET['yearplanner'],'yearplanner')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_year_planner_pdf($_GET['year']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
 		case'smallgroup':if(wp_verify_nonce($_GET['smallgroup'],'smallgroup')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_smallgroup_pdf($_GET['member_type_id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
-		case'addresslist':if(wp_verify_nonce($_GET['addresslist'],'addresslist')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_pdf($_GET['member_type_id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
-		case'vcf':if(wp_verify_nonce($_GET['vcf'],'vcf')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');ca_vcard($_GET['id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
+		case'addresslist':if(wp_verify_nonce($_GET['addresslist'],$_GET['member_type_id'])){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_pdf($_GET['member_type_id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
+		case'vcf':if(wp_verify_nonce($_GET['vcf'],$_GET['id'])){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');ca_vcard($_GET['id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
 		case'mailinglabel':if(wp_verify_nonce($_GET['mailinglabel'],'mailinglabel')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_label_pdf($_GET['member_type_id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
         case 'rotacsv':if(wp_verify_nonce($_GET['rotacsv'],'rotacsv')){require(CHURCH_ADMIN_INCLUDE_PATH."rota.php");church_admin_rota_csv($_GET['service_id']); }else{echo'<p>You can only download if coming from a valid link</p>';}break;
     }

@@ -1,4 +1,29 @@
 <?php
+
+function church_admin_copy_rota($copy_id,$rota_id)
+{
+        /**
+ *
+ * copies data from copy_id to rota_id
+ * 
+ * @author  Andy Moyle
+ * @param    $copy_id,$rota_id
+ * @return   html string
+ * @version  0.1
+ * 
+ */
+	global $wpdb;
+	$rota_jobs=$wpdb->get_var('SELECT rota_jobs FROM '.CA_ROT_TBL.' WHERE rota_id="'.esc_sql($copy_id).'"');
+	if(!empty($rota_jobs))
+	{
+		$wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.esc_sql($rota_jobs).'" WHERE rota_id="'.esc_sql($rota_id).'"');
+		echo'<div class="updated fade".<p><strong>People copied over</strong></p></div>';
+		$service_id=$wpdb->get_var('SELECT service_id FROM '.CA_ROT_TBL.'WHERE rota_id="'.esc_sql($rota_id).'"');
+		church_admin_rota_list($service_id);
+	}
+}
+
+
 function church_admin_email_rota($service_id=1,$date=NULL)
 {
         /**
@@ -36,7 +61,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 			//fix floated images for email
 			$user_message=str_replace('class="alignleft ','style="float:left;margin-right:20px;" class="',$user_message);
 			$user_message=str_replace('class="alignright ','style="float:right;margin-left:20px;" class="',$user_message);
-			$message=$user_message.'<p>'.__('Here is the rota for ','church-admin').'</p>';
+			$message=$user_message.'<p>for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</p>';
 			$message.='<table><thead><tr><th>'.__('Job','church-admin').'</th><th>'.__('Who','church-admin').'</th></tr></thead><tbody>';
 			if(!empty($rota_jobs))
 			{
@@ -118,6 +143,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 function church_admin_rota_list($service_id=NULL)
 {
 global$wpdb,$rota_order,$days;
+$wpdb->show_errors();
 global $church_admin_version;
     //Meta Box
     /* Add screen option: user can choose between 1 or 2 columns (default 2) */
@@ -192,11 +218,19 @@ if(!empty($taskresult))
 	    {
 	      $thead.='<th>'.esc_html($taskrow->rota_task).'</th>';
 	    }
+		$thead.='<th>Copy from...</th>';
 	    $thead.='</tr>';
 	
 	    echo'<thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
 	    //end rota table header
     	
+		
+		//some form data for later
+		$date_options='';
+		$sql='SELECT rota_id,rota_date FROM '.CA_ROT_TBL.' WHERE rota_date>"'.date("Y-m-d",strtotime("-1 month")).'" AND rota_date<"'.date("Y-m-d",strtotime("+1 month")).'"';
+		
+		$dates=$wpdb->get_results($sql);
+		foreach($dates AS $date){$date_options.='<option value="'.$date->rota_id.'">'.mysql2date(get_option('date_format'),$date->rota_date).'</option>';}
 	    //grab results for each date
 	    foreach($results AS $daterows)
 	    {
@@ -232,7 +266,14 @@ if(!empty($taskresult))
 		{
 		    echo'<td colspan="'.count($rota_order).'">'.__('No one is doing anything yet','church-admin').'</td>';    
 		}
-			    
+		//copy section
+		echo'<td><form action="'.admin_url().'admin.php" method="GET">';
+		echo'<input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="action" value="copy_rota_data"/>';
+		echo wp_nonce_field('copy_rota','copy_rota');
+		echo'<input type="hidden" name="rota_id" value="'.$daterows->rota_id.'"/><select name="copy_id">';
+		echo $date_options.'</select>';
+		echo'<input type="submit" value="Copy rota"/></form></td>';
+	    
 		echo'</tr>';//finish building row	
 		}
 	    echo'</tbody>';

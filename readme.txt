@@ -291,6 +291,11 @@ Clear out files
 * Make post editing screen for people and household clearer
 = 0.5901 =
 * Added nonces to all download links, to protect privacy
-== Upgrade Notice ==
+= 0.5910 =
+* Changed Rota PDF to allow more text and initials instead of full names
+= 0.5920 =
+Made protective nonces only valid for given member types
+Fixed address-xml link error
+
 * 0.566 required
 == Credits: ==

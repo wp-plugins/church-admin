@@ -1,5 +1,27 @@
 <?php
-//fixed encoding error
+
+function church_admin_initials($people)
+{
+	
+	if(!empty($people))
+	{
+		
+		foreach($people as $id=>$peep)
+		{
+			$person=church_admin_get_person($peep);
+			$strlen=strlen($person);
+			$initials[$id]='';
+			for($i=0;$i<=$strlen;$i++)
+			{
+				$char=substr($person,$i,1);
+				if (ctype_upper($char)){$initials[$id].=$char;}
+			}
+		}
+		
+		return implode(', ',$initials);
+	
+	}else return '';
+}
 function church_admin_checkdate($date)
 {
 		$d=explode('-',$date);
@@ -129,6 +151,8 @@ function church_admin_autocomplete($name='people',$first_id='friends',$second_id
 </script>';
     return $out;
 }
+
+
 function church_admin_get_person($id)
 {
              /**

@@ -15,12 +15,18 @@ function church_admin_front_admin()
     <div class="wrap" id="church-admin">
 	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?></h2>
 	<div id="poststuff">
-
-			<p>
-	<?php    echo __('We are saving up to visit our friends ch. planting in China - if you find the plugin helpful, please contribute!','church-admin');?>
-	...<form class="right" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>
-	    <script id='fb67321'>(function(i){var f,s=document.getElementById(i);f=document.createElement('iframe');f.src='//api.flattr.com/button/view/?uid=TheMoyle&button=compact&url='+encodeURIComponent(document.URL);f.title='Church Admin Plugin';f.height=20;f.width=110;f.style.borderWidth=0;s.parentNode.insertBefore(f,s);})('fb67321');</script>
-		<?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){	echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	    <!-- #post-body .metabox-holder goes here -->
+	
+	<div class="church_admin_left" style="width:45%"><p>
+	<?php    echo __('If you find the plugin helpful, please contribute!','church-admin');?>
+	<br/><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form><br/>
+	    <script id='fb67321'>(function(i){var f,s=document.getElementById(i);f=document.createElement('iframe');f.src='//api.flattr.com/button/view/?uid=TheMoyle&button=compact&url='+encodeURIComponent(document.URL);f.title='Church Admin Plugin';f.height=20;f.width=110;f.style.borderWidth=0;s.parentNode.insertBefore(f,s);})('fb67321');</script></p></div>
+	<div class="church_admin_left" style="width:45%"><p>
+		<a href="http://www.worshipbanners.co.uk"><img src="<?php echo CHURCH_ADMIN_IMAGES_URL;?>worship-banners-logo.png" width="300" height="100" alt="Worship Banners"/></a>
+		<br/>
+		The plugin author has recently started a business selling rollup banners to use in Churches. <a href="http://www.worshipbanners.co.uk">Why not have a look?</a>
+	</p>
+	</div><div class="clear"></div>
+		<?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){	echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	  <!-- #post-body .metabox-holder goes here -->
 		<div id="post-body" class="metabox-holder columns-1">
 		    <!-- meta box containers here -->
 		    <form  method="get" action="">
@@ -134,11 +140,11 @@ echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;acti
 			    {
 				foreach($member_type AS $key=>$value)
 				{
-				    echo'<a href="'.home_url().'/?download=mailinglabel&amp;mailinglabel='.wp_create_nonce('mailinglabel').'&amp;member_type_id='.$key.'">'.$value.' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</a><br/>';
+				    echo'<a href="'.home_url().'/?download=mailinglabel&amp;mailinglabel='.wp_create_nonce($key).'&amp;member_type_id='.$key.'">'.$value.' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</a><br/>';
 				}
 				foreach($member_type AS $key=>$value)
 				{
-				    echo'<a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce('addresslist').'&amp;member_type_id='.$key.'">'.$value.' '.__('Address List PDF','church-admin').'</a><br/>';
+				    echo'<a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce($key).'&amp;member_type_id='.$key.'">'.$value.' '.__('Address List PDF','church-admin').'</a><br/>';
 				}
 			    }
 			    echo'</p>';
@@ -263,14 +269,15 @@ function church_admin_smallgroups_meta_box()
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_small_group",'edit_small_group').'">'.__('Add a small group','church-admin').'</a></p>';
 			    echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_small_groups">'.__('Small Group List','church-admin').'</a></p>';
 			    echo '<p><label>'.__('Download an small group PDF','church-admin').'</label><form name="address_list_form" action="'.home_url().'" method="get"><input type="hidden" name="download" value="smallgroup"/><select name="member_type_id" onchange="this.form.submit()">';
-			    echo wp_nonce_field('smallgroup','smallgroup');
+			    
 				echo'<option selected="selected" value="1">-- '.__('Choose a pdf','church-admin').' --</option>';
 			    foreach($member_type AS $key=>$value)
 			    {
 				echo'<option value="'.$key.'">'.$value.' '.__('Small group PDF','church-admin').'</option>';
 			    }
 			    echo '<option value="'.home_url().'/?download=smallgroup&amp;smallgroup='.wp_create_nonce('smallgroup').'&amp;member_type_id='.implode(",",array_keys($member_type)).'">'.__('All member types Small group PDF','church-admin').'</option>';
-			    echo'</select></form></p>';
+			    echo wp_nonce_field('smallgroup','smallgroup');
+				echo'</select></form></p>';
 
 }
 function church_admin_services_meta_box()

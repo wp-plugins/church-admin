@@ -20,12 +20,13 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
     
     $rota_task=esc_sql(stripslashes($_POST['rota_task']));
     if(!empty($_POST['department_id'])){(int)$department_id=esc_sql(stripslashes($_POST['department_id']));}else{$department_id="1";}
+	if(!empty($_POST['initials'])){$initials=1;}else{$initials=0;}
     if(!$id)
     {//insert
         $id=$wpdb->get_var('SELECT rota_id FROM '.CA_RST_TBL.' WHERE rota_task="'.$rota_task.'"' );
         if(!$id)
         {
-            $sql='INSERT INTO '.CA_RST_TBL.' (rota_task,department_id) VALUES("'.$rota_task.'","'.$department_id.'")';
+            $sql='INSERT INTO '.CA_RST_TBL.' (rota_task,department_id,initials) VALUES("'.$rota_task.'","'.$department_id.'","'.$initials.'")';
             $wpdb->query($sql);
             $job_id=$wpdb->insert_id;
     
@@ -49,7 +50,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
             church_admin_rota_settings_list();  
         }else
         {
-            $sql='UPDATE '.CA_RST_TBL.' SET rota_task="'.esc_sql(stripslashes($_POST['rota_task'])).'",department_id="'.$department_id.'" WHERE rota_id="'.esc_sql($id).'"';
+            $sql='UPDATE '.CA_RST_TBL.' SET rota_task="'.esc_sql(stripslashes($_POST['rota_task'])).'",department_id="'.$department_id.'",initials="'.$initials.'" WHERE rota_id="'.esc_sql($id).'"';
             
             $wpdb->query($sql);
             echo'<div id="message" class="updated fade"><p><strong> Rota Job Updated</strong></p></div>';
@@ -61,7 +62,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
     }//insert
     else
     {//update
-        $sql='UPDATE '.CA_RST_TBL.' SET rota_task="'.esc_sql(stripslashes($_POST['rota_task'])).'",department_id="'.$department_id.'" WHERE rota_id="'.esc_sql($id).'"';
+        $sql='UPDATE '.CA_RST_TBL.' SET rota_task="'.esc_sql(stripslashes($_POST['rota_task'])).'",department_id="'.$department_id.'",initials="'.$initials.'" WHERE rota_id="'.esc_sql($id).'"';
         
         $wpdb->query($sql);
         echo'<div id="message" class="updated fade"><p><strong> Rota Job Updated</strong></p></div>';
@@ -82,6 +83,9 @@ echo'/></p>';
 echo'<p><label>Use Autocomplete</label><input type="checkbox" name="department_id" value="1"';
 if(!empty($rota_task->department_id)&&$rota_task->department_id>0) echo' checked="checked" ';
 echo'/></p>';
+echo'<p><label>Use Initials</label><input type="checkbox" name="initials" value="1"';
+if(!empty($rota_task->initials)&&$rota_task->initials>0) echo' checked="checked" ';
+echo'/></p>';
 echo'<p class="submit"><input type="submit" name="edit_rota_setting" value="Save Rota Job &raquo;" /></p></form>
 </div>';
 }
@@ -97,13 +101,14 @@ echo'<p>Rota tasks can be sorted by drag and drop, for use in other parts of the
 $rota_results=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order ASC');
 if(!empty($rota_results))
 {
-       echo '<table class="widefat" id="sortable"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Rota Task','church-admin').'</th><th>'.__('How chosen','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Rota Task','church-admin').'</th><th>'.__('How chosen','church-admin').'</th></tr></tfoot><tbody  class="content">';
+       echo '<table class="widefat" id="sortable"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Rota Task','church-admin').'</th><th>'.__('How chosen','church-admin').'</th><th>'.__('Initials?','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Rota Task','church-admin').'</th><th>'.__('How chosen','church-admin').'</th><th>'.__('Initials?','church-admin').'</th></tr></tfoot><tbody  class="content">';
     foreach($rota_results AS $rota_row)
     {
         $rota_edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota_settings&id='.$rota_row->rota_id;
         $rota_delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_rota_settings&id='.$rota_row->rota_id;
         if(!empty($rota_row->department_id)&&$rota_row->department_id>0){$how='Autocomplete';}else{$how='Entered Manually';}
-        echo '<tr class="sortable-row" id="'.$rota_row->rota_id.'"><td><a href="'.wp_nonce_url($rota_edit_url, 'edit_rota_settings').'">[Edit]</a></td><td><a href="'.wp_nonce_url(        $rota_delete_url, 'delete_rota_settings').'">[Delete]</a></td><td>'.esc_html(stripslashes($rota_row->rota_task)).'</td><td>'.esc_html($how).'</td></tr>';
+		if(!empty($rota_row->initials)){$initials=__('Yes','church-admin');}else{$initials=__('No','church-admin');}
+        echo '<tr class="sortable-row" id="'.$rota_row->rota_id.'"><td><a href="'.wp_nonce_url($rota_edit_url, 'edit_rota_settings').'">[Edit]</a></td><td><a href="'.wp_nonce_url(        $rota_delete_url, 'delete_rota_settings').'">[Delete]</a></td><td>'.esc_html(stripslashes($rota_row->rota_task)).'</td><td>'.esc_html($how).'</td><td>'.esc_html($initials).'</td></tr>';
     }
     echo'</tbody></table></div>';
         echo '

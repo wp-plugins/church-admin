@@ -457,6 +457,11 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD plays INT(11)';
     $wpdb->query($sql);
 }
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "initials"')!='initials')
+{
+    $sql='ALTER TABLE  '.CA_RST_TBL.' ADD initials INT(1)';
+    $wpdb->query($sql);
+}
 //make sure tables are UTF8  
     $sql='ALTER TABLE '. CA_ATT_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
@@ -592,7 +597,18 @@ if(empty($departments))
         
     }
 
-
+//sort service addresses for ver 0.5911 onwards
+$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+if(!empty($services))
+foreach($services AS $service)
+{
+	$address=maybe_unserialize($service->address);
+	if(is_array($address))
+	{
+		$address=implode(', ',array_filter($address));
+		$wpdb->query('UPDATE '.CA_SER_TBL.' SET address="'.esc_sql($address).'" WHERE service_id="'.esc_sql($service->service_id).'"');
+	}
+}
 
 //sermonpodcast
 //update version
