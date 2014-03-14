@@ -611,5 +611,63 @@ function ca_podcast_xml()
         return TRUE;
     }//end results
 }
+function church_admin_latest_sermons_widget_control()
+{
+    //get saved options
+    $options=get_option('church_admin_widget');
+    //handle user input
+    if($_POST['latest_sermons_widget_submit'])
+    {
+        $options['title']=strip_tags(stripslashes($_POST['title']));
+        if(ctype_digit($_POST['sermons'])){$options['sermons']=$_POST['sermons'];}else{$options['sermons']='5';}
+        
+        update_option('church_admin_latest_sermons_widget',$options);
+    }
+    church_admin_latest_sermons_widget_control_form();
+}
 
+function church_admin_latest_sermons_widget_control_form()
+{
+    global $wpdb;
+    $wpdb->show_errors;
+    
+    $option=get_option('church_admin_latest_sermons_widget');
+    echo '<p><label for="title">'.__('Title','church-admin').':</label><input type="text" name="title" value="'.$option['title'].'" /></p>';
+   
+    echo '<p><label for="howmany">'.__('How many sermons to show','church-admin').'?</label><select name="sermons">';
+    if(isset($option['sermons'])) echo '<option value="'.$option['sermons'].'">'.$option['sermons'].'</option>';
+    for($x=1;$x<=10;$x++){echo '<option value="'.$x.'">'.$x.'</option>';}
+    echo'</select><input type="hidden" name="latest_sermons_widget_submit" value="1"/>';
+}
+
+function church_admin_latest_sermons_widget_output($limit=5,$title)
+{
+	global $wpdb,$ca_podcast_settings;
+	$wpdb->show_errors;
+	$out='<div class="church-admin-sermons-widget">';
+	$ca_podcast_settings=get_option('ca_podcast_settings');
+	if(!empty($ca_podcast_settings['link']))$out.='<p><a title="Download on Itunes" href="'.$ca_podcast_settings['link'].'">
+<img  alt="badge_itunes-lrg" src="'.CHURCH_ADMIN_IMAGES_URL.'badge_itunes-lrg.png" width="110" height="40" /></a></p>';
+	$options=get_option('church_admin_latest_sermons_widget');
+	
+	$limit=$options['sermons'];
+	$sermons=$wpdb->get_results('SELECT a.*,b.* FROM '.CA_FIL_TBL.' a, '.CA_SERM_TBL.' b WHERE a.series_id=b.series_id ORDER BY a.pub_date DESC LIMIT '.$limit);
+	if(!empty($sermons))
+	{
+		foreach($sermons AS $sermon)
+		{
+			$speaker=church_admin_get_people($sermon->speaker);
+			$out.='<p><a href="'.CA_POD_URL.$data->file_name.'"  title="'.esc_html($data->file_title).'">'.$sermon->file_title.'</a><br/>By '.$speaker.' on '.mysql2date(get_option('date_format'),$sermon->pub_date).'<br/>';
+	
+			$out.='<audio class="sermonmp3" id="'.$sermon->file_id.'" src="'.CA_POD_URL.$sermon->file_name.'" preload="none"/><br/>'; 
+			
+		}
+	}
+
+
+
+$out.='</div>';
+return $out;
+
+}
 ?>

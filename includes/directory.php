@@ -355,9 +355,10 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	    
 			if(!in_array(stripslashes($_POST['new_department']),$departments))
 			{
-				$departments[]=stripslashes($_POST['new_department']);
+				$new=stripslashes($_POST['new_department']);
+				$departments[]=$new;
 				update_option('church_admin_departments',$departments);
-				church_admin_update_department(key($departments),$people_id);
+				church_admin_update_department(array_search($new,$departments),$people_id);
 			}
 		}
 		//end of process into db, now output...		
@@ -475,6 +476,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		echo'<p><label>'.__('Ministries','church-admin').'</label><span style="display:inline-block">';
 		if(!empty($departments))
 		{
+			asort($departments);
 			foreach($departments AS $key=>$value)
 			{
 				echo'<span style="float:left;width:150px">'.$value.'</span><input type="checkbox" name="department[]" value="'.$key.'" ';

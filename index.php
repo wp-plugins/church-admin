@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5920
+Version: 0.5931
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5920';
+$church_admin_version = '0.5931';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -383,6 +383,9 @@ wp_enqueue_script('common');
 }
 
 add_action('init', 'church_admin_init');
+
+
+
 /* Thumbnails */
 function ca_thumbnails()
 {
@@ -409,11 +412,28 @@ function ca_thumbnails()
 /* Thumbnails */
 
 
-
+add_action('admin_head', 'church_admin_header');
+function church_admin_header()
+{
+    wp_enqueue_style('Church Admin',CHURCH_ADMIN_INCLUDE_URL.'admin.css');
+ 
+}
+add_action('wp_head','church_admin_public_css');
+function church_admin_public_css(){wp_enqueue_style('Church Admin',CHURCH_ADMIN_INCLUDE_URL.'public.css');}
+add_action('wp_head', 'church_admin_public_header');
+function church_admin_public_header()
+{
+    global $church_admin_version;
+     
+    echo'<!-- church_admin v'.$church_admin_version.'-->
+    <style>table.church_admin_calendar{width:';
+    if(get_option('church_admin_calendar_width')){echo get_option('church_admin_calendar_width').'}</style>';}else {echo'700}</style>';}
+    
+}
 
 
 //grab includes
-require(CHURCH_ADMIN_INCLUDE_PATH.'header.inc.php');
+
 
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_main')require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_address_list'){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');}
@@ -658,6 +678,8 @@ function church_admin_shortcode($atts, $content = null)
     //grab content
     switch($type)
     {
+	
+	
 	case 'podcast':
 	    require_once(CHURCH_ADMIN_DISPLAY_PATH.'sermon-podcast.php');
 	    $out.=ca_podcast_display($series_id,$speaker_id,$file_id);
@@ -757,14 +779,14 @@ function church_admin_map($atts, $content = null)
     extract(shortcode_atts(array('zoom'=>13,'member_type_id'=>1,'small_group'=>1), $atts));
     global $wpdb;
     $service=$wpdb->get_row('SELECT lat,lng FROM '.CA_SER_TBL.' LIMIT 1');
-    $out.='<script type="text/javascript">var xml_url="'.site_url().'/?download=address-xml&amp;address-xml='.wp_create_nonce('address-xml').'&amp;member_type_id='.$member_type_id.'&small_group='.$small_group.'";';
+    $out.='<div class="church-map"><script type="text/javascript">var xml_url="'.site_url().'/?download=address-xml&member_type_id='.$member_type_id.'&small_group='.$small_group.'&address-xml='.wp_create_nonce('address-xml').'";';
     $out.=' var lat='.$service->lat.';';
     $out.=' var lng='.$service->lng.';';
     
     $out.='jQuery(document).ready(function(){
     load(lat,lng,xml_url);});</script><div id="map"></div>';
     if(empty($small_group)){$out.='<div id="groups" style="display:none"></div>';}else{$out.='<div id="groups" ></div>';}
-    
+    $out.='</div>';
     
     return $out;
     
@@ -842,14 +864,47 @@ function church_admin_birthday_widget_init()
     wp_register_widget_control('Church Admin Birthdays','Church Admin Birthdays','church_admin_birthday_widget_control');
 }
 add_action('init','church_admin_birthday_widget_init');
+function church_admin_sermons_widget($args)
+{
+    global $wpdb;
+	church_admin_latest_sermons_scripts();
+    $wpdb->show_errors();
+    extract($args);
+    $options=get_option('church_admin_latest_sermons_widget');
+    $title=$options['title'];
+	$limit=$options['sermons'];
+    echo $before_widget;
+    if ( $title )echo $before_title . $title . $after_title;
+	require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');
+    echo church_admin_latest_sermons_widget_output($limit,$title);
+    echo $after_widget;
+}
+function church_admin_sermons_widget_init()
+{
+    wp_register_sidebar_widget('Church Admin Latest Sermons','Church Admin Latest Sermons','church_admin_sermons_widget');
+    require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');
+    wp_register_widget_control('Church Admin Latest Sermons','Church Admin Latest Sermons','church_admin_latest_sermons_widget_control');
 
+	
+}
+function church_admin_latest_sermons_scripts()
+{
+	$ajax_nonce = wp_create_nonce("church_admin_mp3_play");			
+	wp_enqueue_script('ca_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js');
+	wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js');
+	wp_localize_script( 'ca_podcast_audio_use', 'ChurchAdminAjax', array('security'=>$ajax_nonce, 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+
+}
+add_action('init','church_admin_sermons_widget_init');
 function church_admin_download($file)
 {
     switch($file)
     {
+		
+		case'ministries_pdf':if(wp_verify_nonce($_GET['_wpnonce'],'ministries_pdf')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_ministry_pdf();}else{echo'<p>You can only download if coming from a valid link</p>';}break;
 		case 'people-csv':if(wp_verify_nonce($_GET['people-csv'],'people-csv')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_people_csv($_GET['member_type_id'],$_GET['people_type_id'],$_GET['sex'],$_GET['address'],$_GET['small_group']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
 		case 'small-group-xml':if(wp_verify_nonce($_GET['small-group-xml'],'small-group-xml')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_small_group_xml();}else{echo'<p>You can only download if coming from a valid link</p>';}break;
-		case 'address-xml':if(wp_verify_nonce($_GET['address-xml'],'address-xml')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_xml($_GET['member_type_id'],$_GET['small_group']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
+		case 'address-xml':require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_address_xml($_GET['member_type_id'],$_GET['small_group']);break;
         case'cron-instructions':if(wp_verify_nonce($_GET['cron-instructions'],'cron-instructions')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_cron_pdf();}else{echo'<p>You can only download if coming from a valid link</p>';}break;
 		case'rota':if(wp_verify_nonce($_GET['rota'],'rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_rota_pdf();}else{echo'<p>You can only download if coming from a valid link</p>';}break;
         case'yearplanner':if(wp_verify_nonce($_GET['yearplanner'],'yearplanner')){require(CHURCH_ADMIN_INCLUDE_PATH.'pdf_creator.php');church_admin_year_planner_pdf($_GET['year']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;

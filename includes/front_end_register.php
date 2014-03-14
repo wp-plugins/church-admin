@@ -21,7 +21,7 @@ function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$m
     require_once(CHURCH_ADMIN_INCLUDE_PATH.'recaptchalib.php');
     $out='';
     $privatekey = "6LclNecSAAAAAG2iyW5voI-9oaVwfgjix59dTeJN";
-	if(!empty($_POST))$resp = recaptcha_check_answer ($privatekey,$_SERVER["REMOTE_ADDR"],$_POST["recaptcha_challenge_field"],$_POST["recaptcha_response_field"]);
+	if(!empty($_POST))$resp = church_admin_recaptcha_check_answer ($privatekey,$_SERVER["REMOTE_ADDR"],$_POST["recaptcha_challenge_field"],$_POST["recaptcha_response_field"]);
 
     if(!empty($_POST['save']) &&($resp->is_valid) && wp_verify_nonce($_POST['church_admin_register'], 'church_admin_register')   )//add verify nonce
     {//process
@@ -89,7 +89,7 @@ function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$m
         //recaptcha service
         
 		$out.='<div class="clear"></div>';
-		$out.= '<p><label>'.__('To prevent automated registration','church-admin').'</label>'.recaptcha_get_html('6LclNecSAAAAACStrXZYLozPCWO1BP7h8X27R54h').'</p>';
+		$out.= '<p><label>'.__('To prevent automated registration','church-admin').'</label>'.church_admin_recaptcha_get_html('6LclNecSAAAAACStrXZYLozPCWO1BP7h8X27R54h').'</p>';
         $out.= '<p><input type="submit" value="'.__('Register','church-admin').'"/></form></div>';
         
     }//form

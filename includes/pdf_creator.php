@@ -756,37 +756,34 @@ function church_admin_small_group_xml()
 function church_admin_address_xml($member_type_id=1,$small_group=1)
 {
     global $wpdb;
-	$memb=explode(',',esc_sql($member_type_id));
-	foreach($memb AS $key=>$value){$membsql[]='member_type_id='.$value;}
-	if(!empty($membsql)) {$memb_sql=implode(' || ',$membsql).' ';}else{$memb_sql='';}
+	
 
-    $color_def = array
-	('1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",
-
-		8  => "FF7F00",	9  => "7F7F7F",	10 => "BFBFBF",	11 => "007F00",
+    $color_def = array(	'1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",'8'  => "FF7F00",	9  => "7F7F7F",	10 => "BFBFBF",	11 => "007F00",
 		12 => "7FFF00",	13 => "00007F",	14 => "7F0000",	15 => "7F4000",
-		16 => "FF9933",	17 => "007F7F",	18 => "7F007F",	19 => "007F7F",
+		16 => "999933",	17 => "007F7F",	18 => "7F007F",	19 => "007F7F",
 		20 => "7F00FF",	21 => "3399CC",	22 => "CCFFCC",	23 => "006633",
 		24 => "FF0033",	25 => "B21919",	26 => "993300",	27 => "CC9933",
-		28 => "999933",	29 => "FFFFBF",	30 => "FFFF7F",31  => "000000"
+		28 => "FF9933",	29 => "FFFFBF",	30 => "FFFF7F",31  => "000000"
 	);
 	//foreach($color_def AS $color)echo'<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|'.$color.'"/>';
     $wpdb->show_errors();
-    header("Content-type: text/xml;charset=utf-8");
+    
 
     
     
     // Select all the rows in the markers table
     $membsql=array();
-    $memb=explode(',',esc_sql($member_type_id));
-	foreach($memb AS $key=>$value){$membsql[]='b.member_type_id='.$value;}
+    $memb=explode(',',$member_type_id);
+	
+	foreach($memb AS $key=>$value){if(!empty($value))$membsql[]='b.member_type_id='.$value;}
 	if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).' )';}else{$memb_sql='';}
-    $sql = 'SELECT a.lat, a.lng, b.smallgroup_id,c.group_name FROM '.CA_HOU_TBL.' a, '.CA_PEO_TBL.' b, '.CA_SMG_TBL.' c WHERE a.household_id = b.household_id AND a.lng != "0" AND a.lat != "52.0" AND b.smallgroup_id=c.id'.$memb_sql;
-   
+    $sql = 'SELECT a.lat, a.lng, b.smallgroup_id,c.group_name,c.address AS small_group_address,c.whenwhere FROM '.CA_HOU_TBL.' a, '.CA_PEO_TBL.' b, '.CA_SMG_TBL.' c WHERE a.household_id = b.household_id AND a.lng != 0 AND a.lat !=52.0 AND b.smallgroup_id=c.id'.$memb_sql;
+ 
     $result = $wpdb->get_results($sql);
     // Iterate through the rows, adding XML nodes for each
     if($result)
     {
+	header("Content-type: text/xml;charset=utf-8");
 	echo '<markers>';
 	foreach($result AS $row)
 	{
@@ -802,9 +799,9 @@ function church_admin_address_xml($member_type_id=1,$small_group=1)
 			echo 'pinColor="'.$color_def[$row->smallgroup_id].'" ';
 			echo 'smallgroup_id="'.$row->smallgroup_id.'" ';
 			echo 'smallgroup_name="'.htmlentities($row->group_name).'" ';
-				echo 'address="'.htmlentities($row->address).'" ';
-				echo 'when="'.htmlentities($row->whenwhere).'" ';
-				echo 'smallgroup_id="'.$row->id.'" ';
+			echo 'address="'.htmlentities($row->small_group_address).'" ';
+			echo 'when="'.htmlentities($row->whenwhere).'" ';
+				
 		}
 		else
 		{
@@ -819,4 +816,52 @@ function church_admin_address_xml($member_type_id=1,$small_group=1)
     exit();    
 }
 
+
+
+function church_admin_ministry_pdf()
+{
+	global $wpdb;
+	$ministries=array();
+	$ministry_names=get_option('church_admin_departments');
+	
+	foreach($ministry_names AS $key=>$ministry_name)
+	{
+			$sql='SELECT CONCAT_WS(" ",a.first_name,a.prefix,a.last_name) AS name FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($key).'" ORDER BY a.last_name';
+			
+			$people=$wpdb->get_results($sql);
+			if(!empty($people))
+			{
+				foreach($people AS $person) {$ministries[$ministry_name][]=$person->name;}
+			}
+	
+	}
+	
+	require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
+	$pdf=new FPDF();
+	$pdf->AddPage('L',get_option('church_admin_pdf_size'));
+	$pdf->AddFont('Verdana','','verdana.php');
+	$pdf->SetFont('Verdana','',16);
+	$pdf->Cell(0,10,__('Ministries','church-admin'),0,0,C);
+	$pdf->SetFont('Verdana','',12);
+	$i=1;
+	$x=15;
+	$y=25;
+	ksort($ministries);
+	foreach($ministries AS $min_name=>$people)
+	{	
+		if($i>5){$pdf->AddPage('L',get_option('church_admin_pdf_size'));$x=15;$x=25;$i=1;}
+		$pdf->SetXY($x,25);
+		//ministry name
+		$pdf->Cell(50,10,$min_name,1,0,C);
+		$pdf->SetXY($x,35);
+		//ministry people
+		$pdf->MultiCell(50,8,iconv('UTF-8', 'ISO-8859-1',implode(",\n",$people)),1,L);
+		
+		$i++;
+		$x+=50;
+		$y=35;
+		$pdf->SetXY($x,$y);
+	}
+	$pdf->Output();
+}
 ?>

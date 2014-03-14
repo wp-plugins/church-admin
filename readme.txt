@@ -296,6 +296,12 @@ Clear out files
 = 0.5920 =
 Made protective nonces only valid for given member types
 Fixed address-xml link error
+= 0.5930 =
+* Bug fixes - nonces for xmls for maps
+* Ministries pdf, showing who is doing what
+* Widget for latest sermons
+= 0.5931 = 
+Made implementation of recaptcha not clash with other plugins
 
 * 0.566 required
 == Credits: ==

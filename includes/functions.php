@@ -405,6 +405,11 @@ function QueueEmail($to,$subject,$message,$copy,$from_name,$from_email,$attachme
 
 if(!function_exists('set_html_content_type')){function set_html_content_type() {return 'text/html';}}
 
-
+function church_admin_plays($file_id)
+{
+	global $wpdb;
+	$plays=$wpdb->get_var('SELECT plays FROM '.CA_FIL_TBL.' WHERE file_id="'.esc_sql($file_id).'"');
+	return $plays;
+}
 
 ?>

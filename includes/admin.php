@@ -184,6 +184,7 @@ function church_admin_departments_meta_box()
 {
     echo'<p>'.__('In this section you can set up the ministry a person is involved in or a role that they have e.g. Elder or Small Group Leader or P.A. operator','church-admin').'</p>';
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_department_list",'department_list').'">'.__('Ministry List','church-admin').'</a></p>';
+	 echo'<p><a href="'.wp_nonce_url(site_url().'/?download=ministries_pdf','ministries_pdf').'">'.__('Ministries PDF','church-admin').'</a></p>';
 
 }
 function church_admin_member_types_meta_box()
