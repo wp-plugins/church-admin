@@ -61,7 +61,7 @@ function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$m
         {
             $message='<p>'.__('A new household has registered on','church-admin').' '.site_url().'</p><p>'.__('Please','church-admin').'  <a href="'.site_url().'wp-admin/admin.php?page=church_admin/index.php&action=church_admin_recent_activity">'.__('check them out','church-admin').'.</a></p>';
             add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
-            wp_mail(get_option('admin_email'),"'.__('New site registration','church-admin').'",$message);
+            wp_mail(get_option('admin_email'),__('New site registration','church-admin'),$message);
         }
         $out.='<p>'.__('Thank you for registering on the site','church-admin').'</p>';
     }//end process
