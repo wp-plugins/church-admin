@@ -142,7 +142,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 	    $last_name=iconv('UTF-8', 'ISO-8859-1', $prefix.$people->last_name);
 	    $adults[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name);
 	    if($people->email!=end($emails)) iconv('UTF-8', 'ISO-8859-1',$emails[]=$people->email);
-	    if($people->mobile!=end($mobiles))$mobiles[]=iconv('UTF-8', 'ISO-8859-1',$people->mobile);
+	    if($people->mobile!=end($mobiles))$mobiles[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name.' '.$people->mobile);
 	  }
 	  else
 	  {
@@ -839,27 +839,36 @@ function church_admin_ministry_pdf()
 	require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
 	$pdf=new FPDF();
 	$pdf->AddPage('L',get_option('church_admin_pdf_size'));
-	$pdf->AddFont('Verdana','','verdana.php');
-	$pdf->SetFont('Verdana','',16);
+	
+	$pdf->SetFont('Arial','B',12);
 	$pdf->Cell(0,10,__('Ministries','church-admin'),0,0,C);
-	$pdf->SetFont('Verdana','',12);
+	$pdf->SetFont('Arial','',10);
 	$i=1;
 	$x=15;
 	$y=25;
 	ksort($ministries);
 	foreach($ministries AS $min_name=>$people)
 	{	
-		if($i>5){$pdf->AddPage('L',get_option('church_admin_pdf_size'));$x=15;$x=25;$i=1;}
+		if($i>6)
+		{
+			$pdf->AddPage('L',get_option('church_admin_pdf_size'));$x=15;$x=25;$i=1;
+			
+			$pdf->SetFont('Arial','B',12);
+			$pdf->Cell(0,6,__('Ministries','church-admin'),0,0,C);
+			
+		}
 		$pdf->SetXY($x,25);
 		//ministry name
-		$pdf->Cell(50,10,$min_name,1,0,C);
-		$pdf->SetXY($x,35);
+		$pdf->SetFont('Arial','B',10);
+		$pdf->Cell(40,6,$min_name,1,0,C);
+		$pdf->SetXY($x,31);
 		//ministry people
-		$pdf->MultiCell(50,8,iconv('UTF-8', 'ISO-8859-1',implode(",\n",$people)),1,L);
+		$pdf->SetFont('Arial','',10);
+		$pdf->MultiCell(40,6,iconv('UTF-8', 'ISO-8859-1',implode("\n",$people)),1,L);
 		
 		$i++;
-		$x+=50;
-		$y=35;
+		$x+=40;
+		$y=30;
 		$pdf->SetXY($x,$y);
 	}
 	$pdf->Output();

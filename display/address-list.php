@@ -75,27 +75,27 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
       $adults=$children=$emails=$mobiles=$photos=array();
       foreach($people_results AS $people)
 	{
-	  if($people->people_type_id=='1')
-	  {
-		  if(!empty($people->prefix)){$prefix=$people->prefix.' ';}else{$prefix='';}
-	    $last_name=$prefix.$people->last_name;
-	    $adults[]=$people->first_name;
-	    if($people->email!=end($emails)) $emails[]=$people->email;
-	    if($people->mobile!=end($mobiles))$mobiles[]=$people->mobile;
-	    if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
-	  }
-	  else
-	  {
-	    $children[]=$people->first_name;
-	    if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
-	  }
+		if($people->people_type_id=='1')
+		{
+			if(!empty($people->prefix)){$prefix=$people->prefix.' ';}else{$prefix='';}
+			$last_name=$prefix.$people->last_name;
+			$adults[]=$people->first_name;
+			if($people->email!=end($emails)) $emails[$people->first_name]=$people->email;
+			if($people->mobile!=end($mobiles))$mobiles[]=$people->first_name.' '.$people->mobile;
+			if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
+		}
+		else
+		{
+			$children[]=$people->first_name;
+			if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
+		}
 	  
 	}
   //create output
   
-    $out .= '<div class="church_admin_address"><div style="width:49%; float:left"><div style="clear:both;"></div><div style="margin-bottom: 10px;"><span style="font-size:larger;font-variant: small-caps"><strong>'.esc_html(implode(" &amp; ",$adults)).' '.esc_html($last_name).'</strong></span><br />';
+    $out .= '<div class="church_admin_address"><div class="church_admin_name_address"><strong>'.esc_html(implode(" &amp; ",$adults)).' '.esc_html($last_name).'</strong></span><br />';
     if(!empty($children))$out.=esc_html(implode(", ",$children)).'<br/>';
-    $out.='</div>';
+    
     if(!empty($address->address)){$out.=str_replace(', ',',<br/> ',$address->address);//implode(",<br/> ",array_filter(unserialize($address->address)));
 	if(!empty($photos))
     {
@@ -107,24 +107,35 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		}
 		$out.='<p >'.$images.'</p>';
 	}
-	$out.='</div>';
-	$out.=	'<div align="right">';}
+	$out.='</div><!--church_admin_name_address-->';
+	$out.=	'<div class="church_admin_phone_email">';}
     if (!empty($emails))
-    foreach($emails AS $email)
-    {
-      $out.='<a class="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n";
-    }
+	{	
+		array_unique($emails);
+		if(count($emails)<2)
+		{
+			$out.='<a class="email" href="'.esc_url('mailto:'.end($emails)).'">'.esc_html(end($emails))."</a><br/>\n";
+		}
+		else
+		{//more than one email in household
+			foreach($emails AS $name=>$email)
+			{
+				$out.=$name.'<a class="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n";
+			}
+		}
+	}
     if ($address->phone)$out.=esc_html($address->phone)."<br />\n";
     if (!empty($mobiles))
     foreach($mobiles AS $mobile)
     {
       $out.=esc_html($mobile)."<br/>\n";
     }
-    if(!empty($map)&&!empty($address->lng)){$out.='<a href="http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&t=m&z=16"><img src="http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&zoom=15&markers='.$address->lat.','.$address->lng.'&size=200x200&sensor=false" height="200px" width="200px"/></a>';}
-    $out.='</div>';
+	$out.='</div><!--church_admin_phone_email-->';
+    if(!empty($map)&&!empty($address->lng)){$out.='<div class="church_admin_address_map"><a href="http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&t=m&z=16"><img src="http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&zoom=15&markers='.$address->lat.','.$address->lng.'&size=200x200&sensor=false" height="200px" width="200px"/></a>';}
+    $out.='</div><!--church_admin_address_map-->';
     	
-    $out.='<div style="clear:both"></div>';
-    $out.='<div class="cn-meta" align="left" style="margin-top: 6px"><span><a href="'.home_url().'/?download=vcf&amp;vcf='.wp_create_nonce($ordered_row->household_id).'&amp;id='.$ordered_row->household_id.'">V-Card</a></span>'.        '  <span style="font-size:x-small; font-variant: small-caps; position: absolute; right: 26px; bottom: 8px;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></div></div>';
+   
+    $out.='<div class="church_admin_vcard" ><span><a href="'.home_url().'/?download=vcf&amp;vcf='.wp_create_nonce($ordered_row->household_id).'&amp;id='.$ordered_row->household_id.'">V-Card</a></span>'.        '  <span style="font-size:x-small; font-variant: small-caps; position: absolute; right: 26px; bottom: 8px;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></div><!--church_admin_vcard--></div><!--church_admin_address-->';
   }
   return $out;
 }

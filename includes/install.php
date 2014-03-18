@@ -71,6 +71,7 @@ function church_admin_install()
     }//end member type already in people_settings option
     $people_type=get_option('church_admin_people_type');
     if(empty($people_type))$people_type=array('1'=>__('Adult','church-admin'),'2'=>__('Child','church-admin'));
+	if(empty($people_type[3]))$people_type[3]=__('Teenager','church-admin');
     update_option('church_admin_people_type',$people_type);
    
     

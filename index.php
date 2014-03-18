@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5931
+Version: 0.5932
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5931';
+$church_admin_version = '0.5932';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -261,26 +261,26 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
 		{
 			$ajax_nonce = wp_create_nonce("church_admin_mp3_play");			
 			
-		    wp_enqueue_script('ca_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js');
-		    wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js');
+		    wp_enqueue_script('ca_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js','',NULL);
+		    wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js','',NULL);
 			wp_localize_script( 'ca_podcast_audio_use', 'ChurchAdminAjax', array('security'=>$ajax_nonce, 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 
 		}
 		if($shortcode_found=='register')
                 {
                     //form field clone script and css                
-                    wp_enqueue_script('form-clone',CHURCH_ADMIN_INCLUDE_URL.'jquery-formfields.js');
-                    wp_enqueue_style('church_admin',CHURCH_ADMIN_INCLUDE_URL.'admin.css');
+                    wp_enqueue_script('form-clone',CHURCH_ADMIN_INCLUDE_URL.'jquery-formfields.js','',NULL);
+                    
                     if(!isset($_POST['save']))
                     {//ad mapping scripts if still form page!
-                        wp_enqueue_script('google_map_script', 'http://maps.googleapis.com/maps/api/js?sensor=false');
-                        wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'maps.js');
+                        wp_enqueue_script('google_map_script', 'http://maps.googleapis.com/maps/api/js?sensor=false','',NULL);
+                        wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'maps.js','',NULL);
                     }
                 }
                 else
                 {
-                    wp_enqueue_script('google_map_script', 'http://maps.googleapis.com/maps/api/js?sensor=false');
-                    wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'google_maps.js');
+                    wp_enqueue_script('google_map_script', 'http://maps.googleapis.com/maps/api/js?sensor=false','',NULL);
+                    wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'google_maps.js','',NULL);
                 }
 	}
  
@@ -302,72 +302,72 @@ function church_admin_init()
  * 
  */ 
     //This function add scripts as needed
-wp_enqueue_script('common');
-		wp_enqueue_script('wp-lists');
-		wp_enqueue_script('postbox');
+		wp_enqueue_script('common','','',NULL);
+		wp_enqueue_script('wp-lists','','',NULL);
+		wp_enqueue_script('postbox','','',NULL);
 
     ca_thumbnails();
-    wp_enqueue_style('church_admin',CHURCH_ADMIN_INCLUDE_URL.'admin.css');
+   
 
     if(isset($_GET['download'])){church_admin_download($_GET['download']);exit();}
     if ((isset($_GET['action'])&&($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'))||!is_admin())
     {
        //Only fire up jquery on the add and edit category pages within admin.php to avoid conflicts
-        wp_enqueue_script('jquery');
+        wp_enqueue_script('jquery','','',NULL);
     }
     //if (!session_id())session_start();
     if(isset($_GET['page']) && $_GET['page']=='church_admin_send_email')
     {
         wp_enqueue_script('jquery');
         wp_register_script('ca_email', CHURCH_ADMIN_INCLUDE_URL.'email.js', false, '1.0');
-        wp_enqueue_script('ca_email');
+        wp_enqueue_script('ca_email','','',NULL);
     }
     if(isset($_GET['action']) && ($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_send_sms'))
     {
-        wp_enqueue_script('jquery');
-        wp_register_script('ca_email', CHURCH_ADMIN_INCLUDE_URL.'email.js', false, '1.0');
-        wp_enqueue_script('ca_email');
+        wp_enqueue_script('jquery','','',NULL);
+        wp_register_script('ca_email', CHURCH_ADMIN_INCLUDE_URL.'email.js', false, NULL);
+        wp_enqueue_script('ca_email','','',NULL);
     }
     if(!empty($_GET['action']) && ($_GET['action']=='church_admin_edit_household'||$_GET['action']=='church_admin_edit_service'||$_GET['action']=='church_admin_edit_small_group'))
     {
-        wp_enqueue_script('google_map','http://maps.google.com/maps/api/js?sensor=false');
-        wp_enqueue_script('js_map',CHURCH_ADMIN_INCLUDE_URL.'maps.js');
+        wp_enqueue_script('google_map','http://maps.google.com/maps/api/js?sensor=false','',NULL);
+        wp_enqueue_script('js_map',CHURCH_ADMIN_INCLUDE_URL.'maps.js','',NULL);
         
     }
     if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_series_event_edit'||$_GET['action']=='church_admin_single_event_edit'||$_GET['action']=='church_admin_edit_attendance'))
     {
-        wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_enqueue_style( 'jquery.ui.theme',WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' );
+        wp_enqueue_script( 'jquery-ui-datepicker','','',NULL );
+        wp_enqueue_style( 'jquery.ui.theme',WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css','',NULL );
     }
     if(isset($_GET['page']) &&$_GET['page']=='church_admin_add_attendance')
     {
-        wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' );
+        wp_enqueue_script( 'jquery-ui-datepicker' ,'','',NULL);
+        wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css','',NULL );
     }
     if(isset($_GET['action']) &&$_GET['action']=='church_admin_add_category')
     {
-        wp_enqueue_script( 'farbtastic' );
-        wp_enqueue_style('farbtastic');	
+        wp_enqueue_script( 'farbtastic' ,'','',NULL);
+        wp_enqueue_style('farbtastic','','',NULL);	
     }
     if(isset($_GET['action'])&&($_GET['action']=='church_admin_member_type'||$_GET['action']=='church_admin_rota_settings_list'||$_GET['action']=='church_admin_edit_rota_settings'))
     {
-        wp_enqueue_script( 'jquery-ui-sortable' );
+        wp_enqueue_script( 'jquery-ui-sortable' ,'','',NULL);
     }
     if(isset($_GET['action'])&& ($_GET['action']=='permissions'||$_GET['action']=='edit_file'||$_GET['action']=='file_add'||$_GET['action']=='church_admin_edit_rota'))
     {//autocomplete scripts
-        wp_enqueue_script( 'jquery-ui-datepicker' ); 
-        wp_enqueue_script('jquery-ui-autocomplete');
-		wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' );
+        wp_enqueue_script( 'jquery-ui-datepicker','','',NULL ); 
+        wp_enqueue_script('jquery-ui-autocomplete','','',NULL);
+		wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css','',NULL );
     }
     if(isset($_GET['page'])&& $_GET['page']=='church_admin_permissions')
     {//autocomplete scripts
-        wp_enqueue_script( 'jquery-ui-datepicker' ); 
-        wp_enqueue_script('jquery-ui-autocomplete');
-		wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' );
+        wp_enqueue_script( 'jquery-ui-datepicker','','',NULL ); 
+        wp_enqueue_script('jquery-ui-autocomplete','','',NULL);
+		wp_enqueue_style( 'jquery.ui.theme', WP_PLUGIN_URL . '/church-admin/css/jquery-ui-1.8.21.custom.css' ,'',NULL);
     }
 	if(isset($_GET['action'])&&$_GET['action']=='church_admin_view_department')
 	{
-		wp_enqueue_script('jquery-ui-autocomplete');
+		wp_enqueue_script('jquery-ui-autocomplete','','',NULL);
 	}
     if(isset($_GET['action'])&&$_GET['action']=='church_admin_update_order')
     {
@@ -410,16 +410,9 @@ function ca_thumbnails()
     
 }
 /* Thumbnails */
-
-
-add_action('admin_head', 'church_admin_header');
-function church_admin_header()
-{
-    wp_enqueue_style('Church Admin',CHURCH_ADMIN_INCLUDE_URL.'admin.css');
- 
-}
-add_action('wp_head','church_admin_public_css');
-function church_admin_public_css(){wp_enqueue_style('Church Admin',CHURCH_ADMIN_INCLUDE_URL.'public.css');}
+add_action( 'admin_enqueue_scripts','church_admin_public_css');
+add_action('wp_enqueue_scripts','church_admin_public_css');
+function church_admin_public_css(){wp_enqueue_style('Church-Admin',CHURCH_ADMIN_INCLUDE_URL.'style.css','',NULL);}
 add_action('wp_head', 'church_admin_public_header');
 function church_admin_public_header()
 {
@@ -427,7 +420,7 @@ function church_admin_public_header()
      
     echo'<!-- church_admin v'.$church_admin_version.'-->
     <style>table.church_admin_calendar{width:';
-    if(get_option('church_admin_calendar_width')){echo get_option('church_admin_calendar_width').'}</style>';}else {echo'700}</style>';}
+    if(get_option('church_admin_calendar_width')){echo get_option('church_admin_calendar_width').'px}</style>';}else {echo'700px}</style>';}
     
 }
 
@@ -831,7 +824,7 @@ function church_admin_calendar_widget($args)
 }
 function church_admin_widget_init()
 {
-    wp_register_sidebar_widget('Church Admin Calendar','Church Admin Calendar','church_admin_calendar_widget');
+    wp_register_sidebar_widget('Church-Admin-Calendar','Church Admin Calendar','church_admin_calendar_widget');
     require(CHURCH_ADMIN_INCLUDE_PATH.'calendar_widget.php');
     wp_register_widget_control('Church Admin Calendar','Church Admin Calendar','church_admin_widget_control');
 }
@@ -881,7 +874,7 @@ function church_admin_sermons_widget($args)
 }
 function church_admin_sermons_widget_init()
 {
-    wp_register_sidebar_widget('Church Admin Latest Sermons','Church Admin Latest Sermons','church_admin_sermons_widget');
+    wp_register_sidebar_widget('Church-Admin-Latest-Sermons','Church Admin Latest Sermons','church_admin_sermons_widget');
     require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');
     wp_register_widget_control('Church Admin Latest Sermons','Church Admin Latest Sermons','church_admin_latest_sermons_widget_control');
 
@@ -890,8 +883,8 @@ function church_admin_sermons_widget_init()
 function church_admin_latest_sermons_scripts()
 {
 	$ajax_nonce = wp_create_nonce("church_admin_mp3_play");			
-	wp_enqueue_script('ca_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js');
-	wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js');
+	wp_enqueue_script('ca_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js','',NULL);
+	wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js','',NULL);
 	wp_localize_script( 'ca_podcast_audio_use', 'ChurchAdminAjax', array('security'=>$ajax_nonce, 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 
 }

@@ -90,7 +90,7 @@ if(!empty($result))
   foreach($result AS $row)
     {
     $date=mysql2date('D j M Y',$row->start_date);
-    $thisday.='<div itemscope itemtype="http://data-vocabulary.org/Event"><time itemprop="startDate" datetime="'.date('c',strtotime($row->start_date.' '.$row->start_time)) .'">'.strtolower($row->start_time).' </time><strong><span itemprop="summary">'.$row->title.'</span></strong> ​(<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/​Organization"><span itemprop="name">'.$row->location.'</span></span>)</div>';
+    $thisday.='<div itemscope itemtype="http://data-vocabulary.org/Event"><time itemprop="startDate" datetime="'.date('c',strtotime($row->start_date.' '.$row->start_time)) .'">'.strtolower($row->start_time).' </time><strong><span itemprop="summary">'.$row->title.'</span></strong>  (<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/​Organization"><span itemprop="name">'.$row->location.'</span></span>)</div>';
     }
     $out.='<li><strong>'.$date.'</strong>'.$thisday.'</li>';
     unset($date,$thisday);
