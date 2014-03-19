@@ -115,6 +115,8 @@ $pdf->Output();
 
 function church_admin_address_pdf($member_type_id=1)
 {
+
+//update 2014-03-19 to allow for multiple surnames
   global $wpdb;
 //address book cache
 require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
@@ -139,10 +141,10 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 	  if($people->people_type_id=='1')
 	  {
 		if(!empty($people->prefix))$prefix= $people->prefix.' '; 
-	    $last_name=iconv('UTF-8', 'ISO-8859-1', $prefix.$people->last_name);
-	    $adults[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name);
-	    if($people->email!=end($emails)) iconv('UTF-8', 'ISO-8859-1',$emails[]=$people->email);
-	    if($people->mobile!=end($mobiles))$mobiles[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name.' '.$people->mobile);
+	    $last_name=$prefix.$people->last_name;
+		$adults[$last_name][]=$people->first_name;
+	    if(!empty($people->email)&&$people->email!=end($emails)) iconv('UTF-8', 'ISO-8859-1',$emails[]=$people->email);
+	    if(!empty($people->mobile)&&$people->mobile!=end($mobiles))$mobiles[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name.' '.$people->mobile);
 	  }
 	  else
 	  {
@@ -150,7 +152,9 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 	  }
 	  
 	}
-	$addresses['address'.$counter]['name']=$last_name.', '.implode(" & ", $adults);
+	array_filter($adults);$adultline=array();
+	foreach($adults as $lastname=>$firstnames){$adultline[]=implode(" & ",$firstnames).' '.$lastname;}
+	$addresses['address'.$counter]['name']=iconv('UTF-8', 'ISO-8859-1',implode(" & ",$adultline));
 	$addresses['address'.$counter]['kids']=implode(" , ", $children);
 	if(!empty($address->address))$addresses['address'.$counter]['address']=iconv('UTF-8', 'ISO-8859-1',$address->address);
 	$addresses['address'.$counter]['email']=iconv('UTF-8', 'ISO-8859-1',implode(", \n",array_filter($emails)));

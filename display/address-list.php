@@ -2,6 +2,8 @@
 
 function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL)
 {
+
+	//update 2014-03-19 to allow for multiple surnames
   global $wpdb;
   $out='';
   $out.='<p><label style="width:75px;float:left;">'.__('Search','church-admin').'</label><form name="ca_search" action="" method="POST"><input name="ca_search" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/>';
@@ -73,16 +75,19 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
       $address=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'"');
       $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
       $adults=$children=$emails=$mobiles=$photos=array();
+	  $last_name='';
+	  
       foreach($people_results AS $people)
 	{
 		if($people->people_type_id=='1')
 		{
 			if(!empty($people->prefix)){$prefix=$people->prefix.' ';}else{$prefix='';}
 			$last_name=$prefix.$people->last_name;
-			$adults[]=$people->first_name;
-			if($people->email!=end($emails)) $emails[$people->first_name]=$people->email;
-			if($people->mobile!=end($mobiles))$mobiles[]=$people->first_name.' '.$people->mobile;
+			$adults[$last_name][]=$people->first_name;
+			if(!empty($people->email)&&$people->email!=end($emails)) $emails[$people->first_name]=$people->email;
+			if(!empty($people->mobile)&&$people->mobile!=end($mobiles))$mobiles[]=$people->first_name.' '.$people->mobile;
 			if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
+			$x++;
 		}
 		else
 		{
@@ -92,8 +97,9 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 	  
 	}
   //create output
-  
-    $out .= '<div class="church_admin_address"><div class="church_admin_name_address"><strong>'.esc_html(implode(" &amp; ",$adults)).' '.esc_html($last_name).'</strong></span><br />';
+	array_filter($adults);$adultline=array();
+	foreach($adults as $lastname=>$firstnames){$adultline[]=implode(" &amp; ",$firstnames).' '.$lastname;}
+    $out .= '<div class="church_admin_address"><div class="church_admin_name_address"><strong>'.esc_html(implode(" &amp; ",$adultline)).'</strong></span><br />';
     if(!empty($children))$out.=esc_html(implode(", ",$children)).'<br/>';
     
     if(!empty($address->address)){$out.=str_replace(', ',',<br/> ',$address->address);//implode(",<br/> ",array_filter(unserialize($address->address)));
