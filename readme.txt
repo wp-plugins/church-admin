@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5933 =
+* Closing div fix when not using google maps in address list
 = 0.5931 = 
 * Put first name against mobile numbers where more than one in a household
 * Made implementation of recaptcha not clash with other plugins

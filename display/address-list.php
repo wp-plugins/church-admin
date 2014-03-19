@@ -131,9 +131,9 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
       $out.=esc_html($mobile)."<br/>\n";
     }
 	$out.='</div><!--church_admin_phone_email-->';
-    if(!empty($map)&&!empty($address->lng)){$out.='<div class="church_admin_address_map"><a href="http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&t=m&z=16"><img src="http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&zoom=15&markers='.$address->lat.','.$address->lng.'&size=200x200&sensor=false" height="200px" width="200px"/></a>';}
+    if(!empty($map)&&!empty($address->lng)){$out.='<div class="church_admin_address_map"><a href="http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&t=m&z=16"><img src="http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&zoom=15&markers='.$address->lat.','.$address->lng.'&size=200x200&sensor=false" height="200px" width="200px"/></a>';
     $out.='</div><!--church_admin_address_map-->';
-    	
+    }
    
     $out.='<div class="church_admin_vcard" ><span><a href="'.home_url().'/?download=vcf&amp;vcf='.wp_create_nonce($ordered_row->household_id).'&amp;id='.$ordered_row->household_id.'">V-Card</a></span>'.        '  <span style="font-size:x-small; font-variant: small-caps; position: absolute; right: 26px; bottom: 8px;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></div><!--church_admin_vcard--></div><!--church_admin_address-->';
   }
