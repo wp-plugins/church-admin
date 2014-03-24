@@ -9,14 +9,15 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
   $out.='<p><label style="width:75px;float:left;">'.__('Search','church-admin').'</label><form name="ca_search" action="" method="POST"><input name="ca_search" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/>';
   $out.='<input type="hidden" name="ca_search_nonce" value="'.wp_create_nonce('ca_search_nonce').'"/>';
   $out.='</form></p>';
+  $memb=explode(',',$member_type_id);
+      foreach($memb AS $key=>$value){if(ctype_digit($value))  $membsql[]='member_type_id='.$value;}
+      if(!empty($membsql)) {$memb_sql='('.implode(' || ',$membsql).')';}else{$memb_sql='';}
     if(empty($_POST['ca_search']))
     {
 		$limit='';
 		$membsql=array();
-      $memb=explode(',',$member_type_id);
-      foreach($memb AS $key=>$value){if(ctype_digit($value))  $membsql[]='member_type_id='.$value;}
-      if(!empty($membsql)) {$memb_sql=' WHERE ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
-      $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
+      
+      $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
       $results=$wpdb->get_results($sql);
       $items=$wpdb->num_rows;
       // number of total rows in the database
@@ -53,18 +54,18 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
       //Pagination
       }
       //grab household_id in last name order
-      $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC '.$limit;
+      $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC '.$limit;
       $results=$wpdb->get_results($sql);
     }
     else
-    {
+    {//search form
       $s=esc_sql(stripslashes($_POST['ca_search']));
-      $sql='SELECT DISTINCT household_id FROM '.CA_PEO_TBL.' WHERE first_name LIKE("%'.$s.'%")||last_name LIKE("%'.$s.'%")||email LIKE("%'.$s.'%")';
+      $sql='SELECT DISTINCT household_id FROM '.CA_PEO_TBL.' WHERE (first_name LIKE("%'.$s.'%")||last_name LIKE("%'.$s.'%")||email LIKE("%'.$s.'%"))AND '.$memb_sql;
     
       $results=$wpdb->get_results($sql);
       if(!$results)
       {
-        $sql='SELECT DISTINCT household_id FROM '.CA_HOU_TBL.' WHERE address LIKE("%'.$s.'%")||phone LIKE("%'.$s.'%")';
+        $sql='SELECT DISTINCT household_id FROM '.CA_HOU_TBL.' WHERE address LIKE("%'.$s.'%")||phone LIKE("%'.$s.'%") AND '. $memb_sql;
         
 	$results=$wpdb->get_results($sql);
       }
@@ -85,7 +86,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 			$last_name=$prefix.$people->last_name;
 			$adults[$last_name][]=$people->first_name;
 			if(!empty($people->email)&&$people->email!=end($emails)) $emails[$people->first_name]=$people->email;
-			if(!empty($people->mobile)&&$people->mobile!=end($mobiles))$mobiles[]=$people->first_name.' '.$people->mobile;
+			if(!empty($people->mobile)&&$people->mobile!=end($mobiles))$mobiles[$people->first_name]=$people->mobile;
 			if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
 			$x++;
 		}
@@ -126,16 +127,26 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		{//more than one email in household
 			foreach($emails AS $name=>$email)
 			{
-				$out.=$name.'<a class="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n";
+				$out.=$name.' <a class="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n";
 			}
 		}
 	}
     if ($address->phone)$out.=esc_html($address->phone)."<br />\n";
     if (!empty($mobiles))
-    foreach($mobiles AS $mobile)
-    {
-      $out.=esc_html($mobile)."<br/>\n";
-    }
+	{	
+		array_unique($mobiles);
+		if(count($mobiles)<2)
+		{
+			$out.='<a class="email" href="'.esc_url('tel:'.end($mobiles)).'">'.esc_html(end($mobiles))."</a><br/>\n";
+		}
+		else
+		{//more than one mobile in household
+			foreach($mobiles AS $name=>$mobile)
+			{
+				$out.=$name.' <a class="email" href="tel:'.esc_url($mobile).'">'.esc_html($mobile)."</a><br/>\n";
+			}
+		}
+	}
 	$out.='</div><!--church_admin_phone_email-->';
     if(!empty($map)&&!empty($address->lng)){$out.='<div class="church_admin_address_map"><a href="http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&t=m&z=16"><img src="http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&zoom=15&markers='.$address->lat.','.$address->lng.'&size=200x200&sensor=false" height="200px" width="200px"/></a>';
     $out.='</div><!--church_admin_address_map-->';

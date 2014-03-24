@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5935 = 
+* Address list display and PDF tweaks
 = 0.5934 =
 * Display multiple surname for a household, still sorted alphabetically by first surname in directory
 = 0.5933 =
