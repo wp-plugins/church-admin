@@ -219,7 +219,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 			array_unique($mobiles);
 			if(count($mobiles)<2 && $x<=1)
 			{
-				$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',esc_html(end($mobiles))),0,1,'L',FALSE,'tel:'.end($mobiles));
+				$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',esc_html(end($mobiles))),0,0,'L',FALSE,'tel:'.end($mobiles));
 			}
 			else
 			{//more than one mobile in household
@@ -229,9 +229,9 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 					$content=$name.': '.$mobile;
 					if($mobile!=end($mobiles))$content.=', ';
 					$width=$pdf->GetStringWidth($content);
-					$pdf->Cell($width,5,iconv('UTF-8', 'ISO-8859-1',$content),0,1,'L',FALSE,'tel:'.$mobile);
+					$pdf->Cell($width,5,iconv('UTF-8', 'ISO-8859-1',$content),0,0,'L',FALSE,'tel:'.$mobile);
 				}
-				
+				$pdf->Ln(5);
 			}
 		}
 	$pdf->Ln(5);
