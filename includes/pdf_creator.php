@@ -125,7 +125,7 @@ function church_admin_address_pdf($member_type_id=1)
 	$pdf->AddPage('P',get_option('church_admin_pdf_size'));
 	$pdf->SetXY(10,10);
 	$pdf->SetFont('Arial','B',18);
-	$title=get_option('blogname').__('Address List','church-admin').' '.date(get_option('date_format'));
+	$title=get_option('blogname').' '.__('Address List','church-admin').' '.date(get_option('date_format'));
 	$pdf->Cell(0,8,$title,0,1,'C');
 	$pdf->Ln(5);
 
@@ -151,7 +151,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 			$pdf->AddPage('P',get_option('church_admin_pdf_size'));
 			$pdf->SetXY(10,10);
 			$pdf->SetFont('Arial','B',18);
-			$title=get_option('blogname').__('Address List','church-admin').' '.date(get_option('date_format'));
+			$title=get_option('blogname').' '.__('Address List','church-admin').' '.date(get_option('date_format'));
 			$pdf->Cell(0,8,$title,0,1,'C');
 			$pdf->Ln(5);
 		}
@@ -159,7 +159,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 		$people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
 		$adults=$children=$emails=$mobiles=$photos=array();
 		$last_name='';
-	  
+		$x=0;
 		foreach($people_results AS $people)
 		{
 			if($people->people_type_id=='1')
@@ -194,7 +194,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 		if (!empty($emails))
 		{	
 			array_unique($emails);
-			if(count($emails)<2)
+			if(count($emails)<2 && $x<=1)
 			{
 				$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',esc_html(end($emails))),0,1,'L',FALSE,'mailto:'.end($emails));
 			}
@@ -203,16 +203,21 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 				$text=array();
 				foreach($emails AS $name=>$email)
 				{
-					$text[]=$name.': '.$email;
+					$content=$name.': '.$email;
+					if($email!=end($emails))$content.=', ';
+					$width=$pdf->GetStringWidth($content);
+					$pdf->Cell($width,5,iconv('UTF-8', 'ISO-8859-1',$content),0,0,'L',FALSE,'mailto:'.$email);
+					
 				}
-				$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',implode(', ',$text)),0,1,'L');
+				$pdf->Ln();
+				//$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',implode(', ',$text)),0,1,'L',FALSE,'mailto:'.end($emails));
 			}
 		}
-		if ($address->phone)$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',$address->phone),0,1,'L');
+		if ($address->phone)$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',$address->phone),0,1,'L',FALSE,'tel:'.$address->phone);
 		if (!empty($mobiles))
 		{	
 			array_unique($mobiles);
-			if(count($mobiles)<2)
+			if(count($mobiles)<2 && $x<=1)
 			{
 				$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',esc_html(end($mobiles))),0,1,'L',FALSE,'tel:'.end($mobiles));
 			}
@@ -221,9 +226,12 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 				$text=array();
 				foreach($mobiles AS $name=>$mobile)
 				{
-					$text[]=$name.': '.$mobile;
+					$content=$name.': '.$mobile;
+					if($mobile!=end($mobiles))$content.=', ';
+					$width=$pdf->GetStringWidth($content);
+					$pdf->Cell($width,5,iconv('UTF-8', 'ISO-8859-1',$content),0,1,'L',FALSE,'tel:'.$mobile);
 				}
-				$pdf->Cell(0,5,iconv('UTF-8', 'ISO-8859-1',implode(', ',$text)),0,1,'L');
+				
 			}
 		}
 	$pdf->Ln(5);

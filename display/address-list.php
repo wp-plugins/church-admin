@@ -77,7 +77,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
       $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
       $adults=$children=$emails=$mobiles=$photos=array();
 	  $last_name='';
-	  
+	  $x=0;
       foreach($people_results AS $people)
 	{
 		if($people->people_type_id=='1')
@@ -97,6 +97,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		}
 	  
 	}
+	
   //create output
 	array_filter($adults);$adultline=array();
 	foreach($adults as $lastname=>$firstnames){$adultline[]=implode(" &amp; ",$firstnames).' '.$lastname;}
@@ -116,26 +117,13 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 	}
 	$out.='</div><!--church_admin_name_address-->';
 	$out.=	'<div class="church_admin_phone_email">';}
-    if (!empty($emails))
-	{	
-		array_unique($emails);
-		if(count($emails)<2)
-		{
-			$out.='<a class="email" href="'.esc_url('mailto:'.end($emails)).'">'.esc_html(end($emails))."</a><br/>\n";
-		}
-		else
-		{//more than one email in household
-			foreach($emails AS $name=>$email)
-			{
-				$out.=$name.' <a class="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n";
-			}
-		}
-	}
-    if ($address->phone)$out.=esc_html($address->phone)."<br />\n";
+	if ($address->phone)$out.=' <a class="email" href="'.esc_url('tel:'.$address->phone).'">'.esc_html($address->phone)."</a><br/>\n";
+
+    
     if (!empty($mobiles))
 	{	
 		array_unique($mobiles);
-		if(count($mobiles)<2)
+		if(count($mobiles)<2 && $x<=1)
 		{
 			$out.='<a class="email" href="'.esc_url('tel:'.end($mobiles)).'">'.esc_html(end($mobiles))."</a><br/>\n";
 		}
@@ -143,7 +131,22 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		{//more than one mobile in household
 			foreach($mobiles AS $name=>$mobile)
 			{
-				$out.=$name.' <a class="email" href="tel:'.esc_url($mobile).'">'.esc_html($mobile)."</a><br/>\n";
+				$out.=$name.': <a class="email" href="tel:'.esc_url($mobile).'">'.esc_html($mobile)."</a><br/>\n";
+			}
+		}
+	}
+	    if (!empty($emails))
+	{	
+		array_unique($emails);
+		if(count($emails)<2 && $x<=1)
+		{
+			$out.='<a class="email" href="'.esc_url('mailto:'.end($emails)).'">'.esc_html(end($emails))."</a><br/>\n";
+		}
+		else
+		{//more than one email in household
+			foreach($emails AS $name=>$email)
+			{
+				$out.=$name.': <a class="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n";
 			}
 		}
 	}
