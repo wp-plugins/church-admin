@@ -125,13 +125,13 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		array_unique($mobiles);
 		if(count($mobiles)<2 && $x<=1)
 		{
-			$out.='<a class="email" href="'.esc_url('tel:'.end($mobiles)).'">'.esc_html(end($mobiles))."</a><br/>\n";
+			$out.='<a class="email" href="tel:'.end($mobiles).'">'.esc_html(end($mobiles))."</a><br/>\n";
 		}
 		else
 		{//more than one mobile in household
 			foreach($mobiles AS $name=>$mobile)
 			{
-				$out.=$name.': <a class="email" href="tel:'.esc_url($mobile).'">'.esc_html($mobile)."</a><br/>\n";
+				$out.=$name.': <a class="email" href="tel:'.$mobile.'">'.esc_html($mobile)."</a><br/>\n";
 			}
 		}
 	}
