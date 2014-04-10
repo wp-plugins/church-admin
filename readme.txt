@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5940 =
+* Rota display bugs fixed on screen and pdf
 = 0.5937 =
 * Fix mobile linking on single mobile households
 = 0.5936 =

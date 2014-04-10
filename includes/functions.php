@@ -8,7 +8,7 @@ function church_admin_initials($people)
 		
 		foreach($people as $id=>$peep)
 		{
-			$person=church_admin_get_person($peep);
+			if(ctype_digit($peep)){$person=church_admin_get_person($peep);}else{$person=$peep;}
 			$strlen=strlen($person);
 			$initials[$id]='';
 			for($i=0;$i<=$strlen;$i++)
