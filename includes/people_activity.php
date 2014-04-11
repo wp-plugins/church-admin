@@ -52,8 +52,8 @@ function church_admin_recent_people_activity()
                 $funnel=$wpdb->get_row($sql);
                 if($funnel)
                 {//funnel has been assigned already
-                    $fun_display=$funnel->action .' '.__('assigned to','church-admin').' '.$funnel->name.' '.__('on','church-admin').' '.mysql2date(get_option('date_format'),$funnel->assigned_date);
-                    if($funnel->completion_date!='0000-00-00')$fun_display.=' '.__('completed on','church-admin').' '.mysql2date(get_option('date_format'),$funnel->completion_date);
+                    $fun_display=sprintf(__('%1$s assigned to %2$s on %3$s','church-admin'), $funnel->action,$funnel->name,mysql2date(get_option('date_format'),$funnel->assigned_date));
+                    if($funnel->completion_date!='0000-00-00')$fun_display.=sprintf(__('completed on %1$s','church-admin'),mysql2date(get_option('date_format'),$funnel->completion_date));
                 }
                 else
                 {
@@ -93,8 +93,8 @@ function church_admin_funnel_assign($people_id,$funnel_id,$member_type_id)
             $fun_display.='<input type="hidden" name="people_id" value="'.$people_id.'"/>';
             $fun_display.='<input type="hidden" name="funnel_id" value="'.$funnel_id.'"/>';
             $fun_display.='<input type="hidden" name="member_type_id" value="'.$member_type_id.'"/>';
-            $fun_display.='<p>'.__('Assign','church-admin').' '.$funnel_details->action.' '.__('to','church-admin').': <select name="assign_id" onchange="this.form.submit()">';
-            $fun_display.='<option value="">Select someone...</option>';
+            $fun_display.='<p>'.sprintf(__('Assign %1$s to ','church-admin'),$funnel_details->action).': <select name="assign_id" onchange="this.form.submit()">';
+            $fun_display.='<option value="">'.__('Select someone...','church-admin').'</option>';
             foreach ($people AS $person)
             {
                 $fun_display.='<option value="'.$person->people_id.'">'.$person->name.'</option>';

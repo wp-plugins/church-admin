@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5941 =
+* US and Aus translations added
 = 0.5940 =
 * Rota display bugs fixed on screen and pdf
 = 0.5937 =

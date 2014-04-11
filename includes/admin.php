@@ -16,11 +16,11 @@ function church_admin_front_admin()
 	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?></h2>
 	<div id="poststuff">
 	
-	<div class="church_admin_left" style="width:45%"><p>
+	<div class="church_admin_left" ><p>
 	<?php    echo __('If you find the plugin helpful, please contribute!','church-admin');?>
 	<br/><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form><br/>
 	    <script id='fb67321'>(function(i){var f,s=document.getElementById(i);f=document.createElement('iframe');f.src='//api.flattr.com/button/view/?uid=TheMoyle&button=compact&url='+encodeURIComponent(document.URL);f.title='Church Admin Plugin';f.height=20;f.width=110;f.style.borderWidth=0;s.parentNode.insertBefore(f,s);})('fb67321');</script></p></div>
-	<div class="church_admin_left" style="width:45%"><p>
+	<div class="church_admin_left" ><p>
 		<a href="http://www.worshipbanners.co.uk"><img src="<?php echo CHURCH_ADMIN_IMAGES_URL;?>worship-banners-logo.png" width="300" height="100" alt="Worship Banners"/></a>
 		<br/>
 		The plugin author has recently started a business selling rollup banners to use in Churches. <a href="http://www.worshipbanners.co.uk">Why not have a look?</a>
@@ -211,11 +211,11 @@ function church_admin_rota_meta_box()
     $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
     
     echo'<form action="'.admin_url().'" method="GET"><input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="action" value="church_admin_email_rota"/>';
-    echo'<p><label>Email out service rota</label><select name="service_id">';
+    echo'<p><label>'.__('Email out service rota','church-admin').'</label><select name="service_id">';
     echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
     foreach($services AS $service)
     {
-       echo'<option value="'.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.' '.$service->venue.'</option>';
+       echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s ', 'church-admin'), $service->service_name,$days[$service->service_day],$service->service_time).'</option>';
     }
     echo'</select><input type="submit" name="submit" value="Send service rota"></p>';
     echo'</form>';
@@ -232,7 +232,7 @@ function church_admin_rota_meta_box()
 				echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
 			        foreach($services AS $service)
 				{
-				    echo'<option value="'.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.' '.$service->venue.'</option>';
+				    echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</option>';
 				}
 				echo'</select></p>';
 				echo'</form>';
@@ -245,7 +245,7 @@ function church_admin_rota_meta_box()
 			    $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 			    foreach($services AS $service)
 			    {
-				echo'<a href="'.home_url().'/?download=rotacsv&amp;rotacsv='.wp_create_nonce('rotacsv').'&amp;service_id='.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.' '.$service->venue.'</a><br/>';}
+				echo'<a href="'.home_url().'/?download=rotacsv&amp;rotacsv='.wp_create_nonce('rotacsv').'&amp;service_id='.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</a><br/>';}
 			    echo'</p>';
 }
 function church_admin_calendar_meta_box()
@@ -292,8 +292,8 @@ function church_admin_attendance_meta_box()
     global $wpdb,$days;
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_metrics">'.__('Church Attendance Data','church-admin').'</a></p>';
 			    $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
-			    foreach($services AS $service)  echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">'.__('Attendance List for','church-admin').' '.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.__('at','church-admin').' '.$service->service_time.'</a></p>';
-			    //echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">'.__('Add Attendance','church-admin').'</a></p>';
+			    foreach($services AS $service)  echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">'.sprintf( __('Attendance list for %1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</a></p>';
+			   
 
 }
 
