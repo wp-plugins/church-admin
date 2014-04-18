@@ -332,6 +332,7 @@ function church_admin_update_order($which='member_type')
             case'member_type':$tb=CA_MTY_TBL;$field='member_type_order';$id='member_type_id';break;
             case'rota_settings':$tb=CA_RST_TBL;$field='rota_order';$id='rota_id';break;
             case'small_groups':$tb=CA_SMG_TBL;$field='smallgroup_order';$id='id';break;
+			case'people':$tb=CA_PEO_TBL;$field='people_order';$id='people_id';break;
         }
         $order=explode(",",$_POST['order']);
         foreach($order AS $order=>$row_id)

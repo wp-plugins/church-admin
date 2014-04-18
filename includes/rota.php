@@ -318,7 +318,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    echo'<form action="" method="POST"><p><label>'.__('Which Service?','church-admin').'</label><select name="service_id">';
 	    foreach($services AS $service)
 	    {
-		echo'<option value="'.$service->service_id.'">'.$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</option>';
+		echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</option>';
 	    }
 	    echo'</select></p>';
 	    echo'<p class="submit"><input type="submit" name="choose_service" value="'.__('Choose service','church-admin').' &raquo;" /></p></form></div>';

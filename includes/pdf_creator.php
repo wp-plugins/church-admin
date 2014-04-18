@@ -734,108 +734,7 @@ function church_admin_rota_pdf($service_id=1)
 	
 }
 
-function church_admin_rota_pdf_old($service_id=1)
-{
-/*
-//deprecated    
-    global $wpdb;
-    $wpdb->show_errors();
-$percent=array();
-$headers=array();
 
-
-$totalcharas=12;//allow for date in output
-//grab character count from largest results
-$now=date('Y-m-d');
-$threemonths=date('Y-m-d',strtotime('+6 months'));
-
-require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
-$pdf=new FPDF();
-$pdf->AddPage('L',get_option('church_admin_pdf_size'));
-$pdf->AddFont('Verdana','','verdana.php');
-$pdf->SetFont('Verdana','',16);
-$text='Sunday Rota '.date("d-m-Y");
-$pdf->Cell(0,10,$text,0,2,'C');
-$pdf->SetFont('Verdana','',5);
-
-//column headers query
-$colres=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
-//set up size array, minimum length is the number of characters in the job title (helps if no one is assigned role!)
-$size=array();
-foreach($colres AS $colrow)$size[$colrow->rota_id]=strlen($colrow->rota_task)+2;
-
-//grab dates
-$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>"'.$now.'" AND rota_date<="'.$threemonths.'" AND service_id="'.esc_sql($service_id).'"ORDER BY rota_date ASC';
-$results=$wpdb->get_results($sql);
-
-
-//find longest rota entries
-foreach($results AS $row)
-{
-    $jobs=maybe_unserialize($row->rota_jobs);
-    if(!empty($jobs))
-    {
-	foreach($jobs AS $job=>$value)
-	{
-	    //replace $size value if bigger
-	    //ignore if not enough jobs in that row
-	    $people=strlen(church_admin_get_people($value));
-	    if(empty($size[$job])||$people>$size[$job])$size[$job]=$people;
-	}
-    }
-
-}
-$totalcharas=array_sum($size)+12;
-$widths=array();//array with proportions for each key
-foreach($size AS $key=>$value)$widths[$key]=$size[$key]/$totalcharas;
-//Date as first header
-
-$h=12;
-$w=280*(12/$totalcharas);
-
-$pdf->Cell($w,$h,"Date",1,0,'C',0);
-foreach($colres AS $colrow)
-{
-    if($widths[$colrow->rota_id]>0)
-    {
-        
-            $w=round(280*$widths[$colrow->rota_id]);
-       
-        
-        $pdf->Cell($w,$h,iconv('UTF-8', 'ISO-8859-1',$colrow->rota_task),1,0,'C',0);
-    } 
-    
-}
-
-//end of add column headers
-$a=1;
-$h=6;
-
-foreach($results AS $row)
-{
-      
-	$jobs=maybe_unserialize($row->rota_jobs);
-    //pull rota results for that date    
-    if(!empty($jobs))
-    {
-	//date has changed
-        $pdf->Ln();//add new line
-        $date1=mysql2date('d/m/Y',$row->rota_date);
-        $pdf->Cell(280*(12/$totalcharas),$h,"{$date1}",1,0,C,0);//print new date
-        $a++;
-	foreach($jobs AS $key=>$value)    
-	{
-	    $w=round(280*$widths[$key]);
-	    $text=iconv('UTF-8', 'ISO-8859-1',church_admin_get_people($value));
-	    $pdf->Cell($w,$h,"$text",1,0,'C',0);
-	}
-    }
-}
-
-$pdf->Output();
-
-*/
-}
 function church_admin_small_group_xml()
 {
 	global $wpdb;
@@ -879,63 +778,88 @@ function church_admin_small_group_xml()
 function church_admin_address_xml($member_type_id=1,$small_group=1)
 {
     global $wpdb;
-	
-
-    $color_def = array(	'1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",'8'  => "FF7F00",	9  => "7F7F7F",	10 => "BFBFBF",	11 => "007F00",
+	$wpdb->show_errors();
+	$markers='<markers>';
+    $color_def = array(	'1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",'8'  => "FF7F00",	
+	9  => "7F7F7F",	10 => "BFBFBF",	11 => "007F00",
 		12 => "7FFF00",	13 => "00007F",	14 => "7F0000",	15 => "7F4000",
 		16 => "999933",	17 => "007F7F",	18 => "7F007F",	19 => "007F7F",
 		20 => "7F00FF",	21 => "3399CC",	22 => "CCFFCC",	23 => "006633",
 		24 => "FF0033",	25 => "B21919",	26 => "993300",	27 => "CC9933",
 		28 => "FF9933",	29 => "FFFFBF",	30 => "FFFF7F",31  => "000000"
 	);
-	//foreach($color_def AS $color)echo'<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|'.$color.'"/>';
-    $wpdb->show_errors();
-    
-
-    
-    
-    // Select all the rows in the markers table
-    $membsql=array();
-    $memb=explode(',',$member_type_id);
-	
-	foreach($memb AS $key=>$value){if(!empty($value))$membsql[]='b.member_type_id='.$value;}
-	if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).' )';}else{$memb_sql='';}
-    $sql = 'SELECT a.lat, a.lng, b.smallgroup_id,c.group_name,c.address AS small_group_address,c.whenwhere FROM '.CA_HOU_TBL.' a, '.CA_PEO_TBL.' b, '.CA_SMG_TBL.' c WHERE a.household_id = b.household_id AND a.lng != 0 AND a.lat !=52.0 AND b.smallgroup_id=c.id'.$memb_sql;
- 
-    $result = $wpdb->get_results($sql);
-    // Iterate through the rows, adding XML nodes for each
-    if($result)
-    {
-	header("Content-type: text/xml;charset=utf-8");
-	echo '<markers>';
-	foreach($result AS $row)
+	//grab relevant households
+	$memb=explode(',',esc_sql($member_type_id));
+	foreach($memb AS $key=>$value){if(ctype_digit($value)) $membsql[]='member_type_id='.$value;}
+	if(!empty($membsql)) {$memb_sql=' WHERE '.implode(' || ',$membsql);}else{$memb_sql='';}
+	$sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
+	$results=$wpdb->get_results($sql);
+    if(!empty($results))
 	{
-
-	    // Iterate through the rows, printing XML nodes for each
-
-	  // ADD TO XML DOCUMENT NODE
-	    echo '<marker ';
-	    echo 'lat="' . $row->lat . '" ';
-	    echo 'lng="' . $row->lng . '" ';
-	    if(!empty($small_group))
-	    {
-			echo 'pinColor="'.$color_def[$row->smallgroup_id].'" ';
-			echo 'smallgroup_id="'.$row->smallgroup_id.'" ';
-			echo 'smallgroup_name="'.htmlentities($row->group_name).'" ';
-			echo 'address="'.htmlentities($row->small_group_address).'" ';
-			echo 'when="'.htmlentities($row->whenwhere).'" ';
-				
-		}
-		else
+		foreach($results AS $row)
 		{
-			echo 'pinColor="FF0000" ';
-		}	
-	    echo '/>';
+			$address=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($row->household_id).'"');
+			$sql='SELECT a.* FROM '.CA_PEO_TBL.' a LEFT JOIN '.CA_SMG_TBL.' b ON b.id=a.smallgroup_id WHERE a.household_id="'.esc_sql($row->household_id).'" ORDER BY a.people_order, a.people_type_id ASC,sex DESC';
+			$people_results=$wpdb->get_results($sql);
+			
+			$adults=$children=$emails=$mobiles=$photos=array();
+			$last_name='';
+			$x=0;
+			foreach($people_results AS $people)
+			{
+				if($people->people_type_id=='1')
+				{	
+					if(!empty($people->prefix)){$prefix=$people->prefix.' ';}else{$prefix='';}
+					$last_name=$prefix.$people->last_name;
+					$adults[$last_name][]=$people->first_name;
+						
+					$x++;
+				}
+				else
+				{
+					if(!empty($people->prefix)){$prefix=$people->prefix.' ';}else{$prefix='';}
+					$last_name=$prefix.$people->last_name;
+					$children[$last_name][]=$people->first_name;
+				
+				}
+	  
+			}
+			$markers.= '<marker ';
+			//address data for marker
+			$markers.= 'lat="' . $address->lat . '" ';
+			$markers.= 'lng="' . $address->lng . '" ';
+			$markers.= 'address="'. $address->address.'" ';
+			//small group data for marker
+			if(!empty($small_group))
+			{
+				$markers.=  'pinColor="'.$color_def[$people->id].'" ';
+				$markers.= 'smallgroup_id="'.$people->id.'" ';
+				$markers.= 'smallgroup_name="'.htmlentities($people->group_name).'" ';
+				$markers.=  'small_group_address="'.htmlentities($people->small_group_address).'" ';
+				$markers.=  'when="'.htmlentities($people->whenwhere).'" ';
+			}
+			else
+			{
+				$markers.= 'pinColor="FF0000" ';
+			}	
+			//people data
+			array_filter($adults);
+			$adultline=array();
+			//the join statement makes sure the array is imploded like this ",,,&"  
+			//http://stackoverflow.com/questions/8586141/implode-array-with-and-add-and-before-last-item 
+			foreach($adults as $lastname=>$firstnames){$adultline[]=join(' &amp; ', array_filter(array_merge(array(join(', ', array_slice($firstnames, 0, -1))), array_slice($firstnames, -1)))).' '.$lastname;}
+			$markers.='adults_names="'.implode(" &amp; ",$adultline). '" ';
+			array_filter($children);
+			$childrenline=array();
+			foreach($children as $lastname=>$firstnames){$childrenline[]=join(' &amp; ', array_filter(array_merge(array(join(', ', array_slice($firstnames, 0, -1))), array_slice($firstnames, -1)))).' '.$lastname;}
+			$markers.='childrens_names="'.implode(" &amp; ",$childrenline). '" ';
+			$markers.= '/>';
+		}
+		$markers.='</markers>';
+		header("Content-type: text/xml;charset=utf-8");
+		echo $markers;
 	}
-	// End XML file
-	echo '</markers>';
-    }
-    
+   
     exit();    
 }
 

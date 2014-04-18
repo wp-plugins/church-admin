@@ -5,9 +5,7 @@ function load(lat,lng,xml_url) {
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         var map = new google.maps.Map(document.getElementById("map"),myOptions);
-      
-
-      
+		    
 
       // Change this depending on the name of your PHP file
       downloadUrl(xml_url, function(data) {
@@ -16,38 +14,54 @@ function load(lat,lng,xml_url) {
         var smallgroup=new Array();
         
         for (var i = 0; i < markers.length; i++) {
-          
-      var point = new google.maps.LatLng(
+          var infowindow;
+		var point = new google.maps.LatLng(
               parseFloat(markers[i].getAttribute("lat")),
               parseFloat(markers[i].getAttribute("lng"))
             );
       var pinColor =markers[i].getAttribute("pinColor");
       var id =markers[i].getAttribute("smallgroup_id");
-      var details=markers[i].getAttribute("when")+ ' at ' +markers[i].getAttribute("address");
-      smallgroup[id]='<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|' + pinColor +'"/> '+markers[i].getAttribute("smallgroup_name") + ': ' +details +'<br/>';
+      var details=markers[i].getAttribute("when")+ ' at ' +markers[i].getAttribute("small_group_address");
+	  var adults_names=markers[i].getAttribute("adults_names");
+	  var childrens_names='';
+	  if ( markers[i].getAttribute("childrens_names")) childrens_names='(' + markers[i].getAttribute("childrens_names")+')'+'<br/>';
+	  var address=markers[i].getAttribute("address");
+	  var information = adults_names + '<br/>'+ childrens_names + address;
+      if(markers[i].getAttribute("smallgroup_name")!="Unattached")smallgroup[id]='<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|' + pinColor +'"/> '+markers[i].getAttribute("smallgroup_name") + ': ' +details +'<br/>';
       
       
       var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
             new google.maps.Size(21, 34),
             new google.maps.Point(0,0),
             new google.maps.Point(10, 34));
-      var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+		var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
         new google.maps.Size(40, 37),
         new google.maps.Point(0, 0),
         new google.maps.Point(12, 35));
+		
+        var marker = createMarker(information, point);  
           
-          var marker = new google.maps.Marker({
+         
+       
+		function createMarker(information, point) {
+       var marker = new google.maps.Marker({
             map: map,
             position: point,
             icon: pinImage,
             shadow: pinShadow,
           });
-         
-        }
+       google.maps.event.addListener(marker, "click", function() {
+         if (infowindow) infowindow.close();
+         infowindow = new google.maps.InfoWindow({content: information});
+         infowindow.open(map, marker);
+       });
+       return marker;
+	    }
+    }
         var sg='<h2>Smallgroups</h2><p>';
-        for(var index in smallgroup) {sg= sg + smallgroup[index];}
+        for(var index in smallgroup) {  sg= sg + smallgroup[index];}
         var container = document.getElementById("groups");
-            container.innerHTML = sg + '</p>';
+        container.innerHTML = sg + '</p>';
 
 
       });

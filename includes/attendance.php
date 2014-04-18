@@ -48,7 +48,7 @@ function church_admin_attendance_list($service_id=1)
 	   $sql='SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"';
 	  
 	  $service=$wpdb->get_row($sql);
-	  $service_details=$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.$service->service_time;
+	  $service_details=sprintf( __('%1$s on %2$s at %3$s', 'church-admin'), $service->service_name,$days[$service->service_day],$service->service_time);
 	  echo'<div class="wrap church_admin"><h2>'.__('Attendance List for','church-admin').' '.$service_details.'</h2>';
 	  echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">'.__('Add attendance','church-admin').'</a>';
 	  // Pagination
@@ -247,8 +247,8 @@ else
 	  $sql='SELECT * FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service->service_id).'"';
 	  
 	  $check=$wpdb->get_row($sql);
-	  if($service->service_id==$service_id)$service_details=$service->service_name.' '.__('on','church-admin').' '.$days[$service->service_day].' '.$service->service_time;
-	  if($check) echo'<tr><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_metrics&amp;service_id='.$service->service_id.'">View attendance table for '.$service->service_name.' '.$service->service_time.'</a></td><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">'.__('Edit week by week attendance for','church-admin').' '.$service->service_name.' '.$service->service_time.'</a></td></tr>';
+	  if($service->service_id==$service_id)$service_details=sprintf( __('%1$s on %2$s at %3$s', 'church-admin'), $service->service_name,$days[$service->service_day],$service->service_time);
+	  if($check) echo'<tr><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_metrics&amp;service_id='.$service->service_id.'">'.sprintf(__('View attendance table for %1$s  %2$s','church-admin'),$service->service_name,$service->service_time).'</a></td><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">'.sprintf(__('Edit week by week attendance for %1$s %2$s','church-admin'),$service->service_name,$service->service_time).'</a></td></tr>';
      }
      echo'</table>';
      echo '<h2>'.__('Attendance Adults,Children (Total)','church-admin').' '.$service_details.'</h2>'.$aggtable;

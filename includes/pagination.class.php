@@ -86,7 +86,7 @@ Author URI: http://www.mis-algoritmos.com
 							else
 								return "$this->target?$this->parameterName=$id";
 					else
-						return "$this->target&$this->parameterName=$id";
+						return "$this->target&amp;$this->parameterName=$id";
 			}
 		
 		function calculate(){

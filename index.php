@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5941
+Version: 0.5943
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5941';
+$church_admin_version = '0.5943';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -460,10 +460,11 @@ function church_admin_menus()
  * 
  */ 
     global $level;
-    $user_permissions=get_option('church_admin_user_permissions');
+	//deprecated next three lines to allow for users to edit own page;
+    //$user_permissions=get_option('church_admin_user_permissions');
     //let plugin decide level of showing admin menu
-    if(!empty($user_permissions)){$level='read';}else{$level='manage_options';}
-    add_menu_page('church_admin:Administration', __('Church Admin','church-admin'),  $level, 'church_admin/index.php', 'church_admin_main');
+    //if(!empty($user_permissions)){$level='read';}else{$level='manage_options';}
+    add_menu_page('church_admin:Administration', __('Church Admin','church-admin'),  'read', 'church_admin/index.php', 'church_admin_main');
     add_submenu_page('church_admin/index.php', __('Permissions','church-admin'), 'Permissions', 'manage_options', 'church_admin_permissions', 'church_admin_permissions');
     add_submenu_page('church_admin/index.php', __('Settings','church-admin'), 'Settings', 'manage_options', 'church_admin_settings', 'church_admin_settings');
 
@@ -519,7 +520,13 @@ function church_admin_cron()
 function church_admin_main() 
 {
     global $wpdb,$church_admin_version;
-    $id=!empty($_GET['id'])?$_GET['id']:NULL;
+	//allow people to edit their own entry
+	$self_edit=FALSE;
+	$user_id=get_current_user_id();
+	if(!empty($_GET['household_id']))$check=$wpdb->get_var('SELECT user_id FROM '.CA_PEO_TBL.' WHERE user_id="'.esc_sql($user_id).'" AND household_id="'.esc_sql($_GET['household_id']).'"');
+	if(!empty($check) && $check==$user_id)$self_edit=TRUE;
+	
+	$id=!empty($_GET['id'])?$_GET['id']:NULL;
 	$rota_id=!empty($_GET['rota_id'])?$_GET['rota_id']:NULL;
 	$copy_id=!empty($_GET['copy_id'])?$_GET['copy_id']:NULL;
     $date_id=!empty($_GET['date_id'])?$_GET['date_id']:NULL;
@@ -599,16 +606,17 @@ function church_admin_main()
 	    case 'church_admin_series_event_edit':check_admin_referer('series_event_edit');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_series_event_edit($date_id,$event_id);}break;
 	    case 'church_admin_single_event_edit':check_admin_referer('single_event_edit');if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_single_event_edit($date_id,$event_id);}break;
 	    case 'church_admin_add_calendar':if(church_admin_level_check('Calendar')){require(CHURCH_ADMIN_INCLUDE_PATH.'calendar.php');church_admin_add_calendar();}break;
+		
 	    //address
 	    case 'church_admin_move_person':if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_move_person($people_id);}break;
 	    case 'church_admin_address_list': if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_address_list($member_type_id);}else{echo"<p>You don't have permission to do that";}break;
 	    case 'church_admin_create_user':check_admin_referer('create_user');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_create_user($people_id,$household_id);}break;      
 	    case 'church_admin_migrate_users':check_admin_referer('migrate_users');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_migrate_users();}break;
-	    case 'church_admin_display_household':check_admin_referer('display_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_display_household($household_id);}break;
-	    case 'church_admin_edit_household':check_admin_referer('edit_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_household($household_id);}break;
+	    case 'church_admin_display_household':if(church_admin_level_check('Directory')||$self_edit){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_display_household($household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
+	    case 'church_admin_edit_household':if(church_admin_level_check('Directory')||$self_edit){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_household($household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
 	    case 'church_admin_delete_household':check_admin_referer('delete_household');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_delete_household($household_id);}break;
-	    case 'church_admin_edit_people':check_admin_referer('edit_people');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_people($people_id,$household_id);}break;
-	    case 'church_admin_delete_people':check_admin_referer('delete_people');if(church_admin_level_check('Directory')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_delete_people($people_id,$household_id);}break;
+	    case 'church_admin_edit_people':if(church_admin_level_check('Directory')||$self_edit){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_people($people_id,$household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
+	    case 'church_admin_delete_people':if(church_admin_level_check('Directory')||$self_edit){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_delete_people($people_id,$household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
 	    case 'church_admin_search':if(wp_verify_nonce('ca_search_nonce','ca_search_nonce')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_search($_POST['ca_search']);}break;
 	   
 	    //rota
@@ -647,7 +655,7 @@ function church_admin_main()
 function church_admin_shortcode($atts, $content = null) 
 {
 	
-    extract(shortcode_atts(array("type" => 'address-list','days'=>30,'year'=>date('Y'),'service_id'=>1,'photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL), $atts));
+    extract(shortcode_atts(array("type" => 'address-list','days'=>30,'year'=>date('Y'),'service_id'=>1,'photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL,'api_key'=>NULL), $atts));
     church_admin_posts_logout();
     $out='';
     global $wpdb;
@@ -662,7 +670,7 @@ function church_admin_shortcode($atts, $content = null)
     {
 	$text = __('Log out of password protected posts','church-admin');
 	//text for link
-	$link = get_bloginfo('site_url').'?church_admin_logout=posts_logout';
+	$link = site_url().'?church_admin_logout=posts_logout';
 	$out.= '<p><a href="' . wp_nonce_url($link, 'posts logout') .'">' . $text . '</a></p>';
 	//output logoutlink
     }
@@ -702,7 +710,7 @@ function church_admin_shortcode($atts, $content = null)
 	   
             $out.='<p><a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce($member_type_id ).'&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
             require_once(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
-            $out.=church_admin_frontend_directory($member_type_id,$map,$photo);
+            $out.=church_admin_frontend_directory($member_type_id,$map,$photo,$api_key);
         break;
         
 		case 'small-groups-list':
@@ -753,7 +761,7 @@ function church_admin_shortcode($atts, $content = null)
 	default:
 			$out.='<p><a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce($member_type_id ).'&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
             require_once(CHURCH_ADMIN_DISPLAY_PATH."address-list.php");
-            $out.=church_admin_frontend_directory($member_type_id,$map,$photo);
+            $out.=church_admin_frontend_directory($member_type_id,$map,$photo,$api_key);
         break;
     }
 //output content instead of shortcode!
@@ -769,10 +777,11 @@ add_shortcode("church_admin", "church_admin_shortcode");
 add_shortcode("church_admin_map","church_admin_map");
 function church_admin_map($atts, $content = null) 
 {
-    extract(shortcode_atts(array('zoom'=>13,'member_type_id'=>1,'small_group'=>1), $atts));
+	$out='';
+    extract(shortcode_atts(array('zoom'=>13,'member_type_id'=>1,'small_group'=>1,'unattached'=>0), $atts));
     global $wpdb;
     $service=$wpdb->get_row('SELECT lat,lng FROM '.CA_SER_TBL.' LIMIT 1');
-    $out.='<div class="church-map"><script type="text/javascript">var xml_url="'.site_url().'/?download=address-xml&member_type_id='.$member_type_id.'&small_group='.$small_group.'&address-xml='.wp_create_nonce('address-xml').'";';
+    $out.='<div class="church-map"><script type="text/javascript">var xml_url="'.site_url().'/?download=address-xml&member_type_id='.$member_type_id.'&small_group='.$small_group.'&unattached='.$unattached.'&address-xml='.wp_create_nonce('address-xml').'";';
     $out.=' var lat='.$service->lat.';';
     $out.=' var lng='.$service->lng.';';
     

@@ -4,7 +4,7 @@ function church_admin_service_list()
     global $wpdb,$days;
     echo'<div class="wrap church_admin"><h2>Services List</h2>';
     echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_service','edit_service').'">Add a service</a></p>';
-    echo'<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Service Name</th><th>Day</th><th>Time</th><th>Venue</th><th>Address</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Service Name</th><th>Day</th><th>Time</th><th>Venue</th><th>Address</th></tr></tfoot><tbody>';
+    echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></tfoot><tbody>';
     
     $sql='SELECT * FROM '.CA_SER_TBL;
     $results=$wpdb->get_results($sql);
@@ -27,13 +27,13 @@ function church_admin_delete_service($id)
 	{
 		$wpdb->query('DELETE FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($id).'"');
 		$wpdb->query('DELETE FROM '.CA_ROT_TBL.' WHERE service_id="'.esc_sql($id).'"');
-		echo'<div class="wrap church_admin"><div class="updated fade"><p>Service deleted</p></div>';
+		echo'<div class="wrap church_admin"><div class="updated fade"><p>'.__('Service deleted','church-admin').'</p></div>';
         church_admin_service_list();
         echo'</div>';
 	}
 	else
 	{
-		echo'<form action="" method="POST"><p><label>Are you sure?</label><input type="hidden" name="confirm_delete" value="yes"/><input type="submit" value="Yes"/></p></form>';
+		echo'<form action="" method="POST"><p><label>'.__('Are you sure?','church-admin').'</label><input type="hidden" name="confirm_delete" value="yes"/><input type="submit" value="'.__('Yes','church-admin').'"/></p></form>';
 	}
 
 }
@@ -59,7 +59,7 @@ function church_admin_edit_service($id)
         {//insert
            $wpdb->query('INSERT INTO '.CA_SER_TBL.' (service_name,service_day,service_time,venue,address,lat,lng,first_meeting) VALUES ("'.esc_sql($form['service_name']).'","'.esc_sql($form['service_day']).'","'.esc_sql($form['service_time']).'","'.esc_sql($form['venue']).'","'.esc_sql($form['address']).'","'.esc_sql($form['lat']).'","'.esc_sql($form['lng']).'","'.date('Y-m-d').'")'); 
         }//insert
-        echo'<div class="wrap church_admin"><div class="updated fade"><p>Service saved</p></div>';
+        echo'<div class="wrap church_admin"><div class="updated fade"><p>'.__('Service saved','church-admin').'</p></div>';
         church_admin_service_list();
         echo'</div>';
     }
@@ -67,7 +67,7 @@ function church_admin_edit_service($id)
     {
        echo'<div class="wrap church_admin"><h2>Service</h2>';
        echo'<form action="" method="post">';
-       echo'<p><label>Service Name</label><input type="text" name="service_name" ';
+       echo'<p><label>'.__('Service Name','church-admin').'</label><input type="text" name="service_name" ';
        if(!empty($data->service_name))echo' value="'.$data->service_name.'" ';
        echo'/></p>';
        echo'<p><label>Service Day</label><select name="service_day"> ';
@@ -78,15 +78,15 @@ function church_admin_edit_service($id)
          echo '>'.$value.'</option>';
        }
        echo'</select></p>';
-       echo'<p><label>Service Time</label><input type="text" name="service_time" ';
+       echo'<p><label>'.__('Service Time','church-admin').'</label><input type="text" name="service_time" ';
        if(!empty($data->service_time))echo' value="'.$data->service_time.'" ';
        echo'/></p>';
-       echo'<p><label>Service Venue</label><input type="text" name="venue" ';
+       echo'<p><label>'.__('Service Venue','church-admin').'</label><input type="text" name="venue" ';
        if(!empty($data->venue))echo' value="'.$data->venue.'" ';
        echo'/></p>';
        require_once(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
        echo church_admin_address_form($data,$error=NULL);
-       echo'<p class="submit"><input type="hidden" name="service" value="yes"/><input type="submit" value="Save Service&raquo;" /></p></form></div>';
+       echo'<p class="submit"><input type="hidden" name="service" value="yes"/><input type="submit" value="'.__('Save Service','church-admin').'&raquo;" /></p></form></div>';
     }
 }
 ?>

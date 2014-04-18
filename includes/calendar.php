@@ -58,8 +58,8 @@ function church_admin_delete_category($id)
     $wpdb->query("UPDATE ".$wpdb->prefix."church_admin_calendar_event SET cat_id='1' WHERE cat_id='".esc_sql($id)."'");
     echo '<div id="message" class="updated fade">';
         echo '<p><strong>'.__('Category Deleted','church-admin').'.<br/>';
-        if($count==1) echo __('Please note that','church-admin').' '.$count.' '.__('event used that category and will need editing','church-admin').'.';
-        if($count>1) echo __('Please note that','church-admin').' '.$count.' '.__('event used that category and will need editing','church-admin').'.';
+        if($count==1) printf(__('Please note that %1$s event used that category and will need editing','church-admin'),$count).'.';
+        if($count>1) printf(__('Please note that %1$s events used that category and will need editing','church-admin'),$count).'.';
         echo'</strong></p>';
         echo '</div>';
         church_admin_category_list();
@@ -99,8 +99,8 @@ echo '<script type="text/javascript" >
     
   });
  </script>  
- <p><label >Category Name</label><input type="text" name="category" value="'.$data->category.'"/></p>
-  <p><label >Background Colour</label><input type="text" id="color" name="color" value="'.$data->bgcolor.'" /></p><div id="picker"></div> 
+ <p><label >'.__('Category Name','church-admin').'</label><input type="text" name="category" value="'.$data->category.'"/></p>
+  <p><label >'.__('Background Colour','church-admin').'</label><input type="text" id="color" name="color" value="'.$data->bgcolor.'" /></p><div id="picker"></div> 
  ';
 }
 

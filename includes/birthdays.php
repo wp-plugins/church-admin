@@ -40,7 +40,7 @@ function church_admin_frontend_birthdays($member_type_id=1, $deltadays=30)
 
 	{
 
-		$out .= '<p><strong>Birthdays within the next '.$deltadays.' days:</strong></p>';
+		$out .= '<p><strong>'.sprintf( __('Birthdays within the next %1$s  days','church-admin'),$deltadays).':</strong></p>';
 
 		$out .= '<table cellspacing="0" cellpadding=0 width="100%">';
 

@@ -304,8 +304,9 @@ function church_admin_shortcodes_meta_box()
     
     //directory
     echo'<h2>Directory</h2>';
-    echo'<p>The directory shortcode is <strong>[church_admin type=address-list member_type_id=# map=1]</strong></p>';
-    echo'<p>map=1 shows a map for households that have had a map set</p>';
+    echo'<p>The directory shortcode is <strong>[church_admin type=address-list member_type_id=# photo=1 map=1 api_key=#]</strong></p>';
+    echo'<p>photo=1 will display a thumbnail if one has been uploaded</p>';
+	echo'<p>map=1 shows a map for households that have had a map set - Google Static Maps require an API Key for more than 25,000 views per day, so we require an api key to show the static map image from v0.5943. Please sign up for an api key using your Google account at <a href="https://code.google.com/apis">https://code.google.com/apis</a></p>';
     echo'<p>Member type can include more than one member type separated with commas e.g.<strong>[church_admin type=address-list member_type_id=1,2 map=1 photo=1]</strong></p>';
     
     $results=$wpdb->get_results('SELECT * FROM '.CA_MTY_TBL.' ORDER BY member_type_id');

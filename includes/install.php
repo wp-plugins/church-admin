@@ -453,6 +453,11 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "transcript"')!='transc
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD transcript TEXT';
     $wpdb->query($sql);
 }
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "people_order"')!='people_order')
+{
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD people_order INT(11)';
+    $wpdb->query($sql);
+}
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
 {
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD plays INT(11)';
