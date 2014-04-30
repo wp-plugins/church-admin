@@ -249,7 +249,7 @@ $language_codes = array(
             //only allow valid category
             if(in_array($_POST['category'],$cats)){$xml['category']=xmlentities(stripslashes($_POST['category']));}else{$xml['category']='Religion & Spirituality -Christianity';}
             if(!array_key_exists($xml['language'],$language_codes))$xml['language']='en';
-            $new_settings=array(
+            $new_settings=array('itunes_link'=>$xml['link'],
                 'title'=>$xml['title'],  
             'copyright'=>$xml['copyright'],
             'link'=>CA_POD_URL.'podcast.xml',
@@ -276,9 +276,11 @@ $language_codes = array(
         }//end process
         else
         {//form
-            
+				$settings=get_option('ca_podcast_settings');
             echo'<h2>Podcast Settings for RSS file</h2>';
             echo'<form action="" enctype="multipart/form-data" method="post">';
+			echo'<p><label>Itunes Link</label><input id="title" type="text" name="itunes_link" value="'.esc_html($settings['itunes_link']).'"/></p>';
+			
             echo'<h2>File Template</h2>';
             echo'<textarea rows="20" cols="200" name="file_template">'.get_option('ca_podcast_file_template').'</textarea>';
             echo'<h2>Speaker Template</h2>';

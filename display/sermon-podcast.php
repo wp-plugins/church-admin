@@ -10,9 +10,10 @@ function ca_podcast_display($series_id=NULL,$speaker_id=NULL,$file_id=NULL)
  * @version  0.1
  * 
  */
-    global $wpdb,$ca_podcast_settings;
+    global $wpdb;
+	$ca_podcast_settings=get_option('ca_podcast_settings');
 	$header='';
-	if(!empty($ca_podcast_settings['link']))$header.='<a title="Download on Itunes" href="'.$ca_podcast_settings['link'].'">
+	if(!empty($ca_podcast_settings['link']))$header.='<a title="'.__('Download on Itunes','church-admin').'" href="'.$ca_podcast_settings['itunes_link'].'">
 <img class="alignleft size-full wp-image-1701" alt="badge_itunes-lrg" src="'.CHURCH_ADMIN_IMAGES_URL.'badge_itunes-lrg.png" width="110" height="40" /></a>';
     if($file_id){return ca_display_file($file_id);}
     elseif($speaker_id)
@@ -45,7 +46,7 @@ function ca_podcast_display($series_id=NULL,$speaker_id=NULL,$file_id=NULL)
     }
     else
     {
-        return("<p>There are no media files uploaded yet</p>");
+        return('<p>'.__('There are no media files uploaded yet','church-admin').'</p>');
     }
     
 }
@@ -61,8 +62,9 @@ function ca_display_file($file_id=NULL)
  * @version  0.1
  * 
  */
-    global $wpdb,$ca_podcast_settings;
-    if(!$file_id)return("<p>There is no file to display</p>");
+    global $wpdb;
+	$ca_podcast_settings=get_option('ca_podcast_settings');
+    if(!$file_id)return('<p>'.__('There is no file to display','church-admin').'</p>');
     $template=get_option('ca_podcast_file_template');
     $sql='SELECT a.*,b.* FROM '.CA_FIL_TBL.' a, '.CA_SERM_TBL.' b WHERE a.series_id=b.series_id AND a.file_id="'.esc_sql($file_id).'"';
     
@@ -95,7 +97,7 @@ function ca_display_file($file_id=NULL)
     }
     else
     {
-        return "File not found";
+        return __('File not found','church-admin');
     }
     
 }

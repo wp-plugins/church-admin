@@ -642,11 +642,13 @@ function church_admin_latest_sermons_widget_control_form()
 
 function church_admin_latest_sermons_widget_output($limit=5,$title)
 {
-	global $wpdb,$ca_podcast_settings;
+	global $wpdb;
+	
 	$wpdb->show_errors;
 	$out='<div class="church-admin-sermons-widget">';
 	$ca_podcast_settings=get_option('ca_podcast_settings');
-	if(!empty($ca_podcast_settings['link']))$out.='<p><a title="Download on Itunes" href="'.$ca_podcast_settings['link'].'">
+	
+	if(!empty($ca_podcast_settings['link']))$out.='<p><a title="Download on Itunes" href="'.$ca_podcast_settings['itunes_link'].'">
 <img  alt="badge_itunes-lrg" src="'.CHURCH_ADMIN_IMAGES_URL.'badge_itunes-lrg.png" width="110" height="40" /></a></p>';
 	$options=get_option('church_admin_latest_sermons_widget');
 	
@@ -657,7 +659,7 @@ function church_admin_latest_sermons_widget_output($limit=5,$title)
 		foreach($sermons AS $sermon)
 		{
 			$speaker=church_admin_get_people($sermon->speaker);
-			$out.='<p><a href="'.CA_POD_URL.$data->file_name.'"  title="'.esc_html($data->file_title).'">'.$sermon->file_title.'</a><br/>By '.$speaker.' on '.mysql2date(get_option('date_format'),$sermon->pub_date).'<br/>';
+			$out.='<p><a href="'.CA_POD_URL.$sermon->file_name.'"  title="'.esc_html($sermon->file_title).'">'.$sermon->file_title.'</a><br/>By '.$speaker.' on '.mysql2date(get_option('date_format'),$sermon->pub_date).'<br/>';
 	
 			$out.='<audio class="sermonmp3" id="'.$sermon->file_id.'" src="'.CA_POD_URL.$sermon->file_name.'" preload="none"/><br/>'; 
 			

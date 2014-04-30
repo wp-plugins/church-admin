@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5944 =
+* Correct links in sermon widget and itunes links
 = 0.5943 = 
 * Users can edit own entry 
 * Address list uses microdata and valid HTML5
