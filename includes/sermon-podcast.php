@@ -257,8 +257,8 @@ function ca_podcast_edit_file($id=NULL)
         }
         $speaker=esc_sql(church_admin_get_people_id($sqlsafe['people']));
         if(!empty($_POST['private'])){$private="1";}else{$private="0";}
-        if(empty($_POST['pub_date'])){$pub_date=date("Y-m-d" );}else{$pub_date=date("Y-m-d",strtotime($_POST['pub_date']) );}
-        $pub_date+='12:00:00';
+        if(empty($_POST['pub_date'])){$sqlsafe['pub_date']=date("Y-m-d" );}else{$sqlsafe['pub_date']=$_POST['pub_date'];}
+        $sqlsafe['pub_date']+=' 12:00:00';
         if(empty($id))$id=$wpdb->get_var('SELECT file_id FROM '.CA_FIL_TBL.' WHERE length="'.$length.'" AND private="'.$private.'" AND file_name="'.$filename.'" AND file_title="'.$sqlsafe['file_title'].'" AND file_description="'.$sqlsafe['file_description'].'" AND service_id="'.$sqlsafe['service_id'].'" AND series_id="'.$sqlsafe['series_id'].'" AND speaker="'.$speaker.'"');
         
         

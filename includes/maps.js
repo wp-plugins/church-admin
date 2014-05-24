@@ -4,7 +4,7 @@ jQuery(document).ready(function($){
   var map, marker;
   var markers = [];
   var inputAddress = $('#address').val();
-  console.log(inputAddress);
+  
   var inputLat = '#lat';
   var inputLng = '#lng';
   var finalise ='#finalise';
@@ -73,16 +73,18 @@ jQuery(document).ready(function($){
   
   function geocodeLocation(address)
   {
+  
     geocoder.geocode({'address' : address}, function(result, status){
       
       if(status!='ZERO_RESULTS')
       {// this returns a latlng
-      console.log(status);
+      
       var location = result[0].geometry.location;
       map.setCenter(location);
-      }
       // replace markers
-      placeMarker(location);      
+      placeMarker(location);
+	  }else{alert("Google maps couldn't find the address, please adjust and try again");}
+            
     });
   }
   
