@@ -14,7 +14,7 @@ function ca_podcast_display($series_id=NULL,$speaker_id=NULL,$file_id=NULL)
 	$ca_podcast_settings=get_option('ca_podcast_settings');
 	$header='';
 	if(!empty($ca_podcast_settings['link']))$header.='<a title="'.__('Download on Itunes','church-admin').'" href="'.$ca_podcast_settings['itunes_link'].'">
-<img class="alignleft size-full wp-image-1701" alt="badge_itunes-lrg" src="'.CHURCH_ADMIN_IMAGES_URL.'badge_itunes-lrg.png" width="110" height="40" /></a>';
+<img class="alignleft size-full wp-image-1701" alt="badge_itunes-lrg" src="'.CHURCH_ADMIN_IMAGES_URL.'badge_itunes-lrg.png" width="110" height="40" /></a><br style="clear:left;"/>';
     if($file_id){return ca_display_file($file_id);}
     elseif($speaker_id)
     {//speaker_id specified

@@ -17,13 +17,15 @@ function church_admin_front_admin()
 	<div id="poststuff">
 	
 	<div class="church_admin_left" ><p>
-	<?php    echo __('If you find the plugin helpful, please contribute!','church-admin');?>
-	<br/><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form><br/>
-	    <script id='fb67321'>(function(i){var f,s=document.getElementById(i);f=document.createElement('iframe');f.src='//api.flattr.com/button/view/?uid=TheMoyle&button=compact&url='+encodeURIComponent(document.URL);f.title='Church Admin Plugin';f.height=20;f.width=110;f.style.borderWidth=0;s.parentNode.insertBefore(f,s);})('fb67321');</script></p></div>
+	<?php    echo '<p><label>'.__('If you find the plugin helpful, please contribute!','church-admin').'</label>';?>
+	<form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>
+		
+		<?php require_once(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');echo church_admin_news_feed();?>
+		</div>
 	<div class="church_admin_left" ><p>
-		<a href="http://www.worshipbanners.co.uk"><img src="<?php echo CHURCH_ADMIN_IMAGES_URL;?>worship-banners-logo.png" width="300" height="100" alt="Worship Banners"/></a>
-		<br/>
-		The plugin author has recently started a business selling rollup banners to use in Churches. <a href="http://www.worshipbanners.co.uk">Why not have a look?</a>
+		<a href="http://www.worshipbanners.co.uk" class="alignleft" ><img src="<?php echo CHURCH_ADMIN_IMAGES_URL;?>roll-up-banner-examples.PNG" width="300" height="182" alt="Worship Banners"/></a>
+		<br/><h3><a href="http://www.worshipbanners.co.uk">Worshipbanners.co.uk</a></h3>
+		The plugin author has recently started a business selling rollup banners to use in Churches.<br/> <a href="http://www.worshipbanners.co.uk">Why not have a look?</a>
 	</p>
 	</div><div class="clear"></div>
 		<?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){	echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	  <!-- #post-body .metabox-holder goes here -->
@@ -33,7 +35,7 @@ function church_admin_front_admin()
 		        <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
 		    wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
 			echo'</form>';
-			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-plugin-news", __('Church Admin Plugin News', 'church-admin'), "church_admin_plugin_news_meta_box", "church-admin");}
+			
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'), "church_admin_shortcodes_meta_box", "church-admin");
 			if(church_admin_level_check('Bulk Email')){	add_meta_box("church-admin-communications", __('Communications', 'church-admin'), "church_admin_communications_meta_box", "church-admin");}

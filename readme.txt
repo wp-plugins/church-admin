@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5946 = 
+* Tidy up sermon podcast display page
 = 0.5945 =
 * Remove console.log() from maps js for old IE versions
 = 0.5944 =

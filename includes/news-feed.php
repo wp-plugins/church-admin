@@ -3,7 +3,7 @@
 function church_admin_news_feed()
 {
 require_once( ABSPATH . WPINC . '/feed.php' ); 
-$output='<ul>';
+$output='<h3>Plugin News</h3><ul>';
 $max_items = 0; 
 if ( function_exists( 'fetch_feed' ) )
 { 
@@ -11,7 +11,7 @@ if ( function_exists( 'fetch_feed' ) )
 		$rss = fetch_feed( 'http://www.themoyles.co.uk/category/church-admin-plugin/feed/' );
 		if ( !is_wp_error( $rss ) ) { // Checks that the object is created correctly 
 		    // Figure out how many total items there are, but limit it to 5. 
-		    $max_items = $rss->get_item_quantity(5);
+		    $max_items = $rss->get_item_quantity(4);
 		    $rss_items = $rss->get_items( 0, $max_items ); 
 		}
 	
@@ -32,4 +32,4 @@ if ( function_exists( 'fetch_feed' ) )
     $output.='</ul>';
 return $output;
 }
-
+?>
