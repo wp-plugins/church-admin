@@ -7,14 +7,14 @@ function church_admin_small_group_list($map=1)
 	
 	$out='';
 	
-		$row=$wpdb->get_row('SELECT AVG(lat) AS lat,AVG(lng) AS lng FROM '.CA_SMG_TBL);
+		$row=$wpdb->get_row('SELECT AVG(lat) AS lat,AVG(lng) AS lng FROM '.CA_SER_TBL);
 		if(!empty($row)&& $map==1)
 		{
 			
 			$out.='<script type="text/javascript">var xml_url="'.site_url().'/?download=small-group-xml&small-group-xml='.wp_create_nonce('small-group-xml').'";';
 			$out.=' var lat='.$row->lat.';';
 			$out.=' var lng='.$row->lng.';';
-			$out.='jQuery(document).ready(function(){load(lat,lng,xml_url);});</script><div id="map"></div><div id="groups" ></div><div class="clear"></div>';
+			$out.='jQuery(document).ready(function(){sgload(lat,lng,xml_url);});</script><div id="map"></div><div id="groups" ></div><div class="clear"></div>';
 		}
 		else
 		{//old way for non geolocated

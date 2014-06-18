@@ -223,7 +223,12 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
     if(!empty($data->household_id))$household_id=$data->household_id;
     if(!empty($_POST['edit_people']))
     {//process
-		if(empty($_POST['smallgroup_id']))$_POST['smallgroup_id']=0;
+		if(empty($_POST['smallgroup_id']))$_POST['smallgroup_id']=NULL;
+		if(empty($_POST['smallgroup_attendance']))
+		{
+		
+			if(empty($data->smallgroup_attendance)){$_POST['smallgroup_attendance']=1;}else{$_POST['smallgroup_attendance']=$data->smallgroup_attendance;}
+		}
 		if(empty($household_id))
 		{
 			$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (lat,lng) VALUES("52.000","0.000")');
@@ -300,14 +305,14 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		if($people_id)
 		{//update
 			
-			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
+			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'",smallgroup_attendance="'.$sql['smallgroup_attendance'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
 		    $wpdb->query($query);
 			
 			
 		}//end update
 		else
 		{
-			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,attachment_id,user_id) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$attachment_id.'","'.$sql['user_id'].'")');
+			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,smallgroup_attendance,attachment_id,user_id) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$sql['smallgroup_attendance'].'","'.$attachment_id.'","'.$sql['user_id'].'")');
 			$people_id=$wpdb->insert_id;
 		}
 		if(!empty($_POST['create_user']))
@@ -337,6 +342,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			}//insert
 			$wpdb->query('UPDATE '.CA_PEO_TBL.' SET smallgroup_id="'.esc_sql($sg_id).'" WHERE people_id="'.$people_id.'"');	
 		}
+		
 	if(church_admin_level_check('Directory'))
 	{//only authorised people
 		//update meta
@@ -392,16 +398,19 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		if(!empty($data->last_name)) echo ' value="'.esc_html($data->last_name).'" ';
 		echo'/></p>';
 		//photo
-		echo'<p><label for="photo">'.__('Photo','church-admin').'</label><input type="file" id="photo" name="uploadfiles" size="35" class="uploadfiles" /></p><p><label>&nbsp;</label>';
+		echo'<p><label for="photo">'.__('Photo','church-admin').'</label><input type="file" id="photo" name="uploadfiles" size="35" class="uploadfiles" /></p>';
 		if(!empty($data->attachment_id))
 		{//photo available
-			echo  wp_get_attachment_image( $data->attachment_id,'ca-people-thumb' );
+			echo '<p><label>Current Photo</label>';
+			if(file_exists(  wp_get_attachment_image( $data->attachment_id,'ca-people-thumb' ))){echo wp_get_attachment_image( $data->attachment_id,'ca-people-thumb' );}else {echo '<img src="'.CHURCH_ADMIN_IMAGES_URL.'default-avatar.jpg" width="75" height="75"/>';}
+			echo'</p>';
 		}//photo available
 		else
 		{
+			echo '<p><label>&nbsp;</label>';
 			echo '<img src="'.CHURCH_ADMIN_IMAGES_URL.'default-avatar.jpg" width="75" height="75"/>';
+			echo '</p>';
 		}
-		echo '</p>';
 		//email
 		echo'<p><label>'.__('Email Address','church-admin').'</label><input type="text" name="email" ';
 		if(!empty($data->email)) echo ' value="'.esc_html($data->email).'" ';
@@ -489,15 +498,18 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		foreach($smallgroups AS $smallgroup)
 		{
 			
-			echo'<input type="radio" name="smallgroup_id" value="'.$smallgroup->id.'"';
+			echo'<input type="checkbox" name="smallgroup_id" value="'.$smallgroup->id.'"';
 			if($smallgroup->id==$data->smallgroup_id) echo' checked="checked" ';
 		echo'/>'.$smallgroup->group_name.'<br/>';
 		}
 		echo '</span></p>';
 	if(church_admin_level_check('Directory'))
-	{//only authorised people to edit wordpress user or create new small groups
-		echo'<p><label>Or create new Small Group</label><span style="display:inline-block"><span style="float:left;width:150px">Group Name</span><input type="text" name="group_name"/><br style="clear:left"/><span style="float:left;width:150px">Leader?</span><input type="checkbox" name="leading"/><br style="clear:left;"/><span style="float:left;width:150px">Where &amp; When</span><input type="text" name="whenwhere"/></span></p>';
+	{//only authorised people to edit wordpress user or create new small groups or adjust attendance indicator
+		if(empty($data->smallgroup_attendance))$data->smallgroup_attendance=1;
+		echo'<p><label>Small group Attendance</label><input type="radio" name="smallgroup_attendance" value="1" '.checked('1',$data->smallgroup_attendance,0).'/>'.__('Regular','church-admin').' &nbsp;<input type="radio" name="smallgroup_attendance" value="2" '.checked('2',$data->smallgroup_attendance,0).'/>'.__('Irregular','church-admin').' &nbsp; <input type="radio" name="smallgroup_attendance" value="3" '.checked('3',$data->smallgroup_attendance,0).'/>'.__('Loosely connected','church-admin').' &nbsp;</p>';
 	
+		echo'<p><label>Or create new Small Group</label><span style="display:inline-block"><span style="float:left;width:150px">Group Name</span><input type="text" name="group_name"/><br style="clear:left"/><span style="float:left;width:150px">Leader?</span><input type="checkbox" name="leading"/><br style="clear:left;"/><span style="float:left;width:150px">Where &amp; When</span><input type="text" name="whenwhere"/></span></p>';
+		
 		if($data->user_id )
 		{
 			echo'<p><label>'.__('Wordpress User','church-admin').'</label>';

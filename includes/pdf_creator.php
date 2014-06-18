@@ -49,8 +49,8 @@ $leader=array();
 //grab people
 $memb=explode(',',esc_sql($member_type_id));
 foreach($memb AS $key=>$value){if(ctype_digit($value))$membsql[]='a.member_type_id='.$value;}
-if(!empty($membsql)) {$memb_sql=' AND ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
-$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE a.people_type_id="1"  '.$memb_sql.' AND a.smallgroup_id=b.id ORDER BY b.smallgroup_order,a.last_name ';
+if(!empty($membsql)) {$memb_sql='  ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name,a.smallgroup_attendance, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE   '.$memb_sql.' AND a.smallgroup_id=b.id ORDER BY b.smallgroup_order,a.smallgroup_attendance,a.last_name ';
 $results = $wpdb->get_results($sql);
 $gp=0;
 $count=array();
@@ -58,8 +58,17 @@ $person=1;
 foreach ($results as $row) 
     {
         $row->name=stripslashes($row->name);
-        
+        if(empty($smallgroups[$row->group_name])){$smallgroups[$row->group_name]=__('Regular Attender','church-admin')."\n";$current_attendance=1;}
         if(empty($count[$row->group_name])){$count[$row->group_name]=1;}else{$count[$row->group_name]++;}
+		if($row->smallgroup_attendance!=$current_attendance)
+		{
+			switch ($row->smallgroup_attendance)
+			{
+				case'1':$smallgroups[$row->group_name].="\n".__('Regular Attenders','church-admin')."\n";$current_attendance=1;$count[$row->group_name]=1;break;
+				case'2':$smallgroups[$row->group_name].="\n".__('Irregular Attenders','church-admin')."\n";$current_attendance=2;$count[$row->group_name]=1;break;
+				case'3':$smallgroups[$row->group_name].="\n".__('Loosely Connected','church-admin')."\n";$current_attendance=3;$count[$row->group_name]=1;break;
+			}
+		}
         $smallgroups[$row->group_name].=$count[$row->group_name].') '.iconv('UTF-8', 'ISO-8859-1',$row->name)."\n";
         $person++;
 
@@ -71,7 +80,7 @@ $counter=$noofgroups->no;
 $pdf=new FPDF();
 $pageno=0;
 $x=10;
-$y=30;
+$y=20;
 $w=1;
 $width=55;
 $pdf->AddPage('L',get_option('church_admin_pdf_size'));
@@ -81,7 +90,7 @@ $whichtype=array();
 foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
 
 $text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y",$next_sunday).'  '.$person.' '.__('people','church-admin');
-$pdf->Cell(0,10,$text,0,2,C);
+$pdf->Cell(0,10,$text,0,2,'C');
 $pageno+=1;
 
 
@@ -96,17 +105,17 @@ for($z=0;$z<=$counter-1;$z++)
 	  $text=__('Small Group List','church-admin').' '.date("d-m-Y",$next_sunday);
 	  $pdf->Cell(0,10,$text,0,2,C);
 	  $x=10;
-	  $y=30;
+	  $y=20;
 	  $w=1;
 	}
 	$newx=$x+(($w-1)*$width);
 	if($pageno>1) {$newx=$x+(($z-($pageno*5))*$width);}
 	$pdf->SetXY($newx,$y);
 	$pdf->SetFont('Arial','B',10);
-	$pdf->Cell($width,10,iconv('UTF-8', 'ISO-8859-1',$groupname[$z]),1,1,C);
+	$pdf->Cell($width,8,iconv('UTF-8', 'ISO-8859-1',$groupname[$z]),1,1,'C');
 	$pdf->SetFont('Arial','',10);
-	$pdf->SetXY($newx,$y+10);
-	$pdf->MultiCell($width,5,iconv('UTF-8', 'ISO-8859-1',$smallgroups[$groupname[$z]]),1,L);
+	$pdf->SetXY($newx,$y+8);
+	$pdf->MultiCell($width,5,iconv('UTF-8', 'ISO-8859-1',$smallgroups[$groupname[$z]]),1,'L');
 	$w++;
 	}
 $pdf->Output();
@@ -799,20 +808,37 @@ function church_admin_address_xml($member_type_id=1,$small_group=1)
 		foreach($results AS $row)
 		{
 			$address=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($row->household_id).'"');
-			$sql='SELECT a.* FROM '.CA_PEO_TBL.' a LEFT JOIN '.CA_SMG_TBL.' b ON b.id=a.smallgroup_id WHERE a.household_id="'.esc_sql($row->household_id).'" ORDER BY a.people_order, a.people_type_id ASC,sex DESC';
+			$sql='SELECT a.* FROM '.CA_PEO_TBL.' a  WHERE a.household_id="'.esc_sql($row->household_id).'" ORDER BY a.people_order, a.people_type_id ASC,sex DESC';
 			$people_results=$wpdb->get_results($sql);
 			
 			$adults=$children=$emails=$mobiles=$photos=array();
 			$last_name='';
 			$x=0;
+			$markers.= '<marker ';
 			foreach($people_results AS $people)
 			{
+				
 				if($people->people_type_id=='1')
 				{	
 					if(!empty($people->prefix)){$prefix=$people->prefix.' ';}else{$prefix='';}
 					$last_name=$prefix.$people->last_name;
 					$adults[$last_name][]=$people->first_name;
-						
+					$smallgroup=$wpdb->get_row('SELECT * FROM '.CA_SMG_TBL.' WHERE id="'.$people->smallgroup_id.'"');
+							//small group data for marker
+							
+							if(!empty($smallgroup))
+							{
+								$sg=array();
+								$sg[]=  'pinColor="'.$color_def[$smallgroup->id].'" ';
+								$sg[]= 'smallgroup_id="'.$smallgroup->id.'" ';
+								$sg[]= 'smallgroup_name="'.htmlentities($smallgroup->group_name).'" ';
+								$sg[]=  'small_group_address="'.htmlentities($smallgroup->address).'" ';
+								$sg[]=  'when="'.htmlentities($smallgroup->whenwhere).'" ';
+							}
+							else
+							{$sg=array();
+								$sg[]= 'pinColor="FF0000" ';
+							}		
 					$x++;
 				}
 				else
@@ -822,26 +848,14 @@ function church_admin_address_xml($member_type_id=1,$small_group=1)
 					$children[$last_name][]=$people->first_name;
 				
 				}
-	  
+				
 			}
-			$markers.= '<marker ';
+			$markers.=implode(" ",$sg);
 			//address data for marker
 			$markers.= 'lat="' . $address->lat . '" ';
 			$markers.= 'lng="' . $address->lng . '" ';
 			$markers.= 'address="'. $address->address.'" ';
-			//small group data for marker
-			if(!empty($small_group))
-			{
-				$markers.=  'pinColor="'.$color_def[$people->id].'" ';
-				$markers.= 'smallgroup_id="'.$people->id.'" ';
-				$markers.= 'smallgroup_name="'.htmlentities($people->group_name).'" ';
-				$markers.=  'small_group_address="'.htmlentities($people->small_group_address).'" ';
-				$markers.=  'when="'.htmlentities($people->whenwhere).'" ';
-			}
-			else
-			{
-				$markers.= 'pinColor="FF0000" ';
-			}	
+			
 			//people data
 			array_filter($adults);
 			$adultline=array();

@@ -455,8 +455,18 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "transcript"')!='transc
 }
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "people_order"')!='people_order')
 {
-    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD people_order INT(11)';
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD people_order INT(11) ';
     $wpdb->query($sql);
+}
+
+$wpdb->query('ALTER TABLE '.CA_PEO_TBL.' CHANGE `people_order` `people_order` INT(11) NULL DEFAULT "1"');
+
+//v0.5946 add smallgroup attendance indicator
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "smallgroup_attendance"')!='smallgroup_attendance')
+{
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD smallgroup_attendance INT(1) DEFAULT 1';
+    $wpdb->query($sql);
+	
 }
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
 {

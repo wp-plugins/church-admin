@@ -249,7 +249,7 @@ $language_codes = array(
             //only allow valid category
             if(in_array($_POST['category'],$cats)){$xml['category']=xmlentities(stripslashes($_POST['category']));}else{$xml['category']='Religion & Spirituality -Christianity';}
             if(!array_key_exists($xml['language'],$language_codes))$xml['language']='en';
-            $new_settings=array('itunes_link'=>$xml['link'],
+            $new_settings=array('itunes_link'=>$xml['itunes_link'],
                 'title'=>$xml['title'],  
             'copyright'=>$xml['copyright'],
             'link'=>CA_POD_URL.'podcast.xml',

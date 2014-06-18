@@ -22,12 +22,13 @@ function load(lat,lng,xml_url) {
       var pinColor =markers[i].getAttribute("pinColor");
       var id =markers[i].getAttribute("smallgroup_id");
       var details=markers[i].getAttribute("when")+ ' at ' +markers[i].getAttribute("small_group_address");
-	  var adults_names=markers[i].getAttribute("adults_names");
+	  if ( markers[i].getAttribute("adults_names")) var adults_names=markers[i].getAttribute("adults_names");
+	  if ( markers[i].getAttribute("smallgroup_name"))var smallgroup_name=markers[i].getAttribute("smallgroup_names");
 	  var childrens_names='';
 	  if ( markers[i].getAttribute("childrens_names")) childrens_names='(' + markers[i].getAttribute("childrens_names")+')'+'<br/>';
 	  var address=markers[i].getAttribute("address");
 	  var information = adults_names + '<br/>'+ childrens_names + address;
-      if(markers[i].getAttribute("smallgroup_name")!="Unattached")smallgroup[id]='<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|' + pinColor +'"/> '+markers[i].getAttribute("smallgroup_name") + ': ' +details +'<br/>';
+      if(markers[i].getAttribute("smallgroup_name")&& markers[i].getAttribute("smallgroup_name")!="Unattached")smallgroup[id]='<img src="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|' + pinColor +'"/> '+markers[i].getAttribute("smallgroup_name") + ': ' +details +'<br/>';
       
       
       var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
@@ -59,7 +60,7 @@ function load(lat,lng,xml_url) {
 	    }
     }
         var sg='<h2>Smallgroups</h2><p>';
-        for(var index in smallgroup) {  sg= sg + smallgroup[index];}
+        for(var index in smallgroup) { if(smallgroup[index]) sg= sg + smallgroup[index];}
         var container = document.getElementById("groups");
         container.innerHTML = sg + '</p>';
 

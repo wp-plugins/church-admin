@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5946
+Version: 0.5949
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5946';
+$church_admin_version = '0.5949';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -251,7 +251,7 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
 	foreach ($posts as $post) {
 		if(stripos($post->post_content,'type=podcast')!== false ||stripos($post->post_content,'type="podcast"')!== false ||stripos($post->post_content,"type='podcast'")!== false )$shortcode_found='podcast';
 		if (stripos($post->post_content, '[church_admin_map') !== false )$shortcode_found='map';
-		if (stripos($post->post_content, 'type=small-groups-list') !== false ||stripos($post->post_content, 'type="small-groups-list"') !== false )$shortcode_found='map';
+		if (stripos($post->post_content, 'type=small-groups-list') !== false ||stripos($post->post_content, 'type="small-groups-list"') !== false )$shortcode_found='sgmap';
                 if(stripos($post->post_content, '[church_admin_register') !== false ) $shortcode_found = 'register';
 	}
  
@@ -277,11 +277,16 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
                         wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'maps.js','',NULL);
                     }
                 }
-                else
+                elseif ($shortcode_found=='map')
                 {
                     wp_enqueue_script('google_map_script', 'http://maps.googleapis.com/maps/api/js?sensor=false','',NULL);
                     wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'google_maps.js','',NULL);
                 }
+				elseif($shortcode_found=='sgmap')
+				{
+					wp_enqueue_script('google_map_script', 'http://maps.googleapis.com/maps/api/js?sensor=false','',NULL);
+                    wp_enqueue_script('ca_google_map_script', CHURCH_ADMIN_INCLUDE_URL.'smallgroup_maps.js','',NULL);
+				}
 	}
  
 	return $posts;
