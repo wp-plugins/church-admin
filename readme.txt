@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5950 =
+* Fix  permissions bug
 = 0.5949 = 
 * fix small group map and addres list map bugs
 = 0.5948 = 

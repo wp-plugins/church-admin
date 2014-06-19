@@ -32,11 +32,12 @@ function church_admin_level_check($what)
     global $current_user;
     get_currentuserinfo();
     $user_permissions=get_option('church_admin_user_permissions');
+	
     $level=get_option('church_admin_levels');
-    if(!empty($user_permissions))
+    if(!empty($user_permissions[$what]))
     {//user permissions have been set for $what
 		
-		if( in_array($current_user->ID,maybe_unserialize($user_permissions[$what]))){return TRUE;}else{return FALSE;}
+		if( in_array($current_user->ID,$user_permissions[$what])){return TRUE;}else{return FALSE;}
 	}//end user permissions have been set
     elseif(!empty($level[$what]) && $level[$what]=="administrator"){return current_user_can('manage_options');}
     elseif(!empty($level[$what]) && $level[$what]=="editor"){return current_user_can('delete_others_pages');}
@@ -280,12 +281,17 @@ function church_admin_get_user_id($name)
             {//only look if a name stored!
                 $sql='SELECT user_id FROM '.CA_PEO_TBL.' WHERE CONCAT_WS(" ",first_name,last_name) REGEXP "^'.esc_sql($value).'" LIMIT 1';
                 $result=$wpdb->get_var($sql);
-                if($result){$user_ids[]=$result;}else{echo '<p>'.esc_html($value).' is not stored by Church Admin as  Wordpress User</p>';}
+                if($result){$user_ids[]=$result;}else
+				{
+					echo '<p>'.esc_html($value).' is not stored by Church Admin as  Wordpress User. ';
+					$people_id=$wpdb->get_var('SELECT people_id FROM '.CA_PEO_TBL.' WHERE CONCAT_WS(" ",first_name,last_name) REGEXP "^'.esc_sql($value).'" LIMIT 1');
+					if(!empty($people_id))echo'Please <a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$people_id,'edit_people').'">edit</a> entry to connect/create site user account.';
+					echo'</p>';
+				}
             }
         }
     }
-    
-    return maybe_serialize(array_filter($user_ids));
+    if(!empty($user_ids)){ return maybe_serialize(array_filter($user_ids));}else{return NULL;}
 }
 
 function church_admin_ajax_people()

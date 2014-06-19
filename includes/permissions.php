@@ -29,59 +29,97 @@ function church_admin_permissions()
 		echo'<div class="updated fade"><p><strong>'.__('Please create or connect Wordpress User accounts for people in the directory first.','church-admin').'</strong></p></div>';
 
 	}
-
-	else
-
-	{//proceed
-
-		if(!empty($_POST['save']))
+	if(!empty($_POST['save']))
 
 		{//form saved
 
 			unset($_POST['save']);
+			if(!empty($_POST['delete_all'])){delete_option('church_admin_user_permissions');echo'<div class="updated fade"><p>'.__('No individual user permissions are stored','church-admin').'</p></div>';}
+			else
+			{
+				if(!empty($_POST['Directory']))
+				{
+					$directory=church_admin_get_user_id($_POST['Directory']);
+					if(!empty($directory))$user_permissions['Directory']=$directory;
+				}
 
-			if(!empty($_POST['Directory'])){$user_permissions['Directory']=church_admin_get_user_id($_POST['Directory']);}
+				if(!empty($_POST['Calendar']))
+				{	
+					$calendar=church_admin_get_user_id($_POST['Calendar']);
+					if(!empty($calendar))$user_permissions['Calendar']=$calendar;
+				}
 
-			if(!empty($_POST['Calendar']))$user_permissions['Calendar']=church_admin_get_user_id($_POST['Calendar']);
+				if(!empty($_POST['Rota']))
+				{
+					$rota=church_admin_get_user_id($_POST['Rota']);
+					if(!empty($rota))$user_permissions['Rota']=$rota;
+				}
+				if(!empty($_POST['Sermons']))
+				{
+					$sermons=church_admin_get_user_id($_POST['Sermons']);
+					if(!empty($sermons))$user_permissions['Sermons']=$sermons;
+				}
 
-			if(!empty($_POST['Rota']))$user_permissions['Rota']=church_admin_get_user_id($_POST['Rota']);
+				if(!empty($_POST['Funnel']))
+				{
+					$funnel=church_admin_get_user_id($_POST['Funnel']);
+					if(!empty($funnel))$user_permissions['Funnel']=$funnel;
+				}
 
-			if(!empty($_POST['Sermons']))$user_permissions['Sermons']=church_admin_get_user_id($_POST['Sermons']);
+				if(!empty($_POST['Bulk_SMS']))
+				{
+					$sms=church_admin_get_user_id($_POST['Funnel']);
+					if(!empty($sms))$user_permissions['Bulk SMS']=$sms;
+				}
 
-			if(!empty($_POST['Funnel']))$user_permissions['Funnel']=church_admin_get_user_id($_POST['Funnel']);
+				if(!empty($_POST['Bulk_Email']))
+				{
+					$email=church_admin_get_user_id($_POST['Funnel']);
+					if(!empty($email))$user_permissions['Bulk Email']=$email;
+				}
+				if(!empty($_POST['Attendance']))
+				{
+					$att=church_admin_get_user_id($_POST['Attendance']);
+					if(!empty($att))$user_permissions['Attendance']=$att;
+				}
+				if(!empty($_POST['Member_type']))
+				{
+					$mt=church_admin_get_user_id($_POST['Member_type']);				
+					if(!empty($mt))$user_permissions['Member Type']=$mt;
+				}
+				if(!empty($_POST['small_groups']))
+				{
+					$sg=church_admin_get_user_id($_POST['small_groups']);
+					if(!empty($sg))$user_permissions['Small Groups']=$sg;
+				}
+				if(!empty($_POST['Service']))
+				{
+					$service=church_admin_get_user_id($_POST['small_groups']);
+					if(!empty($service))$user_permissions['Service']=$service;
+				}
+				
+				if(!empty($user_permissions))
 
-			if(!empty($_POST['Bulk_SMS']))$user_permissions['Bulk SMS']=church_admin_get_user_id($_POST['Bulk_SMS']);
+				{//some people have been specified so save them	
 
-			if(!empty($_POST['Bulk_Email']))$user_permissions['Bulk Email']=church_admin_get_user_id($_POST['Bulk_Email']);
-
-			if(!empty($_POST['Attendance']))$user_permissions['Attendance']=church_admin_get_user_id($_POST['Attendance']);
-
-			if(!empty($_POST['Member_type']))$user_permissions['Member Type']=church_admin_get_user_id($_POST['Member_type']);
-
-			if(!empty($_POST['small_groups']))$user_permissions['Small Groups']=church_admin_get_user_id($_POST['small_groups']);
-
-			if(!empty($_POST['Service']))$user_permissions['Service']=church_admin_get_user_id($_POST['Service']);
-
-			if(!empty($user_permissions))
-
-			{//some people have been specified so save them	
-
-			
+				
 
 				echo'<div class="updated fade"><p><strong>'.__('Permissions Saved','church-admin').'</strong></p></div>';
 
 				update_option('church_admin_user_permissions',$user_permissions);
 
-			}
+				}
 
-			else
+				else
 
-			{//no-one specified, make sure option is deleted
+				{//no-one specified, make sure option is deleted
 
-				delete_option('church_admin_user_permissions');
+					delete_option('church_admin_user_permissions');
 
-				echo'<div class="updated fade"><p>'.__('No individual user permissions are stored','church-admin').'</p></div>';
+					echo'<div class="updated fade"><p>'.__('No individual user permissions are stored','church-admin').'</p></div>';
 
+				}
+				
 			}
 
 		}//form saved
@@ -117,6 +155,7 @@ function church_admin_permissions()
 			echo'<form action="" method="post">';
 
 			echo'<h2>'.__('Who is allowed to do what?','church-admin').'</h2>';
+			echo'<p><label>Delete All user permissions</label><input type="checkbox" class="delete_all_permissions" value="yes" name="delete_all"/></p>';
 
 			echo'<p><label>'.__('Directory','church-admin').'</label>';
 
@@ -180,15 +219,20 @@ function church_admin_permissions()
 
 			echo'<p><label>'.__('Service','church-admin').'</label>';
 
-			echo church_admin_autocomplete('Service','service','att',$user_permissions['Service'],TRUE); 
+			echo church_admin_autocomplete('Service','service','ser',$user_permissions['Service'],TRUE); 
 
 			echo '</p>';
 
 			echo'<p class="submit"><input type="hidden" name="save" value="yes"/><input type="submit" value="'.__('Save','church-admin').'" class="primary-button"/></p>';
 
 			echo'</form></div></div>';
+			echo'<script type="text/javascript">jQuery(document).ready(function($) {
+			$(".delete_all_permissions").click(function(){ 
+				$(".to").val("");
+				
+			});
+});</script>';
 
-		}//end proceed
 
 	
 
@@ -197,4 +241,3 @@ function church_admin_permissions()
 }//end function
 
 ?>
-
