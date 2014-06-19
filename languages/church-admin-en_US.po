@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Church Admin\n"
-"POT-Creation-Date: 2014-06-18 14:39-0000\n"
-"PO-Revision-Date: 2014-06-18 14:45-0000\n"
+"POT-Creation-Date: 2014-06-19 10:22-0000\n"
+"PO-Revision-Date: 2014-06-19 10:22-0000\n"
 "Last-Translator: Andy Moyle <clients@themoyles.co.uk>\n"
 "Language-Team: Andy Moyle <clients@themoyles.co.uk>\n"
 "Language: en_US\n"
@@ -187,7 +187,7 @@ msgstr "Member Types"
 msgid "Follow Up"
 msgstr "Follow Up"
 
-#: includes/admin.php:48 includes/permissions.php:132 includes/rota.php:150
+#: includes/admin.php:48 includes/permissions.php:166 includes/rota.php:150
 #: includes/rota.php:443 includes/rota_settings.php:9
 #: includes/rota_settings.php:48 includes/rota_settings.php:58
 #: includes/rota_settings.php:70
@@ -195,7 +195,7 @@ msgid "Rota"
 msgstr "Schedule"
 
 #: includes/admin.php:49 includes/calendar.php:110
-#: includes/permissions.php:156
+#: includes/permissions.php:190
 msgid "Calendar"
 msgstr "Calendar"
 
@@ -204,7 +204,7 @@ msgid "Small Groups"
 msgstr "Small Groups"
 
 #: includes/admin.php:51 includes/attendance.php:129
-#: includes/permissions.php:168
+#: includes/permissions.php:202
 msgid "Attendance"
 msgstr "Attendance"
 
@@ -491,7 +491,7 @@ msgstr "Total"
 msgid "Attendance added"
 msgstr "Attendance added"
 
-#: includes/attendance.php:133 includes/permissions.php:186
+#: includes/attendance.php:133 includes/permissions.php:220
 #: includes/sermon-podcast.php:327
 msgid "Service"
 msgstr "Service"
@@ -1187,9 +1187,9 @@ msgstr "Regular"
 msgid "Irregular"
 msgstr "Irregular"
 
-#: includes/directory.php:509
-msgid "Loosely connected"
-msgstr "Loosely connected"
+#: includes/directory.php:509 includes/pdf_creator.php:69
+msgid "Connected"
+msgstr "Connected"
 
 #: includes/directory.php:515
 msgid "Wordpress User"
@@ -1346,7 +1346,7 @@ msgstr "Processing"
 msgid "Step 2 check message and choose recipients"
 msgstr "Step 2 check message and choose recipients"
 
-#: includes/email.php:91 includes/permissions.php:144
+#: includes/email.php:91 includes/permissions.php:178
 msgid "Bulk Email"
 msgstr "Bulk Email"
 
@@ -1620,7 +1620,7 @@ msgid "Member Type Updated"
 msgstr "Member Type Updated"
 
 #: includes/member_type.php:108 includes/member_type.php:109
-#: includes/permissions.php:174
+#: includes/permissions.php:208
 msgid "Member Type"
 msgstr "Member Type"
 
@@ -1650,21 +1650,13 @@ msgstr ""
 "Windows servers. Please go back to Communication settings and enable the wp-"
 "cron option for scheduling sending of queued emails"
 
-#: includes/pdf_creator.php:61
-msgid "Regular Attender"
-msgstr "Regular Attender"
-
-#: includes/pdf_creator.php:67
+#: includes/pdf_creator.php:61 includes/pdf_creator.php:67
 msgid "Regular Attenders"
 msgstr "Regular Attenders"
 
 #: includes/pdf_creator.php:68
 msgid "Irregular Attenders"
 msgstr "Irregular Attenders"
-
-#: includes/pdf_creator.php:69
-msgid "Loosely Connected"
-msgstr "Loosely Connected"
 
 #: includes/pdf_creator.php:92
 msgid "people"
@@ -1737,39 +1729,39 @@ msgstr ""
 "Please create or connect Wordpress User accounts for people in the directory "
 "first"
 
-#: includes/permissions.php:42 includes/permissions.php:85
+#: includes/permissions.php:37 includes/permissions.php:119
 msgid "No individual user permissions are stored"
 msgstr "No individual user permissions are stored"
 
-#: includes/permissions.php:73
+#: includes/permissions.php:107
 msgid "Permissions Saved"
 msgstr "Permissions Saved"
 
-#: includes/permissions.php:123
+#: includes/permissions.php:157
 msgid "Who is allowed to do what?"
 msgstr "Who is allowed to do what?"
 
-#: includes/permissions.php:126
+#: includes/permissions.php:160
 msgid "Directory"
 msgstr "Directory"
 
-#: includes/permissions.php:138
+#: includes/permissions.php:172
 msgid "Bulk SMS"
 msgstr "Bulk SMS"
 
-#: includes/permissions.php:150
+#: includes/permissions.php:184
 msgid "Sermons"
 msgstr "Sermons"
 
-#: includes/permissions.php:162
+#: includes/permissions.php:196
 msgid "Follow Up Funnels"
 msgstr "Follow Up Funnels"
 
-#: includes/permissions.php:180
+#: includes/permissions.php:214
 msgid "Small groups"
 msgstr "Small groups"
 
-#: includes/permissions.php:192 includes/rota.php:414
+#: includes/permissions.php:226 includes/rota.php:414
 msgid "Save"
 msgstr "Save"
 
@@ -2000,6 +1992,12 @@ msgstr "Average Attendance Graph"
 #: index.php:763
 msgid "Average Attendance Graph"
 msgstr "Average Attendance Graph"
+
+#~ msgid "Loosely connected"
+#~ msgstr "Loosely connected"
+
+#~ msgid "Regular Attender"
+#~ msgstr "Regular Attender"
 
 #~ msgid "Church Admin Plugin News"
 #~ msgstr "Church Admin Plugin News"

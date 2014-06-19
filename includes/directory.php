@@ -506,7 +506,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	if(church_admin_level_check('Directory'))
 	{//only authorised people to edit wordpress user or create new small groups or adjust attendance indicator
 		if(empty($data->smallgroup_attendance))$data->smallgroup_attendance=1;
-		echo'<p><label>Small group Attendance</label><input type="radio" name="smallgroup_attendance" value="1" '.checked('1',$data->smallgroup_attendance,0).'/>'.__('Regular','church-admin').' &nbsp;<input type="radio" name="smallgroup_attendance" value="2" '.checked('2',$data->smallgroup_attendance,0).'/>'.__('Irregular','church-admin').' &nbsp; <input type="radio" name="smallgroup_attendance" value="3" '.checked('3',$data->smallgroup_attendance,0).'/>'.__('Loosely connected','church-admin').' &nbsp;</p>';
+		echo'<p><label>Small group Attendance</label><input type="radio" name="smallgroup_attendance" value="1" '.checked('1',$data->smallgroup_attendance,0).'/>'.__('Regular','church-admin').' &nbsp;<input type="radio" name="smallgroup_attendance" value="2" '.checked('2',$data->smallgroup_attendance,0).'/>'.__('Irregular','church-admin').' &nbsp; <input type="radio" name="smallgroup_attendance" value="3" '.checked('3',$data->smallgroup_attendance,0).'/>'.__('Connected','church-admin').' &nbsp;</p>';
 	
 		echo'<p><label>Or create new Small Group</label><span style="display:inline-block"><span style="float:left;width:150px">Group Name</span><input type="text" name="group_name"/><br style="clear:left"/><span style="float:left;width:150px">Leader?</span><input type="checkbox" name="leading"/><br style="clear:left;"/><span style="float:left;width:150px">Where &amp; When</span><input type="text" name="whenwhere"/></span></p>';
 		

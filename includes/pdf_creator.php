@@ -58,7 +58,7 @@ $person=1;
 foreach ($results as $row) 
     {
         $row->name=stripslashes($row->name);
-        if(empty($smallgroups[$row->group_name])){$smallgroups[$row->group_name]=__('Regular Attender','church-admin')."\n";$current_attendance=1;}
+        if(empty($smallgroups[$row->group_name])){$smallgroups[$row->group_name]=__('Regular Attenders','church-admin')."\n";$current_attendance=1;}
         if(empty($count[$row->group_name])){$count[$row->group_name]=1;}else{$count[$row->group_name]++;}
 		if($row->smallgroup_attendance!=$current_attendance)
 		{
@@ -66,7 +66,7 @@ foreach ($results as $row)
 			{
 				case'1':$smallgroups[$row->group_name].="\n".__('Regular Attenders','church-admin')."\n";$current_attendance=1;$count[$row->group_name]=1;break;
 				case'2':$smallgroups[$row->group_name].="\n".__('Irregular Attenders','church-admin')."\n";$current_attendance=2;$count[$row->group_name]=1;break;
-				case'3':$smallgroups[$row->group_name].="\n".__('Loosely Connected','church-admin')."\n";$current_attendance=3;$count[$row->group_name]=1;break;
+				case'3':$smallgroups[$row->group_name].="\n".__('Connected','church-admin')."\n";$current_attendance=3;$count[$row->group_name]=1;break;
 			}
 		}
         $smallgroups[$row->group_name].=$count[$row->group_name].') '.iconv('UTF-8', 'ISO-8859-1',$row->name)."\n";
