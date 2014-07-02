@@ -13,23 +13,22 @@ function ca_podcast_display($series_id=NULL,$speaker_id=NULL,$file_id=NULL)
     global $wpdb;
 	$ca_podcast_settings=get_option('ca_podcast_settings');
 	$header='';
-	if(!empty($ca_podcast_settings['link']))$header.='<a title="'.__('Download on Itunes','church-admin').'" href="'.$ca_podcast_settings['itunes_link'].'">
-<img class="alignleft size-full wp-image-1701" alt="badge_itunes-lrg" src="'.CHURCH_ADMIN_IMAGES_URL.'badge_itunes-lrg.png" width="110" height="40" /></a><br style="clear:left;"/>';
+	if(!empty($ca_podcast_settings['itunes_link']))$header.='<a title="'.__('Download on Itunes','church-admin').'" href="'.$ca_podcast_settings['itunes_link'].'"><img class="alignleft size-full wp-image-1701" alt="badge_itunes-lrg" src="'.CHURCH_ADMIN_IMAGES_URL.'badge_itunes-lrg.png" width="110" height="40" /></a><br style="clear:left;"/>';
     if($file_id){return ca_display_file($file_id);}
-    elseif($speaker_id)
+    elseif(!empty($speaker_id))
     {//speaker_id specified
         $speaker=$wpdb->get_row('SELECT * FROM '.CA_SPK_TBL.' WHERE speaker_id="'.esc_sql($speaker_id).'"');
         $header.=get_option('ca_podcast_speaker_template');
-        $header.=str_replace('[SPEAKER_NAME]',$speaker->speaker_name,$header);
-        $header.=str_replace('[SPEAKER_DESCRIPTION]',$speaker->speaker_description,$header);
+        $header=str_replace('[SPEAKER_NAME]',$speaker->speaker_name,$header);
+        $header=str_replace('[SPEAKER_DESCRIPTION]',$speaker->speaker_description,$header);
         $sql='SELECT file_id FROM '.CA_FIL_TBL.' WHERE speaker_id="'.esc_sql($speaker_id).'"';
     }//end speaker_id specified
-    elseif($series_id)
+    elseif(!empty($series_id))
     {//series_id specified
         $series=$wpdb->get_row('SELECT * FROM '.CA_SERM_TBL.' WHERE series_id="'.esc_sql($series_id).'"');
         $header.=get_option('ca_podcast_event_template');
-        $header.=str_replace('[SERIES_NAME]',$series->series_name,$header);
-        $header.=str_replace('[SERIES_DESCRIPTION]',$series->series_description,$header);
+        $header=str_replace('[SERIES_NAME]',$series->series_name,$header);
+        $header=str_replace('[SERIES_DESCRIPTION]',$series->series_description,$header);
         $sql='SELECT file_id FROM '.CA_FIL_TBL.' WHERE series_id="'.esc_sql($series_id).'"';
     }//end series_id specified
     else
@@ -40,9 +39,9 @@ function ca_podcast_display($series_id=NULL,$speaker_id=NULL,$file_id=NULL)
     $results=$wpdb->get_results($sql);
     if($results)
     {
-        $out=$header;
+        $out='';
         foreach($results AS $row){$out.=ca_display_file($row->file_id);}
-        return $out;
+        return $header.$out;
     }
     else
     {

@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5950
+Version: 0.5951
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5950';
+$church_admin_version = '0.5951';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -563,8 +563,8 @@ function church_admin_main()
             case'edit_speaker':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_edit_speaker($id);break;
             case'delete_speaker':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_delete_speaker($id);break;
             case'list_sermon_series':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_list_series();break;
-            case'edit_series':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_edit_series($id);break;
-            case'delete_series':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_delete_series($id);break;
+            case'edit_sermon_series':check_admin_referer('edit_sermon_series');require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_edit_series($id);break;
+            case'delete_sermon_series':check_admin_referer('delete_sermon_series');require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_delete_series($id);break;
             case'list_files':require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_list_files();break;
             case'edit_file':check_admin_referer('edit_podcast_file');require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_edit_file($id);break;
             case'delete_file':check_admin_referer('delete_podcast_file');require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');ca_podcast_delete_file($id);break;
@@ -686,12 +686,10 @@ function church_admin_shortcode($atts, $content = null)
     {
 	
 	
-	case 'podcast':
+		case 'podcast':
 	    require_once(CHURCH_ADMIN_DISPLAY_PATH.'sermon-podcast.php');
 	    $out.=ca_podcast_display($series_id,$speaker_id,$file_id);
-		
-		
-	break;    
+		break;    
         case 'calendar':
 	    
 	    $out.='<table><tr><td>'.__('Year Planner pdfs','church-admin').' </td><td>  <form name="guideform" action="" method="get"><select name="guidelinks" onchange="window.location=document.guideform.guidelinks.options[document.guideform.guidelinks.selectedIndex].value"> <option selected="selected" value="">-- '.__('Choose a pdf','church-admin').' --</option>';
