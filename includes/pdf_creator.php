@@ -726,7 +726,8 @@ function church_admin_rota_pdf($service_id=1)
 				//that job for each date
 		
 				$pdf->SetFont('Arial','',6);
-				foreach($jobs[$rota_job->rota_id] AS $date=>$people)
+				
+				foreach((array)$jobs[$rota_job->rota_id] AS $date=>$people)
 				{
 			
 					if($x %2 == 0){$pdf->SetFillColor(200,200,200);$fill=1;}else{$fill=0;}
