@@ -512,7 +512,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		
 		if($data->user_id )
 		{
-			echo'<p><label>'.__('Wordpress User','church-admin').'</label>';
+			echo'<p><label>'.__('Wordpress User','church-admin').'</label><input type="hidden" name="ID" value="'.$data->user_id.'"/>';
 			$user_info=get_userdata($data->user_id);
 			if(!empty($user_info)){echo $user_info->roles['0'].'</p>';}
 		}	

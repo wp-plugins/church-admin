@@ -82,6 +82,7 @@ function church_admin_funnel_assign($people_id,$funnel_id,$member_type_id)
 {
        //returns form to assign someone to action a particular funnel for a particular person
     global $wpdb;
+	$fun_display='';
     $funnel_details=$wpdb->get_row('SELECT * FROM '.CA_FUN_TBL.' WHERE funnel_id="'.esc_sql($funnel_id).'"');
     if($funnel_details)
     {
@@ -89,7 +90,7 @@ function church_admin_funnel_assign($people_id,$funnel_id,$member_type_id)
         $people=$wpdb->get_results('SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id AS people_id FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.department_id="'.esc_sql($funnel_details->department_id).'" AND b.people_id=a.people_id ORDER BY a.last_name');
         if($people)
         {//people available to assign to
-            $fun_display='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_assign_funnel" method="post">';
+            $fun_display.='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_assign_funnel" method="post">';
             $fun_display.='<input type="hidden" name="people_id" value="'.$people_id.'"/>';
             $fun_display.='<input type="hidden" name="funnel_id" value="'.$funnel_id.'"/>';
             $fun_display.='<input type="hidden" name="member_type_id" value="'.$member_type_id.'"/>';

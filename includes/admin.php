@@ -307,7 +307,9 @@ function church_admin_shortcodes_meta_box()
             echo'<p><label>'.$row->member_type.': </label>member_type_id='.esc_html($row->member_type_id).'</p>';
         }
     }
-    
+    //recent
+	echo'<h2>Recent Visitors</h2>';
+	echo'<p><strong>[church_admin type=recent member_type_id=#] </strong>Lists your recent visitors - just specify member_types_ids</p>';
     //small groups
     echo'<h2>Small groups</h2>';
     echo'<p><strong>[church_admin type=small-groups-list map=1]</strong> lists all your small groups\' details in map form (map=1)or as a list (map=0)</p>';

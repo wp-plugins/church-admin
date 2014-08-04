@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5952
+Version: 0.5955
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5952';
+$church_admin_version = '0.5955';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -623,7 +623,7 @@ function church_admin_main()
 	    case 'church_admin_edit_people':if(church_admin_level_check('Directory')||$self_edit){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_edit_people($people_id,$household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
 	    case 'church_admin_delete_people':if(church_admin_level_check('Directory')||$self_edit){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_delete_people($people_id,$household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
 	    case 'church_admin_search':if(wp_verify_nonce('ca_search_nonce','ca_search_nonce')){require(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');church_admin_search($_POST['ca_search']);}break;
-	   
+		case'church_admin_recent_visitors': require(CHURCH_ADMIN_INCLUDE_PATH.'recent.php');echo church_admin_recent_visitors($member_type_id);break;
 	    //rota
 		case 'copy_rota_data':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_copy_rota($copy_id,$rota_id);}break;
 	    case 'church_admin_email_rota':if(church_admin_level_check('Rota')){require(CHURCH_ADMIN_INCLUDE_PATH.'rota.php');church_admin_email_rota($service_id);}break;
@@ -685,7 +685,10 @@ function church_admin_shortcode($atts, $content = null)
     switch($type)
     {
 	
-	
+		case 'recent':
+			require_once(CHURCH_ADMIN_INCLUDE_PATH.'recent.php');
+			$out.=church_admin_recent_visitors($member_type_id=1);
+		break;
 		case 'podcast':
 	    require_once(CHURCH_ADMIN_DISPLAY_PATH.'sermon-podcast.php');
 	    $out.=ca_podcast_display($series_id,$speaker_id,$file_id);

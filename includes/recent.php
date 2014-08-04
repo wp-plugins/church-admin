@@ -22,4 +22,47 @@ function church_admin_recent_display($month)
     
     
 }
+
+function church_admin_recent_visitors($member_type_id=1)
+{
+	global $wpdb;
+	$out='';
+	$memb=explode(',',$member_type_id);
+    foreach($memb AS $key=>$value){if(ctype_digit($value))  $membsql[]='member_type_id='.$value;}
+    if(!empty($membsql)) {$memb_sql='('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+	$member_type=$wpdb->get_var('SELECT member_type FROM '.CA_MTY_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'"');
+	$results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.' ORDER BY last_updated DESC');
+	
+	if(!empty($results))
+	{
+		$out.='<h1>Recent "'.$member_type.'"</h1>';
+		$recent_dates=array();
+		foreach($results AS $row)
+		{
+			$member_data=maybe_unserialize($row->member_data);
+			
+			$date=$member_data[$member_type];
+			
+			if(!empty($date) &&$date!='0000-00-00')$recent_dates[$date][]=array('people_id'=>$row->people_id,'first_name'=>$row->first_name,'last_name'=>$row->last_name,'household_id'=>$row->household_id);
+			
+		}
+		//arsort(array_filter($recent_dates));
+		
+		foreach($recent_dates AS $service_date=>$people)
+		{
+			
+			$out.='<h2>'.mysql2date(get_option('date_format'),$service_date).'</h2>';
+			foreach($people AS $person)
+			{
+			
+				$out.='<p><a title="Edit person" href="'.wp_nonce_url('admin.php?page=church-admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$person['people_id'],'edit_people').'">'.$person['first_name'].'</a> <a href="'.wp_nonce_url('admin.php?page=church-admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$person['household_id'],'edit_household').'" title="edit household">'.$person['last_name'].'</a></p>';
+				
+			}
+			$out.='<p>&nbsp;</p>';
+		
+		
+		}
+	}
+	return $out;
+}
 ?>
