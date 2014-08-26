@@ -203,15 +203,48 @@ if(!empty($taskresult))
     }
     if($service_id)
     {//service chosen
+	
+	 // number of total rows in the database
+      require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
+      $items=$wpdb->get_var('SELECT COUNT(DISTINCT(rota_date)) FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'"');
+	  $p = new pagination;
+	  $p->items($items);
+	  $p->limit(10); // Limit entries per page
+	  
+	  $p->target($_SERVER['REQUEST_URI']);
+	  if(!isset($p->paging))$p->paging=1; 
+	  if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
+	  $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
+	  $p->calculate(); // Calculates what to show
+	  $p->parameterName('paging');
+	  $p->adjacents(1); //No. of page away from the current page
+	  if(!isset($_GET['paging']))
+	  {
+	      $p->page = 1;
+	  }
+	  else
+	  {
+	      $p->page = $_GET['paging'];
+	  }
+	  //Query for limit paging
+	  $limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
+	  
+	
 	//grab already set dates from db after today
-	$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date LIMIT 0,52 ';
-   
+	
+	$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date '.$limit;
+  
 	$results=$wpdb->get_results($sql);
 	if($results)
 	{
 		//build rota tableheader
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
 	         echo'<h2>Rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
+			 // Pagination
+			echo'<div class="tablenav"><div class="tablenav-pages">';
+			echo $p->getOutput();  
+			echo'</div></div>';
+      //Pagination
 	    echo '<table class="widefat">';
 	    $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Date','church-admin').'</th>';
 	    foreach($taskresult AS $taskrow)
