@@ -655,7 +655,7 @@ function church_admin_latest_sermons_widget_output($limit=5,$title)
 	$options=get_option('church_admin_latest_sermons_widget');
 	
 	$limit=$options['sermons'];
-	if(!empty($limit))$limit=5;
+	if(empty($limit))$limit=5;
 	$sermons=$wpdb->get_results('SELECT a.*,b.* FROM '.CA_FIL_TBL.' a, '.CA_SERM_TBL.' b WHERE a.series_id=b.series_id ORDER BY a.pub_date DESC LIMIT '.$limit);
 	if(!empty($sermons))
 	{
