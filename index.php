@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A church admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5955
+Version: 0.5956
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5955';
+$church_admin_version = '0.5956';
 church_admin_constants();//setup constants first
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
@@ -59,7 +59,10 @@ if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
 add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
-
+add_action('activated_plugin','church_admin_save_error');
+function church_admin_save_error(){
+    update_option('church_admin_plugin_error',  ob_get_contents());
+}
 add_action('load-church-admin', 'church_admin_add_screen_meta_boxes');
 
 // add localisation
@@ -551,6 +554,8 @@ function church_admin_main()
     {
 	switch($_GET['action'])
 	{
+		//errors
+		case 'church_admin_activation_log_clear':check_admin_referer('clear_error');church_admin_activation_log_clear();break;
 		//mailchimp
 		case'mailchimp_sync':if(church_admin_level_check('Directory')){require_once(CHURCH_ADMIN_INCLUDE_PATH.'mailchimp.php');church_admin_mailchimp_sync();}break;
 		//premissions
@@ -1029,5 +1034,5 @@ function church_admin_action_callback() {
 	echo $plays;
 	die();
 } 
-  
+ function church_admin_activation_log_clear(){delete_option('church_admin_plugin_error');church_admin_front_admin();} 
 ?>

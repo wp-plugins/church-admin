@@ -50,6 +50,8 @@ function church_admin_front_admin()
 			if(church_admin_level_check('Small Groups')){ 	add_meta_box("church-admin-small_groups", __('Small Groups', 'church-admin'), "church_admin_smallgroups_meta_box", "church-admin");}
 			if(church_admin_level_check('Attendance')){	add_meta_box("church-admin-attendance", __('Attendance', 'church-admin'), "church_admin_attendance_meta_box", "church-admin");}
 			if(church_admin_level_check('Service')){  add_meta_box("church-admin-services", __('Services', 'church-admin'), "church_admin_services_meta_box", "church-admin");}
+			$activation_errors=get_option('church_admin_plugin_error');
+			if(!empty($activation_errors)){  add_meta_box("church-admin-errors", __('Activation Errors', 'church-admin'),'church_admin_errors_meta_box','church-admin');}
 			do_meta_boxes('church-admin','advanced',null);?>
 		    </form>
 		</div>
@@ -275,6 +277,16 @@ function church_admin_services_meta_box()
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_service_list">'.__('Service List','church-admin').'</a></p>';
 				echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_service','edit_service').'">'.__('Add a service','church-admin').'</a></p>';
 
+}
+function church_admin_errors_meta_box()
+{
+	$error=get_option('church_admin_plugin_error');
+	if(!empty($error))
+	{
+		echo'<p>This is what was saved as an error during activation "'.$error.'"</p>';
+		echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_activation_log_clear','clear_error').'">'.__('Clear activation errors log','church_admin').'</a></p>';
+	}
+	else echo'<p>No errors</p>';
 }
 function church_admin_attendance_meta_box()
 {
