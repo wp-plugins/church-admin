@@ -443,7 +443,7 @@ function church_admin_calendar_form($data,$error,$recurring=1)
 {
     
     global $wpdb;
-  
+	if(empty($data)) $data=new stdClass();
     $wpdb->show_errors();
     $out='  <script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script>
 <script type="text/javascript">document.write(getCalendarStyles());</script>

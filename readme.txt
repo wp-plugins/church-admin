@@ -60,6 +60,11 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5957 =
+* Latest Sermons widget Control
+* Calender remove empty class warning
+* Directory remove empty class warning
+* Fix Calendar Postit style width
 = 0.5955 = 
 * Bug fixes to directory
 = 0.5952 =

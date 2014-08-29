@@ -219,6 +219,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	<div id="poststuff">
     <?php
     if($people_id)$data=$wpdb->get_row('SELECT * FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
+	if(empty($data)) $data = new stdClass();
 	
     if(!empty($data->household_id))$household_id=$data->household_id;
     if(!empty($_POST['edit_people']))
