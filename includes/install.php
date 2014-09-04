@@ -44,7 +44,7 @@ function church_admin_install()
    
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_MET_TBL.'"') != CA_MET_TBL)
     {
-        $sql = 'CREATE TABLE '.CA_MET_TBL.' ( people_id INT(11),department_id INT(11), meta_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (meta_id));';
+        $sql = 'CREATE TABLE '.CA_MET_TBL.' ( meta_type VARCHAR(255) DEFAULT "ministry", people_id INT(11),department_id INT(11), meta_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (meta_id));';
         $wpdb->query($sql);
     }
     
@@ -467,6 +467,20 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "smallgroup_attendance"
     $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD smallgroup_attendance INT(1) DEFAULT 1';
     $wpdb->query($sql);
 	
+}
+//v0.5958 added hope team
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "meta_type"')!='meta_type')
+{
+    $sql='ALTER TABLE '.CA_MET_TBL.' ADD `meta_type` VARCHAR(255) NOT NULL DEFAULT "ministry" FIRST;';
+    $wpdb->query($sql);
+	
+}
+if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOP_TBL.'"') != CA_HOP_TBL)
+{
+
+	 $sql = 'CREATE TABLE '.CA_HOP_TBL.' ( job TEXT, hope_team_id_id INT(11),ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,hope_team_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (hope_team_id));';
+		echo $sql;
+	  $wpdb->query($sql);
 }
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
 {
