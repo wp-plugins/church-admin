@@ -180,6 +180,7 @@ if($rota_jobs>0&&$rota_list>0)
 
     //grab rota tasks
 $taskresult=$wpdb->get_results("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings  ORDER by rota_order");
+
 if(!empty($taskresult))
 {
     if(!$service_id)
@@ -207,6 +208,8 @@ if(!empty($taskresult))
 	 // number of total rows in the database
       require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
       $items=$wpdb->get_var('SELECT COUNT(DISTINCT(rota_date)) FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'"');
+	  
+	  
 	  $p = new pagination;
 	  $p->items($items);
 	  $p->limit(10); // Limit entries per page
@@ -233,8 +236,9 @@ if(!empty($taskresult))
 	//grab already set dates from db after today
 	
 	$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date '.$limit;
-  
+
 	$results=$wpdb->get_results($sql);
+	
 	if($results)
 	{
 		//build rota tableheader
@@ -313,7 +317,8 @@ if(!empty($taskresult))
 	    echo'</table>';
 	}
     }
-}//end of non empty rota tasks.			
+}//end of non empty rota tasks.	
+else echo'No rota tasks';		
 }
 //end of check for rota settings
 else

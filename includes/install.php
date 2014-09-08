@@ -469,6 +469,12 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "smallgroup_attendance"
 	
 }
 //v0.5958 added hope team
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "other_hope_team"')!='other_hope_team')
+{
+    $sql='ALTER TABLE '.CA_PEO_TBL.' ADD `other_hope_team` TEXT NOT NULL;';
+    $wpdb->query($sql);
+	
+}
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "meta_type"')!='meta_type')
 {
     $sql='ALTER TABLE '.CA_MET_TBL.' ADD `meta_type` VARCHAR(255) NOT NULL DEFAULT "ministry" FIRST;';
@@ -478,9 +484,8 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "meta_type"')!='meta_ty
 if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOP_TBL.'"') != CA_HOP_TBL)
 {
 
-	 $sql = 'CREATE TABLE '.CA_HOP_TBL.' ( job TEXT, hope_team_id_id INT(11),ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,hope_team_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (hope_team_id));';
-		echo $sql;
-	  $wpdb->query($sql);
+	 $sql = 'CREATE TABLE IF NOT EXISTS '.CA_HOP_TBL.' (  `job` text NOT NULL,  `ts` datetime NOT NULL,  `hope_team_id` int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (`hope_team_id`)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1';
+	 	 $wpdb->query($sql);
 }
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
 {

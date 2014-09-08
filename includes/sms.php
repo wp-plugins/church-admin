@@ -46,7 +46,7 @@ function church_admin_send_sms()
 		elseif(!empty($_POST['type']) && $_POST['type']=='roles')
 		{
 			foreach($_POST['role_id'] AS $key=>$value)$r[]='b.department_id='.$value;
-			$sql='SELECT  a.mobile FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.people_id=a.people_id AND a.mobile!="" AND ('.implode( " || ",$r).')' ;
+			$sql='SELECT  a.mobile FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.meta_type="ministry" AND b.people_id=a.people_id AND a.mobile!="" AND ('.implode( " || ",$r).')' ;
       	}
 		$results=$wpdb->get_results($sql);
 		

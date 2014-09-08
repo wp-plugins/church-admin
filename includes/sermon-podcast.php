@@ -455,6 +455,7 @@ function ca_podcast_file_add($file_name=NULL)
  * 
  */
     if(!$file_name)wp_die("No file specified");
+	$current_data=new stdClass();
     global $wpdb,$rm_podcast_settings;
     $wpdb->show_errors();
     $file_name=basename($file_name);

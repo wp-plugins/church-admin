@@ -67,26 +67,14 @@ function church_admin_attendance_list($service_id=1)
 	  echo'</tbody></table></div>';
      }
 }
-function church_admin_show_rolling_average()
-{   global $wpdb;
-     include(CHURCH_ADMIN_INCLUDE_PATH."rolling-average-graph.php");
-    echo '<p><img src="'.CHURCH_ADMIN_CACHE_URL.'rolling_average_attendance.png"  width="1000" height="500" alt="Rolling Average Graph"/></p>';
 
-}
-
-function church_admin_show_graph()
-{   global $wpdb;
-    include(CHURCH_ADMIN_INCLUDE_PATH."attendance-graph.php");
-    echo '<p><img src="'.CHURCH_ADMIN_CACHE_URL.'attendance-graph.png" alt="attendance graph" width="1000" height="500" /></p>';
-
-}
 
 function church_admin_edit_attendance($attendance_id){
   global $wpdb,$days;
   
   $wpdb->show_errors();
   $data=$wpdb->get_row('SELECT * FROM '.CA_ATT_TBL.' WHERE attendance_id="'.esc_sql($attendance_id).'"');
-  //print_r($data);
+
 if(isset($_POST['edit_att']))
 {
   $sql=array();
@@ -120,7 +108,7 @@ if(isset($_POST['edit_att']))
      echo '<div id="message" class="updated fade">';
      echo '<p><strong>'.__('Attendance added','church-admin').'.</strong></p>';
      echo '</div>';
-     //print_r($sqlsafe);
+    
      church_admin_attendance_list($sqlsafe['service_id']);
 
 }
@@ -160,6 +148,7 @@ echo'<p><label >'.__('Date','church-admin').' :</label><input type="text" id="ad
          });
       });
    </script>';
+  
 echo'   <p><label >'.__('Adults','church-admin').'</label><input type="text" name="adults"  ';
 if(!empty($data->adults)) echo' value="'.$data->adults.'" ';
 echo'/></p>

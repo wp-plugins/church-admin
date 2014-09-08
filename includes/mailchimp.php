@@ -12,7 +12,9 @@ function church_admin_mailchimp_sync()
 		$result=$wpdb->get_results('SELECT * FROM '.CA_MTY_TBL);
 		$member_levels=array();
 		foreach($result AS $row)$member_levels[$row->member_type_id]=$row->member_type;
-		
+		$result=$wpdb->get_results('SELECT * FROM '.CA_HOP_TBL);
+		$hope_teams=array();
+		foreach($result AS $row)$hope_teams[$row->hope_team_id]=$row->job;
 		$api_key=stripslashes($_POST['api_key']);
 		$listID=stripslashes($_POST['listID']);
 		$MailChimp = new MailChimp($api_key);
@@ -37,9 +39,20 @@ function church_admin_mailchimp_sync()
 					$ministry_id=$grouping['id'];
 					
 				}
+				//Check for hope team
+				if(!empty($grouping['name'])&&$grouping['name']==translate('Hope Team','church-admin'))
+				{
+					$hope_team_id=$grouping['id'];
+					
+				}
 			}
 		}
-		
+		if(empty($hope_team_id)) 
+		{
+			$mem_id=$MailChimp->call('lists/interest-grouping-add',array('id'=>$listID,'type'=>'checkboxes','groups'=>$hope_teams,'name'=>translate('Hope Teams','church-admin')));
+			$hope_team_id=$mem_id['id'];
+			echo'<p>Added "'.translate('Hope Teams','church-admin').'" grouping on Mailchimp</p>';
+		}
 		if(empty($member_level_id)) 
 		{
 			$mem_id=$MailChimp->call('lists/interest-grouping-add',array('id'=>$listID,'type'=>'checkboxes','groups'=>$member_levels,'name'=>translate('Member Levels','church-admin')));
@@ -104,7 +117,7 @@ function church_admin_mailchimp_sync()
 			{
 				$memb_level=array('id'=>$member_level_id,'groups'=>array($member_levels[$person->member_type_id]));
 				//grab ministries
-				$result=$wpdb->get_results('SELECT department_id FROM '.CA_MET_TBL.' WHERE people_id="'.$person->people_id.'"');
+				$result=$wpdb->get_results('SELECT department_id FROM '.CA_MET_TBL.' WHERE people_id="'.$person->people_id.'" AND meta_type="ministry"');
 				$min=array();
 				if(!empty($result))
 				{
@@ -115,7 +128,7 @@ function church_admin_mailchimp_sync()
 						}
 				}
 				$ministries=array('id'=>$ministry_id,'groups'=>$min);
-				$peeps[]=array('email'=>array('email'=>$person->email),'email_type'=>'html','merge_vars'=>array('FNAME'=>$person->first_name,'LNAME'=>$person->last_name,'GROUPINGS'=>array('0'=>$memb_level,'1'=>$ministries)));
+				if(is_email($person->email))$peeps[]=array('email'=>array('email'=>$person->email),'email_type'=>'html','merge_vars'=>array('FNAME'=>$person->first_name,'LNAME'=>$person->last_name,'GROUPINGS'=>array('0'=>$memb_level,'1'=>$ministries)));
 				
 			}
 			//print_r($peeps);

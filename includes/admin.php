@@ -42,6 +42,8 @@ function church_admin_front_admin()
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-recent-people-activity", __('Recent People Activity', 'church-admin'), "church_admin_recent_people_activity_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");}
 			if(church_admin_level_check('Sermons'))	add_meta_box("church-admin-sermons", __('Sermon mp3 podcasting', 'church-admin'), "church_admin_sermons_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-hope-team", __('Hope Team', 'church-admin'), "church_admin_hope_team_meta_box", "church-admin");}
+			
 			if(church_admin_level_check('Directory')){ 	add_meta_box("church-admin-departments", __('Ministries', 'church-admin'), "church_admin_departments_meta_box", "church-admin");}
 			if(church_admin_level_check('Member Type')){	add_meta_box("church-admin-member-types", __('Member Types', 'church-admin'), "church_admin_member_types_meta_box", "church-admin");}
 			if(church_admin_level_check('Funnel')){ 	add_meta_box("churchadmin-follow-up", __('Follow Up', 'church-admin'), "church_admin_followup_meta_box", "church-admin");}
@@ -68,6 +70,15 @@ function church_admin_front_admin()
 
 }
 
+
+function church_admin_hope_team_meta_box()
+{
+//show backup
+    
+		echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=hope_team_jobs','hope_team_jobs').'">Hope Team Jobs</a></p>';
+		echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_hope_team','edit_hope_team').'">Edit Hope Team</a></p>';
+		echo'<p><a href="'.home_url().'/?download=hope_team_pdf">Hope Team PDF</a></p>';
+}
 function church_admin_backup_meta_box()
 {
 //show backup
@@ -131,11 +142,11 @@ echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;acti
 			    {
 				foreach($member_type AS $key=>$value)
 				{
-				    echo'<a href="'.home_url().'/?download=mailinglabel&amp;mailinglabel='.wp_create_nonce($key).'&amp;member_type_id='.$key.'">'.$value.' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</a><br/>';
+				    echo'<a href="'.home_url().'/?download=mailinglabel&amp;mailinglabel='.wp_create_nonce('mailinglabel'.$key).'&amp;member_type_id='.$key.'">'.$value.' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</a><br/>';
 				}
 				foreach($member_type AS $key=>$value)
 				{
-				    echo'<a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce($key).'&amp;member_type_id='.$key.'">'.$value.' '.__('Address List PDF','church-admin').'</a><br/>';
+				    echo'<a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce('member'.$key).'&amp;member_type_id='.$key.'">'.$value.' '.__('Address List PDF','church-admin').'</a><br/>';
 				}
 			    }
 			    echo'</p>';
