@@ -51,6 +51,7 @@ function church_admin_widget_control_form()
 function church_admin_calendar_widget_output($limit=5,$postit,$title)
 {
 global $wpdb;
+$limit=3;
 $wpdb->show_errors;
 $current=time(); //get user date or use today
 $thismonth = (int)date("m",$current);
@@ -68,6 +69,7 @@ $jd = cal_to_jd( CAL_GREGORIAN, $thismonth,date( 1 ), $thisyear );
 $options=get_option('church_admin_widget');
 if(isset($options['cat_id']) && $options['cat_id']!=0){$cat=CA_CAT_TBL.'.cat_id="'.$options['cat_id'].'" AND ';} else {$cat='';}
 //prepare output
+$out='';
 if($postit)$out.='<div class="Postit">';
 $out.='<ul>';
 
@@ -78,22 +80,29 @@ for($x=0;$x<=$limit;$x++)
     $sqlnow=date('Y-m-d',$current+($x*60*60*24));
  
     //query
-$sql="SELECT ".$wpdb->prefix."church_admin_calendar_date.start_date, TIME_FORMAT(".$wpdb->prefix."church_admin_calendar_date.start_time,'%h:%i%p')AS start_time, ".$wpdb->prefix."church_admin_calendar_date.end_time, ".$wpdb->prefix."church_admin_calendar_event.title,".$wpdb->prefix."church_admin_calendar_event.location, ".$wpdb->prefix."church_admin_calendar_event.description,".$wpdb->prefix."church_admin_calendar_category.category
-FROM ".$wpdb->prefix."church_admin_calendar_date, ".$wpdb->prefix."church_admin_calendar_event,".$wpdb->prefix."church_admin_calendar_category
-WHERE ".$cat."  ".$wpdb->prefix."church_admin_calendar_date.start_date='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.event_id = ".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_event.cat_id=".$wpdb->prefix."church_admin_calendar_category.cat_id
-ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_date,".$wpdb->prefix."church_admin_calendar_date.start_time
-LIMIT 0 ,".$limit;
+$sql='SELECT TIME_FORMAT('.CA_DATE_TBL.'.start_time,"%h:%i%p")AS start_time, '.CA_DATE_TBL.'.start_date AS start_date,'.CA_DATE_TBL.'.end_time, '.CA_EVE_TBL.'.title,'.CA_EVE_TBL.'.location, '.CA_EVE_TBL.'.description,'.CA_CAT_TBL.'.category,'.CA_EVE_TBL.'.event_image AS event_image 
+FROM '.CA_DATE_TBL.', '.CA_EVE_TBL.','.CA_CAT_TBL.'
+WHERE '.CA_DATE_TBL.'.start_date="'.$sqlnow.'" AND '.CA_DATE_TBL.'.event_id = '.CA_EVE_TBL.'.event_id AND '.CA_EVE_TBL.'.cat_id='.CA_CAT_TBL.'.cat_id ORDER BY '.CA_DATE_TBL.'.start_time LIMIT 0 ,'.$limit;
 
 $result=$wpdb->get_results($sql);
 if(!empty($result))
 {
   foreach($result AS $row)
     {
-    $date=mysql2date('D j M Y',$row->start_date);
-    $thisday.='<div itemscope itemtype="http://data-vocabulary.org/Event"><time itemprop="startDate" datetime="'.date('c',strtotime($row->start_date.' '.$row->start_time)) .'">'.strtolower($row->start_time).' </time><strong><span itemprop="summary">'.$row->title.'</span></strong>  (<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/​Organization"><span itemprop="name">'.$row->location.'</span></span>)</div>';
+    $date=mysql2date('D jS M',$row->start_date);
+	$class='';
+    $out.='<div itemscope itemtype="http://data-vocabulary.org/Event" class="church-admin-calendar-widget-item">';
+	if(!empty($row->event_image))
+	{
+		$out.=wp_get_attachment_image( $row->event_image, 'ca-people-thumb','',array('class'=>'alignleft'));
+		$class=' class="ca_event_detail" ';//adds class to stop text flowing under thumbnail
+	}
+	$out.='<p '.$class.'><span itemprop="summary">'.strtoupper($row->title).'</span><br/>';
+	$out.='<time itemprop="startDate" datetime="'.date('c',strtotime($row->start_date.' '.$row->start_time)) .'">'.$date.' '.strtolower($row->start_time).' </time><br/>';
+	$out.='	<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/​Organization"><span itemprop="name">'.$row->location.'</span></span></div></p>';
     }
-    $out.='<li><strong>'.$date.'</strong>'.$thisday.'</li>';
-    unset($date,$thisday);
+  
+    unset($date,$thisday,$class);
     
 }//end of non empty result
 else{

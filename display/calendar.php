@@ -87,9 +87,8 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
         $rowcounter ++;
     $out.="\t\t<td align=\"left\"><strong>$counter</strong><br/>";
     //put events for day in here
-    $sqlnow="$thisyear-$thismonth-$counter";
-    $sql="SELECT ".$wpdb->prefix."church_admin_calendar_category.fgcolor AS fgcolor,".$wpdb->prefix."church_admin_calendar_category.bgcolor AS bgcolor,".$wpdb->prefix."church_admin_calendar_category.category AS category, ".$wpdb->prefix."church_admin_calendar_category.cat_id,".$wpdb->prefix."church_admin_calendar_event.cat_id,".$wpdb->prefix."church_admin_calendar_date.date_id,".$wpdb->prefix."church_admin_calendar_date.start_time,".$wpdb->prefix."church_admin_calendar_date.end_time,".$wpdb->prefix."church_admin_calendar_date.start_date,".$wpdb->prefix."church_admin_calendar_date.event_id, ".$wpdb->prefix."church_admin_calendar_event.event_id,".$wpdb->prefix."church_admin_calendar_event.title AS title, ".$wpdb->prefix."church_admin_calendar_event.description, ".$wpdb->prefix."church_admin_calendar_event.location  FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_date,".$wpdb->prefix."church_admin_calendar_event WHERE ".$wpdb->prefix."church_admin_calendar_date.start_date='$sqlnow' AND ".$wpdb->prefix."church_admin_calendar_date.event_id=".$wpdb->prefix."church_admin_calendar_event.event_id AND ".$wpdb->prefix."church_admin_calendar_category.cat_id=".$wpdb->prefix."church_admin_calendar_event.cat_id ORDER BY ".$wpdb->prefix."church_admin_calendar_date.start_time ";
-    
+    $sqlnow="$thisyear-$thismonth-".sprintf('%02d', $counter);
+    $sql='SELECT a.*, b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.cat_id=b.cat_id  AND a.start_date="'.$sqlnow.'" ORDER BY a.start_time';
     $result=$wpdb->get_results($sql);
     if($wpdb->num_rows=='0')
     {
@@ -99,7 +98,8 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
     {
         foreach($result AS $row)
         {
-            $popup=stripslashes("<p><strong>".esc_html($row->title)."</strong><br/>".esc_html($row->description)."<br/>".$row->location."<br/>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."<br/>".$row->category." Event");
+			if(!empty($row->event_image)){$image=wp_get_attachment_image( $row->event_image,'ca-people-thumb' ,'',array('class'=>"alignleft"));}else{$image='';}
+            $popup=stripslashes("<p><strong>".esc_html(strtoupper($row->title))."</strong><br/>$image".esc_html($row->description)."<br/>".$row->location."<br/>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."<br/>".$row->category." Event");
             $out.= '<div class="church_admin_cal_item" id="ca'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.mysql2date(get_option('time_format'),$row->start_time).' '.htmlentities($row->title).'... </div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip"  >'.$popup.'</div><br/>';
         }
     }    

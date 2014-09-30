@@ -83,10 +83,11 @@ function church_admin_backup_meta_box()
 {
 //show backup
     echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=refresh_backup','refresh_backup').'">Refresh Church Admin DB Backup </a></p>';
+		$filename=get_option('church_admin_backup_filename');
 		
-    if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz'))
+    if(!empty($filename)&&file_exists(CHURCH_ADMIN_EMAIL_CACHE.$filename))
     {
-		echo'<p><a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.'Church_Admin_Backup.sql.gz">Download Church Admin DB Backup - For recent Updates, it will be for old version</a></p>';
+		echo'<p><a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">Download Church Admin DB Backup - For recent Updates, it will be for old version</a></p>';
 		echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_backup','delete_backup').'">Delete Church Admin DB Backup - Sensible after download!</a></p>';
 		
     }

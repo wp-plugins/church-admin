@@ -183,7 +183,7 @@ function church_admin_delete_household($household_id=NULL)
    
     //delete people meta data
     $people=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($household_id).'"');
-    foreach($people AS $person){$member_type_id=$person->member_type_id;$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($person->people_id).'"');}
+    foreach($people AS $person){$member_type_id=$person->member_type_id;$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE meta_type="ministry" AND people_id="'.esc_sql($person->people_id).'"');}
     //delete from household and people tables
     $wpdb->query('DELETE FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($household_id).'"');
     $wpdb->query('DELETE FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($household_id).'"');
@@ -347,7 +347,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	if(church_admin_level_check('Directory'))
 	{//only authorised people
 		//update meta
-		$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
+		$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND meta_type="ministry"');
 		//if new small group then add small group leader to person's meta
 		if(!empty($_POST['group_name'])){church_admin_update_department('1',$people_id);}
 		if(!empty($_POST['department']))
@@ -403,7 +403,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		if(!empty($data->attachment_id))
 		{//photo available
 			echo '<p><label>Current Photo</label>';
-			if(file_exists(  wp_get_attachment_image( $data->attachment_id,'ca-people-thumb' ))){echo wp_get_attachment_image( $data->attachment_id,'ca-people-thumb' );}else {echo '<img src="'.CHURCH_ADMIN_IMAGES_URL.'default-avatar.jpg" width="75" height="75"/>';}
+			echo wp_get_attachment_image( $data->attachment_id,'ca-people-thumb' );
 			echo'</p>';
 		}//photo available
 		else
@@ -484,7 +484,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 				echo'<span style="float:left;width:150px">'.$value.'</span><input type="checkbox" name="department[]" value="'.$key.'" ';
 				if(!empty($data->people_id))
 				{
-					$check=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($data->people_id).'" AND department_id="'.esc_sql($key).'"');
+					$check=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($data->people_id).'" AND meta_type="ministry" AND department_id="'.esc_sql($key).'"');
 					if($check)echo ' checked="checked" ';
 				}
 				echo '/><br style="clear:left"/>';
@@ -543,8 +543,8 @@ function church_admin_delete_people($people_id=NULL,$household_id)
     //deletes person with specified people_id
     global $wpdb;
     $wpdb->show_errors();
-    $wpdb->query('DELETE FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
-    $wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
+    $wpdb->query('DELETE FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'" ');
+    $wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND meta_type="ministry"');
     echo'<div class="updated fade"><p><strong>'.__('Person Deleted','church-admin').'</strong></p></div>';
 	church_admin_display_household($household_id);
  

@@ -944,50 +944,40 @@ function church_admin_hope_team_pdf()
 	
 	foreach($hope_teams AS $hope_team)
 	{
-			$sql='SELECT CONCAT_WS(" ",a.first_name,a.prefix,a.last_name) AS name FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE b.meta_type="hope_team" AND a.people_id=b.people_id AND b.department_id="'.esc_sql($hope_team->hope_team_id).'" ORDER BY a.last_name';
+			$sql='SELECT CONCAT_WS(" ",a.first_name,a.prefix,a.last_name) AS name , mobile, email FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE b.meta_type="hope_team" AND a.people_id=b.people_id AND b.department_id="'.esc_sql($hope_team->hope_team_id).'" ORDER BY a.last_name';
 			
 			$people=$wpdb->get_results($sql);
 			if(!empty($people))
 			{
-				foreach($people AS $person) {$hope_team_jobs[$hope_team->job][]=$person->name;}
+				foreach($people AS $person) {$hope_team_jobs[$hope_team->job][]=$person->name.' '.$person->mobile.' '.$person->email;}
 			}
 	
 	}
 	
 	require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
 	$pdf=new FPDF();
-	$pdf->AddPage('L',get_option('church_admin_pdf_size'));
+	$pdf->AddPage('P',get_option('church_admin_pdf_size'));
 	
 	$pdf->SetFont('Arial','B',12);
-	$pdf->Cell(0,10,__('Hope Team','church-admin'),0,0,'C');
+	$pdf->Cell(0,10,__('Hope Team','church-admin'),0,1,'C');
 	$pdf->SetFont('Arial','',10);
 	$i=1;
-	$x=15;
-	$y=25;
+	
 	ksort($hope_team_jobs);
 	foreach($hope_team_jobs AS $min_name=>$people)
 	{	
-		if($i>6)
-		{
-			$pdf->AddPage('L',get_option('church_admin_pdf_size'));$x=15;$x=25;$i=1;
-			
-			$pdf->SetFont('Arial','B',12);
-			$pdf->Cell(0,6,__('Hope Team','church-admin'),0,0,'C');
-			
-		}
-		$pdf->SetXY($x,25);
+		
 		//ministry name
-		$pdf->SetFont('Arial','B',10);
-		$pdf->Cell(40,6,$min_name,1,0,'C');
-		$pdf->SetXY($x,31);
+		$pdf->SetFont('Arial','B',8);
+		$pdf->Cell(0,6,$min_name,1,1,'C');
+		
 		//ministry people
 		$pdf->SetFont('Arial','',10);
-		$pdf->MultiCell(40,6,iconv('UTF-8', 'ISO-8859-1',implode("\n",$people)),1,'L');
+		$pdf->MultiCell(0,6,iconv('UTF-8', 'ISO-8859-1',implode("\n",$people)),1,'L');
+		$pdf->Ln(5);
 		
-		$i++;
-		$x+=40;
-		$y=30;
-		$pdf->SetXY($x,$y);
+		
+		
 	}
 	$pdf->Output();
 }

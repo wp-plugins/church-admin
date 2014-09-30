@@ -16,8 +16,8 @@ function ca_podcast_list_series()
     global $wpdb;
     $wpdb->show_errors();
 
-    echo'<h2>Sermon Series</h2>';
-    echo'<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_series','edit_podcast_series').'">Add a Sermon Series</a></p>';
+    echo'<div class="wrap"><h2>Sermon Series</h2>';
+    echo'<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_sermon_series','edit_sermon_series').'">Add a Sermon Series</a></p>';
             
     //grab files from table
     $results=$wpdb->get_results('SELECT * FROM '.CA_SERM_TBL);
@@ -28,7 +28,7 @@ function ca_podcast_list_series()
         {
             $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_sermon_series&amp;id='.$row->series_id,'edit_sermon_series').'">Edit</a>';
             $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_sermon_series&amp;id='.$row->series_id,'delete_sermon_series').'">Delete</a>';
-            $files=$wpdb->get_var('SELECT count(*) FROM '.CA_SERM_TBL.' WHERE series_id="'.esc_sql($row->series_id).'"');
+            $files=$wpdb->get_var('SELECT count(*) FROM '.CA_FIL_TBL.' WHERE series_id="'.esc_sql($row->series_id).'"');
             if(!$files)$files="0";
             $table.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($row->series_name).'</td><td>'.$files.'</td><td>[church_admin type="podcast" series_id="'.$row->series_id.'"]</td></tr>';
         }
@@ -40,6 +40,7 @@ function ca_podcast_list_series()
     {
         echo'<p>No Sermon Series stored yet</p>';
     }
+	echo'</div>';
 
 }
 
@@ -56,6 +57,7 @@ function ca_podcast_edit_series($id=NULL)
  * @version  0.1
  * 
  */
+	echo'<div class="wrap church_admin">';
     global $wpdb;
     if(!empty($id))
     {
@@ -90,11 +92,13 @@ function ca_podcast_edit_series($id=NULL)
         if(!empty($current_data->series_name)) echo 'value="'.esc_html($current_data->series_name).'"';
         echo'/></p>';
         echo'<p><label for="series_description">'.__('Series Description','church-admin').'</label></p>';
-        echo'<textarea name="series_description" id="series_description">'.$current_data->series_description.'</textarea></p>';
+        echo'<textarea name="series_description" id="series_description">';
+		if(!empty($current_data->series_description))echo $current_data->series_description;
+		echo'</textarea></p>';
         echo '<p><input type="hidden" name="save_series" value="save_series"/><input type="submit" class="primary-button" value="'.__('Save Sermon Series','church-admin').'"/></p></form>';
     }//form
     
-    
+    echo'</div>';
 }
 
 
@@ -255,7 +259,7 @@ function ca_podcast_edit_file($id=NULL)
                 $sqlsafe['series_id']=$check;
             }
         }
-        $speaker=esc_sql(church_admin_get_people_id($sqlsafe['people']));
+        $speaker=esc_sql($sqlsafe['people']);
         if(!empty($_POST['private'])){$private="1";}else{$private="0";}
         if(empty($_POST['pub_date'])){$sqlsafe['pub_date']=date("Y-m-d" );}else{$sqlsafe['pub_date']=$_POST['pub_date'];}
 		
@@ -344,17 +348,9 @@ function ca_podcast_edit_file($id=NULL)
         }
         echo'<p><label>'.__('Speaker','church-admin').'</label>';
         $s=array();
-        if(!empty($current_data->speaker))
-        {
-            
-            foreach(unserialize($current_data->speaker) AS $key=>$speaker)
-            {
-                $s[]=$wpdb->get_var('SELECT CONCAT_WS(" ",first_name,last_name) FROM '.CA_PEO_TBL.' WHERE people_id="'.$speaker.'"');
-            }
-                 
-        }
+	
         
-        echo church_admin_autocomplete('people','friends','to',$s); 
+        echo church_admin_autocomplete('people','friends','to',$current_data->speaker); 
         echo'</p>';
         if(empty($current_data->pub_date))$current_data->pub_date=date('Y-m-d');
         //javascript to bring up date picker
@@ -462,7 +458,7 @@ function ca_podcast_file_add($file_name=NULL)
     echo'<h2>Add File - '.$file_name.'</h2>';
     if(!empty($_POST['save_file']))
     {//process form
-        $speaker=esc_sql(church_admin_get_people_id($_POST['speaker']));
+        $speaker=esc_sql($_POST['speaker']);
         require_once(CHURCH_ADMIN_INCLUDE_PATH.'mp3.php');
         
         $m = new mp3file(CA_POD_PTH.$file_name);
@@ -619,7 +615,7 @@ function church_admin_latest_sermons_widget_control()
     //get saved options
     $options=get_option('church_admin_widget');
     //handle user input
-    if($_POST['latest_sermons_widget_submit'])
+    if(!empty($_POST['latest_sermons_widget_submit']))
     {
         $options['title']=strip_tags(stripslashes($_POST['title']));
         if(ctype_digit($_POST['sermons'])){$options['sermons']=$_POST['sermons'];}else{$options['sermons']='5';}

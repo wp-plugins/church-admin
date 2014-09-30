@@ -37,6 +37,7 @@ function church_admin_send_sms()
 			$sql='SELECT mobile FROM '.CA_PEO_TBL.' WHERE '.$where;
 		}
 		elseif(!empty($_POST['type']) && $_POST['type']=='smallgroup') $sql='SELECT mobile FROM '.CA_PEO_TBL.' WHERE smallgroup_id="'.esc_sql($_POST['group_id']).'"';
+		elseif(!empty($_POST['type']) && $_POST['type']=='hope_team') $sql='SELECT a.mobile FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE b.meta_type="hope_team" AND a.people_id=b.people_id AND b.department_id="'.esc_sql($hope_team->hope_team_id).'"';
 		elseif(!empty($_POST['type']) && $_POST['type']=='individuals')
 		{
 			$names=array();
@@ -164,10 +165,13 @@ function counterUpdate(opt_countedTextBox, opt_countBody, opt_maxSize) {
 ';
 if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
 	echo'<h2>Choose recipients...</h2>';
+	echo'<p><label><strong>'.__('Choose a member type','church-admin').'</strong></label><input type="radio" name="type" value="member_type"  /></p>';
+	echo'<fieldset id="member_type">';
 	foreach($member_type AS $key=>$value)
 	{
 		echo'<p><label><strong>'.__('All','church-admin').' '.$value.'</strong></label><input type="checkbox" name="member_type[]" value="'.$key.'"/></p>';
 	}
+	echo'</fieldset>';
 	echo'<p><label><strong>'.__('A Small group','church-admin').'</strong></label><input type="radio" name="type" value="smallgroup"/></p>';
 	echo'<fieldset id="smallgroup">';
 	echo'<p><label>'.__('Which group','church-admin').'</label><select name="group_id">';
@@ -191,18 +195,42 @@ if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
     echo'<p><input type="button" id="btnAdd" value="'.__('Add another person','church-admin').'" /><input type="button" id="btnDel" value="'.__('Remove person','church-admin').'" /></p></fieldset>';
   
     //end choose individuals
-    echo'<p><label>'.__('Everyone in this ministry','church-admin').'...</label><input type="radio" name="type" value="roles"  /></p>';
+	echo'<p><label>'.__('Everyone in this ministry','church-admin').'...</label><input type="radio" name="type" value="roles"  /></p>';
+
     $roles=get_option('church_admin_departments');
+
      echo'<fieldset id="roles">';
+
     echo '<div class="roleclonedInput" id="roleinput1">';
+
     echo'<p><label>'.__('Select Ministry','church-admin').'</label><select name="role_id[]" id="roleid1" class="role_id">';
+
     foreach($roles AS $key=>$value)
+
     {
+
       echo'<option value="'.$key.'">'.$value.'</option>';
+
     }
+
     echo'</select></p></div>';
-    echo'<p><input type="button" id="roleadd" value="'.__('Add another ministry','church-admin').'" /><input type="button" id="roledel" value="Remove ministry" /></p></fieldset>';
+
+     echo'<p><input type="button" id="roleadd" value="'.__('Add another ministry','church-admin').'" /><input type="button" id="roledel" value="Remove ministry" /></p></fieldset>';
+
   
+       
+   echo'<p><label><strong>'.__('Hope Team','church-admin').'</strong></label><input type="radio" name="type" value="hope_team"/></p>';
+   echo'<fieldset id="hope_team">';
+    echo'<p><label>'.__('Select Hope Team Job','church-admin').'</label><select name="hope_team" ><option value="">Select job</option>';
+    $results=$wpdb->get_results('SELECT job,hope_team_id FROM '.CA_HOP_TBL);
+    foreach($results AS $row)
+    {
+        echo '<option value="'.$row->hope_team_=id.'">'.$row->job.'</option>';
+    }
+    echo'</select></p></fieldset>';
+    
+    //end choose individuals
+   
     
 //end of choose recipients
 

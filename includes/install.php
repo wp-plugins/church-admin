@@ -16,7 +16,8 @@ function church_admin_install()
     global $wpdb,$church_admin_version;
     $wpdb->show_errors();
     //household table    
-    
+    $backup=get_option('church_admin_backup_filename');
+	if(empty($backup))unlink(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz');
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOU_TBL.'"') != CA_HOU_TBL)
     {
         $sql = 'CREATE TABLE '.CA_HOU_TBL.' ( address TEXT, lat VARCHAR(50),lng VARCHAR (50), phone VARCHAR(15),member_type_id INT(11),ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,household_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (household_id));';
@@ -294,20 +295,14 @@ $wpdb->query ($sql);
         $wpdb->query ($sql);
     }
 
-    //install calendar table1
-    $table_name = $wpdb->prefix."church_admin_calendar_event";
-    if($wpdb->get_var("show tables like '$table_name'") != $table_name)
-    {
-        $sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (recurring VARCHAR(3),title text NOT NULL, description text  NOT NULL, location text NOT NULL, year_planner INT(1),cat_id INT(11) NOT NULL, event_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (event_id)) ;";
-        $wpdb->query ($sql);
-    }
+
     
-    //install calendar table2
-    $table_name = $wpdb->prefix."church_admin_calendar_date";
+    //install calendar table1
+    $table_name = CA_DATE_TBL;
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
     {
 
-	$sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (start_date date NOT NULL DEFAULT '0000-00-00', start_time time NOT NULL DEFAULT '00:00:00', end_time time NOT NULL DEFAULT '00:00:00', event_id int(11) NOT NULL DEFAULT '0',date_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (date_id)) " ;
+	$sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (recurring VARCHAR(3),title text NOT NULL, description text  NOT NULL, location text NOT NULL, year_planner INT(1),cat_id INT(11) NOT NULL,start_date date NOT NULL DEFAULT '0000-00-00', start_time time NOT NULL DEFAULT '00:00:00', end_time time NOT NULL DEFAULT '00:00:00', event_id int(11) NOT NULL DEFAULT '0',date_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (date_id)) " ;
         $wpdb->query ($sql);
     }
     
@@ -359,7 +354,28 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
     $wpdb->query($sql);
     
  }
- 
+   if($wpdb->get_var('SHOW COLUMNS FROM '.CA_EVE_TBL.' LIKE "event_image"')!='event_image')
+{
+    $sql='ALTER TABLE  '.CA_EVE_TBL.' ADD event_image INT(11)';
+    $wpdb->query($sql);
+    
+ }
+   if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "title"')!='title')
+{
+    $sql='ALTER TABLE '.CA_DATE_TBL.' ADD `title` TEXT NOT NULL FIRST, ADD `description` TEXT NOT NULL AFTER `title`, ADD `location` TEXT NOT NULL AFTER `description`, ADD `year_planner` INT(1) NOT NULL AFTER `location`, ADD `cat_id` INT(11) NOT NULL AFTER `year_planner`, ADD `how_many` INT(11) AFTER `event_id`,  ADD `event_image` INT (11) AFTER `year_planner`, ADD `recurring` TEXT NOT NULL AFTER `year_planner`;';
+    $wpdb->query($sql);
+	$events=$wpdb->get_results('SELECT * FROM '.CA_EVE_TBL);
+	if(!empty($events))
+	{
+		foreach($events AS $event)
+		{
+		$sql='UPDATE '. CA_DATE_TBL.' SET cat_id="'.esc_sql($event->cat_id).'",event_id="'.esc_sql($event->event_id).'",recurring="'.esc_sql($event->recurring).'",title="'.esc_sql($event->title).'", description="'.$event->description.'", location="'.esc_sql($event->location).'", year_planner="'.esc_sql($event->year_planner).'" WHERE event_id="'.esc_sql($event->event_id).'"';
+		
+			$wpdb->query($sql);
+		}
+	}
+    
+ }
  if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "rota_order"')!='rota_order')
 {
     $sql='ALTER TABLE  '.CA_RST_TBL.' ADD rota_order INT(11)';
@@ -469,7 +485,7 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "smallgroup_attendance"
 	
 }
 //v0.5958 added hope team
-if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "other_hope_team"')!='other_hope_team')
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "other_hope_team"')!='other_hope_team')
 {
     $sql='ALTER TABLE '.CA_PEO_TBL.' ADD `other_hope_team` TEXT NOT NULL;';
     $wpdb->query($sql);
@@ -485,7 +501,7 @@ if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOP_TBL.'"') != CA_HOP_TBL)
 {
 
 	 $sql = 'CREATE TABLE IF NOT EXISTS '.CA_HOP_TBL.' (  `job` text NOT NULL,  `ts` datetime NOT NULL,  `hope_team_id` int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (`hope_team_id`)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1';
-	 	 $wpdb->query($sql);
+	 $wpdb->query($sql);
 }
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
 {
@@ -631,7 +647,20 @@ if(empty($departments))
         );
         
     }
+//change way speakers are stored for v0.5963
+$sermons=$wpdb->get_results('SELECT * FROM '.CA_FIL_TBL);
+if(!empty($sermons) && OLD_CHURCH_ADMIN_VERSION <0.5963)
+{
 
+	foreach ($sermons AS $sermon)
+	{
+		$speaker=church_admin_get_people($sermon->speaker);
+		$sql='UPDATE '.CA_FIL_TBL.' SET speaker="'.esc_sql($speaker).'" WHERE file_id="'.esc_sql($sermon->file_id).'"';
+		
+		$wpdb->query($sql);
+	}
+
+}
 //sort service addresses for ver 0.5911 onwards
 $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 if(!empty($services))
