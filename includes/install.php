@@ -18,6 +18,13 @@ function church_admin_install()
     //household table    
     $backup=get_option('church_admin_backup_filename');
 	if(empty($backup))unlink(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz');
+	if(!file_exists(CHURCH_ADMIN_EMAIL_CACHE.'index.php'))
+	{
+		$data='<?php //nothing here ?>';
+		$fp = fopen(CHURCH_ADMIN_EMAIL_CACHE.'index.php', 'w');
+		fwrite($fp,$data);
+		fclose($fp);
+	}
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOU_TBL.'"') != CA_HOU_TBL)
     {
         $sql = 'CREATE TABLE '.CA_HOU_TBL.' ( address TEXT, lat VARCHAR(50),lng VARCHAR (50), phone VARCHAR(15),member_type_id INT(11),ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,household_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (household_id));';
@@ -603,11 +610,7 @@ if(empty($departments))
     $file_template=get_option('ca_podcast_file_template');
     if(empty($file_template))
     {
-        $file_template='<div class="ca_podcast_file">
-<h3>[FILE_TITLE] </h3>
-<p><audio class="sermonmp3" id="[FILE_ID]" src="[FILE_NAME]" preload="none"/></p><p>[FILE_DOWNLOAD]</a> 
-<br/>[FILE_DESCRIPTION] 
-<br/><span style="font-size:smaller">[SERIES_NAME]: [SPEAKER_NAME] ([FILE_PLAYS]) </span> </p></div>';
+        $file_template='<div class="ca_podcast_file"><h3><a href="[FILE_URI]">[FILE_TITLE] </a> </h3><p>By [SPEAKER_NAME] on [FILE_DATE] as part of the [SERIES_NAME] series<br/>[FILE_DESCRIPTION] </p><p><audio class="sermonmp3" id="[FILE_ID]" src="[FILE_NAME]" preload="none"></audio></p></div>';
         
     }
 	else
