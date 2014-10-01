@@ -28,7 +28,11 @@ function church_admin_front_admin()
 		The plugin author has recently started a business selling rollup banners to use in Churches.<br/> <a href="http://www.worshipbanners.co.uk">Why not have a look?</a>
 	</p>
 	</div><div class="clear"></div>
-		<?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){	echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	  <!-- #post-body .metabox-holder goes here -->
+	
+		<?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){unlink(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz');}
+	$filename=get_option('church_admin_backup_filename');
+			
+			if(!empty($filename) && file_exists(CHURCH_ADMIN_EMAIL_CACHE.$filename)){echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	  <!-- #post-body .metabox-holder goes here -->
 		<div id="post-body" class="metabox-holder columns-1">
 		    <!-- meta box containers here -->
 		    <form  method="get" action="">
