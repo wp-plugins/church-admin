@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.5969
+Version: 0.5970
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.5969';
+$church_admin_version = '0.5970';
 church_admin_constants();//setup constants first
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
 require_once(CHURCH_ADMIN_INCLUDE_PATH.'functions.php');
@@ -267,9 +267,9 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
 			$ajax_nonce = wp_create_nonce("church_admin_mp3_play");			
 			
 		    wp_enqueue_script('ca_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js','',NULL);
-		    wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js','',NULL);
+		    wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js','',NULL,TRUE);
 			wp_localize_script( 'ca_podcast_audio_use', 'ChurchAdminAjax', array('security'=>$ajax_nonce, 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
-
+			
 		}
 		if($shortcode_found=='register')
                 {
@@ -297,7 +297,16 @@ function church_admin_conditionally_add_scripts_and_styles($posts){
 	return $posts;
 }
 
-
+add_action('wp_head','church_admin_ajaxurl');
+function church_admin_ajaxurl() {
+$ajax_nonce = wp_create_nonce("church_admin_mp3_play");	
+?>
+<script type="text/javascript">
+var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+var security= '<?php echo $ajax_nonce; ?>';
+</script>
+<?php
+}
 
 function church_admin_init()
 {
@@ -911,7 +920,7 @@ function church_admin_sermons_widget_init()
 }
 function church_admin_latest_sermons_scripts()
 {
-	$ajax_nonce = wp_create_nonce("church_admin_mp3_play");			
+			
 	wp_enqueue_script('ca_podcast_audio',CHURCH_ADMIN_INCLUDE_URL.'audio.min.js','',NULL);
 	wp_enqueue_script('ca_podcast_audio_use',CHURCH_ADMIN_INCLUDE_URL.'audio.use.js','',NULL);
 	wp_localize_script( 'ca_podcast_audio_use', 'ChurchAdminAjax', array('security'=>$ajax_nonce, 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
