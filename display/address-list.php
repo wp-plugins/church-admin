@@ -28,7 +28,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 	  $p->items($items);
 	  $p->limit(10); // Limit entries per page
 	  
-	  $p->target($_SERVER['REQUEST_URI']);
+	  $p->target(get_permalink());
 	  if(!isset($p->paging))$p->paging=1; 
 	  if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
 	  $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
@@ -135,7 +135,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		{//more than one mobile in household
 			foreach($mobiles AS $name=>$mobile)
 			{
-				$out.=$name.': <a class="email" href="tel:'.str_replace(' ','',$mobile).'"><span itemprop="telephone">'.esc_html($mobile)."</span></a><br/>\n";
+				if(!empty($mobile))$out.=$name.': <a class="email" href="tel:'.str_replace(' ','',$mobile).'"><span itemprop="telephone">'.esc_html($mobile)."</span></a><br/>\n";
 			}
 		}
 	}
@@ -150,7 +150,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		{//more than one email in household
 			foreach($emails AS $name=>$email)
 			{
-				$out.=$name.': <a class="email" itemprop="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n\r\t\t";
+				if(!empty($email))$out.=$name.': <a class="email" itemprop="email" href="'.esc_url('mailto:'.$email).'">'.esc_html($email)."</a><br/>\n\r\t\t";
 			}
 		}
 	}
