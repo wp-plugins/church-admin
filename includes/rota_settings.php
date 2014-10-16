@@ -5,7 +5,7 @@ function church_admin_delete_rota_settings($id)
     global $wpdb;
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota_settings WHERE rota_id='".esc_sql($id)."'");
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_option_id='".esc_sql($id)."'");
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
     add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
     do_meta_boxes('church-admin','advanced',null);
     church_admin_rota_settings_list();
@@ -44,7 +44,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
             
             }
             echo'<div id="message" class="updated fade"><p><strong> Rota Job Added</strong></p></div>';
-            require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+            require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
             add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
             do_meta_boxes('church-admin','advanced',null);
             church_admin_rota_settings_list();  
@@ -54,7 +54,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
             
             $wpdb->query($sql);
             echo'<div id="message" class="updated fade"><p><strong> Rota Job Updated</strong></p></div>';
-            require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+            require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
             add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
             do_meta_boxes('church-admin','advanced',null);
             church_admin_rota_settings_list();  
@@ -66,7 +66,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
         
         $wpdb->query($sql);
         echo'<div id="message" class="updated fade"><p><strong> Rota Job Updated</strong></p></div>';
-         require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+         require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
         add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
         do_meta_boxes('church-admin','advanced',null);
         church_admin_rota_settings_list();

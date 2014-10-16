@@ -6,7 +6,7 @@ function church_admin_recent_people_activity()
     $out='';
         
     // number of total rows in the database
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
     $items=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL);
     if($items > 0)
     {

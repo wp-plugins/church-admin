@@ -335,6 +335,7 @@ function church_admin_update_order($which='member_type')
     {
         switch($which)
         {
+			case'facilities':$tb=CA_FAC_TBL;$field='facilities_order';$id='facility_id';break;
             case'member_type':$tb=CA_MTY_TBL;$field='member_type_order';$id='member_type_id';break;
             case'rota_settings':$tb=CA_RST_TBL;$field='rota_order';$id='rota_id';break;
             case'small_groups':$tb=CA_SMG_TBL;$field='smallgroup_order';$id='id';break;
@@ -360,12 +361,12 @@ function church_admin_member_type_array()
     }
     return($member_type);
 }
-function church_admin_update_department($department_id,$people_id)
+function church_admin_update_department($department_id,$people_id,$meta_type='ministry')
 {
   global $wpdb;
   $wpdb->show_errors;
-  $id=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND department_id="'.esc_sql($department_id).'"');
-  if(!$id){$wpdb->query('INSERT INTO '.CA_MET_TBL.'(people_id,department_id) VALUES("'.esc_sql($people_id).'","'.esc_sql($department_id).'")');}
+  $id=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND meta_type="'.esc_sql($meta_type).'" AND department_id="'.esc_sql($department_id).'"');
+  if(!$id){$wpdb->query('INSERT INTO '.CA_MET_TBL.'(people_id,department_id,meta_type) VALUES("'.esc_sql($people_id).'","'.esc_sql($department_id).'","'.esc_sql($meta_type).'")');}
 }
 function strip_only($str, $tags) {
     //this functions strips some tages, but not all

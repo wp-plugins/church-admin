@@ -223,7 +223,7 @@ $language_codes = array(
                 {
                     $tmp_name = $_FILES["image"]["tmp_name"];
                     $name = basename($_FILES["image"]["name"]);
-                    if(move_uploaded_file($tmp_name, CA_POD_PTH.$name))$image=CA_POD_URL.$name;
+                    if(move_uploaded_file($tmp_name, plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$name))$image=CA_POD_URL.$name;
                 }
                 else
                 {//not image, so no change
@@ -270,7 +270,7 @@ $language_codes = array(
             update_option('ca_podcast_speaker_template',stripslashes($_POST['speaker_template']));
             update_option('ca_podcast_series_template',stripslashes($_POST['series_template']));
             echo'<div class="updated fade"><p><strong>Podcast Settings Updated<br/><a href="'.CA_POD_URL.'podcast.xml">Check xml feed</a></p></div>';
-            require_once(CHURCH_ADMIN_INCLUDE_PATH.'sermon-podcast.php');
+            require_once(plugin_dir_path(dirname(__FILE__)).'includes/sermon-podcast.php');
             ca_podcast_xml();
             
         }//end process
@@ -315,7 +315,7 @@ $language_codes = array(
             }
             echo $first.$option.'</select></p>';
             echo'<p><label for="image">Image</label><input type="file" name="image"/>';
-            echo'<br/><img src="'.$settings['image'].'">';
+            if(!empty($settings['image']))echo'<br/><img src="'.$settings['image'].'">';
             echo'</p>';
             echo '<p><input type="hidden" name="save_settings" value="yes"/><input type="submit" class="primary-button" value="Save Podcast XML settings"/></p></form>';
 

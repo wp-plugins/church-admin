@@ -43,8 +43,25 @@ function ca_podcast_list_series()
 	echo'</div>';
 
 }
+function ca_podcast_delete_series($id=NULL)
+{
+    /**
+ *
+ * Delete podcast events
+ * 
+ * @author  Andy Moyle
+ * @param    $id=null
+ * @return   html string
+ * @version  0.1
+ * 
+ */
 
-
+	global $wpdb;
+	$wpdb->query('DELETE  FROM '.CA_SERM_TBL.' WHERE series_id="'.esc_sql($id).'"');
+	 echo'<div class="updated fade"><p>'.__('Series Deleted','church-admin').'</p></div>';
+        ca_podcast_list_series();
+ 
+ }
 function ca_podcast_edit_series($id=NULL)
 {
     /**
@@ -118,30 +135,32 @@ function ca_podcast_list_files()
  */    
     global $wpdb;
     $wpdb->show_errors();
-
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
     echo'<h2>Sermon Podcast Files</h2>';
     echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file','edit_podcast_file').'">Upload File</a></p>';
     echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=check_files','check_podcast_file').'">Add Already Uploaded Files</a></p>';
-    if(!file_exists(CA_POD_PTH.'podcast.xml'))
+    if(!file_exists($path.'podcast.xml'))
     {
         ca_podcast_xml();
         
     }
-    if(file_exists(CA_POD_PTH.'podcast.xml'))echo'<p><a href="'.CA_POD_URL.'podcast.xml">Podcast RSS File</a></p>';
+    if(file_exists($path.'podcast.xml'))echo'<p><a href="'.$url.'podcast.xml">Podcast RSS File</a></p>';
     //grab files from table
     $results=$wpdb->get_results('SELECT a.* FROM '.CA_FIL_TBL.' a  ORDER BY pub_date DESC');
     if($results)
     {//results
-        $table='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>Mp3 File</th></th><th>File Okay?</th><th>Length</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>File</th><th>File Okay?</th><th>Length</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
+        $table='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>Mp3 File</th></th><th>File Okay?</th><th>Length</th><th>Media</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>File</th><th>File Okay?</th><th>Length</th><th>Media</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
         foreach($results AS $row)
         {
-            if(file_exists(CA_POD_PTH.$row->file_name)){$okay='<img src="'.CHURCH_ADMIN_IMAGES_URL.'green.png" width="32" height="32"/>';}else{$okay='<img src="'.CHURCH_ADMIN_IMAGES_URL.'red.png" width="32" height="32"/>';}
+            if(file_exists(plugin_dir_path( $path.$row->file_name))){$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'" width="32" height="32"/>';}else{$okay='<img src="'.plugins_url('images/red.png',dirname(__FILE__) ) .'" width="32" height="32"/>';}
             $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file&amp;id='.$row->file_id,'edit_podcast_file').'">Edit</a>';
             $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_file&amp;id='.$row->file_id,'delete_podcast_file').'">Delete</a>';
             $series_name=$wpdb->get_var('SELECT series_name FROM '.CA_SERM_TBL.' WHERE series_id="'.esc_sql($row->series_id).'"');
-            if(file_exists(CA_POD_PTH.$row->file_name)){$file='<a href="'.CA_POD_URL.$row->file_name.'">'.esc_html($row->file_name).'</a>';$okay='<img src="'.CHURCH_ADMIN_IMAGES_URL.'green.png"/>';}else{$file='&nbsp;';$okay='<img src="'.CHURCH_ADMIN_IMAGES_URL.'red.png"/>';}
-            $table.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.date(get_option('date_format'),strtotime($row->pub_date)).'</td><td>'.esc_html($row->file_title).'</td><td>'.esc_html(church_admin_get_people($row->speaker)).'</td><td>'.$file.'</td><td>'.$okay.'</td><td>'.esc_html($row->length).'</td>';
-            if(file_exists(CA_POD_PTH.$row->transcript)){$table.='<td><a href="'.CA_POD_URL.$row->transcript.'">'.esc_html($row->transcript).'</a></td>';}else{$table.='<td>&nbsp;</td>';}
+            if(file_exists($path.$row->file_name)){$file='<a href="'.$url.$row->file_name.'">'.esc_html($row->file_name).'</a>';$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'"/>';}else{$file='&nbsp;';$okay='<img src="'.plugins_url('images/red.png',dirname(__FILE__) ).'"/>';}
+            $table.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.date(get_option('date_format'),strtotime($row->pub_date)).'</td><td>'.esc_html($row->file_title).'</td><td>'.esc_html(church_admin_get_people($row->speaker)).'</td><td>'.$file.'</td><td>'.$okay.'</td><td>'.esc_html($row->length).'</td><td>'.$row->video_url.'</td>';
+            if(file_exists($path.$row->transcript)){$table.='<td><a href="'.$url.$row->transcript.'">'.esc_html($row->transcript).'</a></td>';}else{$table.='<td>&nbsp;</td>';}
             $table.='<td>'.$series_name.'</td><td>[church_admin type="podcast" file_id="'.$row->file_id.'"]</td></tr>';
         }
         
@@ -178,6 +197,7 @@ function ca_podcast_edit_file($id=NULL)
     {
         $title='Add';
     }
+	if(empty($current_data))$current_data=new stdClass();
     echo'<h2>'.$title.' File</h2>';
     if(!empty($_POST['save_file']))
     {//process form
@@ -199,19 +219,19 @@ function ca_podcast_edit_file($id=NULL)
             $type=substr($name,-3);
             $split=sanitize_title(substr($name,0,-4));
             $file_name=$split.'.'.$type;
-            while(file_exists(CA_POD_PTH.$file_name))
+            while(file_exists(plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$file_name))
             {
                 
                 $file_name=$split.$x.'.'.$type;
                 $x++;
             }
             
-            if(!move_uploaded_file($tmp_name, CA_POD_PTH.$file_name)) echo"<p>File Upload issue</p>";
+            if(!move_uploaded_file($tmp_name, plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$file_name)) echo"<p>File Upload issue</p>";
              
         }    
         if(empty($file_name) &&!empty($current_data->file_name))$file_name=$current_data->file_name;   
-            require_once(CHURCH_ADMIN_INCLUDE_PATH.'mp3.php');
-            $m = new mp3file(CA_POD_PTH.$file_name);
+            require_once(plugin_dir_path(dirname(__FILE__)).'includes/mp3.php');
+            $m = new mp3file(plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$file_name);
             $a = $m->get_metadata();
             $length=esc_sql($a['Length mm:ss']);
         //end mp3
@@ -230,14 +250,14 @@ function ca_podcast_edit_file($id=NULL)
             $type=substr($name,-3);
             $split=sanitize_title(substr($name,0,-4));
             $transcript=$split.'.'.$type;
-            while(file_exists(CA_POD_PTH.$transcript))
+            while(file_exists(plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$transcript))
             {
                 
                 $transcript=$split.$x.'.'.$type;
                 $x++;
             }
             
-            if(!move_uploaded_file($tmp_name, CA_POD_PTH.$transcript)) echo"<p>File Upload issue</p>";
+            if(!move_uploaded_file($tmp_name, plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$transcript)) echo"<p>File Upload issue</p>";
              
         } 
            
@@ -269,13 +289,13 @@ function ca_podcast_edit_file($id=NULL)
         
         if(!empty($id))
         {//update
-            $sql='UPDATE '.CA_FIL_TBL.' SET transcript="'.$transcript.'",file_subtitle="'.$sqlsafe['file_subtitle'].'",pub_date="'.$sqlsafe['pub_date'].'",length="'.$length.'", private="'.$private.'",last_modified="'.date("Y-m-d H:i:s" ).'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , service_id="'.$sqlsafe['service_id'].'",series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
+            $sql='UPDATE '.CA_FIL_TBL.' SET video_url="'.$sqlsafe['video_url'].'",transcript="'.$transcript.'",file_subtitle="'.$sqlsafe['file_subtitle'].'",pub_date="'.$sqlsafe['pub_date'].'",length="'.$length.'", private="'.$private.'",last_modified="'.date("Y-m-d H:i:s" ).'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , service_id="'.$sqlsafe['service_id'].'",series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
 			
             $wpdb->query($sql);
         }//end update
         else
         {//insert
-            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified,transcript)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqldafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'","'.$transcript.'")';
+            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified,transcript,video_url)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqldafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'","'.$transcript.'","'.$sqlsafe['video_url'].'")';
             $wpdb->query($sql);
         }//end insert
         
@@ -359,7 +379,9 @@ function ca_podcast_edit_file($id=NULL)
         echo'<p><label for="pub_date">'.__('Publication Date','church-admin').'</label><input type="text" name="pub_date" id="pub_date" value="'.date('Y-m-d',strtotime($current_data->pub_date)).'"/></p>';
         echo'<p><label for="file">'.__('Mp3 File to Upload','church-admin').'</label><input type="file" name="file" id="file"/></p>';
         echo'<p><label for="transcript">'.__('Transcript to Upload ','church-admin').'</label><input type="file" name="transcript" id="transcript"/></p>';
-        
+        echo'<p><label for="video_url">'.__('Video URL','church-admin').'</label><input type="text" name="video_url" id="video_url"';
+		if(!empty($current_data->video_url))echo' value="'.$current_data->video_url.'" ';
+		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</p>';
         echo '<p><input type="hidden" name="save_file" value="save_file"/><input type="submit" id="submit" class="primary-button" value="Save File"/></p></form>';
     }//form
     
@@ -384,7 +406,8 @@ function ca_podcast_delete_file($id=NULL)
         $data=$wpdb->get_row('SELECT a.*,b.series_name AS series_name FROM '.CA_FIL_TBL.' a , '.CA_SERM_TBL.' b WHERE a.file_id="'.esc_sql($id).'" AND a.series_id=b.series_id');
         if(!empty($_POST['sure']))
         {//end sure so delete
-            unlink(CA_POD_PTH.$data->file_name);
+			$upload_dir = wp_upload_dir();
+            unlink($upload_dir['basedir'].'/sermons/'.$data->file_name);
             $wpdb->query('DELETE FROM '.CA_FIL_TBL.' WHERE file_id="'.esc_sql($id).'"');
             ca_podcast_xml();//update podcast feed
             echo'<div class="updated fade">'.$data->file_title.' '.__('from','church-admin').' '.$data->series_name.' '.__('deleted','church-admin').'</p></div>';
@@ -392,8 +415,8 @@ function ca_podcast_delete_file($id=NULL)
         }//end sure so delete
         else
         {
-            echo'<p>'.__('Are you sure you want to delete ','church-admin').$data->file_title.' '.__('from','church-admin').' '.$data->series_name.'? ';
-            echo'<form action="" method="post"><input type="hidden" name="sure" value="YES"/><input type="submit" value="Yes" class="primary-button"/></form></p>';
+            echo'<p>'.printf(__('Are you sure you want to delete %1$s sermon form %2s?','church-admin'),$data->file_title,$data->series_name);
+            echo'<form action="" method="post"><input type="hidden" name="sure" value="YES"/><input type="submit" value="'.__('Yes','church-admin').'" class="primary-button"/></form></p>';
         }
         
     }//end non empty $id
@@ -414,10 +437,13 @@ function ca_podcast_check_files()
  */
     global $wpdb,$rm_podcast_settings;
     $wpdb->show_errors();
-    $files=scandir(CA_POD_PTH);
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
+	$files=scandir($path);
     $exclude_list = array(".", "..", "index.php","podcast.xml");
     $files = array_diff($files, $exclude_list);
-   
+  
     
         $table='<h2>'.__('Unattached Media Files','church-admin').'</h2><table class="widefat"><thead><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Filename','church-admin').'</th><th>'.__('Add to podcast','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Filename','church-admin').'</th><th>'.__('Add to podcast','church-admin').'</th></tr></tfoot><tbody>';
     
@@ -425,7 +451,7 @@ function ca_podcast_check_files()
         {
             $check=$wpdb->get_var('SELECT file_id FROM '.CA_FIL_TBL.' WHERE file_name="'.esc_sql(basename($entry)).'"');
             
-            if(is_file(CA_POD_PTH.$entry)&&!$check)
+            if(is_file($path.$entry)&&!$check)
             {
                 
                 $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=file_delete&file='.$entry,'file_delete').'">'.__('Delete','church-admin').'</a>';
@@ -451,6 +477,9 @@ function ca_podcast_file_add($file_name=NULL)
  * 
  */
     if(!$file_name)wp_die("No file specified");
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
 	$current_data=new stdClass();
     global $wpdb,$rm_podcast_settings;
     $wpdb->show_errors();
@@ -459,9 +488,9 @@ function ca_podcast_file_add($file_name=NULL)
     if(!empty($_POST['save_file']))
     {//process form
         $speaker=esc_sql($_POST['speaker']);
-        require_once(CHURCH_ADMIN_INCLUDE_PATH.'mp3.php');
-        
-        $m = new mp3file(CA_POD_PTH.$file_name);
+        require_once(plugin_dir_path(dirname(__FILE__)).'includes/mp3.php');
+        $file=$path.$file_name;
+        $m = new mp3file($file);
         $a = $m->get_metadata();
         $length=esc_sql($a['Length mm:ss']);
         
@@ -472,13 +501,13 @@ function ca_podcast_file_add($file_name=NULL)
         if(empty($id))$id=$wpdb->get_var('SELECT file_id FROM '.CA_FIL_TBL.' WHERE file_name="'.$file_name.'"' );
         if(!empty($id))
         {//update
-            $sql='UPDATE '.CA_FIL_TBL.' SET pub_date="'.$pub_date.'", length="'.$length.'", last_modified="'.date("Y-m-d H:i:s" ).'",private="'.$private.'",file_name="'.$file_name.'" ,file_subtitle= "'.$sql['file_subtitle'].'",file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
+            $sql='UPDATE '.CA_FIL_TBL.' SET video_url="'.$sqlsafe['video_url'].'",pub_date="'.$pub_date.'", length="'.$length.'", last_modified="'.date("Y-m-d H:i:s" ).'",private="'.$private.'",file_name="'.$file_name.'" ,file_subtitle= "'.$sql['file_subtitle'].'",file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
             
             $wpdb->query($sql);
         }//end update
         else
         {//insert
-            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_subtitle,file_title,file_description,private,length,series_id,speaker,pub_date,last_modified)VALUES("'.$file_name.'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$pub_date.'","'.date("Y-m-d H:i:s" ).'")';
+            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_subtitle,file_title,file_description,private,length,series_id,speaker,pub_date,last_modified,video_url)VALUES("'.$file_name.'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$pub_date.'","'.date("Y-m-d H:i:s" ).'","'.$sqlsafe['video_url'].'")';
            
             $wpdb->query($sql);
         }//end insert
@@ -526,7 +555,9 @@ function ca_podcast_file_add($file_name=NULL)
         
         if(empty($current_data->pub_date))$current_data->pub_date=date('Y-m-d H:i:s');
         echo'<p><label for="file">Publication Date</label><input type="text" name="pub_date" value="'.esc_html($current_data->pub_date).'"/></p>';
-        
+         echo'<p><label for="video_url">'.__('Video URL','church-admin').'</label><input type="text" name="video_url" id="video_url"';
+		if(!empty($current_data->video_url))echo' value="'.$current_data->video_url.'" ';
+		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</p>';
         echo '<p><input type="hidden" name="save_file" value="save_file"/><input type="submit" class="primary-button" value="Save File"/></p></form>';
     }//form
     
@@ -534,9 +565,12 @@ function ca_podcast_file_add($file_name=NULL)
 }
 function ca_podcast_file_delete($file_name=NULL)
 {
-    if($file_name &&is_file(CA_POD_PTH.basename($file_name)))
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
+    if($file_name &&is_file($path.basename($file_name)))
     {
-        unlink(CA_POD_PTH.basename($file_name));
+        unlink($path.basename($file_name));
         echo'<div class="updated fade"><p>'.basename($file_name).' deleted</p></div>';
         ca_podcast_check_files();
     }
@@ -547,6 +581,9 @@ function ca_podcast_xml()
 {
     global $wpdb,$ca_podcast_settings;
     $settings=get_option('ca_podcast_settings');
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
      $results=$wpdb->get_results('SELECT DATE_FORMAT(a.pub_date,"%a, %d %b %Y %T") AS publ_date,a.*,c.series_name AS series_name FROM '. CA_FIL_TBL.' a, '.CA_SERM_TBL.' c WHERE a.private="0" AND a.series_id=c.series_id ORDER BY pub_date DESC');
     if(!empty($results)&&!empty($settings['title']))
     {
@@ -555,7 +592,7 @@ function ca_podcast_xml()
         $output = '<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">';
         $output .= '<channel>';
         $output .= '<title>'.$settings['title'].'</title>';
-        $output .= '<link>'.CA_POD_URL.'podcast.xml'.'</link>';
+        $output .= '<link>'.$url.'podcast.xml'.'</link>';
         $output .= '<language>'.$settings['language'].'</language>';
         $output .= '<copyright>&#x2117; &amp; &#xA9; '.date('Y').' '.$settings['copyright'].'</copyright>';
         $output .= '<itunes:subtitle>'.$settings['subtitle'].'</itunes:subtitle>';
@@ -583,7 +620,7 @@ function ca_podcast_xml()
             //get speakers
             
             $names=church_admin_get_people($row->speaker);
-            
+          
             //end get speakers
             $service=$wpdb->get_var('SELECT CONCAT_WS(" ",service_name,service_time) FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($row->service_id).'"');
             $output .= '<item>';
@@ -592,8 +629,8 @@ function ca_podcast_xml()
             $output .= '<itunes:subtitle>'.$row->file_subtitle.'</itunes:subtitle>';
             $output .= '<itunes:summary>'.$row->file_description.'</itunes:summary>';
             //$output .=  '<itunes:image href="'..'" />';
-            $output .= '<enclosure url="'.CA_POD_URL.$row->file_name.'" length="'.filesize(CA_POD_PTH.$row->file_name).'" type="audio/mpeg" />';
-            $output .= '<guid>'.CA_POD_URL.$row->file_name.'</guid>';
+            $output .= '<enclosure url="'.$url.$row->file_name.'" length="'.filesize($path.$row->file_name).'" type="audio/mpeg" />';
+            $output .= '<guid>'.$url.$row->file_name.'</guid>';
             $output .= '<pubDate>'.$row->publ_date.' '.date('O').'</pubDate>';
             $output .= '<itunes:duration>'.$row->length.'</itunes:duration>';
             //$output .= '<itunes:keywords></itunes:keywords>';
@@ -604,7 +641,7 @@ function ca_podcast_xml()
         $output .= '</rss>';
         
         //SEND COMPLETE RSS FEED TO podcast xml file
-        $fp = fopen(CA_POD_PTH.'podcast.xml', 'w');
+        $fp = fopen($path.'podcast.xml', 'w');
         fwrite($fp, $output);
         fclose($fp);
         return TRUE;
@@ -612,6 +649,7 @@ function ca_podcast_xml()
 }
 function church_admin_latest_sermons_widget_control()
 {
+
     //get saved options
     $options=get_option('church_admin_widget');
     //handle user input
@@ -642,13 +680,15 @@ function church_admin_latest_sermons_widget_control_form()
 function church_admin_latest_sermons_widget_output($limit=5,$title)
 {
 	global $wpdb;
-	
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
 	$wpdb->show_errors;
 	$out='<div class="church-admin-sermons-widget">';
 	$ca_podcast_settings=get_option('ca_podcast_settings');
 	
 	if(!empty($ca_podcast_settings['link']))$out.='<p><a title="Download on Itunes" href="'.$ca_podcast_settings['itunes_link'].'">
-<img  alt="badge_itunes-lrg" src="'.CHURCH_ADMIN_IMAGES_URL.'badge_itunes-lrg.png" width="110" height="40" /></a></p>';
+<img  alt="badge_itunes-lrg" src="'.plugins_url('/images/badge_itunes-lrg.png',dirname(__FILE__) ).'" width="110" height="40" /></a></p>';
 	$options=get_option('church_admin_latest_sermons_widget');
 	
 	$limit=$options['sermons'];
@@ -659,7 +699,7 @@ function church_admin_latest_sermons_widget_output($limit=5,$title)
 		foreach($sermons AS $sermon)
 		{
 			$speaker=church_admin_get_people($sermon->speaker);
-			$out.='<p><a href="'.CA_POD_URL.$sermon->file_name.'"  title="'.esc_html($sermon->file_title).'">'.$sermon->file_title.'</a><br/>By '.$speaker.' on '.mysql2date(get_option('date_format'),$sermon->pub_date).'<br/>';
+			$out.='<p><a href="'.$url.$sermon->file_name.'"  title="'.esc_html($sermon->file_title).'">'.$sermon->file_title.'</a><br/>By '.$speaker.' on '.mysql2date(get_option('date_format'),$sermon->pub_date).'<br/>';
 	
 			$out.='<audio class="sermonmp3" id="'.$sermon->file_id.'" src="'.CA_POD_URL.$sermon->file_name.'" preload="none"/><br/>'; 
 			

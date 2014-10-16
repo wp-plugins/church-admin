@@ -113,7 +113,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 				}	
 			}
 		}
-		require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+		require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
 		add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
 		echo'<form  method="get" action="">';
 		wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
@@ -153,7 +153,7 @@ global $church_admin_version;
 	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
 	<div id="poststuff">
     <?php
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
     echo'<form  method="get" action="">';
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
 	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
@@ -206,7 +206,7 @@ if(!empty($taskresult))
     {//service chosen
 	
 	 // number of total rows in the database
-      require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
+      require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
       $items=$wpdb->get_var('SELECT COUNT(DISTINCT(rota_date)) FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'"');
 	  
 	  
@@ -484,7 +484,7 @@ function church_admin_delete_rota($id)
 	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
 	<div id="poststuff">
     <?php
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
     echo'<form  method="get" action="">';
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
 	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );

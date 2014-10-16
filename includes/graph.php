@@ -1,15 +1,12 @@
 <?php
 
-
-
 function church_admin_weekly_attendance_graph($year,$service_id)
-
 {
 	global $wpdb;
 	/* pChart library inclusions */
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pData.class.php");
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pDraw.class.php");
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pImage.class.php");
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pData.class.php');
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pDraw.class.php');
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pImage.class.php');
 	//build data
 
 	$result=$wpdb->get_results('SELECT *, DATE_FORMAT(`date`,"%D %b") AS week FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" AND YEAR(`date`)="'.esc_sql($year).'" ORDER BY `date` ASC');
@@ -42,37 +39,36 @@ function church_admin_weekly_attendance_graph($year,$service_id)
 		/* Add a border to the picture */ 
 		$myPicture->drawRectangle(0,0,899,499,array("R"=>0,"G"=>0,"B"=>0)); 
 		/* Write the chart title */  
-		$myPicture->setFontProperties(array("FontName"=>CHURCH_ADMIN_INCLUDE_PATH."graph/Fonts/Forgotte.ttf","FontSize"=>11)); 
+		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/Forgotte.ttf',"FontSize"=>11)); 
 		$myPicture->drawText(250,30,"Weekly Attendance ".$year,array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE)); 
 		/* Draw the scale and the 1st chart */ 
 		$myPicture->setGraphArea(40,40,860,460); 
 		$myPicture->drawFilledRectangle(40,40,860,460,array("R"=>255,"G"=>255,"B"=>255,"Surrounding"=>-200,"Alpha"=>10)); 
 		$myPicture->drawScale(array("DrawSubTicks"=>TRUE)); 
 		$myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10)); 
-		$myPicture->setFontProperties(array("FontName"=>CHURCH_ADMIN_INCLUDE_PATH."graph/Fonts/pf_arma_five.ttf","FontSize"=>6)); 
+		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/pf_arma_five.ttf',"FontSize"=>6)); 
 		$myPicture->drawLineChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_AUTO)); 
 		$myPicture->setShadow(FALSE); 
 		/* Write the chart legend */ 
 		$myPicture->drawLegend(510,475,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL)); 
-		$myPicture->render(CHURCH_ADMIN_EMAIL_CACHE.'weekly-attendance'.$year.'.png'); 
+		$upload_dir = wp_upload_dir();
+		$path=$upload_dir['basedir'].'/church-admin-cache/';
+		$myPicture->render($path.'weekly-attendance'.$year.'.png'); 
 	}//end result
-
 }
 
-
 function church_admin_monthly_attendance_graph($year,$service_id)
-
 {
 
 global $wpdb;
 
 	/* pChart library inclusions */
 
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pData.class.php");
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pData.class.php');
 
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pDraw.class.php");
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pDraw.class.php');
 
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pImage.class.php");
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pImage.class.php');
 
 	
 
@@ -138,7 +134,7 @@ global $wpdb;
 
 		/* Write the chart title */  
 
-		$myPicture->setFontProperties(array("FontName"=>CHURCH_ADMIN_INCLUDE_PATH."graph/Fonts/Forgotte.ttf","FontSize"=>11)); 
+		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/Forgotte.ttf',"FontSize"=>11)); 
 
 		$myPicture->drawText(250,20,"Attendance ".$year,array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE)); 
 
@@ -154,7 +150,7 @@ global $wpdb;
 
 		$myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10)); 
 
-		$myPicture->setFontProperties(array("FontName"=>CHURCH_ADMIN_INCLUDE_PATH."graph/Fonts/pf_arma_five.ttf","FontSize"=>6)); 
+		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/pf_arma_five.ttf',"FontSize"=>6)); 
 
 		$myPicture->drawLineChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_AUTO)); 
 
@@ -172,26 +168,23 @@ global $wpdb;
 
 		
 
-		
+		$upload_dir = wp_upload_dir();
+		$path=$upload_dir['basedir'].'/church-admin-cache/';
 
-		$myPicture->render(CHURCH_ADMIN_EMAIL_CACHE.'monthly-attendance'.$year.'.png'); 
+		$myPicture->render($path.'monthly-attendance'.$year.'.png'); 
 
 	}//end result
-
-
-
 }
 
 
 
 function church_admin_rolling_attendance_graph($service_id)
-
 {
 	global $wpdb;
 	/* pChart library inclusions */
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pData.class.php");
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pDraw.class.php");
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."graph/class/pImage.class.php");
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pData.class.php');
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pDraw.class.php');
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/graph/class/pImage.class.php');
 	//update rolling average
 	$result=$wpdb->get_results('SELECT attendance_id FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
 	foreach($result AS $row)
@@ -265,7 +258,7 @@ function church_admin_rolling_attendance_graph($service_id)
 
 		/* Write the chart title */  
 
-		$myPicture->setFontProperties(array("FontName"=>CHURCH_ADMIN_INCLUDE_PATH."graph/Fonts/Forgotte.ttf","FontSize"=>11)); 
+		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/Forgotte.ttf',"FontSize"=>11)); 
 
 		$myPicture->drawText(250,20,"Rolling Average Attendance ".$year,array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE)); 
 
@@ -281,7 +274,7 @@ function church_admin_rolling_attendance_graph($service_id)
 
 		$myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10)); 
 
-		$myPicture->setFontProperties(array("FontName"=>CHURCH_ADMIN_INCLUDE_PATH."graph/Fonts/pf_arma_five.ttf","FontSize"=>6)); 
+		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/pf_arma_five.ttf',"FontSize"=>6)); 
 
 		$myPicture->drawLineChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_AUTO)); 
 
@@ -299,19 +292,15 @@ function church_admin_rolling_attendance_graph($service_id)
 
 		
 
+		$upload_dir = wp_upload_dir();
+		$path=$upload_dir['basedir'].'/church-admin-cache/';
 		
 
-		$myPicture->render(CHURCH_ADMIN_EMAIL_CACHE.'rolling-average-attendance'.$year.'.png'); 
+		$myPicture->render($path.'rolling-average-attendance.png'); 
 
 	}//end result
 
 
 
 }
-
-
-
-
-
 ?>
-

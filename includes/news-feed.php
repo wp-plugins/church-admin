@@ -3,7 +3,7 @@
 function church_admin_news_feed()
 {
 require_once( ABSPATH . WPINC . '/feed.php' ); 
-$output='<h3>Plugin News</h3><ul>';
+$output='<ul>';
 $max_items = 0; 
 if ( function_exists( 'fetch_feed' ) )
 { 

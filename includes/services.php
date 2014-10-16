@@ -48,10 +48,10 @@ function church_admin_edit_service($id)
         foreach($_POST AS $key=>$value)$form[$key]=stripslashes($value);
         
        
-        if(!$id)$id=$wpdb->get_var('SELECT service_id FROM '.CA_SER_TBL.' WHERE service_name="'.esc_sql($form['service_name']).'" AND service_day="'.esc_sql($form['service_day']).'" AND service_time="'.esc_sql($form['service_time']).'" AND venue="'.esc_sql($form['venue']).'" AND address="'.esc_sql($from['address']).'" AND lat="'.esc_sql($form['lat']).'" AND lng="'.esc_sql($form['lng']).'"');
+        if(!$id)$id=$wpdb->get_var('SELECT service_id FROM '.CA_SER_TBL.' WHERE service_name="'.esc_sql($form['service_name']).'" AND service_day="'.esc_sql($form['service_day']).'" AND service_time="'.esc_sql($form['service_time']).'" AND venue="'.esc_sql($form['venue']).'" AND address="'.esc_sql($form['address']).'" AND lat="'.esc_sql($form['lat']).'" AND lng="'.esc_sql($form['lng']).'"');
         if($id)
         {//update
-            $sql='UPDATE '.CA_SER_TBL.' SET service_name="'.esc_sql($form['service_name']).'" , service_day="'.esc_sql($form['service_day']).'" , service_time="'.esc_sql($form['service_time']).'" , venue="'.esc_sql($form['venue']).'" , address="'.esc_sql($form['address']).'" , lat="'.esc_sql($form['lat']).'" , lng="'.esc_sql($form['lng']).'" WHERE service_id="'.esc_Sql($id).'"';
+            $sql='UPDATE '.CA_SER_TBL.' SET service_name="'.esc_sql($form['service_name']).'" , service_day="'.esc_sql($form['service_day']).'" , service_time="'.esc_sql($form['service_time']).'" , venue="'.esc_sql($form['venue']).'" , address="'.esc_sql($form['address']).'" , lat="'.esc_sql($form['lat']).'" , lng="'.esc_sql($form['lng']).'" WHERE service_id="'.esc_sql($id).'"';
             
             $wpdb->query($sql);
         }//update
@@ -74,7 +74,7 @@ function church_admin_edit_service($id)
        foreach($days AS $key=>$value)
        {
          echo'<option value="'.$key.'"';
-         selected($key,$data->service_day);
+         if(!empty($data->service_day))selected($key,$data->service_day);
          echo '>'.$value.'</option>';
        }
        echo'</select></p>';
@@ -84,8 +84,10 @@ function church_admin_edit_service($id)
        echo'<p><label>'.__('Service Venue','church-admin').'</label><input type="text" name="venue" ';
        if(!empty($data->venue))echo' value="'.$data->venue.'" ';
        echo'/></p>';
-       require_once(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
-       echo church_admin_address_form($data,$error=NULL);
+       require_once(plugin_dir_path(dirname(__FILE__)).'includes/directory.php');
+       if(empty($data))$data=new stdClass();
+	   
+	   echo church_admin_address_form($data,NULL);
        echo'<p class="submit"><input type="hidden" name="service" value="yes"/><input type="submit" value="'.__('Save Service','church-admin').'&raquo;" /></p></form></div>';
     }
 }

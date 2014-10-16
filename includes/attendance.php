@@ -15,7 +15,7 @@ function church_admin_attendance_list($service_id=1)
     
     
     // number of total rows in the database
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
     if($items > 0)
     {
 	$p = new pagination;
@@ -176,7 +176,7 @@ function church_admin_attendance_metrics($service_id=1)
 {
      global $wpdb,$days;
      $wpdb->show_errors;
-     
+     $thead='';
      if(empty($service_id))$service_id=1;
      $service=$wpdb->get_var('SELECT CONCAT_WS(" ",service_name,service_time) AS service FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
      $first_year=$wpdb->get_var('SELECT YEAR(`date`) FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" ORDER BY `date` ASC LIMIT 1');
@@ -206,9 +206,9 @@ if($results)
 	  {
 	       if(empty($adults[$month][$year])){$adulttable.='<td>&nbsp;</td>';}else{$adulttable.='<td>'.$adults[$month][$year].'</td>';}
 	       if(empty($children[$month][$year])){$childtable.='<td>&nbsp;</td>';}else{$childtable.='<td>'.$children[$month][$year].'</td>';}
-	       $total=$adults[$month][$year]+$children[$month][$year];
-	       if($adults[$month][$year]+$children[$month][$year]>0){$totaltable.='<td>'.$total.'</td>';}else{$totaltable.='<td>&nbsp;</td>';}
-	       if($adults[$month][$year]+$children[$month][$year]>0){$aggtable.='<td><span class="adults">'.$adults[$month][$year].'</span>, <span class="children">'.$children[$month][$year].'</span> (<span class="total">'.$total.')</span></td>';}else{$aggtable.='<td>&nbsp;</td>';}
+	       if(!empty($adults[$month][$year]))$total=$adults[$month][$year]+$children[$month][$year];
+	       if(!empty($adults[$month][$year]))if($adults[$month][$year]+$children[$month][$year]>0){$totaltable.='<td>'.$total.'</td>';}else{$totaltable.='<td>&nbsp;</td>';}
+	       if(!empty($adults[$month][$year])&&$adults[$month][$year]+$children[$month][$year]>0){$aggtable.='<td><span class="adults">'.$adults[$month][$year].'</span>, <span class="children">'.$children[$month][$year].'</span> (<span class="total">'.$total.')</span></td>';}else{$aggtable.='<td>&nbsp;</td>';}
 	       
 	  }
 	  $aggtable.='</tr>';

@@ -124,6 +124,7 @@ function church_admin_edit_small_group($id)
     else
     {
 	$data=$wpdb->get_row('SELECT * FROM '.CA_SMG_TBL.' WHERE id="'.esc_sql($id).'"');
+	if(empty($data))$data=new stdClass();
 	$leaders=$wpdb->get_results('SELECT a.people_id, CONCAT_WS(" ", b.first_name,b.last_name) AS leader  FROM '.CA_MET_TBL.' a, '.CA_PEO_TBL.' b WHERE a.department_id=1 AND a.people_id=b.people_id AND a.meta_type="ministry"');
 	
 	    echo'<div class="wrap church_admin"><h2>'.__('Add/Edit Small Group','church-admin').'</h2><form action="" method="post">';
@@ -133,29 +134,28 @@ function church_admin_edit_small_group($id)
 	    echo'<p><label>'.__('When','church-admin').'</label><input type="text" name="whenwhere"';
 	    if(!empty($data->whenwhere)) echo ' value="'.$data->whenwhere.'" ';
 	    echo'/></p>';
-	    echo'<script type="text/javascript"> var beginLat =';
-		if(empty($data->lat))  {$data->lat='51.50351129583287';}
-		echo $data->lat;
+	    
+		echo'<script type="text/javascript"> var beginLat =';
+		if(!empty($data->lat)) {echo $data->lat;}else {$data->lat='51.50351129583287';echo '51.50351129583287';}
 		echo '; var beginLng =';
-		if(empty($data->lng)) {$data->lng='-0.148193359375';}
-		echo $data->lng;
+		if(!empty($data->lng)) {echo $data->lng;}else {$data->lng='-0.148193359375';echo'-0.148193359375';}
 		echo';</script>';
 	
 	    echo'<p><label>'.__('Address','church-admin').'</label><input type="text" id="address" name="address"';
 	    if(!empty($data->address)) echo ' value="'.$data->address.'" ';
 	    echo'/></p>';
-		echo '<p><a href="#" id="geocode_address">'.__('Please click here to update map location','church-admin').'...</a><br/><span id="finalise" >Once you have updated your address, this map will show roughly where your address is.</span><input type="hidden" name="lat" id="lat" value="'.$data->lat.'"/><input type="hidden" name="lng" id="lng" value="'.$data->lng.'"/></p><div id="map" style="width:500px;height:300px"></div>';
+		echo '<p><a href="#" id="geocode_address">'.__('Please click here to update map location','church-admin').'...</a><br/><span id="finalise" >Once you have updated your address, this map will show roughly where your address is.</span><input type="hidden" name="lat" id="lat" value="'.$data->lat.'"/><input type="hidden" name="lng" id="lng" value="'.$data->lng.'"/></p><div id="map" style="width:500px;height:300px"></div><br/ style="clear:left">';
 		
   
 	    if($leaders)
 	    {//leaders available
-		$curr_leaders=unserialize($data->leader);
+		if(!empty($data->leader))$curr_leaders=unserialize($data->leader);
 		echo'<p><label>'.__('Leader','church-admin').'</label>';
 		echo'<select name="leader1">';
 		foreach($leaders AS $leader)
 		{
 		    echo'<option value="'.$leader->people_id.'" ';
-		    selected($curr_leaders[1],$leader->people_id);
+		    if(!empty($curr_leaders)) selected($curr_leaders[1],$leader->people_id);
 		    echo' >'.$leader->leader.'</option>';
 		}
 		echo'</select></p>';
@@ -165,7 +165,7 @@ function church_admin_edit_small_group($id)
 		foreach($leaders AS $leader)
 		{
 		    echo'<option value="'.$leader->people_id.'" ';
-		    selected($curr_leaders[2],$leader->people_id);
+		    if(!empty($curr_leaders))selected($curr_leaders[2],$leader->people_id);
 		    echo' >'.$leader->leader.'</option>';
 		}
 		echo'</select></p>';

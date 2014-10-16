@@ -31,7 +31,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 *   Google map integrations for small groups and directories
 
 *   Calendar - month to view, agenda view and nth day recurring events (eg 3rd Sunday)
-
+*  Facilities - manage facilities like rooms and equipment and their bookings.
 *   The calendar now includes that most powerful of planning tools - the year planner!
 
 == Installation ==
@@ -60,6 +60,11 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.5973 =
+* Fixed font size on post it notes
+* People can be in more then one small group
+* ssl proof the plugin, by using better formed include paths and uris
+* Fixed directory edit people bugs
 = 0.5970 =
 * Added icon and banner
 = 0.5969 =

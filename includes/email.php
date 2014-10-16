@@ -132,7 +132,7 @@ function church_admin_email_form()
 
     echo'<div id="poststuff">';
 
-    the_editor('','message',"", true);
+    wp_editor('','message');
 
     echo'</div>';
 
@@ -201,12 +201,12 @@ function church_admin_email_build()
     //Build Email
 
     //handle attachments
-
+$upload_dir = wp_upload_dir();
 if  ($_FILES['userfile1']['size']>0)
 
 {
 
-    $attachments['1'] = CHURCH_ADMIN_CACHE_PATH.$_FILES['userfile1']['name'];
+    $attachments['1'] = $upload_dir['basedir'].'church-admin-cache/'.$_FILES['userfile1']['name'];
 
   
 
@@ -220,7 +220,7 @@ if  ($_FILES['userfile2']['size']>0)
 
 {
 
-    $attachments[2] = CHURCH_ADMIN_CACHE_PATH.$_FILES['userfile2']['name'];
+    $attachments[2] = $upload_dir['basedir'].'church-admin-cache/'.$_FILES['userfile2']['name'];
 
      
 
@@ -234,7 +234,7 @@ if  ($_FILES['userfile3']['size']>0)
 
 {
 
-    $attachments[] = CHURCH_ADMIN_CACHE_PATH.$_FILES['userfile3']['name'];
+    $attachments[] = $upload_dir['basedir'].'church-admin-cache/'.$_FILES['userfile3']['name'];
 
     
 
@@ -314,7 +314,7 @@ if  ($_FILES['userfile3']['size']>0)
 
     //grab template
 
-    $message=file_get_contents(CHURCH_ADMIN_INCLUDE_PATH.'email_template.html');
+    $message=file_get_contents(plugin_dir_path(dirname(__FILE__)).'includes/email_template.html');
 
     //add initial paragraph entered by user
 
@@ -386,15 +386,15 @@ if  ($_FILES['userfile3']['size']>0)
 
     $filename='Email-'.date('Y-m-d-H-i-s').'.html';
 
-    $message=str_replace('[cache]','<p style="font-size:smaller;text-align:center;margin:0 auto;">'.__('Having trouble reading this?','church-admin').' - <a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">'.__('view in your web browser','church-admin').'</a></p>',$message);
+    $message=str_replace('[cache]','<p style="font-size:smaller;text-align:center;margin:0 auto;">'.__('Having trouble reading this?','church-admin').' - <a href="'.content_url('/uploads/church-admin-cache/'.$filename).'">'.__('view in your web browser','church-admin').'</a></p>',$message);
 
 
-
-    if(!is_dir(CHURCH_ADMIN_CACHE))mkdir(CHURCH_ADMIN_CACHE);
 
     
 
-    $handle=fopen(CHURCH_ADMIN_EMAIL_CACHE.$filename,"w")OR DIE("Couldn't open");
+    
+
+    $handle=fopen($upload_dir['basedir'].'/church-admin-cache/'.$filename,"w")OR DIE("Couldn't open");
 
     fwrite($handle, $message);  
 
@@ -444,11 +444,11 @@ if  ($_FILES['userfile3']['size']>0)
 
     echo'<p>'.__('The email will have Dear First Name, when it is sent out','church-admin').'!</p>';
 
-    echo '<iframe width="700" border="1" height="450" src="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">'.__('Please upgrade your browser to display the email!','church-admin').'</iframe>';
+    echo '<iframe width="700" border="1" height="450" src="'.content_url('/uploads/church-admin-cache/').$filename.'">'.__('Please upgrade your browser to display the email!','church-admin').'</iframe>';
 
-    echo'<h3>Use these social media buttons to post the email url...</h3><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=118790464849935&amp;xfbml=1"></script><fb:like href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'" send="false" width="450" show_faces="false" font="lucida grande"></fb:like></p>';
+    echo'<h3>Use these social media buttons to post the email url...</h3><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=118790464849935&amp;xfbml=1"></script><fb:like href="'.content_url('/uploads/church-admin-cache/').$filename.'" send="false" width="450" show_faces="false" font="lucida grande"></fb:like></p>';
 
-echo '<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-text="'.$_POST['subject'].'" data-url="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script> '  ;
+echo '<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-text="'.$_POST['subject'].'" data-url="'.content_url('/uploads/church-admin-cache/').$filename.'">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script> '  ;
 
     
 
@@ -610,7 +610,7 @@ function church_admin_send_message($email_id)
 
       foreach($_POST['role_id'] AS $key=>$value)$r[]='b.department_id='.$value;
 
-      $sql='SELECT  a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).')' ;
+      $sql='SELECT  a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.meta_type="ministry" b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).')' ;
 
       
 
@@ -630,7 +630,7 @@ function church_admin_send_message($email_id)
 
 	 {
 
-	    require_once(CHURCH_ADMIN_INCLUDE_PATH.'class.phpmailer.php');
+	    require_once(plugin_dir_path(dirname(__FILE__)).'includes/class.phpmailer.php');
 
 	    $mail = new PHPMailer();
 

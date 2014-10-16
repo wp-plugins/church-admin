@@ -13,7 +13,7 @@ function church_admin_address_list($member_type_id=1)
     echo'<div class="wrap" id="church-admin">
 	<div id="icon-index" class="icon32"><br/></div><h2>Address List for '.$member_type[$member_type_id].'</h2>
 	<div id="poststuff"><div id="post-body" class="metabox-holder columns-1">';
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
     echo'<form  method="get" action="">';
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
 	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
@@ -32,7 +32,7 @@ function church_admin_address_list($member_type_id=1)
     
     
     // number of total rows in the database
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
     if($items > 0)
     {
 	
@@ -138,7 +138,9 @@ function church_admin_edit_household($household_id=NULL)
 	}//end insert
 	else
 	{//update
-	   $success=$wpdb->query('UPDATE '.CA_HOU_TBL.' SET address="'.$sql['address'].'" , lat="'.$sql['lat'].'" , lng="'.$sql['lng'].'" , phone="'.$sql['phone'].'" WHERE household_id="'.esc_sql($household_id).'"');
+	   $sql='UPDATE '.CA_HOU_TBL.' SET address="'.$sql['address'].'" , lat="'.$sql['lat'].'" , lng="'.$sql['lng'].'" , phone="'.$sql['phone'].'" WHERE household_id="'.esc_sql($household_id).'"';
+	   //echo $sql;
+	   $success=$wpdb->query($sql);
 	}//update
 	if($success)
 	{
@@ -147,7 +149,7 @@ function church_admin_edit_household($household_id=NULL)
 	    echo'<div id="post-body" class="metabox-holder columns-2"><!-- meta box containers here -->';
 		
 		echo'<div class="updated fade"><p><strong>'.__('Household Edited','church-admin').' <br/>';
-		if(church_admin_level_check('Directory')) echo'<a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a>';
+		if(church_admin_level_check('Directory')) echo'<a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$member_type_id.'">'.__('Back to Directory','church-admin').'</a>';
 		echo'</strong></p></div>';
 	
 		church_admin_display_household($household_id);
@@ -237,7 +239,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		}
 		$sql=array();
 		foreach($_POST AS $key=>$value)$sql[$key]=esc_sql(stripslashes_deep($value));
-	
+		$sql['sg']=esc_sql(maybe_serialize($_POST['smallgroup_id']));
 		//handle date of birth
 		if(!empty($_POST['date_of_birth'])&& church_admin_checkdate($_POST['date_of_birth'])){$dob=esc_sql($_POST['date_of_birth']);}else{$dob='0000-00-00';}
 	
@@ -306,7 +308,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		if($people_id)
 		{//update
 			
-			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['smallgroup_id'].'",smallgroup_attendance="'.$sql['smallgroup_attendance'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
+			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['sg'].'",smallgroup_attendance="'.$sql['smallgroup_attendance'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
 		    $wpdb->query($query);
 			
 			
@@ -349,12 +351,12 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		//update meta
 		$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND meta_type="ministry"');
 		//if new small group then add small group leader to person's meta
-		if(!empty($_POST['group_name'])){church_admin_update_department('1',$people_id);}
+		if(!empty($_POST['group_name'])){church_admin_update_department('1',$people_id,'ministry');}
 		if(!empty($_POST['department']))
 		{ 
 			foreach($_POST['department'] AS $a=>$key)
 			{
-				if(array_key_exists($key,$departments)){church_admin_update_department($key,$people_id);}
+				if(array_key_exists($key,$departments)){church_admin_update_department($key,$people_id,'ministry');}
 			}
 		}
 		if(!empty($_POST['new_department'])&&$_POST['new_department']!='Add a new ministry')
@@ -365,7 +367,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 				$new=stripslashes($_POST['new_department']);
 				$departments[]=$new;
 				update_option('church_admin_departments',$departments);
-				church_admin_update_department(array_search($new,$departments),$people_id);
+				church_admin_update_department(array_search($new,$departments,'ministry'),$people_id);
 			}
 		}
 	}//only authorised people
@@ -374,7 +376,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		echo'<div id="post-body" class="metabox-holder columns-2"><!-- meta box containers here -->';
 		
 		echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/>';
-		if(church_admin_level_check('Directory')) echo'<a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$data->member_type_id.'">'.__('Back to Directory','church-admin').'</a>';
+		if(church_admin_level_check('Directory')) echo'<a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$sql['member_type_id'].'">'.__('Back to Directory','church-admin').'</a>';
 		echo'</strong></p></div>';
 	
 		church_admin_display_household($household_id);
@@ -409,7 +411,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		else
 		{
 			echo '<p><label>&nbsp;</label>';
-			echo '<img src="'.CHURCH_ADMIN_IMAGES_URL.'default-avatar.jpg" width="75" height="75"/>';
+			echo '<img src="'.plugins_url('/images/default-avatar.jpg',dirname(__FILE__) ).'" width="75" height="75"/>';
 			echo '</p>';
 		}
 		//email
@@ -424,14 +426,14 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		echo'<p><label>Sex</label>'.__('Male','church-admin').' <input type="radio" name="sex" value="1"';
 		if(!empty($data->sex) && $data->sex==1) echo' checked="checked" ';
 		echo ' /> '.__('Female','church-admin').' <input type="radio" name="sex" value="0"';
-		if($data->sex==0)  echo' checked="checked" ';
+		if(empty($data->sex)||$data->sex==0)  echo' checked="checked" ';
 		echo'/></p>';
 		//people_type
 		echo'<p><label>'.__('People Type','church-admin').'</label><select name="people_type_id">';
 		foreach($people_type AS $key=>$value)
 		{
 			echo'<option value="'.$key.'" ';
-			selected($key,$data->people_type_id);
+			if(!empty($data->people_type_id))selected($key,$data->people_type_id);
 			echo'>'.$value.'</option>';
 		}
 		echo'</select></p>';
@@ -453,7 +455,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		foreach($member_type AS $key=>$value)
 		{
 			echo'<input type="radio" name="member_type_id" value="'.$key.'"';
-			if($data->member_type_id==$key)echo' checked="checked" ';
+			if(!empty($data->member_type_id)&&$data->member_type_id==$key)echo' checked="checked" ';
 			echo ' />'.$value.'<br/>';
 	   
 		}
@@ -461,7 +463,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		echo'</span></p>';
 	
 	
-		$prev_member_types=unserialize($data->member_data);
+		if(!empty($data->member_type_id))$prev_member_types=unserialize($data->member_data);
 	
 	    echo'<p><label>'.__('Dates of Member Levels','church-admin').'</label><span style="display:inline-block">	';
 	    foreach($member_type AS $key=>$value)
@@ -499,8 +501,8 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		foreach($smallgroups AS $smallgroup)
 		{
 			
-			echo'<input type="checkbox" name="smallgroup_id" value="'.$smallgroup->id.'"';
-			if($smallgroup->id==$data->smallgroup_id) echo' checked="checked" ';
+			echo'<input type="checkbox" name="smallgroup_id[]" value="'.$smallgroup->id.'"';
+			if(!empty($data->smallgroup_id)&&$smallgroup->id==$data->smallgroup_id) echo' checked="checked" ';
 		echo'/>'.$smallgroup->group_name.'<br/>';
 		}
 		echo '</span></p>';
@@ -511,7 +513,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	
 		echo'<p><label>Or create new Small Group</label><span style="display:inline-block"><span style="float:left;width:150px">Group Name</span><input type="text" name="group_name"/><br style="clear:left"/><span style="float:left;width:150px">Leader?</span><input type="checkbox" name="leading"/><br style="clear:left;"/><span style="float:left;width:150px">Where &amp; When</span><input type="text" name="whenwhere"/></span></p>';
 		
-		if($data->user_id )
+		if(!empty($data->user_id ))
 		{
 			echo'<p><label>'.__('Wordpress User','church-admin').'</label><input type="hidden" name="ID" value="'.$data->user_id.'"/>';
 			$user_info=get_userdata($data->user_id);
@@ -582,7 +584,7 @@ function church_admin_display_household($household_id)
     
     $departments=get_option('church_admin_departments');
     $add_row=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($household_id).'"');
-    
+    if(empty($add_row))$add_row=new stdClass();
     if($add_row)
     {//address stored
 	if(!empty($add_row->address))
@@ -597,7 +599,9 @@ function church_admin_display_household($household_id)
 $out.= '; var beginLng =';
     if(!empty($data->lng)) {echo $data->lng;}else {echo'-0.148193359375';}
     echo';</script>';
-	if(!empty($add_row->lng))$map='<img src="http://maps.google.com/maps/api/staticmap?center='.$add_row->lat.','.$add_row->lng.'&zoom=15&markers='.$add_row->lat.','.$add_row->lng.'&size=500x300&sensor=false" alt="'.$address.'"/>';
+	if(empty($add_row->lng)){$add_row->lng='-0.148193359375';}
+	if(empty($add_row->lat)){$add_row->lat='51.50351129583287';}
+	$map='<img src="http://maps.google.com/maps/api/staticmap?center='.$add_row->lat.','.$add_row->lng.'&zoom=15&markers='.$add_row->lat.','.$add_row->lng.'&size=500x300&sensor=false" alt="'.$address.'"/>';
 	echo'<h2>Household Details</h2>';
 	
 	//grab people
@@ -644,7 +648,7 @@ $out.= '; var beginLng =';
 		}//photo available
 		else
 		{
-		    $photo= '<img src="'.CHURCH_ADMIN_IMAGES_URL.'default-avatar.jpg" width="75" height="75"/>';
+		    $photo= '<img src="'.plugins_url('images/default-avatar.jpg',dirname(__FILE__) ) .'" width="75" height="75"/>';
 		}
 		if(!empty($person->prefix)){$prefix=$person->prefix.' ';}else{$prefix='';}
 		echo'<tr class="sortable-row" id="'.$person->people_id.'"><td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$person->people_id.'&amp;household_id='.$household_id,'edit_people').'">'.__('Edit','church-admin').'</a></td><td><a onclick="return confirm(\'Are you sure you want to delete '.esc_html($person->first_name).' '.$prefix.esc_html($person->last_name).'?\');" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_people&amp;household_id='.$household_id.'&amp;people_id='.$person->people_id.'&amp;household_id='.$household_id,'delete_people').'">'.__('Delete','church-admin').'</a></td><td>'.$photo.'</td><td>'.esc_html($person->first_name).' '.$prefix.esc_html($person->last_name).'</a></td><td>'.$sex.'</td><td>'.$people_type[$person->people_type_id].'</td><td>'.$member_type[$person->member_type_id].'</td><td>'.implode(', ',$department).'</td><td>';
@@ -707,7 +711,7 @@ $("#sortable tbody.content").disableSelection();
 	}//no people
 	//end grab people
 	if(!empty($add_row->phone))echo'<p><label>'.__('Homephone','church-admin').' </label>'.$add_row->phone.'</p>';
-	echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$household_id,'edit_household').'">'.__('Edit Address','church-admin').' - </a>'.$address.'</p>';
+	echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$household_id,'edit_household').'">'.__('Edit Address','church-admin').'</a>: '.$address.'</p>';
 	echo'<p>'.$map.'</p>';
     }//end address stored
     else
@@ -729,7 +733,7 @@ function church_admin_migrate_users()
 	    if(!$check)
 	    {
 		$user_info=get_userdata($row->ID);
-		$address=$address=esc_sql(serialize(array('address_line1'=>"",'address_line2'=>"",'town'=>"",'county'=>"",'postcode'=>"")));
+		$address='';
 		$wpdb->query('INSERT INTO '.CA_HOU_TBL.'(member_type_id,address)VALUES("1","'.$address.'")');
 		$household_id=$wpdb->insert_id;
 		$wpdb->query('INSERT INTO '.CA_PEO_TBL.' (first_name,last_name,email,household_id,user_id,member_type_id,people_type_id,smallgroup_id,sex) VALUES("'.$user_info->first_name.'","'.$user_info->last_name.'","'.$user_info->user_email.'","'.$household_id.'","'.$row->ID.'","1","1","0","1")');
@@ -738,9 +742,7 @@ function church_admin_migrate_users()
 	
 	echo'<div class="updated fade"><p><strong>'.__('Wordpress Users migrated','church-admin').'</strong></p></div>';
     }
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
-	    add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
-	    do_meta_boxes('church-admin','advanced',null);
+   
     church_admin_address_list();
 }
 
@@ -774,7 +776,7 @@ function church_admin_move_person($id)
 			$household_id=(int)$_POST['household_id'];
 		}
 	    church_admin_display_household($household_id);
-	     require_once(CHURCH_ADMIN_INCLUDE_PATH.'admin.php');
+	     require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
 	    add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");
 	    do_meta_boxes('church-admin','advanced',null);
 	}

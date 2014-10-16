@@ -48,7 +48,7 @@ function load(lat,lng,xml_url) {
           });
        google.maps.event.addListener(marker, "click", function() {
          if (infowindow) infowindow.close();
-         infowindow = new google.maps.InfoWindow({content: information});
+         infowindow = new google.maps.InfoWindow({content:'<span style="color:black">'+ information+'</span>'});
          infowindow.open(map, marker);
        });
        return marker;

@@ -21,7 +21,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
       $results=$wpdb->get_results($sql);
       $items=$wpdb->num_rows;
       // number of total rows in the database
-      require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');
+      require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
       if($items > 0)
       {
 	  $p = new pagination;
@@ -170,7 +170,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
     $out.='</div><!--church_admin_address_map-->'."\r\n\t";
     }
    
-    $out.='<div class="church_admin_vcard" >'."\r\n\t\t".'<p>&nbsp;<a title="'.__('Edit Entry','church-admin').'" href="'.admin_url().'admin.php?page=church_admin/index.php&amp;action=church_admin_display_household&amp;household_id='.$ordered_row->household_id.'"><img src="'.CHURCH_ADMIN_IMAGES_URL.'user-edit-icon.png" width="32" height="32" alt="'.__('Edit Entry','church-admin').'"/></a><span><a title="'.__('Download Vcard','church-admin').'" href="'.home_url().'/?download=vcf&amp;vcf='.wp_create_nonce($ordered_row->household_id).'&amp;id='.$ordered_row->household_id.'"><img src="'.CHURCH_ADMIN_IMAGES_URL.'vcard-icon.png" width="32" height="32" alt="'.__('Download Vcard','church-admin').'"/></a></span>  <span style="float:right;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></p>'."\r\n\t".'</div><!--church_admin_vcard-->'."\r\n".'</div><!--church_admin_address-->'."\r\n";
+    $out.='<div class="church_admin_vcard" >'."\r\n\t\t".'<p>&nbsp;<a title="'.__('Edit Entry','church-admin').'" href="'.admin_url().'admin.php?page=church_admin/index.php&amp;action=church_admin_display_household&amp;household_id='.$ordered_row->household_id.'"><img src="'.plugins_url('images/user-edit-icon.png',dirname(__FILE__) ).'" width="32" height="32" alt="'.__('Edit Entry','church-admin').'"/></a><span><a title="'.__('Download Vcard','church-admin').'" href="'.home_url().'/?download=vcf&amp;vcf='.wp_create_nonce($ordered_row->household_id).'&amp;id='.$ordered_row->household_id.'"><img src="'.plugins_url('images/vcard-icon.png',dirname(__FILE__) ).' " width="32" height="32" alt="'.__('Download Vcard','church-admin').'"/></a></span>  <span style="float:right;">Updated '.human_time_diff( strtotime( $address->ts ) ).' ago</span></p>'."\r\n\t".'</div><!--church_admin_vcard-->'."\r\n".'</div><!--church_admin_address-->'."\r\n";
   }
   return $out;
 }

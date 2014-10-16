@@ -11,6 +11,9 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
  * 
  */
     global $wpdb,$ca_podcast_settings;
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
 	$header='';
 	if(!empty($series_id)||!empty($speaker_name))$header.='<p><a href="'.get_permalink().'"><strong>'.__('Show all sermons','church-admin').'</strong></a></p>';
 	//Add filter by preacher name
@@ -48,7 +51,7 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
 			$header.=implode(', ',$series_header).'</p>';
 	 }
 	
-	require_once(CHURCH_ADMIN_INCLUDE_PATH.'pagination.class.php');//pagination
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
 	$out='';
     if($file_id){return ca_display_file($file_id);}
 	elseif($speaker_name)
@@ -129,6 +132,9 @@ function ca_display_file($file_id=NULL)
  * 
  */
     global $wpdb,$ca_podcast_settings;
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
     if(!$file_id)return("<p>There is no file to display</p>");
     $template=get_option('ca_podcast_file_template');
     $sql='SELECT a.*,b.* FROM '.CA_FIL_TBL.' a, '.CA_SERM_TBL.' b WHERE a.series_id=b.series_id AND a.file_id="'.esc_sql($file_id).'"';
@@ -137,28 +143,30 @@ function ca_display_file($file_id=NULL)
     $data->speaker_name=$data->speaker;
     if($data)
     {
-        $template=str_replace('[FILE_TITLE]',$data->file_title,$template);
+        $template=str_replace('[VIDEO_URL]',"\r\n".$data->video_url."\r\n",$template);
+		$template=str_replace('[FILE_TITLE]',$data->file_title,$template);
 		$template=str_replace('[FILE_ID]',$data->file_id,$template);
 		$template=str_replace('[FILE_DATE]',mysql2date(get_option('date_format'),$data->pub_date),$template);
-        $template=str_replace('[FILE_NAME]',CA_POD_URL.$data->file_name,$template);
+        $template=str_replace('[FILE_NAME]',$url.$data->file_name,$template);
 		$template=str_replace('[FILE_PLAYS]','Played: <span class="plays'.$data->file_id.'">'.church_admin_plays($data->file_id).'</span> times',$template);
-        $template=str_replace('[FILE_URI]',CA_POD_URL.$data->file_name,$template);
-        $template=str_replace('[FILE_DOWNLOAD]','<a href="'.CA_POD_URL.$data->file_name.'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
-        if(file_exists(CA_POD_PTH.$data->transcript))
+        $template=str_replace('[FILE_URI]',$url.$data->file_name,$template);
+        $template=str_replace('[FILE_DOWNLOAD]','<a href="'.$url.$data->file_name.'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
+        if(file_exists($path.$data->transcript))
         {
-			$template=str_replace('[TRANSCRIPTION]','<a href="'.CA_POD_URL.$data->transcript.'" title="'.esc_html($data->transcript).'">'.esc_html($data->transcript).'</a>',$template);
+			$template=str_replace('[TRANSCRIPT]','<a href="'.$url.$data->transcript.'" title="'.esc_html($data->transcript).'">'.esc_html($data->transcript).'</a>',$template);
         
 		}
 		else
 		{
-			$template=str_replace('[TRANSCRIPTION]','',$template);
+			$template=str_replace('[TRANSCRIPT]','',$template);
         
 		}	
         $template=str_replace('[FILE_DESCRIPTION]',$data->file_description,$template);
         $template=str_replace('[SERIES_NAME]','<a href="'.get_permalink().'?series_id='.$data->series_id.'">'.$data->series_name.'</a>',$template);
         $template=str_replace('[SPEAKER_NAME]','<a href="'.get_permalink().'?speaker_name='.urlencode($data->speaker_name).'">'.$data->speaker_name.'</a>',$template);
-        $template=str_replace('[SPEAKER_DESCRIPTION]',$data->speaker_description,$template);
-        return $template;
+        //$template=str_replace('[SPEAKER_DESCRIPTION]',$data->speaker_description,$template);
+      
+		return $template;
     }
     else
     {

@@ -16,15 +16,8 @@ function church_admin_install()
     global $wpdb,$church_admin_version;
     $wpdb->show_errors();
     //household table    
-    $backup=get_option('church_admin_backup_filename');
-	if(empty($backup))unlink(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz');
-	if(!file_exists(CHURCH_ADMIN_EMAIL_CACHE.'index.php'))
-	{
-		$data='<?php //nothing here ?>';
-		$fp = fopen(CHURCH_ADMIN_EMAIL_CACHE.'index.php', 'w');
-		fwrite($fp,$data);
-		fclose($fp);
-	}
+    
+	
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOU_TBL.'"') != CA_HOU_TBL)
     {
         $sql = 'CREATE TABLE '.CA_HOU_TBL.' ( address TEXT, lat VARCHAR(50),lng VARCHAR (50), phone VARCHAR(15),member_type_id INT(11),ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,household_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (household_id));';
@@ -219,6 +212,27 @@ function church_admin_install()
 		}
     }
 //end migrate old tables
+//make smallgrpup_id a serialized area in people table
+if(OLD_CHURCH_ADMIN_VERSION<0.5973)
+{
+	$wpdb->query('ALTER TABLE '.CA_PEO_TBL.' CHANGE `smallgroup_id` `smallgroup_id` TEXT NOT NULL');
+	$people=$wpdb->get_results('SELECT smallgroup_id, people_id FROM '.CA_PEO_TBL);
+	if(!empty($people))
+	{
+		foreach($people AS $person)
+		{
+			$sg=maybe_unserialize($person->smallgroup_id);
+			if(!is_array($sg))
+			{
+				$s=array($sg);
+				$sql='UPDATE '.CA_PEO_TBL.' SET smallgroup_id="'.esc_sql(serialize($s)).'" WHERE people_id="'.esc_sql($person->people_id).'"';
+				
+				$wpdb->query($sql);
+			}
+		}
+	}
+}
+
     
     //install small group table
     $table_name = $wpdb->prefix."church_admin_smallgroup";
@@ -520,6 +534,22 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "initials"')!='initials
     $sql='ALTER TABLE  '.CA_RST_TBL.' ADD initials INT(1)';
     $wpdb->query($sql);
 }
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "facilities_id"')!='facilities_id')
+{
+    $sql='ALTER TABLE  '.CA_DATE_TBL.' ADD facilities_id INT(11) AFTER event_id';
+    $wpdb->query($sql);
+}
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "general_calendar"')!='general_calendar')
+{
+    $sql='ALTER TABLE  '.CA_DATE_TBL.' ADD general_calendar INT(1) NOT NULL DEFAULT "1" AFTER `facilities_id`';
+    $wpdb->query($sql);
+}
+if($wpdb->get_var('SHOW TABLES LIKE "'.CA_FAC_TBL.'"')!=CA_FAC_TBL)
+{
+	$sql="CREATE TABLE IF NOT EXISTS ". CA_FAC_TBL ."  (facility_name TEXT,facilities_order INT(11),  facilities_id INT(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`facilities_id`))" ;
+        $wpdb->query ($sql);
+}
+
 //make sure tables are UTF8  
     $sql='ALTER TABLE '. CA_ATT_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
@@ -596,7 +626,7 @@ if(empty($departments))
     }
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_FIL_TBL.'"') != CA_FIL_TBL)
     {
-        $sql='CREATE TABLE  '.CA_FIL_TBL.' (`file_name` TEXT NOT NULL ,`file_title` TEXT NOT NULL ,`file_description` TEXT NOT NULL ,`service_id` INT(11),`bible_passages` TEXT NOT NULL,`private` INT(1) NOT NULL DEFAULT "0",`length` TEXT NOT NULL, `pub_date` DATETIME, last_modified DATETIME, `series_id` INT( 11 ) NOT NULL ,`transcript` TEXT, `speaker` TEXT NOT NULL,`file_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
+        $sql='CREATE TABLE  '.CA_FIL_TBL.' (`file_name` TEXT NOT NULL ,`file_title` TEXT NOT NULL ,`file_description` TEXT NOT NULL ,`service_id` INT(11),`bible_passages` TEXT NOT NULL,`private` INT(1) NOT NULL DEFAULT "0",`length` TEXT NOT NULL, `pub_date` DATETIME, last_modified DATETIME, `series_id` INT( 11 ) NOT NULL ,`transcript` TEXT,`video_url` TEXT, `speaker` TEXT NOT NULL,`file_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
         $wpdb->query($sql);
     }
     if($wpdb->get_var('SHOW TABLES LIKE "'.CA_BIB_TBL.'"') != CA_BIB_TBL)
@@ -650,6 +680,11 @@ if(empty($departments))
         );
         
     }
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "video_url"')!='video_url')
+{
+    $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD video_url TEXT AFTER `transcript`';
+    $wpdb->query($sql);
+}
 //change way speakers are stored for v0.5963
 $sermons=$wpdb->get_results('SELECT * FROM '.CA_FIL_TBL);
 if(!empty($sermons) && OLD_CHURCH_ADMIN_VERSION <0.5963)

@@ -3,7 +3,7 @@
 function church_admin_cron_pdf()
 {
     //setup pdf
-    require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
     $pdf=new FPDF();
     $pdf->AddPage('P','A4');
     $pdf->SetFont('Arial','B',24);
@@ -12,7 +12,7 @@ function church_admin_cron_pdf()
     if (PHP_OS=='Linux')
     {
     $phppath='/usr/local/bin/php -f ';
-    $cronpath=CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php';
+    $cronpath=plugin_dir_path(dirname(__FILE__)).'includes/cronemail.php';
     $command=$phppath.$cronpath;
     
     
@@ -21,7 +21,7 @@ function church_admin_cron_pdf()
     
     $pdf->MultiCell(0, 10, $text );
  
-    $pdf->Image(CHURCH_ADMIN_IMAGES_PATH.'cron-job1.jpg','10','65','','','jpg','');
+    $pdf->Image(plugin_dir_path( dirname(__FILE__) ).'images/cron-job1.jpg','10','65','','','jpg','');
     $pdf->SetXY(10,180);
     $text="In the common settings option - select 'Once an Hour'. \r\nIn 'Command to run' put this:\r\n".$command."\r\n and then click Add Cron Job. Job Done. Don't forget to test it by sending an email to yourself at a few minutes before the hour! ";
     $pdf->MultiCell(0, 10, $text );
@@ -40,85 +40,146 @@ function church_admin_cron_pdf()
 function church_admin_smallgroup_pdf($member_type_id)
 {
     global $wpdb,$member_type;
-require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
+require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
 //cache small group pdf
 $wpdb->show_errors();
-$smallgroups=array();
+$smallgroups=$groupnames=array();
+$count=0;
 $leader=array();
-
-//grab people
-$memb=explode(',',esc_sql($member_type_id));
-foreach($memb AS $key=>$value){if(ctype_digit($value))$membsql[]='a.member_type_id='.$value;}
-if(!empty($membsql)) {$memb_sql='  ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
-$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name,a.smallgroup_attendance, b.group_name FROM '.CA_PEO_TBL.' a,'.CA_SMG_TBL.' b WHERE   '.$memb_sql.' AND a.smallgroup_id=b.id ORDER BY b.smallgroup_order,a.smallgroup_attendance,a.last_name ';
-$results = $wpdb->get_results($sql);
-$gp=0;
-$count=array();
-$person=1;
-foreach ($results as $row) 
+//get groups
+$results=$wpdb->get_results('SELECT group_name,id FROM '.CA_SMG_TBL);
+if(!empty($results))
+{
+	foreach($results AS $row){$smallgroups[$row->id]=array('regular'=>array(),'irregular'=>array(),'connected'=>array());$groupnames[$row->id]=iconv('UTF-8', 'ISO-8859-1',$row->group_name);}
+	
+	//grab people
+	if(!empty($member_type_id)&&!is_array($member_type_id)){$memb=explode(',',esc_sql($member_type_id));}else{$memb=$member_type_id;}
+	foreach($memb AS $key=>$value){if(ctype_digit($value))$membsql[]='member_type_id='.$value;}
+	if(!empty($membsql)) {$memb_sql='  ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+	$sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name,smallgroup_attendance,smallgroup_id FROM '.CA_PEO_TBL.'  WHERE   '.$memb_sql.'  ORDER BY smallgroup_attendance,last_name ';
+	$peopleresults = $wpdb->get_results($sql);
+	
+	
+	$gp=0;
+	
+	$person=1;
+	foreach ($peopleresults as $people) 
     {
-        $row->name=stripslashes($row->name);
-        if(empty($smallgroups[$row->group_name])){$smallgroups[$row->group_name]=__('Regular Attenders','church-admin')."\n";$current_attendance=1;}
-        if(empty($count[$row->group_name])){$count[$row->group_name]=1;}else{$count[$row->group_name]++;}
-		if($row->smallgroup_attendance!=$current_attendance)
+		
+        $people->name=stripslashes($people->name);
+		$sg=maybe_unserialize($people->smallgroup_id);
+		$person_gp_count=count($sg);
+		if($person_gp_count>1){$count++;}
+		foreach($sg AS $key=>$sg_id)
 		{
-			switch ($row->smallgroup_attendance)
-			{
-				case'1':$smallgroups[$row->group_name].="\n".__('Regular Attenders','church-admin')."\n";$current_attendance=1;$count[$row->group_name]=1;break;
-				case'2':$smallgroups[$row->group_name].="\n".__('Irregular Attenders','church-admin')."\n";$current_attendance=2;$count[$row->group_name]=1;break;
-				case'3':$smallgroups[$row->group_name].="\n".__('Connected','church-admin')."\n";$current_attendance=3;$count[$row->group_name]=1;break;
-			}
+			if($person_gp_count==1 && !empty($sg_id))$count++;//only increment count if person is one existing group
+				switch ($people->smallgroup_attendance)
+				{
+					case'1':$smallgroups[$sg_id]['regular'][]=iconv('UTF-8', 'ISO-8859-1',$people->name);break;
+					case'2':$smallgroups[$sg_id]['irregular'][]=iconv('UTF-8', 'ISO-8859-1',$people->name);break;
+					case'3':$smallgroups[$sg_id]['connected'][]=iconv('UTF-8', 'ISO-8859-1',$people->name);break;
+					default:$smallgroups[$sg_id]['regular'][]=iconv('UTF-8', 'ISO-8859-1',$people->name);break;
+				}
+			
 		}
-        $smallgroups[$row->group_name].=$count[$row->group_name].') '.iconv('UTF-8', 'ISO-8859-1',$row->name)."\n";
-        $person++;
-
+       
     }
-$groupname=array_keys($smallgroups);
-$noofgroups=$wpdb->get_row('SELECT COUNT(id) AS no FROM '.CA_SMG_TBL);
-$counter=$noofgroups->no;
+	
+	$noofgroups=$wpdb->get_row('SELECT COUNT(id) AS no FROM '.CA_SMG_TBL);
+	$counter=$noofgroups->no;
 
-$pdf=new FPDF();
-$pageno=0;
-$x=10;
-$y=20;
-$w=1;
-$width=55;
-$pdf->AddPage('L',get_option('church_admin_pdf_size'));
-$pdf->SetFont('Arial','B',16);
-$next_sunday=strtotime("this sunday");
-$whichtype=array();
-foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
-
-$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y",$next_sunday).'  '.$person.' '.__('people','church-admin');
-$pdf->Cell(0,10,$text,0,2,'C');
-$pageno+=1;
-
+	$pdf=new FPDF();
+	$pageno=0;
+	$x=10;
+	$y=20;
+	$w=1;
+	$width=55;
+	$pdf->AddPage('L',get_option('church_admin_pdf_size'));
+	$pdf->SetFont('Arial','B',16);
+	
+	$whichtype=array();
+	foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
+	$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y").'  '.$count.' '.__('people','church-admin');
+	$pdf->Cell(0,10,$text,0,2,'C');
+	$pageno+=1;
 
 
-for($z=0;$z<=$counter-1;$z++)
+
+	foreach($groupnames AS $z=>$groupname)
 	{
-	if($w==6)
-	{
-	  $pdf->AddPage('L','A4');
-	  $pdf->SetFont('Arial','B',16);
-	  $next_sunday=strtotime("this sunday");
-	  $text=__('Small Group List','church-admin').' '.date("d-m-Y",$next_sunday);
-	  $pdf->Cell(0,10,$text,0,2,C);
-	  $x=10;
-	  $y=20;
-	  $w=1;
+		$text='';
+		if($w==6)
+		{
+			$pdf->SetFont('Arial','B',16);
+			$pdf->AddPage('L',get_option('church_admin_pdf_size'));
+			
+			$whichtype=array();
+			foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
+			$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y").'  '.$count.' '.__('people','church-admin');
+			$pdf->Cell(0,10,$text,0,2,'C');
+			$x=10;
+			$y=20;
+			$w=1;
+		}
+		$newx=$x+(($w-1)*$width);
+		if($pageno>1) {$newx=$x+(($z-($pageno*5))*$width);}
+		$pdf->SetXY($newx,$y);
+		$pdf->SetFont('Arial','B',10);
+		$pdf->Cell($width,8,iconv('UTF-8', 'ISO-8859-1',$groupname),1,1,'C');
+		$pdf->SetFont('Arial','',10);
+		$pdf->SetXY($newx,$y+8);
+		if(!empty($smallgroups[$z]['regular']))
+		{
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Cell($width,5,__('Regular','church-admin')."\n",'LR',2,'L');
+			$pdf->SetFont('Arial','',10);
+			$text='';
+			for($a=0;$a<count($smallgroups[$z]['regular']);$a++)
+			{
+				$b=$a+1;
+				$text.=$b.') '.$smallgroups[$z]['regular'][$a]."\n";
+			}
+			$pdf->MultiCell($width,5,$text."\n",'LR');
+			
+			$pdf->SetX($newx);
+		}
+		if(!empty($smallgroups[$z]['irregular']))
+		{
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Cell($width,5,__('Irregular','church-admin')."\n",'LR',2,'L');
+			$pdf->SetFont('Arial','',10);
+			$text='';
+			for($a=0;$a<count($smallgroups[$z]['irregular']);$a++)
+			{
+				$b=$a+1;
+				$text.=$b.') '.$smallgroups[$z]['irregular'][$a]."\n";
+			}
+			$pdf->MultiCell($width,5,$text."\n",'LR');
+			
+		
+			$pdf->SetX($newx);
+		}
+		if(!empty($smallgroups[$z]['connected']))
+		{
+			$pdf->SetFont('Arial','B',10);
+			$pdf->Cell($width,5,__('Connected','church-admin')."\n",'LR',2,'L');
+			$pdf->SetFont('Arial','',10);
+			$text='';
+			for($a=0;$a<count($smallgroups[$z]['connected']);$a++)
+			{
+				$b=$a+1;
+				$text.=$b.') '.$smallgroups[$z]['connected'][$a]."\n";
+			}
+			$pdf->MultiCell($width,5,$text."\n",'LR');
+			
+			
+			$pdf->SetX($newx);
+		}
+		$pdf->Cell($width,0,"",'LB',2,'L');
+		$w++;
 	}
-	$newx=$x+(($w-1)*$width);
-	if($pageno>1) {$newx=$x+(($z-($pageno*5))*$width);}
-	$pdf->SetXY($newx,$y);
-	$pdf->SetFont('Arial','B',10);
-	$pdf->Cell($width,8,iconv('UTF-8', 'ISO-8859-1',$groupname[$z]),1,1,'C');
-	$pdf->SetFont('Arial','',10);
-	$pdf->SetXY($newx,$y+8);
-	$pdf->MultiCell($width,5,iconv('UTF-8', 'ISO-8859-1',$smallgroups[$groupname[$z]]),1,'L');
-	$w++;
-	}
-$pdf->Output();
+	$pdf->Output();
+}
 }
 
 
@@ -127,7 +188,7 @@ function church_admin_address_pdf($member_type_id=1)
 
 //update 2014-03-19 to allow for multiple surnames
 	//initilaise pdf
-	require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
 	//Title
 	$pdf=new FPDF();
 	$pdf->SetAutoPageBreak(1,10);
@@ -247,80 +308,7 @@ $sql='SELECT household_id FROM '.CA_PEO_TBL.$memb_sql.'  GROUP BY household_id O
 	$pdf->Ln(5);
     }
    
-   
-	
-/*  foreach($results AS $ordered_row)
-  {
-      $address=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'"');
-      
-      $people_results=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($ordered_row->household_id).'" ORDER BY people_type_id ASC,sex DESC');
-      $adults=$children=$emails=$mobiles=array();
-      $prefix='';
-      foreach($people_results AS $people)
-	{
-	  if($people->people_type_id=='1')
-	  {
-		if(!empty($people->prefix))$prefix= $people->prefix.' '; 
-	    $last_name=$prefix.$people->last_name;
-		$adults[$last_name][]=$people->first_name;
-	    if(!empty($people->email)&&$people->email!=end($emails)) $emails[$people->first_name]=iconv('UTF-8', 'ISO-8859-1',$people->email);
-	    if(!empty($people->mobile)&&$people->mobile!=end($mobiles))$mobiles[$people->first_name]=iconv('UTF-8', 'ISO-8859-1',$people->mobile);
-	  }
-	  else
-	  {
-	    $children[]=iconv('UTF-8', 'ISO-8859-1',$people->first_name);
-	  }
-	  
-	}
-	array_filter($adults);$adultline=array();
-	foreach($adults as $lastname=>$firstnames){$adultline[]=implode(" & ",$firstnames).' '.$lastname;}
-	$addresses['address'.$counter]['name']=iconv('UTF-8', 'ISO-8859-1',implode(" & ",$adultline));
-	$addresses['address'.$counter]['kids']=implode(" , ", $children);
-	if(!empty($address->address))$addresses['address'.$counter]['address']=iconv('UTF-8', 'ISO-8859-1',$address->address);
-	$addresses['address'.$counter]['email']=iconv('UTF-8', 'ISO-8859-1',implode(", \n",array_filter($emails)));
-	$addresses['address'.$counter]['mobile']=iconv('UTF-8', 'ISO-8859-1',implode(", \n",array_filter($mobiles)));
-	$addresses['address'.$counter]['phone']=iconv('UTF-8', 'ISO-8859-1',$address->phone);
-	$counter++;
-  }
-  
-//start of cache address-list.pdf    
-$pdf=new FPDF();
-$pageno=0;
-$x=10;
-$y=30;
-$width=55;
-global $pageno;
-if(!function_exists('newpage'))
-{function newpage($pdf)
-{
-$pdf->AddPage('P',get_option('church_admin_pdf_size'));
-$pdf->SetFont('Arial','B',24);
-$text='Address List '.date("d-m-Y");
-$pdf->Cell(0,20,$text,0,2,C);
-$pdf->SetFont('Arial','',12);
-$pageno+=1;
-}
-}
-newpage($pdf);
-for($z=0;$z<=$counter-1;$z++)
-    {
-        if($z/12>0&&$z%12==0) newpage($pdf);//every 13 addresses new page is called
-    if(!empty($addresses['address'.$z][name]))
-    {
-        $pdf->SetFont('Arial','B',10);
-           if(!empty($addresses['address'.$z][kids])){$pdf->Cell(100,5,$addresses['address'.$z][name]." ({$addresses['address'.$z][kids]})",0,0,L);}
-        else{$pdf->Cell(100,5,$addresses['address'.$z][name],0,0,L);}
-        $pdf->SetFont('Arial','',10);
-        if(!empty($addresses['address'.$z][phone])){$pdf->Cell(80,5,$addresses['address'.$z][phone],0,1,R);}else{$pdf->Cell(80,5,$addresses['address'.$z][mobile],0,1,R);}
-        $pdf->SetFont('Arial','',10);
-        $pdf->Cell(100,5,$addresses['address'.$z][address],0,0,L);
-        if(!empty($addresses['address'.$z][phone])){$pdf->Cell(80,5,$addresses['address'.$z][mobile],0,1,R);}else{$pdf->Ln();}
-        
-        $pdf->Cell(0,5,$addresses['address'.$z][email],0,1,L);
-        $pdf->Ln();
-    }
-    }
-*/
+ 
 $pdf->Output();
 
 
@@ -463,7 +451,7 @@ function ca_vcard($id)
 		}
 	}
   //prepare vcard
-require_once(CHURCH_ADMIN_INCLUDE_PATH.'vcf.php');
+require_once(plugin_dir_path(dirname(__FILE__)).'includes/vcf.php');
 $v = new vCard();
 if(!empty($add_row->phone))$v->setPhoneNumber($add_row->phone, "PREF;HOME;VOICE");
 if(!empty($mobiles))$v->setPhoneNumber("{$mobiles['0']}", "CELL;VOICE");
@@ -504,11 +492,12 @@ function church_admin_year_planner_pdf($initial_year)
     if(empty($initial_year))$initial_year==date('Y');
     global $wpdb;
 //check cache admin exists
-$dir=CHURCH_ADMIN_CACHE_PATH;
+$upload_dir = wp_upload_dir();
+$dir=$upload_dir['basedir'].'/church-admin-cache/';
 
 
 //initialise pdf
-require_once(CHURCH_ADMIN_INCLUDE_PATH."fpdf.php");
+require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
 $pdf=new FPDF();
 $pdf->AddPage('L','A4');
 
@@ -662,7 +651,7 @@ function church_admin_rota_pdf($service_id=1)
     $wpdb->show_errors();
 	$percent=array();
 	$headers=array();
-	require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
 	
 	$pdf=new FPDF();
 	
@@ -753,9 +742,7 @@ function church_admin_small_group_xml()
 	if(!empty($results))
 	{
 		$color_def = array
-	('1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",
-
-		8  => "FF7F00",	9  => "7F7F7F",	10 => "BFBFBF",	11 => "007F00",
+	('1'=>"FF0000",'2'=>"00FF00",'3'=>"0000FF",'4'=>"FFF000",'5'=>"00FFFF",'6'=>"FF00FF",'7'=>"CCCCCC",	8  => "FF7F00",	9  => "7F7F7F",	10 => "BFBFBF",	11 => "007F00",
 		12 => "7FFF00",	13 => "00007F",	14 => "7F0000",	15 => "7F4000",
 		16 => "FF9933",	17 => "007F7F",	18 => "7F007F",	19 => "007F7F",
 		20 => "7F00FF",	21 => "3399CC",	22 => "CCFFCC",	23 => "006633",
@@ -899,7 +886,7 @@ function church_admin_ministry_pdf()
 	
 	}
 	
-	require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
 	$pdf=new FPDF();
 	$pdf->AddPage('L',get_option('church_admin_pdf_size'));
 	
@@ -954,7 +941,7 @@ function church_admin_hope_team_pdf()
 	
 	}
 	
-	require_once(CHURCH_ADMIN_INCLUDE_PATH.'fpdf.php');
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
 	$pdf=new FPDF();
 	$pdf->AddPage('P',get_option('church_admin_pdf_size'));
 	

@@ -11,41 +11,35 @@ function church_admin_front_admin()
     
     $user_permissions=get_option('church_admin_user_permissions');
     
-    ?>
-    <div class="wrap" id="church-admin">
-	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?></h2>
-	<div id="poststuff">
+    echo'<div class="wrap" id="church-admin"><div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v'.$church_admin_version.'</h2>
+	<div id="poststuff"><div class="church_admin_left" ><h3>Plugin News</h3><p><label>'.__('If you find the plugin helpful, please contribute!','church-admin').'</label>
+	<form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>';
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/news-feed.php');
+	echo church_admin_news_feed();
+	echo'</div><div class="church_admin_left" ><h3>Rollup Worship banners</h3><p><a href="http://www.worshipbanners.co.uk"  class="alignleft" ><img src="'.plugins_url('images/roll-up-banner-examples.PNG',dirname(__FILE__) ).'"  alt="Worship Banners"/></a><p>Now with mainland Europe Delivery! <a href="http://www.worshipbanners.co.uk">Why not have a look?</a></p></div>';
+	//echo '<div class="church_admin_left"><h3>Gift Aid Envelopes for UK Churches</h3><p><img src="'.plugins_url('images/gift-aid-envelope.png',dirname(__FILE__) ).'"  alt="Gift Aid Envelope"/> We print and deliver gift aid envelopes with the latest HMRC wording, your church logo and charity details.<br/>1000 one colour DL size Gift Aid envelopes delivered for &pound;100</p></div>';
+	echo'<div class="clear"></div>';
 	
-	<div class="church_admin_left" ><p>
-	<?php    echo '<p><label>'.__('If you find the plugin helpful, please contribute!','church-admin').'</label>';?>
-	<form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>
 		
-		<?php require_once(CHURCH_ADMIN_INCLUDE_PATH.'news-feed.php');echo church_admin_news_feed();?>
-		</div>
-	<div class="church_admin_left" ><p>
-		<a href="http://www.worshipbanners.co.uk" class="alignleft" ><img src="<?php echo CHURCH_ADMIN_IMAGES_URL;?>roll-up-banner-examples.PNG" width="300" height="182" alt="Worship Banners"/></a>
-		<br/><h3><a href="http://www.worshipbanners.co.uk">Worshipbanners.co.uk</a></h3>
-		The plugin author has recently started a business selling rollup banners to use in Churches.<br/> <a href="http://www.worshipbanners.co.uk">Why not have a look?</a>
-	</p>
-	</div><div class="clear"></div>
-	
-		<?php if(file_exists(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz')){unlink(CHURCH_ADMIN_EMAIL_CACHE.'Church_Admin_Backup.sql.gz');}
+		$upload_dir = wp_upload_dir();
+		$path=$upload_dir['basedir'];
+		if(file_exists($path.'/church-admin-cache/Church_Admin_Backup.sql.gz')){unlink($path.'church-admin-cache/Church_Admin_Backup.sql.gz');}
 	$filename=get_option('church_admin_backup_filename');
 			
-			if(!empty($filename) && file_exists(CHURCH_ADMIN_EMAIL_CACHE.$filename)){echo '<h3>A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3>';}?>	  <!-- #post-body .metabox-holder goes here -->
-		<div id="post-body" class="metabox-holder columns-1">
-		    <!-- meta box containers here -->
-		    <form  method="get" action="">
-		        <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
+			if(!empty($filename) && file_exists($path.'/church-admin-cache/'.$filename)){echo '<h3 style="color:red">A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3> ';}
+			echo' <!-- #post-body .metabox-holder goes here --><div id="post-body" class="metabox-holder columns-1"><!-- meta box containers here -->    <form  method="get" action="">';
+		    wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
 		    wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
 			echo'</form>';
 			
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");}
-			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'), "church_admin_shortcodes_meta_box", "church-admin");
+			if(church_admin_level_check('Calendar')){  add_meta_box("church-admin-facilities", __('Facilities', 'church-admin'), "church_admin_facilities_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'),
+			"church_admin_shortcodes_meta_box", "church-admin");}
 			if(church_admin_level_check('Bulk Email')){	add_meta_box("church-admin-communications", __('Communications', 'church-admin'), "church_admin_communications_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-recent-people-activity", __('Recent People Activity', 'church-admin'), "church_admin_recent_people_activity_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");}
-			if(church_admin_level_check('Sermons'))	add_meta_box("church-admin-sermons", __('Sermon mp3 podcasting', 'church-admin'), "church_admin_sermons_meta_box", "church-admin");}
+			if(church_admin_level_check('Sermons'))	{add_meta_box("church-admin-sermons", __('Sermon mp3 podcasting', 'church-admin'), "church_admin_sermons_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-hope-team", __('Hope Team', 'church-admin'), "church_admin_hope_team_meta_box", "church-admin");}
 			
 			if(church_admin_level_check('Directory')){ 	add_meta_box("church-admin-departments", __('Ministries', 'church-admin'), "church_admin_departments_meta_box", "church-admin");}
@@ -58,18 +52,10 @@ function church_admin_front_admin()
 			if(church_admin_level_check('Service')){  add_meta_box("church-admin-services", __('Services', 'church-admin'), "church_admin_services_meta_box", "church-admin");}
 			$activation_errors=get_option('church_admin_plugin_error');
 			if(!empty($activation_errors)){  add_meta_box("church-admin-errors", __('Activation Errors', 'church-admin'),'church_admin_errors_meta_box','church-admin');}
-			do_meta_boxes('church-admin','advanced',null);?>
-		    </form>
-		</div>
-	</div>
-    </div>
-    <script type="text/javascript">
-	jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
-			       
-				postboxes.add_postbox_toggles( 'church-admin');
-				});
-    </script>
-    <?php
+			do_meta_boxes('church-admin','advanced',null);
+			echo'</form></div><!--postbody--></div><!--poststuff--> </div><!--wrap--><script type="text/javascript">jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");			       
+				postboxes.add_postbox_toggles( "church-admin");
+				});</script>';
 
 
 }
@@ -85,13 +71,17 @@ function church_admin_hope_team_meta_box()
 }
 function church_admin_backup_meta_box()
 {
+$filename=get_option('church_admin_backup_filename');
 //show backup
     echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=refresh_backup','refresh_backup').'">Refresh Church Admin DB Backup </a></p>';
-		$filename=get_option('church_admin_backup_filename');
+	
+		$upload_dir = wp_upload_dir();
+		$path=$upload_dir['basedir'];
+		$loc=$path.'/church-admin-cache/'.$filename;
 		
-    if(!empty($filename)&&file_exists(CHURCH_ADMIN_EMAIL_CACHE.$filename))
+    if(!empty($filename)&&file_exists($loc))
     {
-		echo'<p><a href="'.CHURCH_ADMIN_EMAIL_CACHE_URL.$filename.'">Download Church Admin DB Backup - For recent Updates, it will be for old version</a></p>';
+		echo'<p><a href="'.$upload_dir['baseurl'].'/church-admin-cache/'.$filename.'">Download Church Admin DB Backup - For recent Updates, it will be for old version</a></p>';
 		echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_backup','delete_backup').'">Delete Church Admin DB Backup - Sensible after download!</a></p>';
 		
     }
@@ -110,7 +100,7 @@ function church_admin_recent_people_activity_meta_box()
     }
     else
     {//people stored in directory
-     require_once(CHURCH_ADMIN_INCLUDE_PATH.'people_activity.php');
+     require_once(plugin_dir_path( dirname(__FILE__) ).'includes/people_activity.php');
     church_admin_recent_people_activity();
     }
 }
@@ -200,6 +190,13 @@ function church_admin_member_types_meta_box()
 			    echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_member_type">'.__('Member Type List','church-admin').'</a></p>';
 
 }
+function church_admin_facilities_meta_box()
+{
+	echo'<p><strong>'.__('Use this section for administering facilities like rooms in your building, or even assets like a video projector.','church-admin').'</strong></p>';
+    echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_facility",'edit_facility').'">'.__('Add a facility','church-admin').'</a></p>';
+			    echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_facilities">'.__('Facilities List','church-admin').'</a></p>';
+
+}
 function church_admin_communications_meta_box()
 {
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_send_sms">'.__('Send Bulk SMS','church-admin').'</a></p>';
@@ -259,7 +256,7 @@ function church_admin_calendar_meta_box()
 {
     
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_add_calendar">'.__('Add calendar Event','church-admin').'</a></p>';
-			    echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_calendar_list">'.__('View Calendar','church-admin').'</a></p>';
+			    echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_new_calendar">'.__('View Calendar','church-admin').'</a></p>';
     			    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_add_category','add_category').'">'.__('Add a category','church-admin').'</a></p>';
 			    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_category_list','category_list').'">'.__('Category List','church-admin').'</a></p>';
 			    echo '<p><label>'.__('Download a year planner PDF','church-admin').'</label><form name="calendar_form" action="" method="get"><select name="calendar_form_links" onchange="window.location=document.calendar_form.calendar_form_links.options[document.calendar_form.calendar_form_links.selectedIndex].value">';
@@ -276,16 +273,14 @@ function church_admin_smallgroups_meta_box()
     global $member_type;
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_small_group",'edit_small_group').'">'.__('Add a small group','church-admin').'</a></p>';
 			    echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_small_groups">'.__('Small Group List','church-admin').'</a></p>';
-			    echo '<p><label>'.__('Download an small group PDF','church-admin').'</label><form name="address_list_form" action="'.home_url().'" method="get"><input type="hidden" name="download" value="smallgroup"/><select name="member_type_id" onchange="this.form.submit()">';
-			    
-				echo'<option selected="selected" value="1">-- '.__('Choose a pdf','church-admin').' --</option>';
+			    echo '<p><strong>'.__('Download a small group PDF','church-admin').'</strong></p><form name="address_list_form" action="'.home_url().'" method="get"><input type="hidden" name="download" value="smallgroup"/>';
 			    foreach($member_type AS $key=>$value)
 			    {
-				echo'<option value="'.$key.'">'.$value.' '.__('Small group PDF','church-admin').'</option>';
+				echo'<p><label>'.$value.'</label><input type="checkbox" value="'.$key.'" name="member_type_id[]"/></p>';
 			    }
-			    echo '<option value="'.home_url().'/?download=smallgroup&amp;smallgroup='.wp_create_nonce('smallgroup').'&amp;member_type_id='.implode(",",array_keys($member_type)).'">'.__('All member types Small group PDF','church-admin').'</option>';
+			   
 			    echo wp_nonce_field('smallgroup','smallgroup');
-				echo'</select></form></p>';
+				echo'<input type="submit" value="'.__('Download','church-admin').'"/></form></p>';
 
 }
 function church_admin_services_meta_box()

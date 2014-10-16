@@ -29,7 +29,7 @@ function  church_admin_member_type()
             $delete=$check .' '.__('people who are','church-admin').' '.$membertype;
             $reassign='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_member_type" method="post">'.__('Reassign people to','church-admin').' ';
             $reassign.='<select name="reassign">';
-            foreach($member_type AS $mtid=>$value)if($mtid!=$id && $mtid!=$_POST['current']) $reassign.='<option value="'.$mtid.'">'.$value.'</option>';
+			foreach($member_type AS $mtid=>$value)if($mtid!=$id) $reassign.='<option value="'.$mtid.'">'.$value.'</option>';
             $reassign.='</select><input type="hidden" name="current" value="'.$id.'"/><input type="submit" value="Reassign"/></form>';
         }
             

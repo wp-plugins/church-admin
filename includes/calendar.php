@@ -4,9 +4,149 @@
 2011-03-14 fixed errors not sowing as red since 0.32.4
 2012-07-20 Update Internationalisation 
 2014-09-22 Simplify db and add image 
+2014-10-06 Added facilities bookings
  
 */
+function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
+{
 
+	global $wpdb;
+	if(isset($_POST['ca_month']) && isset($_POST['ca_year'])){ $current=mktime(12,0,0,$_POST['ca_month'],14,$_POST['ca_year']);}
+	if(empty($current)){$current=time();}
+	$thismonth = (int)date("m",$current);
+	$thisyear = date( "Y",$current );
+	$actualyear=date("Y");
+	$next = strtotime("+1 month",$current);
+	$previous = strtotime("-1 month",$current);
+	$now=date("M Y",$current);
+	$sqlnow=date("Y-m-d", $current);
+    // find out the number of days in the month
+    $numdaysinmonth = cal_days_in_month( CAL_GREGORIAN, $thismonth, $thisyear );
+    // create a calendar object
+    $jd = cal_to_jd( CAL_GREGORIAN, $thismonth,date( 1 ), $thisyear );
+
+    // get the start day as an int (0 = Sunday, 1 = Monday, etc)
+    $startday = jddayofweek( $jd , 0 );
+    
+    // get the month as a name
+    $monthname = jdmonthname( $jd, 1 );
+	$out='<div class="wrap church_admin">';
+	if(!empty($facilities_id))
+	{
+		$facility=$wpdb->get_var('SELECT facility_name FROM '.CA_FAC_TBL.' WHERE facilities_id="'.esc_sql($facilities_id).'"');
+		$out.='<h2>Booking Calendar for '.$facility.'</h2>';
+	}else
+	{
+		$out.='<h2>Calendar</h2>';
+	}
+	
+	$facs=$wpdb->get_results('SELECT * FROM '.CA_FAC_TBL.' ORDER BY facilities_order');
+	if(!empty($facs))
+	{
+		$out.='<p><label>Choose facility</label><form action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar" method="POST"><select name="facilities_id">';
+		if(!empty($facilities_id)) {$out.='<option value="'.$facilities_id.'">'.$facility.'</option>';}
+		$out.='<option value="">'.__('N/A','church-admin').'</option>';
+		foreach($facs AS $fac){$out.='<option value="'.$fac->facilities_id.'">'.$fac->facility_name.'</option>';}
+		$out.='</select><input type="submit" name="'.__('Choose facility','church-admin').'"/></form></p>';
+	}
+	$out.='<p>Double click on an event to edit, or a day to add an event</p>';
+	$out.='<p><a href="'.admin_url().'?page=church_admin/index.php&action=church_admin_calendar_list">Old Style Calendar List</a></p>';
+	$out.='<table class="church_admin_calendar"><tr><td colspan="7" class="calendar-date-switcher"><form method="post" action="">'.__('Month','church-admin').'<select name="ca_month">';
+	$first=$option='';
+	for($q=0;$q<=12;$q++)
+	{
+		$mon=date('m',($current+$q*(28*24*60*60)));
+		$MON=date('M',($current+$q*(28*24*60*60)));
+		if(isset($_POST['ca_month'])&&$_POST['ca_month']==$mon) {$first="<option value=\"$mon\" selected=\"selected\">$MON</option>";}else{$out.= "<option value=\"$mon\">$MON</option>";}
+	}
+	$out.=$first.$option;
+	$out.='</select>'.__('Year','church-admin').'<select name="ca_year">';
+	$first=$option='';
+	for ($x=$actualyear;$x<=$actualyear+15;$x++)
+	{
+		if(isset($_POST['ca_year'])&&$_POST['ca_year']==$x)
+		{
+			$first="<option value=\"$x\" >$x</option>";
+		}
+		else
+		{
+			$option.= "<option value=\"$x\">$x</option>";
+		}
+	}
+	$out.=$first.$option;
+	$out.='</select><input  type="submit" value="'.__('Submit','church-admin').'"/></form></td></tr>';
+	$out.='<tr><td colspan="3" class="calendar-date-switcher">';
+	if($now==date('M Y')){$out.='&nbsp;';}else{$out.='<form action="'.get_permalink().'" name="previous" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime("$now -1 month")).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime("$now -1 month")).'"/><input type="submit" value="Previous" class="calendar-date-switcher"/></form>';}
+	$out.='</td><td class="calendar-date-switcher">'.$now.'</td><td class="calendar-date-switcher" colspan="3"><form action="'.get_permalink().'" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td></tr>
+	<tr><td  ><strong>'.__('Sunday','church-admin').'</strong></td>
+    <td ><strong>'.__('Monday','church-admin').'</strong></td>
+    <td ><strong>'.__('Tuesday','church-admin').'</strong></td>
+    <td ><strong>'.__('Wednesday','church-admin').'</strong></td>
+    <td ><strong>'.__('Thursday','church-admin').'</strong></td>
+    <td ><strong>'.__('Friday','church-admin').'</strong></td>
+    <td ><strong>'.__('Saturday','church-admin').'</strong></td>
+    </tr><tr class="cal">';
+	// put render empty cells
+	$emptycells = 0;
+	for( $counter = 0; $counter <  $startday; $counter ++ )
+	{
+		$out.="\t\t<td>-</td>\n";
+		$emptycells ++;
+	}
+	// renders the days
+	$rowcounter = $emptycells;
+	$numinrow = 7;
+	for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
+	{
+        $rowcounter ++;
+		$out.="\t\t".'<td id="'.$sqlnow.'"><strong>'.$counter.'</strong><br/>';
+    //put events for day in here
+    $sqlnow="$thisyear-$thismonth-".sprintf('%02d', $counter);
+    if(empty($facilities_id)){$sql='SELECT a.*, b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.general_calendar=1 AND a.cat_id=b.cat_id  AND a.start_date="'.$sqlnow.'" ORDER BY a.start_time';}
+	else{$sql='SELECT a.*, b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.facilities_id="'.esc_sql($facilities_id).'" AND a.cat_id=b.cat_id  AND a.start_date="'.$sqlnow.'" ORDER BY a.start_time';}
+	
+    $result=$wpdb->get_results($sql);
+    if($wpdb->num_rows=='0')
+    {
+        $out.='&nbsp;<br/>&nbsp;<br/>';
+    }
+    else
+    {
+        foreach($result AS $row)
+        {
+			
+            $out.= '<div id="item'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.mysql2date(get_option('time_format'),$row->start_time).' '.htmlentities($row->title).'... </div></p>';
+        }
+    }    
+    $out.="</td>\n";
+        
+        if( $rowcounter % $numinrow == 0 )
+        {   
+            $out.="\t</tr>\n";
+            if( $counter < $numdaysinmonth )
+            {
+                $out.="\t".'<tr class="cal">'."\n";
+            }    
+            $rowcounter = 0;
+        }
+}
+// clean up
+$numcellsleft = $numinrow - $rowcounter;
+if( $numcellsleft != $numinrow )
+{
+    for( $counter = 0; $counter < $numcellsleft; $counter ++ )
+    {
+        $out.= "\t\t<td>-</td>\n";
+        $emptycells ++;
+    }
+}
+$out.='</tr></table>';
+
+$out.='<script type="text/javascript">	jQuery(document).ready(function($) {$(".cal").bind("dblclick", function(event) {window.location.href = "'.admin_url().'?page=church_admin/index.php&action=church_admin_new_edit_calendar&id="+event.target.id';
+if(!empty($facilities_id))$out.='+ "&facilities_id='.$facilities_id.'"';
+$out.='});});</script></div><!--wrap church-admin-->';
+echo $out;
+}
 function church_admin_category_list()
 {
     global $wpdb;
@@ -81,17 +221,19 @@ function church_admin_edit_category($id)
     {
     echo'<div class="wrap church_admin"><h2>'.__('Edit Category','church-admin').'</h2><form action="" method="post">';
     //grab current data
-    $row=$wpdb->get_row('SELECT * FROM "'.CA_CAT_TBL.' WHERE cat_id="'.esc_sql($id).'"');
+    $row=$wpdb->get_row('SELECT * FROM '.CA_CAT_TBL.' WHERE cat_id="'.esc_sql($id).'"');
     church_admin_category_form($row);
     echo'<p><label>&nbsp;</label><input type="submit" name="edit_category" value="'.__('Edit Category','church-admin').'"/></p></form>';
-    church_admin_category_list();
+   
     echo'</div>';
     }
 }
 function church_admin_category_form($data)
 {
-    if(empty($data))$data->bgcolor='#e4afb1';
-echo '<script type="text/javascript" > 
+if(empty($data))$data=new stdClass();
+ 
+    if(empty($data->bgcolor))$data->bgcolor='#e4afb1';
+	echo '<script type="text/javascript" > 
   jQuery(document).ready(function($) {
     
     $(\'#picker\').farbtastic(\'#color\');
@@ -99,9 +241,14 @@ echo '<script type="text/javascript" >
     
   });
  </script>  
- <p><label >'.__('Category Name','church-admin').'</label><input type="text" name="category" value="'.$data->category.'"/></p>
-  <p><label >'.__('Background Colour','church-admin').'</label><input type="text" id="color" name="color" value="'.$data->bgcolor.'" /></p><div id="picker"></div> 
- ';
+ <p><label >'.__('Category Name','church-admin').'</label><input type="text" name="category" ';
+ if(!empty($data->category)) echo 'value="'.$data->category.'"';
+	echo'/></p>
+  <p><label >'.__('Background Colour','church-admin').'</label><input type="text" ';
+  if(!empty($data->bgcolor)) echo' style="background:'.$data->bgcolor.'" ';
+  echo' id="color" name="color" ';
+  if(!empty($data->bgcolor))echo' value="'.$data->bgcolor.'" ';
+  echo'/></p><div id="picker"></div>';
 }
 
 function church_admin_calendar()
@@ -114,19 +261,22 @@ function church_admin_calendar()
 
 
 
-function church_admin_event_edit($date_id,$event_id,$edit_type)
+function church_admin_event_edit($date_id,$event_id,$edit_type,$date,$facilities_id)
 {
+
 	global $wpdb;
 	$wpdb->show_errors();
-	if(!empty($date_id))$data=$wpdb->get_row('SELECT a.*,b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.cat_id=b.cat_id AND a.date_id="'.esc_sql($date_id).'"');
+	$edit='Add';
+	if(!empty($date_id)){$data=$wpdb->get_row('SELECT a.*,b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.cat_id=b.cat_id AND a.date_id="'.esc_sql($date_id).'"');$edit='Edit';}
+	if(empty($event_id)&&!empty($data->event_id)){$event_id=$data->event_id;$edit='Edit';}
 	
 	if(!empty($_POST['save_date']))
 	{//process
 		
 		switch($edit_type)
 		{
-			case'single':$wpdb->query('DELETE FROM '.CA_DATE_TBL .' WHERE date_id="'.esc_sql($date_id).'"');break;
-			case'series':$wpdb->query('DELETE FROM '.CA_DATE_TBL .' WHERE event_id="'.esc_sql($event_id).'"');break;
+			case'single':if(!empty($date_id))$wpdb->query('DELETE FROM '.CA_DATE_TBL .' WHERE date_id="'.esc_sql($date_id).'"');break;
+			case'series':if(!empty($event_id))$wpdb->query('DELETE FROM '.CA_DATE_TBL .' WHERE event_id="'.esc_sql($event_id).'"');break;
 		
 		}
 		
@@ -137,7 +287,9 @@ function church_admin_event_edit($date_id,$event_id,$edit_type)
 		//adjust data
 		$form['start_time'].=':00';
 		$form['end_time'].=':00';
+		if(empty($form['cat_id'])){$form['cat_id']=1;}
 		if(empty($form['year_planner'])){$form['year_planner']=0;}else{$form['year_planner']=1;}
+		if(empty($form['general_calendar'])){$form['general_calendar']=0;}else{$form['general_calendar']=1;}
 		if(empty($form['end_date'])){$form['end_date']=$form['start_date'];}
 		//only allow one submit!
 		$checksql='SELECT date_id FROM '.CA_DATE_TBL.' WHERE title="'.esc_sql($form['title']).'" AND description="'.esc_sql($form['description']).'" AND location="'.esc_sql($form['location']).'"  AND cat_id="'.esc_sql($form['cat_id']).'" AND start_date="'.esc_sql($form['start_date']).'" AND start_time="'.esc_sql($form['start_time']).'" AND end_time="'.esc_sql($form['end_time']).'" LIMIT 1';
@@ -187,7 +339,7 @@ function church_admin_event_edit($date_id,$event_id,$edit_type)
 			switch($_POST['recurring'])
 			{
 				case's':
-					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,cat_id,event_id,how_many,start_date,start_time,end_time)VALUES("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.esc_sql($form['cat_id']).'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['start_date']).'","'.esc_sql($form['start_time']).'","'.esc_sql($form['end_time']).'")';
+					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,cat_id,event_id,how_many,start_date,start_time,end_time,facilities_id,general_calendar)VALUES("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.esc_sql($form['cat_id']).'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['start_date']).'","'.esc_sql($form['start_time']).'","'.esc_sql($form['end_time']).'","'.esc_sql($form['facilities_id']).'","'.esc_sql($form['general_calendar']).'")';
 				break;
 				case'n':
 					//handle nth
@@ -195,45 +347,45 @@ function church_admin_event_edit($date_id,$event_id,$edit_type)
 					for($x=0;$x<$form['how_many'];$x++)
 					{
 						$start_date=nthday($form['nth'],$form['day'],date('Y-m-d',strtotime($form['start_date']." +$x month")));
-               			$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'")';
+               			$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'","'.esc_sql($form['facilities_id']).'","'.esc_sql($form['general_calendar']).'")';
 					}
-					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time)VALUES'.implode(",",$values);
+					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time,facilities_id,general_calendar)VALUES'.implode(",",$values);
 				break;
 				case '14':
 					$values=array();
 					for($x=0;$x<$form['how_many'];$x++)
 					{
 						$start_date=date('Y-m-d',strtotime("{$form['start_date']}+$x fortnight"));
-						$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'")';
+						$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'","'.esc_sql($form['facilities_id']).'","'.esc_sql($form['general_calendar']).'")';
 					}
-					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time)VALUES'.implode(",",$values);
+					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time,facilities_id,general_calendar)VALUES'.implode(",",$values);
 				break;
 				case '7':
 					$values=array();
 					for($x=0;$x<$form['how_many'];$x++)
 					{
 						$start_date=date('Y-m-d',strtotime("{$form['start_date']}+$x week"));
-						$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'")';
+						$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'","'.esc_sql($form['facilities_id']).'","'.esc_sql($form['general_calendar']).'")';
 					}
-					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time)VALUES'.implode(",",$values);
+					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time,facilities_id,general_calendar)VALUES'.implode(",",$values);
 				break;
 				case 'm':
 					$values=array();
 					for($x=0;$x<$form['how_many'];$x++)
 					{
 						$start_date=date('Y-m-d',strtotime("{$form['start_date']}+$x month"));
-						$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'")';
+						$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'","'.esc_sql($form['facilities_id']).'","'.esc_sql($form['general_calendar']).'")';
 					}
-					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time)VALUES'.implode(",",$values);
+					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time,facilities_id,general_calendar)VALUES'.implode(",",$values);
 				break;
 				case 'a':
 					$values=array();
 					for($x=1;$x<$form['how_many'];$x++)
 					{
 						$start_date=date('Y-m-d',strtotime("{$form['start_date']}+$x year"));
-						$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'")';
+						$values[]='("'.esc_sql($form['title']).'","'.esc_sql($form['description']).'","'.esc_sql($form['location']).'","'.esc_sql($form['recurring']).'","'.esc_sql($form['year_planner']).'","'.$event_image.'","'.$event_id.'","'.esc_sql($form['how_many']).'","'.esc_sql($form['cat_id']).'","'.$start_date.'","'.$form['start_time'].'","'.$form['end_time'].'","'.esc_sql($form['facilities_id']).'","'.esc_sql($form['general_calendar']).'")';
 					}
-					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time)VALUES'.implode(",",$values);
+					$sql='INSERT INTO '.CA_DATE_TBL.' (title,description,location,recurring,year_planner, event_image,event_id,how_many,cat_id,start_date,start_time,end_time,facilities_id,general_calendar)VALUES'.implode(",",$values);
 				break;
 		
 			}
@@ -242,27 +394,41 @@ function church_admin_event_edit($date_id,$event_id,$edit_type)
 			echo'<div class="updated fade"><p><strong>'.__('Date(s) saved','church-admin').'</strong></p></div>';
 		}
 		else{echo'<div class="updated fade"><p><strong>'.__('Date(s) already saved','church-admin').'</strong></p></div>';}
-		church_admin_calendar_list();
+		church_admin_new_calendar(strtotime($form['start_date']));
 	}//end process
 	else
 	{
-		echo'<div class="wrap church_admin"><h2>Edit Calendar Item</h2><form action="" enctype="multipart/form-data" id="calendar" method="post">';
+	
+		echo'<div class="wrap church_admin">';
+		
+		if(empty($facilities_id)){echo'<h2>'.$edit.' Calendar Item</h2>';}else{echo '<h2>'.$edit.' Facility Booking</h2>';}
+		echo'<form action="" enctype="multipart/form-data" id="calendar" method="post">';
 		if(empty($error))$error =new stdClass();
 		if(empty($data)) $data = new stdClass();
-		echo church_admin_calendar_form($data,$error,1);
+		if(!empty($data->event_id))
+		{
+			$multi=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_DATE_TBL.' WHERE event_id="'.esc_sql($data->event_id).'"');
+			if($multi>1)
+			{
+				echo'<p><label>Single or Series Edit?</label><input type="radio" name="edit_type" value="single" checked="checked"/> Single or <input type="radio" name="edit_type" value="series"/> Series</p>';
+				if(!empty($data->event_id))echo '<p><label>&nbsp;</label><a class="button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id='.$data->event_id.'&amp;date_id='.$data->date_id,'series_event_delete').'">'.__('Delete this series event','church-admin').'</a></p>';
+			}
+		}
+		if(!empty($data->date_id))echo '<p><label>&nbsp;</label><a  class="button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id='.$data->event_id.'&amp;date_id='.$data->date_id,'single_event_delete').'">'.__('Delete this single event','church-admin').'</a></p>';
+		echo church_admin_calendar_form($data,$error,1,$date,$facilities_id);
 		echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="'.__('Save Event','church-admin').'"/></form></div>'; 
 		}
 
 }
 
-function church_admin_calendar_form($data,$error,$recurring=1)
+function church_admin_calendar_form($data,$error,$recurring=1,$date,$facilities_id)
 {
     
     global $wpdb;
 	if(empty($data)) $data=new stdClass();
     
 	$wpdb->show_errors();
-    $out='  <script type="text/javascript" src="'.CHURCH_ADMIN_INCLUDE_URL.'javascript.js"></script>
+    $out='  <script type="text/javascript" src="'.plugins_url('includes/javascript.js',dirname(__FILE__) ) . '"></script>
 <script type="text/javascript">document.write(getCalendarStyles());</script>
 <script type="text/javascript">
 var cal_begin = new CalendarPopup(\'pop_up_cal\');
@@ -311,7 +477,7 @@ if(!empty($data->event_image))
 		else
 		{
 			$out.= '<p><label>&nbsp;</label>';
-			$out.= '<img src="'.CHURCH_ADMIN_IMAGES_URL.'default-avatar.jpg" width="75" height="75"/>';
+			$out.= '<img src="'.plugins_url('images/default-avatar.jpg',dirname(__FILE__) ) .'" width="75" height="75"/>';
 			$out.= '</p>';
 		}
 $out.='<p><label>'.__('Event Description','church-admin').'</label><textarea rows="5" cols="50" name="description" ';
@@ -322,8 +488,24 @@ $out.='</textarea></p>';
 $out.='<p><label>'.__('Event Location','church-admin').'</label><textarea rows="5" cols="50" name="location" ';
 if(!empty($error->location))$out.=$error->location;
 $out.='>';
+
 if(!empty($data->location))$out.=stripslashes($data->location);
 $out.='</textarea></p>';
+$out.='<p><label>'.__('Facility/Room','church-admin').'</label><select name="facilities_id"> ';
+if(!empty($facilities_id))
+{
+	$facility_name=$wpdb->get_var('SELECT facility_name FROM '.CA_FAC_TBL.' WHERE facilities_id="'.esc_sql($facilities_id).'"');
+	if(!empty($facilitiy_name))$out.='<option value="'.$facilities_id.'" selected="selected" >'.$facility_name.'</option>';
+}
+else{$out.='<option value="">'.__('N/A','church-admin').'</option>';}
+$facs=$wpdb->get_results('SELECT * FROM '.CA_FAC_TBL.' ORDER BY facilities_order');
+	if(!empty($facs))
+	{
+		foreach($facs AS $fac){$out.='<option value="'.$fac->facilities_id.'">'.$fac->facility_name.'</option>';}
+		
+	}
+$out.='</select></p>';
+
 $out.='<p><label> '.__('Category','church-admin').'</label><select name="cat_id" ';
 if(!empty($error->category)) $out.=$error->category;
 $out.=' >';
@@ -348,6 +530,7 @@ $out.=$first.$select;//have original value first!
 $out.='</select></p>
 <p><label >'.__('Start Date','church-admin').'</label><input name="start_date" id="start_date" type="text"';
 if(!empty($error->start_date))$out.=$error->start_date;
+if(!empty($date))$out.=' value="'.$date.'"';
 if(!empty($data->start_date))$out.=' value="'.mysql2date('Y-m-d',$data->start_date).'"';
 $out.=' size="25" />';
 $out.='<script type="text/javascript">
@@ -407,7 +590,11 @@ if(!empty($data->end_time))$out.=' value="'.$data->end_time.'" ';
 $out.='/></p>';
 $out.='<p><label>'.__('Appear on Year Planner?','church-admin').'</label><input type="checkbox" name="year_planner" value="1"';
 if(!empty($data->year_planner)) $out.=' checked="checked"';
-$out.='/><input type="hidden" name="save_date" value="yes"/></p>';
+$out.='/>';
+$out.='<p><label>'.__('Appear on General Calendar?','church-admin').'</label><input type="checkbox" name="general_calendar" value="1"';
+if(!empty($data->general_calendar)) $out.=' checked="checked"';
+$out.='/>';
+$out.='<input type="hidden" name="save_date" value="yes"/></p>';
 
 return $out;
 }
@@ -418,27 +605,25 @@ return $out;
 function church_admin_single_event_delete($date_id)
 {
     global $wpdb;
-    
+    $date=$wpdb->get_var('SELECT start_date FROM '.CA_DATE_TBL.' WHERE date_id="'.esc_sql($date_id).'"');
     $wpdb->query('DELETE FROM '.CA_DATE_TBL.' WHERE date_id="'.esc_sql($date_id).'"');
     echo '<div id="message" class="updated fade">';
     echo '<p><strong>'.__('Calendar Events deleted','church-admin').'.</strong></p>';
     echo '</div>';
     
 	
-    church_admin_calendar_list();
+    church_admin_new_calendar(strtotime($date));
 }
 
 function church_admin_series_event_delete($event_id)
 {
     global $wpdb;
-    
+    $date=$wpdb->get_var('SELECT MIN(start_date) FROM '.CA_DATE_TBL.' WHERE event_id="'.esc_sql($event_id).'"');
     $wpdb->query('DELETE FROM '.CA_DATE_TBL.' WHERE event_id="'.esc_sql($event_id).'"');
     echo '<div id="message" class="updated fade">';
     echo '<p><strong>'.__('Calendar Events deleted','church-admin').'.</strong></p>';
     echo '</div>';
-    
-	
-    church_admin_calendar_list();
+    church_admin_new_calendar(strtotime($date));
 }
 
 
@@ -531,7 +716,7 @@ echo '</select><input type="submit" value="'.__('Go to date','church-admin').'"/
     {
     //create links
     $single_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;'.$entereddate,'single_event_edit').'">'.__('Edit','church-admin').'</a>';
-    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series_event_edit').'">'.__('Edit Series','church-admin').'</a>';}
+    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series').'">'.__('Edit Series','church-admin').'</a>';}
     $single_delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'single_event_delete').'">'.__('Delete this one','church-admin').'</a>';
 
     if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series_event_delete').'">'.__('Delete Series','church-admin').'</a>';}

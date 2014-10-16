@@ -18,7 +18,7 @@ function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$m
  */
     global $wpdb,$people_type;
     if(!ctype_digit($member_type_id))$member_type_id=1;
-    require_once(CHURCH_ADMIN_INCLUDE_PATH.'recaptchalib.php');
+    require_once(plugin_dir_path(dirname(__FILE__)).'includes/recaptchalib.php');
     $out='';
     $privatekey = "6LclNecSAAAAAG2iyW5voI-9oaVwfgjix59dTeJN";
 	if(!empty($_POST))$resp = church_admin_recaptcha_check_answer ($privatekey,$_SERVER["REMOTE_ADDR"],$_POST["recaptcha_challenge_field"],$_POST["recaptcha_response_field"]);
@@ -84,7 +84,7 @@ function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$m
         
         $out.='<p id="jquerybuttons"><input type="button" id="btnAdd" value="'.__('Add another person','church-admin').'" /><input type="button" id="btnDel" value="'.__('Remove person','church-admin').'" /></p>';;
         $out.='<p><label>'.__('Phone','church-admin').'</label><input name="phone" type="text"/></p>';
-        require_once(CHURCH_ADMIN_INCLUDE_PATH.'directory.php');
+        require_once(plugin_dir_path(dirname(__FILE__)).'includes/directory.php');
         $out.= church_admin_address_form(NULL,NULL);
         //recaptcha service
         

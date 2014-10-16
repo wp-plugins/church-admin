@@ -23,7 +23,7 @@ function church_admin_view_department($id)
 {
 		global $wpdb;$departments;
 		$departments=get_option('church_admin_departments');
-		$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" ORDER BY a.last_name ASC';
+		$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" AND b.meta_type="ministry" ORDER BY a.last_name ASC';
 		
 		$results=$wpdb->get_results($sql);
 		
@@ -36,7 +36,7 @@ function church_admin_view_department($id)
 				{
 					if(!empty($_POST[$row->people_id]))
 					{
-						$sql='DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($row->people_id).'" AND department_id="'.esc_sql($id).'"';
+						$sql='DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($row->people_id).'" AND department_id="'.esc_sql($id).'" AND meta_type="ministry"';
 						
 						$wpdb->query($sql);
 					}
@@ -48,8 +48,8 @@ function church_admin_view_department($id)
 				{
 					foreach($peoples_id AS $key=>$people_id)
 					{
-						$check=$wpdb->get_var('SELECT people_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND department_id="'.esc_sql($id).'"');
-						$sql='INSERT INTO '.CA_MET_TBL.' (people_id,department_id)VALUES("'.esc_sql($people_id).'","'.esc_sql($id).'")';
+						$check=$wpdb->get_var('SELECT people_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND department_id="'.esc_sql($id).'" AND meta_type="ministry"');
+						$sql='INSERT INTO '.CA_MET_TBL.' (people_id,department_id,meta_type)VALUES("'.esc_sql($people_id).'","'.esc_sql($id).'","ministry")';
 						if(empty($check))$wpdb->query($sql);
 					}
 				}
@@ -57,7 +57,7 @@ function church_admin_view_department($id)
 			
 			}		
 		}	//department contains people
-	$results=$wpdb->get_results('SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" ORDER BY a.last_name,a.first_name ASC');
+	$results=$wpdb->get_results('SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" AND b.meta_type="ministry" ORDER BY a.last_name,a.first_name ASC');
 		if(!empty($results))
 		{
 			echo '<h2>'.sprintf(__('Viewing who is in "%1s" ministry','church-admin'),$departments[$id]).'</h2><form action="" method="POST"><table class="widefat" ><thead><tr><th>'.__('Remove','church-admin').'</th><th>'.__('Person','church-admin').'</th></tr></thead><tbody>';

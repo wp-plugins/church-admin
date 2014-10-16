@@ -18,7 +18,11 @@ if(isset($_POST['ca_month']) && isset($_POST['ca_year'])){ $current=mktime(12,0,
     
     // get the month as a name
     $monthname = jdmonthname( $jd, 1 );
-
+if(!empty($facilities_id))
+{
+	$fac=$wpdb->get_var('SELECT facility_name FROM '.CA_FAC_TBL.' WHERE facilities_id="'.esc_sql($facilities_id).'"');
+	if(!empty($fac)) $out.='<h3>'.__('Bookings Calendar for ','church-admin').$fac.'</h3>';
+}
 $out.='<table class="church_admin_calendar">
 <tr>
         <td colspan="7" class="calendar-date-switcher">
@@ -88,8 +92,10 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
     $out.="\t\t<td align=\"left\"><strong>$counter</strong><br/>";
     //put events for day in here
     $sqlnow="$thisyear-$thismonth-".sprintf('%02d', $counter);
-    $sql='SELECT a.*, b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.cat_id=b.cat_id  AND a.start_date="'.$sqlnow.'" ORDER BY a.start_time';
-    $result=$wpdb->get_results($sql);
+    if(empty($facilities_id)){$sql='SELECT a.*, b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.general_calendar=1 AND a.cat_id=b.cat_id  AND a.start_date="'.$sqlnow.'" ORDER BY a.start_time';}
+	else{$sql='SELECT a.*, b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.facilities_id="'.esc_sql($facilities_id).'" AND a.cat_id=b.cat_id  AND a.start_date="'.$sqlnow.'" ORDER BY a.start_time';}
+	
+	$result=$wpdb->get_results($sql);
     if($wpdb->num_rows=='0')
     {
         $out.='&nbsp;<br/>&nbsp;<br/>';
@@ -99,7 +105,15 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
         foreach($result AS $row)
         {
 			if(!empty($row->event_image)){$image=wp_get_attachment_image( $row->event_image,'ca-people-thumb' ,'',array('class'=>"alignleft"));}else{$image='';}
-            $popup=stripslashes("<p><strong>".esc_html(strtoupper($row->title))."</strong><br/>$image".esc_html($row->description)."<br/>".$row->location."<br/>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."<br/>".$row->category." Event");
+            $popup=stripslashes("<p><strong>".esc_html(strtoupper($row->title))."</strong><br/>$image".esc_html($row->description)."<br/>".$row->location);
+			if(!empty($row->facilities_id)&&$row->facilities_id>0)
+			{
+				$fac=$wpdb->get_var('SELECT facility_name FROM '.CA_FAC_TBL.' WHERE facilities_id="'.esc_sql($row->facilities_id).'"');
+				$popup.='('.$fac.')';
+			}
+			$popup.="<br/>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."<br/>".$row->category." Event<br/>";
+			if($row->recurring=='s'){$type='church_admin_single_event_edit';$nonce='single_event_edit';}else{$type='church_admin_series_event_edit';$nonce='series_event_edit';}
+			$popup.='<a title="'.__('Edit Entry','church-admin').'" href="'.wp_nonce_url(admin_url().'?page=church_admin/index.php&amp;action='.$type.'&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id,$nonce).'"><img src="'.plugins_url('images/edit_event.png',dirname(__FILE__) ) .'" width="32" height="32" alt="'.__('Edit Entry','church-admin').'"/></a>';
             $out.= '<div class="church_admin_cal_item" id="ca'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.mysql2date(get_option('time_format'),$row->start_time).' '.htmlentities($row->title).'... </div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip"  >'.$popup.'</div><br/>';
         }
     }    

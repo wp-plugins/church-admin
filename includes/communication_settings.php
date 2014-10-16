@@ -212,7 +212,7 @@ function church_admin_cron_job_instructions()
     if (PHP_OS=='Linux')
     {
     $phppath='/usr/local/bin/php';
-    $cronpath=CHURCH_ADMIN_INCLUDE_PATH.'cronemail.php';
+    $cronpath=plugin_dir_path(dirname(__FILE__)).'/includes/cronemail.php';
     $command=$phppath.' -f '.$cronpath;
     
     
@@ -221,7 +221,7 @@ function church_admin_cron_job_instructions()
     
     $pdf->MultiCell(0, 10, $text );
  
-    $pdf->Image(CHURCH_ADMIN_IMAGES_PATH.'cron-job1.jpg','10','65','','','jpg','');
+    $pdf->Image(plugin_dir_path( dirname(__FILE__) ).'images/cron-job1.jpg','10','65','','','jpg','');
     $pdf->SetXY(10,180);
     $text="In the common settings option - select 'Once an Hour'. \r\nIn 'Command to run' put this:\r\n".$command."\r\n and then click Add Cron Job. Job Done. Don't forget to test it by sending an email to yourself at a few minutes before the hour! ";
     $pdf->MultiCell(0, 10, $text );
@@ -232,7 +232,8 @@ function church_admin_cron_job_instructions()
         $text="Unfortunately setting up queuing for email using cron is not possible in Windows servers. Please go back to Communication settings and enable the wp-cron option for scheduling sending of queued emails";
         $pdf->MultiCell(0, 10, $text );
     }
-    $pdf->Output(CHURCH_ADMIN_CACHE_PATH.'bulk_email_queuing.pdf',F);
-    echo '<a href="'.CHURCH_ADMIN_CACHE_URL.'bulk_email_queuing.pdf">PDF instructions</a>';
+	$upload_dir = wp_upload_dir();
+    $pdf->Output($upload_dir['basedir'].'church-admin-cache/bulk_email_queuing.pdf',F);
+    echo '<a href="'.$upload_dir['baseurl'].'/church-admin-cache/'.'bulk_email_queuing.pdf">PDF instructions</a>';
 }
 ?>

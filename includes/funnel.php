@@ -42,7 +42,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
                     $departments[]=stripslashes($_POST['new_department']);
                     $_POST['department']=key($departments);
                     update_option('church_admin_departments',$departments);
-                    church_admin_update_department(key($departments),$people_id);
+                    church_admin_update_department(key($departments),$people_id,'ministry');
                 }
             }
             if(!$funnel_id)$funnel_id=$wpdb->get_var('SELECT funnel_id FROM '.CA_FUN_TBL.' WHERE action="'.esc_sql(stripslashes($_POST['action'])).'" AND member_type_id="'.esc_sql((int)($_POST['member_type_id'])).'"');
