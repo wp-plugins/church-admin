@@ -60,7 +60,9 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
-= 0.5973 =
+= 0.601 =
+* Sermon mp3 file edit path bug fix
+= 0.600 =
 * Fixed font size on post it notes
 * People can be in more then one small group
 * ssl proof the plugin, by using better formed include paths and uris

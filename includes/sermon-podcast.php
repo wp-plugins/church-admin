@@ -188,6 +188,9 @@ function ca_podcast_edit_file($id=NULL)
  */
     global $wpdb,$rm_podcast_settings;
     $wpdb->show_errors();
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
     if(!empty($id))
     {
         $current_data=$wpdb->get_row('SELECT * FROM '.CA_FIL_TBL.' WHERE file_id="'.esc_sql($id).'"');
@@ -219,19 +222,19 @@ function ca_podcast_edit_file($id=NULL)
             $type=substr($name,-3);
             $split=sanitize_title(substr($name,0,-4));
             $file_name=$split.'.'.$type;
-            while(file_exists(plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$file_name))
+            while(file_exists($path.$file_name))
             {
                 
                 $file_name=$split.$x.'.'.$type;
                 $x++;
             }
             
-            if(!move_uploaded_file($tmp_name, plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$file_name)) echo"<p>File Upload issue</p>";
+            if(!move_uploaded_file($tmp_name, $path.$file_name)) echo"<p>File Upload issue</p>";
              
         }    
         if(empty($file_name) &&!empty($current_data->file_name))$file_name=$current_data->file_name;   
             require_once(plugin_dir_path(dirname(__FILE__)).'includes/mp3.php');
-            $m = new mp3file(plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$file_name);
+            $m = new mp3file($path.$file_name);
             $a = $m->get_metadata();
             $length=esc_sql($a['Length mm:ss']);
         //end mp3
@@ -250,14 +253,14 @@ function ca_podcast_edit_file($id=NULL)
             $type=substr($name,-3);
             $split=sanitize_title(substr($name,0,-4));
             $transcript=$split.'.'.$type;
-            while(file_exists(plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$transcript))
+            while(file_exists($path.$transcript))
             {
                 
                 $transcript=$split.$x.'.'.$type;
                 $x++;
             }
             
-            if(!move_uploaded_file($tmp_name, plugin_dir_path( dirname(__FILE__)).'uploads/sermons/'.$transcript)) echo"<p>File Upload issue</p>";
+            if(!move_uploaded_file($tmp_name, $path.$transcript)) echo"<p>File Upload issue</p>";
              
         } 
            
