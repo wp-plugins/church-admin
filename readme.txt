@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.602 = 
+* Added missing facilities.php file
 = 0.601 =
 * Sermon mp3 file edit path bug fix
 = 0.600 =
