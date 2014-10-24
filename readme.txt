@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.605 =
+* Calendar List bug fix
 = 0.604 =
 * Fix date table for new installs
 = 0.603 =
