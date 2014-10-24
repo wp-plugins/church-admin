@@ -34,6 +34,7 @@ function church_admin_level_check($what)
     $user_permissions=get_option('church_admin_user_permissions');
 	
     $level=get_option('church_admin_levels');
+	
     if(!empty($user_permissions[$what]))
     {//user permissions have been set for $what
 		

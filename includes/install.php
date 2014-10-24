@@ -321,12 +321,75 @@ $wpdb->query ($sql);
     //install calendar table1
     $table_name = CA_DATE_TBL;
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
-    {
-
-	$sql="CREATE TABLE  IF NOT EXISTS ". $table_name ."  (recurring VARCHAR(3),title text NOT NULL, description text  NOT NULL, location text NOT NULL, year_planner INT(1),cat_id INT(11) NOT NULL,start_date date NOT NULL DEFAULT '0000-00-00', start_time time NOT NULL DEFAULT '00:00:00', end_time time NOT NULL DEFAULT '00:00:00', event_id int(11) NOT NULL DEFAULT '0',date_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (date_id)) " ;
+    { $sql='CREATE TABLE IF NOT EXISTS '.CA_DATE_TBL.' (`title` text NOT NULL,`description` text NOT NULL,`location` text NOT NULL,`year_planner` int(1) NOT NULL,`event_image` int(11) DEFAULT NULL,`end_date` date NOT NULL DEFAULT "0000-00-00",`start_date` date NOT NULL DEFAULT "0000-00-00",`start_time` time NOT NULL DEFAULT "00:00:00",`end_time` time NOT NULL DEFAULT "00:00:00", `event_id` int(11) NOT NULL DEFAULT "0",`facilities_id` int(11) DEFAULT NULL,
+  `general_calendar` int(1) NOT NULL DEFAULT "1", `general_calendar` int(1) NOT NULL DEFAULT "1",`how_many` int(11) NOT NULL,`date_id` int(11) NOT NULL AUTO_INCREMENT, `cat_id` int(11) NOT NULL,`recurring` text NOT NULL,PRIMARY KEY (`date_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
         $wpdb->query ($sql);
     }
+    //upgrade CA_DATE_TBL if needed
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "facilities_id"')!='facilities_id')
+	{
+			$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD facilities_id INT(11) AFTER event_id';
+			$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "general_calendar"')!='general_calendar')
+	{
+		$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD general_calendar INT(1) NOT NULL DEFAULT "1" AFTER `facilities_id`';
+		$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "description"')!='description')
+	{
+		$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD `description` TEXT NOT NULL AFTER `facilities_id`';
+		$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "location"')!='location')
+	{
+		$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD `location` TEXT NOT NULL AFTER `description`';
+		$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "year_planner"')!='year_planner')
+	{
+		$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD `year_planner` INT(1) NOT NULL AFTER `location`';
+		$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "cat_id"')!='cat_id')
+	{
+		$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD `cat_id` INT(11) NOT NULL AFTER `year_planner`';
+		$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "how_many"')!='how_many')
+	{
+		$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD `how_many` INT(11) AFTER `event_id`';
+		$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "event_image"')!='event_image')
+	{
+		$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD `event_image` INT (11) AFTER `year_planner`';
+		$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "recurring"')!='recurring')
+	{
+		$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD `recurring` TEXT NOT NULL AFTER `year_planner`';
+		$wpdb->query($sql);
+	}
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "title"')!='title')
+	{
+		$sql='ALTER TABLE '.CA_DATE_TBL.' ADD `title` TEXT NOT NULL FIRST;';
+		$wpdb->query($sql);
+		$events=$wpdb->get_results('SELECT * FROM '.CA_EVE_TBL);
+		if(!empty($events))
+		{
+			foreach($events AS $event)
+			{
+			$sql='UPDATE '. CA_DATE_TBL.' SET cat_id="'.esc_sql($event->cat_id).'",event_id="'.esc_sql($event->event_id).'",recurring="'.esc_sql($event->recurring).'",title="'.esc_sql($event->title).'", description="'.$event->description.'", location="'.esc_sql($event->location).'", year_planner="'.esc_sql($event->year_planner).'" WHERE event_id="'.esc_sql($event->event_id).'"';
+		
+			$wpdb->query($sql);
+			}
+		}
     
+	}
+	
+	
+	
     //install calendar table2
     $table_name = $wpdb->prefix."church_admin_calendar_category";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
@@ -375,28 +438,8 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
     $wpdb->query($sql);
     
  }
-   if($wpdb->get_var('SHOW COLUMNS FROM '.CA_EVE_TBL.' LIKE "event_image"')!='event_image')
-{
-    $sql='ALTER TABLE  '.CA_EVE_TBL.' ADD event_image INT(11)';
-    $wpdb->query($sql);
-    
- }
-   if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "title"')!='title')
-{
-    $sql='ALTER TABLE '.CA_DATE_TBL.' ADD `title` TEXT NOT NULL FIRST, ADD `description` TEXT NOT NULL AFTER `title`, ADD `location` TEXT NOT NULL AFTER `description`, ADD `year_planner` INT(1) NOT NULL AFTER `location`, ADD `cat_id` INT(11) NOT NULL AFTER `year_planner`, ADD `how_many` INT(11) AFTER `event_id`,  ADD `event_image` INT (11) AFTER `year_planner`, ADD `recurring` TEXT NOT NULL AFTER `year_planner`;';
-    $wpdb->query($sql);
-	$events=$wpdb->get_results('SELECT * FROM '.CA_EVE_TBL);
-	if(!empty($events))
-	{
-		foreach($events AS $event)
-		{
-		$sql='UPDATE '. CA_DATE_TBL.' SET cat_id="'.esc_sql($event->cat_id).'",event_id="'.esc_sql($event->event_id).'",recurring="'.esc_sql($event->recurring).'",title="'.esc_sql($event->title).'", description="'.$event->description.'", location="'.esc_sql($event->location).'", year_planner="'.esc_sql($event->year_planner).'" WHERE event_id="'.esc_sql($event->event_id).'"';
-		
-			$wpdb->query($sql);
-		}
-	}
-    
- }
+
+
  if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "rota_order"')!='rota_order')
 {
     $sql='ALTER TABLE  '.CA_RST_TBL.' ADD rota_order INT(11)';
@@ -534,16 +577,7 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "initials"')!='initials
     $sql='ALTER TABLE  '.CA_RST_TBL.' ADD initials INT(1)';
     $wpdb->query($sql);
 }
-if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "facilities_id"')!='facilities_id')
-{
-    $sql='ALTER TABLE  '.CA_DATE_TBL.' ADD facilities_id INT(11) AFTER event_id';
-    $wpdb->query($sql);
-}
-if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "general_calendar"')!='general_calendar')
-{
-    $sql='ALTER TABLE  '.CA_DATE_TBL.' ADD general_calendar INT(1) NOT NULL DEFAULT "1" AFTER `facilities_id`';
-    $wpdb->query($sql);
-}
+
 if($wpdb->get_var('SHOW TABLES LIKE "'.CA_FAC_TBL.'"')!=CA_FAC_TBL)
 {
 	$sql="CREATE TABLE IF NOT EXISTS ". CA_FAC_TBL ."  (facility_name TEXT,facilities_order INT(11),  facilities_id INT(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`facilities_id`))" ;

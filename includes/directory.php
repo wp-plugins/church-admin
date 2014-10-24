@@ -210,8 +210,18 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
     
     global $wpdb,$people_type,$member_type,$departments,$current_user,$church_admin_version;
     get_currentuserinfo();
+	
     $wpdb->show_errors();
-    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
+    
+	$hopeteamjobs=array();
+		$hts=$wpdb->get_results('SELECT job,hope_team_id FROM '.CA_HOP_TBL);
+		if(!empty($hts))
+		{
+		
+			foreach($hts AS $ht){$hopeteamjobs[$ht->hope_team_id]=$ht->job;}
+		}
+	
+	/* Add screen option: user can choose between 1 or 2 columns (default 2) */
     add_screen_option('layout_columns', array('max' => 2, 'default' => 2) );
     
     
@@ -349,7 +359,9 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	if(church_admin_level_check('Directory'))
 	{//only authorised people
 		//update meta
-		$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND meta_type="ministry"');
+		
+		$deleted=$wpdb->query('DELETE FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND meta_type="ministry"');
+	
 		//if new small group then add small group leader to person's meta
 		if(!empty($_POST['group_name'])){church_admin_update_department('1',$people_id,'ministry');}
 		if(!empty($_POST['department']))
@@ -357,6 +369,13 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			foreach($_POST['department'] AS $a=>$key)
 			{
 				if(array_key_exists($key,$departments)){church_admin_update_department($key,$people_id,'ministry');}
+			}
+		}
+		if(!empty($_POST['hope_team']))
+		{ 
+			foreach($_POST['hope_team'] AS $a=>$key)
+			{
+				if(array_key_exists($key,$hopeteamjobs)){church_admin_update_department($key,$people_id,'hope_team');}
 			}
 		}
 		if(!empty($_POST['new_department'])&&$_POST['new_department']!='Add a new ministry')
@@ -493,6 +512,19 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			}
 		}
 		echo '<input type="text" name="new_department" value="'.__('Add a new ministry','church-admin').'" onfocus="javascript:this.value=\'\';"/></p>';
+		//hope team
+		echo'<p><label>'.__('Hope Team','church-admin').'</label><span style="display:inline-block">';
+		
+		foreach($hopeteamjobs AS $key=>$value)
+			{
+				echo'<span style="float:left;width:150px">'.$value.'</span><input type="checkbox" name="hope_team[]" value="'.$key.'" ';
+				if(!empty($data->people_id))
+				{
+					$check=$wpdb->get_var('SELECT meta_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($data->people_id).'" AND meta_type="hope_team" AND department_id="'.esc_sql($key).'"');
+					if($check)echo ' checked="checked" ';
+				}
+				echo '/><br style="clear:left"/>';
+			}
 	}//only available to authorised people
 	//small group
 		echo'<p><label>'.__('Small Group','church-admin').'</label><span style="display:inline-block">';
@@ -612,11 +644,11 @@ $out.= '; var beginLng =';
 		echo '<p>'.__('You can drag and drop to sort people display order','church-admin').'</p>';
 	if(church_admin_level_check('Directory'))
 	{
-		echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Move to different household','church-admin').'</th><th>'.__('WP user','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Move to different household','church-admin').'</th><th>'.__('WP user','church-admin').'</th></tr></tfoot><tbody  class="content">';
+		echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Hope Team','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Move to different household','church-admin').'</th><th>'.__('WP user','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Hope Team','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Move to different household','church-admin').'</th><th>'.__('WP user','church-admin').'</th></tr></tfoot><tbody  class="content">';
 	}
 	else
 	{
-		echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th></tr></tfoot><tbody  class="content">';
+		echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Hope Team','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Hope Team','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th></tr></tfoot><tbody  class="content">';
 	
 	}
 	    foreach ($people AS $person)
@@ -626,13 +658,30 @@ $out.= '; var beginLng =';
 		    case 0:$sex=__('Female','church-admin');break;
 		    case 1:$sex=__('Male','church-admin');break;
 		}
-		$result=$wpdb->get_results('SELECT * FROM '.CA_MET_TBL.' WHERE people_id="'.$person->people_id.'"');
+		//ministries
+		$result=$wpdb->get_results('SELECT * FROM '.CA_MET_TBL.' WHERE people_id="'.$person->people_id.'" AND meta_type="ministry"');
 		$department=array();
 		foreach($result AS $row)
 		{
 				if(!empty($departments[$row->department_id]))$department[]=$departments[$row->department_id];
 		}
 		asort($department);
+		//hopeteam
+		$hopeteamjobs=array();
+		$hts=$wpdb->get_results('SELECT job,hope_team_id FROM '.CA_HOP_TBL);
+		if(!empty($hts))
+		{
+		
+			foreach($hts AS $ht){$hopeteamjobs[$ht->hope_team_id]=$ht->job;}
+		}
+		
+		$result=$wpdb->get_results('SELECT * FROM '.CA_MET_TBL.' WHERE people_id="'.$person->people_id.'" AND meta_type="hope_team"');
+		$hopeteam=array();
+		foreach($result AS $row)
+		{
+				if(!empty($hopeteamjobs[$row->department_id]))$hopeteam[]=$hopeteamjobs[$row->department_id];
+		}
+		asort($hopeteam);
 		if($person->user_id)
 		{
 		    $user_info=get_userdata($person->user_id);
@@ -651,7 +700,7 @@ $out.= '; var beginLng =';
 		    $photo= '<img src="'.plugins_url('images/default-avatar.jpg',dirname(__FILE__) ) .'" width="75" height="75"/>';
 		}
 		if(!empty($person->prefix)){$prefix=$person->prefix.' ';}else{$prefix='';}
-		echo'<tr class="sortable-row" id="'.$person->people_id.'"><td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$person->people_id.'&amp;household_id='.$household_id,'edit_people').'">'.__('Edit','church-admin').'</a></td><td><a onclick="return confirm(\'Are you sure you want to delete '.esc_html($person->first_name).' '.$prefix.esc_html($person->last_name).'?\');" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_people&amp;household_id='.$household_id.'&amp;people_id='.$person->people_id.'&amp;household_id='.$household_id,'delete_people').'">'.__('Delete','church-admin').'</a></td><td>'.$photo.'</td><td>'.esc_html($person->first_name).' '.$prefix.esc_html($person->last_name).'</a></td><td>'.$sex.'</td><td>'.$people_type[$person->people_type_id].'</td><td>'.$member_type[$person->member_type_id].'</td><td>'.implode(', ',$department).'</td><td>';
+		echo'<tr class="sortable-row" id="'.$person->people_id.'"><td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$person->people_id.'&amp;household_id='.$household_id,'edit_people').'">'.__('Edit','church-admin').'</a></td><td><a onclick="return confirm(\'Are you sure you want to delete '.esc_html($person->first_name).' '.$prefix.esc_html($person->last_name).'?\');" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_people&amp;household_id='.$household_id.'&amp;people_id='.$person->people_id.'&amp;household_id='.$household_id,'delete_people').'">'.__('Delete','church-admin').'</a></td><td>'.$photo.'</td><td>'.esc_html($person->first_name).' '.$prefix.esc_html($person->last_name).'</a></td><td>'.$sex.'</td><td>'.$people_type[$person->people_type_id].'</td><td>'.$member_type[$person->member_type_id].'</td><td>'.implode(',<br/>',$department).'</td><td>'.implode(',<br/>',$hopeteam).'</td><td>';
 		if(is_email($person->email)){echo '<a href="mailto:'.$person->email.'">'.$person->email.'</a>';}else{echo esc_html($person->email);}
 		echo '</td><td>'.esc_html($person->mobile).'</td>';
 		if(church_admin_level_check('Directory'))
