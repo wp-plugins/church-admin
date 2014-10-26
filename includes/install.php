@@ -605,10 +605,7 @@ if($wpdb->get_var('SHOW TABLES LIKE "'.CA_FAC_TBL.'"')!=CA_FAC_TBL)
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
     $wpdb->query($sql);
-    $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_calendar_event CONVERT TO CHARACTER SET '.DB_CHARSET;
-    if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
-    $sql.=';';
-    $wpdb->query($sql);
+   
     $sql='ALTER TABLE '.$wpdb->prefix.'church_admin_calendar_category CONVERT TO CHARACTER SET '.DB_CHARSET;
     if(DB_COLLATE)$sql.=' COLLATE '.DB_COLLATE.';';
     $sql.=';';
