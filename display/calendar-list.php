@@ -7,7 +7,9 @@ $actualyear=date("Y");
 $next = strtotime("+1 month",$current);
 $previous = strtotime("-1 month",$current);
 $now=date("M Y",$current);
-$sqlnow=$thisyear.'-'.$thismonth.'-01';
+$sqlfirst=date('Y-m-01',$current);
+$sqllast=date('Y-m-t',$current);
+
 if(empty($weeks))$weeks=4;
 $sqlnext=date("Y-m-d",strtotime($sqlnow." + ".$weeks." weeks"));
    // find out the number of days in the month

@@ -491,6 +491,7 @@ function church_admin_year_planner_pdf($initial_year)
 {
     if(empty($initial_year))$initial_year==date('Y');
     global $wpdb;
+	$wpdb->show_errors;
 //check cache admin exists
 $upload_dir = wp_upload_dir();
 $dir=$upload_dir['basedir'].'/church-admin-cache/';
@@ -567,7 +568,9 @@ for($column=0;$column<=2;$column++)
             else
             {
                 //during month so category background
-                $bgcolor=$wpdb->get_var("SELECT ".$wpdb->prefix."church_admin_calendar_category.bgcolor FROM ".$wpdb->prefix."church_admin_calendar_category,".$wpdb->prefix."church_admin_calendar_event,".$wpdb->prefix."church_admin_calendar_date WHERE ".$wpdb->prefix."church_admin_calendar_event.year_planner='1' AND ".$wpdb->prefix."church_admin_calendar_event.cat_id=".$wpdb->prefix."church_admin_calendar_category.cat_id AND ".$wpdb->prefix."church_admin_calendar_event.event_id=".$wpdb->prefix."church_admin_calendar_date.event_id AND ".$wpdb->prefix."church_admin_calendar_date.start_date='".$this_year."-".$this_month."-".$counter."' LIMIT 1");
+                $sql='SELECT a.bgcolor FROM '.CA_CAT_TBL.' a, '.CA_DATE_TBL.' b WHERE b.year_planner="1" AND a.cat_id=b.cat_id AND b.start_date="'.$this_year.'-'.$this_month.'-'.sprintf('%02d',$counter).'" LIMIT 1';
+				
+				$bgcolor=$wpdb->get_var($sql);
                 if(!empty($bgcolor))
                 {
                     $colour=html2rgb($bgcolor);

@@ -326,6 +326,11 @@ $wpdb->query ($sql);
         $wpdb->query ($sql);
     }
     //upgrade CA_DATE_TBL if needed
+	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "year_planner"')!='year_planner')
+	{
+			$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD facilities_id INT(1) NOT NULL DEFAULT "1" AFTER event_id';
+			$wpdb->query($sql);
+	}
 	if($wpdb->get_var('SHOW COLUMNS FROM '.CA_DATE_TBL.' LIKE "facilities_id"')!='facilities_id')
 	{
 			$sql='ALTER TABLE  '.CA_DATE_TBL.' ADD facilities_id INT(11) AFTER event_id';
