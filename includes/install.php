@@ -322,7 +322,7 @@ $wpdb->query ($sql);
     $table_name = CA_DATE_TBL;
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
     { $sql='CREATE TABLE IF NOT EXISTS '.CA_DATE_TBL.' (`title` text NOT NULL,`description` text NOT NULL,`location` text NOT NULL,`year_planner` int(1) NOT NULL,`event_image` int(11) DEFAULT NULL,`end_date` date NOT NULL DEFAULT "0000-00-00",`start_date` date NOT NULL DEFAULT "0000-00-00",`start_time` time NOT NULL DEFAULT "00:00:00",`end_time` time NOT NULL DEFAULT "00:00:00", `event_id` int(11) NOT NULL DEFAULT "0",`facilities_id` int(11) DEFAULT NULL,
-  `general_calendar` int(1) NOT NULL DEFAULT "1", `general_calendar` int(1) NOT NULL DEFAULT "1",`how_many` int(11) NOT NULL,`date_id` int(11) NOT NULL AUTO_INCREMENT, `cat_id` int(11) NOT NULL,`recurring` text NOT NULL,PRIMARY KEY (`date_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
+  `general_calendar` int(1) NOT NULL DEFAULT "1",`how_many` int(11) NOT NULL,`date_id` int(11) NOT NULL AUTO_INCREMENT, `cat_id` int(11) NOT NULL,`recurring` text NOT NULL,PRIMARY KEY (`date_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
         $wpdb->query ($sql);
     }
     //upgrade CA_DATE_TBL if needed
