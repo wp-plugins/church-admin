@@ -23,7 +23,7 @@ function church_admin_front_admin()
 		
 		$upload_dir = wp_upload_dir();
 		$path=$upload_dir['basedir'];
-		if(file_exists($path.'/church-admin-cache/Church_Admin_Backup.sql.gz')){unlink($path.'church-admin-cache/Church_Admin_Backup.sql.gz');}
+		if(file_exists($path.'/church-admin-cache/Church_Admin_Backup.sql.gz')){unlink($path.'/church-admin-cache/Church_Admin_Backup.sql.gz');}
 	$filename=get_option('church_admin_backup_filename');
 			
 			if(!empty($filename) && file_exists($path.'/church-admin-cache/'.$filename)){echo '<h3 style="color:red">A plugin database backup is available - <a href="#church-admin-backup">please download and delete</a></h3> ';}
