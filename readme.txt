@@ -60,7 +60,7 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
-= 0.606 =
+= 0.607 =
 * Initial Install bug fix for calendar table
 = 0.605 =
 * Calendar List bug fix

@@ -169,10 +169,12 @@ function church_admin_category_list()
 function church_admin_add_category()
 {
      global $wpdb;
+	 $wpdb->show_errors;
     if(!empty($_POST))
     {
-        
-        $wpdb->query('INSERT INTO '.CA_CAT_TBL.' (category,bgcolor)VALUES("'.esc_sql(stripslashes($_POST['category'])).'","'.esc_sql($_POST['color']).'")');
+        $sql='INSERT INTO '.CA_CAT_TBL.' (category,bgcolor)VALUES("'.esc_sql(stripslashes($_POST['category'])).'","'.esc_sql($_POST['color']).'")';
+		echo $sql;
+        $wpdb->query($sql);
         echo '<div id="message" class="updated fade">';
         echo '<p><strong>'.__('Category Added','church-admin').'</strong></p>';
         echo '</div>';
