@@ -10,14 +10,24 @@ function church_admin_front_admin()
     add_screen_option('layout_columns', array('max' => 1, 'default' => 1) );
     
     $user_permissions=get_option('church_admin_user_permissions');
-    
-    echo'<div class="wrap" id="church-admin"><div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v'.$church_admin_version.'</h2>
-	<div id="poststuff"><div class="church_admin_left" ><h3>Plugin News</h3><p><label>'.__('If you find the plugin helpful, please contribute!','church-admin').'</label>
+	echo'<div class="wrap" id="church-admin"><div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v'.$church_admin_version.'</h2>
+	<div id="poststuff">';
+	echo '<div class="church_admin_left"><p><label>'.__('If you find the plugin helpful, please contribute!','church-admin').'</label>
 	<form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>';
+   
+	echo '<h3>Worship Albums I\'m listening to on Itunes...</h3>';
+	echo'<p><a href="https://itunes.apple.com/gb/album/newday-live-2014/id925436883?uo=4&at=10lMFD" target="Newday 2014 on itunes_store"  class="alignleft"><img src="'.plugins_url('images/ND14-Cover-150x150.jpg',dirname(__FILE__) ).'"/></a><a href="https://itunes.apple.com/gb/album/live-from-new-york-martin/id578670133?uo=4&at=10lMFD" class="alignleft" target="Jesus Culture Live in New York on itunes_store"><img src="'.plugins_url('images/jesus-culture-new-york.jpg',dirname(__FILE__) ).'"/></a>';
+	echo'<a href="https://itunes.apple.com/gb/album/the-art-of-celebration/id820496065?uo=4&at=10lMFD" class="alignleft" target="Rend Collective on itunes_store"><img src="'.plugins_url('images/rend-collective.jpg',dirname(__FILE__) ).'"/></a></p>';
+	echo'</div>';
+    echo'<div class="church_admin_left" ><h3>Plugin News</h3>';
 	require_once(plugin_dir_path(dirname(__FILE__)).'includes/news-feed.php');
 	echo church_admin_news_feed();
-	echo'</div><div class="church_admin_left" ><h3>Rollup Worship banners</h3><p><a href="http://www.worshipbanners.co.uk"  class="alignleft" ><img src="'.plugins_url('images/roll-up-banner-examples.PNG',dirname(__FILE__) ).'"  alt="Worship Banners"/></a><p>Now with mainland Europe Delivery! <a href="http://www.worshipbanners.co.uk">Why not have a look?</a></p></div>';
-	//echo '<div class="church_admin_left"><h3>Gift Aid Envelopes for UK Churches</h3><p><img src="'.plugins_url('images/gift-aid-envelope.png',dirname(__FILE__) ).'"  alt="Gift Aid Envelope"/> We print and deliver gift aid envelopes with the latest HMRC wording, your church logo and charity details.<br/>1000 one colour DL size Gift Aid envelopes delivered for &pound;100</p></div>';
+	echo '<h3>Other Plugins You may find useful</h3>';
+	echo	'<p><a href="https://wordpress.org/plugins/never-loose-contact-form">Never Loose Contact Form</a> - a spam free contact form that saves to database and emails the admin email the message.<br/>';
+	echo'<a href="https://wordpress.org/plugins/emergency-password-reset/">Emergency Password Reset</a> - If you think you may have been hacked, the first thing is to change the passwords of all users automatically which logs everyone out.</p>';
+	echo'</div>';
+	//echo'<div class="church_admin_left" ><h3>Rollup Worship banners</h3><p><a href="http://www.worshipbanners.co.uk"  class="alignleft" ><img src="'.plugins_url('images/roll-up-banner-examples.PNG',dirname(__FILE__) ).'"  alt="Worship Banners"/></a><p>Now with mainland Europe Delivery! <a href="http://www.worshipbanners.co.uk">Why not have a look?</a></p></div>';
+	
 	echo'<div class="clear"></div>';
 	
 		

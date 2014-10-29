@@ -41,7 +41,7 @@ div.pagination span.disabled{padding:2px 5px 2px 5px;margin-right:2px;border:1px
 #map{width:600px;height:500px;margin-right:5px;}
 
 .church_admin_main_menu h2{padding-top:0px;}
-.church_admin_left{width:45%;height:250px;border:1px solid #CCC;background:#FEB801;border-radius:5px;margin:0px 10px 10px 0px;padding:5px 10px;text-align:left;float:left;}
+.church_admin_left{width:45%;height:300px;border:1px solid #CCC;background:#FEB801;border-radius:5px;margin:0px 10px 10px 0px;padding:5px 10px;text-align:left;float:left;}
 .church_admin_left img{max-width:90%;}
 @media only screen and (max-width:480px){.church_admin_left{width:95%; margin:0 auto;float:none;}}}
 #smallgroup{display:none;}
