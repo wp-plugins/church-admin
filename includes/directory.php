@@ -527,6 +527,9 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			}
 	}//only available to authorised people
 	//small group
+	print_r($data->smallgroup_id);
+		$sg=maybe_unserialize($data->smallgroup_id);
+		if(!is_array($sg))$sg=array(0=>$data->smallgroup_id);
 		echo'<p><label>'.__('Small Group','church-admin').'</label><span style="display:inline-block">';
 		$smallgroups=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
 		$first=$option='';
@@ -534,7 +537,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		{
 			
 			echo'<input type="checkbox" name="smallgroup_id[]" value="'.$smallgroup->id.'"';
-			if(!empty($data->smallgroup_id)&&$smallgroup->id==$data->smallgroup_id) echo' checked="checked" ';
+			if(!empty($sg)&&in_array($smallgroup->id,$sg)) echo' checked="checked" ';
 		echo'/>'.$smallgroup->group_name.'<br/>';
 		}
 		echo '</span></p>';

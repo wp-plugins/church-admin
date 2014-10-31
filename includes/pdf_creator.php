@@ -68,6 +68,7 @@ if(!empty($results))
 		
         $people->name=stripslashes($people->name);
 		$sg=maybe_unserialize($people->smallgroup_id);
+		if(!is_array($sg))$sg=array('0'=>$sg);
 		$person_gp_count=count($sg);
 		if($person_gp_count>1){$count++;}
 		foreach($sg AS $key=>$sg_id)
