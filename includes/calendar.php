@@ -718,7 +718,7 @@ echo '</select><input type="submit" value="'.__('Go to date','church-admin').'"/
     {
     //create links
     $single_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;'.$entereddate,'single_event_edit').'">'.__('Edit','church-admin').'</a>';
-    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series').'">'.__('Edit Series','church-admin').'</a>';}
+    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series_event_edit').'">'.__('Edit Series','church-admin').'</a>';}
     $single_delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'single_event_delete').'">'.__('Delete this one','church-admin').'</a>';
 
     if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series_event_delete').'">'.__('Delete Series','church-admin').'</a>';}
