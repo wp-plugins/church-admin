@@ -22,9 +22,12 @@ function church_admin_weekly_attendance_graph($year,$service_id)
 			$date[]=$row->week;
 		}
 		$MyData = new pData(); 
-		$MyData->addPoints($total,'Total');		
+		$MyData->addPoints($total,'Total');
+		$MyData->setSerieWeight("Total",2);		
 		$MyData->addPoints($adults,'Adults');
+		$MyData->setSerieWeight("Adults",2);
 		$MyData->addPoints($children,'Children');
+		$MyData->setSerieWeight("Children",2);
 		$MyData->setAxisName(0,"Attendance");
 		$MyData->addPoints($date,"Labels");
 		$MyData->setSerieDescription("Labels","Dates");
@@ -33,9 +36,13 @@ function church_admin_weekly_attendance_graph($year,$service_id)
 		/* Create the pChart object */ 
 
 		$myPicture = new pImage(900,500,$MyData); 
+
+
+
 		/* Draw the background */ 
-		$Settings = array("R"=>255, "G"=>255, "B"=>255); 
-		$myPicture->drawFilledRectangle(0,0,900,500,$Settings); 
+		$Settings = array("R"=>179, "G"=>217, "B"=>91, "Dash"=>1, "DashR"=>199, "DashG"=>237, "DashB"=>111);
+		$myPicture->drawFilledRectangle(0,0,900,500,$Settings);
+		 
 		/* Add a border to the picture */ 
 		$myPicture->drawRectangle(0,0,899,499,array("R"=>0,"G"=>0,"B"=>0)); 
 		/* Write the chart title */  
@@ -47,7 +54,7 @@ function church_admin_weekly_attendance_graph($year,$service_id)
 		$myPicture->drawScale(array("DrawSubTicks"=>TRUE)); 
 		$myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10)); 
 		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/pf_arma_five.ttf',"FontSize"=>6)); 
-		$myPicture->drawLineChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_AUTO)); 
+		$myPicture->drawLineChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_MANUAL,"DisplayR"=>0,"DisplayG"=>0,"DisplayB"=>0)); 
 		$myPicture->setShadow(FALSE); 
 		/* Write the chart legend */ 
 		$myPicture->drawLegend(510,475,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL)); 
@@ -98,10 +105,11 @@ global $wpdb;
 
 		$MyData = new pData();   
 		$MyData->addPoints($total,'Total');
+		$MyData->setSerieWeight("Total",2);
 		$MyData->addPoints($adults,'Adults');
-
+		$MyData->setSerieWeight("Adults",2);
 		$MyData->addPoints($children,'Children');
-
+		$MyData->setSerieWeight("Children",2);
 		$MyData->setAxisName(0,"Attendance");
 
 		$MyData->addPoints($date,"Labels");
@@ -119,24 +127,16 @@ global $wpdb;
 
 
 		/* Draw the background */ 
-
-		$Settings = array("R"=>255, "G"=>255, "B"=>255); 
-
-		$myPicture->drawFilledRectangle(0,0,700,500,$Settings); 
-
-
-
-		
-
+		$Settings = array("R"=>179, "G"=>217, "B"=>91, "Dash"=>1, "DashR"=>199, "DashG"=>237, "DashB"=>111);
+		$myPicture->drawFilledRectangle(0,0,700,500,$Settings);
 		/* Add a border to the picture */ 
-
 		$myPicture->drawRectangle(0,0,699,499,array("R"=>0,"G"=>0,"B"=>0)); 
 
 		/* Write the chart title */  
 
 		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/Forgotte.ttf',"FontSize"=>11)); 
 
-		$myPicture->drawText(250,20,"Attendance ".$year,array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE)); 
+		$myPicture->drawText(250,20,"Monthly Average Attendance ".$year,array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE)); 
 
 
 
@@ -150,24 +150,10 @@ global $wpdb;
 
 		$myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10)); 
 
-		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/pf_arma_five.ttf',"FontSize"=>6)); 
-
-		$myPicture->drawLineChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_AUTO)); 
-
+		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/pf_arma_five.ttf',"FontSize"=>10));	$myPicture->drawLineChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_MANUAL,"DisplayR"=>0,"DisplayG"=>0,"DisplayB"=>0)); 
 		$myPicture->setShadow(FALSE); 
-
-
-
-		
-
-		
-
 		/* Write the chart legend */ 
-
-		$myPicture->drawLegend(510,475,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL)); 
-
-		
-
+		$myPicture->drawLegend(510,30,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL));
 		$upload_dir = wp_upload_dir();
 		$path=$upload_dir['basedir'].'/church-admin-cache/';
 
@@ -199,7 +185,7 @@ function church_admin_rolling_attendance_graph($service_id)
 		$wpdb->query($up);
 	 }
 	//build data
-	$sql='SELECT rolling_adults as adults,rolling_children AS children,MONTHNAME(`date`) AS month FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" GROUP BY YEAR(`date`), MONTH(`date`) ';
+	$sql='SELECT rolling_adults as adults,rolling_children AS children,date_format(`date`,"%b %Y") AS date FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" GROUP BY YEAR(`date`), MONTH(`date`) ';
 	$result=$wpdb->get_results($sql);
 
 	if(!empty($result))
@@ -216,88 +202,46 @@ function church_admin_rolling_attendance_graph($service_id)
 
 			$children[]=$row->children;
 
-			$date[]=mysql2date('M/Y',$row->month);
+			$date[]=$row->date;
 
 		}
 
 		$MyData = new pData();   
 		$MyData->addPoints($total,'Total');
+		$MyData->setSerieWeight("Total",2);
 		$MyData->addPoints($adults,'Adults');
-
+		$MyData->setSerieWeight("Adults",2);
 		$MyData->addPoints($children,'Children');
-
+		$MyData->setSerieWeight("Children",2);
 		$MyData->setAxisName(0,"Attendance");
-
 		$MyData->addPoints($date,"Labels");
-
 		$MyData->setSerieDescription("Labels","Dates");
-
 		$MyData->setAbscissa("Labels");
 
 	
 
 		/* Create the pChart object */ 
-
-		$myPicture = new pImage(900,500,$MyData); 
-
-
-
-		/* Draw the background */ 
-
-		$Settings = array("R"=>255, "G"=>255, "B"=>255); 
-
-		$myPicture->drawFilledRectangle(0,0,900,500,$Settings); 
-
-
-
-		
-
+		$myPicture = new pImage(900,550,$MyData); 
+		$Settings = array("R"=>179, "G"=>217, "B"=>91, "Dash"=>1, "DashR"=>199, "DashG"=>237, "DashB"=>111);
+		$myPicture->drawFilledRectangle(0,0,900,550,$Settings);
 		/* Add a border to the picture */ 
-
-		$myPicture->drawRectangle(0,0,899,499,array("R"=>0,"G"=>0,"B"=>0)); 
-
+		$myPicture->drawRectangle(0,0,899,549,array("R"=>0,"G"=>0,"B"=>0,"Ticks"=>TRUE)); 
 		/* Write the chart title */  
-
 		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/Forgotte.ttf',"FontSize"=>11)); 
-
-		$myPicture->drawText(250,20,"Rolling Average Attendance ".$year,array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE)); 
-
-
-
+		$myPicture->drawText(250,30,"Rolling Average Attendance ".$year,array("FontSize"=>20,"Align"=>TEXT_ALIGN_BOTTOMMIDDLE)); 
 		/* Draw the scale and the 1st chart */ 
-
 		$myPicture->setGraphArea(40,40,860,460); 
-
 		$myPicture->drawFilledRectangle(40,40,860,460,array("R"=>255,"G"=>255,"B"=>255,"Surrounding"=>-200,"Alpha"=>10)); 
-
-		$myPicture->drawScale(array("DrawSubTicks"=>TRUE)); 
-
+		$myPicture->drawScale(array("DrawSubTicks"=>TRUE,"DrawArrows"=>TRUE,"ArrowSize"=>6,'LabelSkip'=>5));
 		$myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10)); 
-
 		$myPicture->setFontProperties(array("FontName"=>plugin_dir_path(dirname(__FILE__)).'includes/graph/Fonts/pf_arma_five.ttf',"FontSize"=>6)); 
-
-		$myPicture->drawLineChart(array("DisplayValues"=>TRUE,"DisplayColor"=>DISPLAY_AUTO)); 
-
+		$myPicture->drawLineChart(array("DisplayValues"=>FALSE)); 
 		$myPicture->setShadow(FALSE); 
-
-
-
-		
-
-		
-
 		/* Write the chart legend */ 
-
-		$myPicture->drawLegend(510,475,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL)); 
-
-		
-
+		$myPicture->drawLegend(510,30,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL)); 
 		$upload_dir = wp_upload_dir();
 		$path=$upload_dir['basedir'].'/church-admin-cache/';
-		
-
 		$myPicture->render($path.'rolling-average-attendance.png'); 
-
 	}//end result
 
 

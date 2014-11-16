@@ -40,7 +40,7 @@ function church_admin_mailchimp_sync()
 					
 				}
 				//Check for hope team
-				if(!empty($grouping['name'])&&$grouping['name']==translate('Hope Team','church-admin'))
+				if(!empty($grouping['name'])&&$grouping['name']==translate('Hope Teams','church-admin'))
 				{
 					$hope_team_id=$grouping['id'];
 					
@@ -118,7 +118,7 @@ function church_admin_mailchimp_sync()
 				$memb_level=array('id'=>$member_level_id,'groups'=>array($member_levels[$person->member_type_id]));
 				//grab ministries
 				$result=$wpdb->get_results('SELECT department_id FROM '.CA_MET_TBL.' WHERE people_id="'.$person->people_id.'" AND meta_type="ministry"');
-				$min=array();
+				$mins=$min=array();
 				if(!empty($result))
 				{
 						foreach($result AS $row)
@@ -127,11 +127,27 @@ function church_admin_mailchimp_sync()
 							
 						}
 				}
-				$ministries=array('id'=>$ministry_id,'groups'=>$min);
-				if(is_email($person->email))$peeps[]=array('email'=>array('email'=>$person->email),'email_type'=>'html','merge_vars'=>array('FNAME'=>$person->first_name,'LNAME'=>$person->last_name,'GROUPINGS'=>array('0'=>$memb_level,'1'=>$ministries)));
+				if(!empty($min))$mins=array('id'=>$ministry_id,'groups'=>$min);
+				$result=$wpdb->get_results('SELECT department_id FROM '.CA_MET_TBL.' WHERE people_id="'.$person->people_id.'" AND meta_type="hope_team"');
+				$htjobs=$ht_jobs=array();
+				if(!empty($result))
+				{
+						foreach($result AS $row)
+						{
+							if($row->department_id!=0)$ht_jobs[]=$hope_teams[$row->department_id];
+							
+						}
+				}
+				if(!empty($ht_jobs))$htjobs=array('id'=>$hope_team_id,'groups'=>$ht_jobs);
+				if(is_email($person->email))
+				{
+					$groupings=array_filter(array($memb_level,$mins,$htjobs));
+					echo '<h2>'.$person->email.'<h2><pre> '.print_r($groupings,TRUE).'</pre>';
+					$peeps[]=array('email'=>array('email'=>$person->email),'email_type'=>'html','merge_vars'=>array('FNAME'=>$person->first_name,'LNAME'=>$person->last_name,'GROUPINGS'=>$groupings));
+				}
 				
 			}
-			//print_r($peeps);
+			
 			$subs=$MailChimp->call('lists/batch-subscribe',array('id'=>$listID,'batch'=>$peeps, 'double_optin'=>FALSE,'update_existing'=>TRUE,'replace_interests'=>TRUE));
 			if(!empty($subs['errors']))
 			{	

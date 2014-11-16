@@ -108,8 +108,11 @@ if(isset($_POST['edit_att']))
      echo '<div id="message" class="updated fade">';
      echo '<p><strong>'.__('Attendance added','church-admin').'.</strong></p>';
      echo '</div>';
-    
-     church_admin_attendance_list($sqlsafe['service_id']);
+	 require_once(plugin_dir_path(__FILE__).'/graph.php');
+	church_admin_rolling_attendance_graph($sqlsafe['service_id']);
+	church_admin_monthly_attendance_graph(date('Y'),$sqlsafe['service_id']);
+	church_admin_weekly_attendance_graph(date('Y'),$sqlsafe['service_id']);
+    church_admin_attendance_list($sqlsafe['service_id']);
 
 }
 else

@@ -285,9 +285,10 @@ function ca_podcast_edit_file($id=NULL)
         $speaker=esc_sql($sqlsafe['people']);
         if(!empty($_POST['private'])){$private="1";}else{$private="0";}
         if(empty($_POST['pub_date'])){$sqlsafe['pub_date']=date("Y-m-d" );}else{$sqlsafe['pub_date']=$_POST['pub_date'];}
+		if(empty($transcript))$transcript='';
 		
         $sqlsafe['pub_date'].=' 12:00:00';
-        if(empty($id))$id=$wpdb->get_var('SELECT file_id FROM '.CA_FIL_TBL.' WHERE length="'.$length.'" AND private="'.$private.'" AND file_name="'.$filename.'" AND file_title="'.$sqlsafe['file_title'].'" AND file_description="'.$sqlsafe['file_description'].'" AND service_id="'.$sqlsafe['service_id'].'" AND series_id="'.$sqlsafe['series_id'].'" AND speaker="'.$speaker.'"');
+        if(empty($id))$id=$wpdb->get_var('SELECT file_id FROM '.CA_FIL_TBL.' WHERE length="'.$length.'" AND private="'.$private.'" AND file_name="'.$file_name.'" AND file_title="'.$sqlsafe['file_title'].'" AND file_description="'.$sqlsafe['file_description'].'" AND service_id="'.$sqlsafe['service_id'].'" AND series_id="'.$sqlsafe['series_id'].'" AND speaker="'.$speaker.'"');
         
         
         if(!empty($id))
@@ -298,7 +299,7 @@ function ca_podcast_edit_file($id=NULL)
         }//end update
         else
         {//insert
-            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified,transcript,video_url)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqldafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'","'.$transcript.'","'.$sqlsafe['video_url'].'")';
+            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified,transcript,video_url)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqlsafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'","'.$transcript.'","'.$sqlsafe['video_url'].'")';
             $wpdb->query($sql);
         }//end insert
         
@@ -372,7 +373,7 @@ function ca_podcast_edit_file($id=NULL)
         echo'<p><label>'.__('Speaker','church-admin').'</label>';
         $s=array();
 	
-        
+        if(empty($current_data->speaker))$current_data->speaker='';
         echo church_admin_autocomplete('people','friends','to',$current_data->speaker); 
         echo'</p>';
         if(empty($current_data->pub_date))$current_data->pub_date=date('Y-m-d');
