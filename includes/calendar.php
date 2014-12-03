@@ -51,7 +51,7 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 	}
 	$out.='<p>Double click on an event to edit, or a day to add an event</p>';
 	$out.='<p><a href="'.admin_url().'?page=church_admin/index.php&action=church_admin_calendar_list">Old Style Calendar List</a></p>';
-	$out.='<table class="church_admin_calendar"><tr><td colspan="7" class="calendar-date-switcher"><form method="post" action="">'.__('Month','church-admin').'<select name="ca_month">';
+	$out.='<table class="church_admin_calendar"><tr><td colspan="7" class="calendar-date-switcher"><form method="post" action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar">'.__('Month','church-admin').'<select name="ca_month">';
 	$first=$option='';
 	for($q=0;$q<=12;$q++)
 	{
@@ -96,12 +96,14 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 	// renders the days
 	$rowcounter = $emptycells;
 	$numinrow = 7;
+	 
 	for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
 	{
+		$sqlnow="$thisyear-$thismonth-".sprintf('%02d', $counter);
         $rowcounter ++;
 		$out.="\t\t".'<td id="'.$sqlnow.'"><strong>'.$counter.'</strong><br/>';
     //put events for day in here
-    $sqlnow="$thisyear-$thismonth-".sprintf('%02d', $counter);
+   
     if(empty($facilities_id)){$sql='SELECT a.*, b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.general_calendar=1 AND a.cat_id=b.cat_id  AND a.start_date="'.$sqlnow.'" ORDER BY a.start_time';}
 	else{$sql='SELECT a.*, b.* FROM '.CA_DATE_TBL.' a,'.CA_CAT_TBL.' b WHERE a.facilities_id="'.esc_sql($facilities_id).'" AND a.cat_id=b.cat_id  AND a.start_date="'.$sqlnow.'" ORDER BY a.start_time';}
 	
