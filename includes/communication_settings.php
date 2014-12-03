@@ -87,7 +87,7 @@ function church_admin_settings()
 	
 	 foreach($levels AS $key=>$value)
 	 {
-	    if(array_key_exists($_POST['level'.$key],$available_levels))$levels[$key]=$_POST['level'.$key];
+	    if(!empty($_POST['level'.$key])&&array_key_exists($_POST['level'.$key],$available_levels))$levels[$key]=$_POST['level'.$key];
 	    
 	 }
 	 update_option('church_admin_levels',$levels);

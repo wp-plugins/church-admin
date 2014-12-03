@@ -8,7 +8,7 @@ function church_admin_cron_pdf()
     $pdf->AddPage('P','A4');
     $pdf->SetFont('Arial','B',24);
     $text=__('How to set up Bulk Email Queuing','church-admin');
-    $pdf->Cell(0,10,$text,0,2,L);
+    $pdf->Cell(0,10,$text,0,2,'L');
     if (PHP_OS=='Linux')
     {
     $phppath='/usr/local/bin/php -f ';
@@ -55,8 +55,8 @@ if(!empty($results))
 	//grab people
 	if(!empty($member_type_id)&&!is_array($member_type_id)){$memb=explode(',',esc_sql($member_type_id));}else{$memb=$member_type_id;}
 	foreach($memb AS $key=>$value){if(ctype_digit($value))$membsql[]='member_type_id='.$value;}
-	if(!empty($membsql)) {$memb_sql='  ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
-	$sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name,smallgroup_attendance,smallgroup_id FROM '.CA_PEO_TBL.'  WHERE   '.$memb_sql.'  ORDER BY smallgroup_attendance,last_name ';
+	if(!empty($membsql)) {$memb_sql='WHERE   ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+	$sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name,smallgroup_attendance,smallgroup_id FROM '.CA_PEO_TBL.'  '.$memb_sql.'  ORDER BY smallgroup_attendance,last_name ';
 	$peopleresults = $wpdb->get_results($sql);
 	
 	

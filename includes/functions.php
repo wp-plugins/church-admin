@@ -31,14 +31,14 @@ function church_admin_level_check($what)
 {
     global $current_user;
     get_currentuserinfo();
-    $user_permissions=get_option('church_admin_user_permissions');
+    $user_permissions=maybe_unserialize(get_option('church_admin_user_permissions'));
 	
     $level=get_option('church_admin_levels');
 	
     if(!empty($user_permissions[$what]))
     {//user permissions have been set for $what
 		
-		if( in_array($current_user->ID,$user_permissions[$what])){return TRUE;}else{return FALSE;}
+		if( in_array($current_user->ID,maybe_unserialize($user_permissions[$what]))){return TRUE;}else{return FALSE;}
 	}//end user permissions have been set
     elseif(!empty($level[$what]) && $level[$what]=="administrator"){return current_user_can('manage_options');}
     elseif(!empty($level[$what]) && $level[$what]=="editor"){return current_user_can('delete_others_pages');}
@@ -399,14 +399,14 @@ function QueueEmail($to,$subject,$message,$copy,$from_name,$from_email,$attachme
 {
     global $wpdb;
     $sqlsafe=array();
-    $sqlsafe['to']=mysql_real_escape_string($to);
-    $sqlsafe['from_name']=mysql_real_escape_string($from_name);
-    $sqlsafe['from_email']=mysql_real_escape_string($from_email);
-    $sqlsafe['subject']=mysql_real_escape_string($subject);    
-    $sqlsafe['message']=mysql_real_escape_string($message);
-    $sqlsafe['attachment']=mysql_real_escape_string($attachment);
+    $sqlsafe['to']=esc_sql($to);
+    $sqlsafe['from_name']=esc_sql($from_name);
+    $sqlsafe['from_email']=esc_sql($from_email);
+    $sqlsafe['subject']=esc_sql($subject);    
+    $sqlsafe['message']=esc_sql($message);
+    $sqlsafe['attachment']=esc_sql($attachment);
 
-    $sqlsafe['copy']=mysql_real_escape_string($copy);
+    $sqlsafe['copy']=esc_sql($copy);
     $result=$wpdb->query("INSERT INTO ".$wpdb->prefix."church_admin_email (recipient,from_name,from_email,copy,subject,message,sent,attachment)VALUES('{$sqlsafe['to']}','{$sqlsafe['from_name']}','{$sqlsafe['from_email']}','{$sqlsafe['copy']}','{$sqlsafe['subject']}','{$sqlsafe['message']}',NOW(),'{$sqlsafe['attachment']}')");
 
     if($result) {return $wpdb->insert_id;}else{return FALSE;}

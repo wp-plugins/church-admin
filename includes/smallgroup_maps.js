@@ -26,7 +26,7 @@ function sgload(lat,lng,xml_url) {
 				new google.maps.Size(40, 37),
 				new google.maps.Point(0, 0),
 				new google.maps.Point(12, 35));
-				var marker = createMarker(information, point);  
+				 
 				function createMarker(information, point) 
 				{
 					var marker = new google.maps.Marker({map: map,position: point,icon: pinImage,shadow: pinShadow,});
@@ -39,6 +39,7 @@ function sgload(lat,lng,xml_url) {
 					});
 					return marker;
 				}
+				var marker = createMarker(information, point); 
 			}
 			var sg='<h2>Smallgroups</h2><p>';
 			for(var index in smallgroup) {  sg= sg + smallgroup[index] +'<br/>';}

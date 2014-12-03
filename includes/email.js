@@ -7,14 +7,14 @@ $(document).ready(function() {
 			document.getElementById('individuals').style.display ='block';
 			document.getElementById('smallgroup').style.display ='none';
 			document.getElementById('hope_team').style.display ='none';
-			document.getElementById('member_type').style.display ='none';
+			
 			document.getElementById('roles').style.display ='none';
                 } else if($(this).val() == 'smallgroup') {
                         //do something else again
 			document.getElementById('individuals').style.display ='none';
 			document.getElementById('smallgroup').style.display ='block';
 			document.getElementById('hope_team').style.display ='none';
-			document.getElementById('member_type').style.display ='none';
+			
 			document.getElementById('roles').style.display ='none';
                 }
 		 else if($(this).val() == 'roles') {
@@ -22,14 +22,14 @@ $(document).ready(function() {
 			document.getElementById('individuals').style.display ='none';
 			document.getElementById('smallgroup').style.display ='none';
 			document.getElementById('hope_team').style.display ='none';
-			document.getElementById('member_type').style.display ='none';
+			
 			document.getElementById('roles').style.display ='block';
                 }
 				else if($(this).val() == 'hope_team') {
                         //do something else again
 			document.getElementById('individuals').style.display ='none';
 			document.getElementById('smallgroup').style.display ='none';
-			document.getElementById('member_type').style.display ='none';
+			
 			document.getElementById('hope_team').style.display ='block';
 			document.getElementById('roles').style.display ='none';
                 }
@@ -37,7 +37,7 @@ $(document).ready(function() {
                         //do something else again
 			document.getElementById('individuals').style.display ='none';
 			document.getElementById('smallgroup').style.display ='none';
-			document.getElementById('member_type').style.display ='block';
+			
 			document.getElementById('hope_team').style.display ='none';
 			document.getElementById('roles').style.display ='none';
                 }
@@ -101,7 +101,7 @@ $(document).ready(function() {
 
 $(document).ready(function() {
 			$('#roleadd').click(function() {
-				console.log('Add role fired');
+				
 				var num		= $('.roleclonedInput').length;	// how many "duplicatable" input fields we currently have
 				var newNum	= new Number(num + 1);		// the numeric ID of the new input field being added
 
@@ -136,6 +136,49 @@ $(document).ready(function() {
 			});
 
 			$('#roledel').attr('disabled','disabled');
+		});
+
+
+
+
+
+$(document).ready(function() {
+			$('#hopeadd').click(function() {
+				
+				var num		= $('.hopeclonedInput').length;	// how many "duplicatable" input fields we currently have
+				var newNum	= new Number(num + 1);		// the numeric ID of the new input field being added
+
+				// create the new element via clone(), and manipulate it's ID using newNum value
+				var newElem = $('#hopeinput' + num).clone().attr('id', 'hopeinput' + newNum);
+				
+				// manipulate the name/id values of the input inside the new element
+				
+				newElem.find('select').attr('id', 'hopeid' + newNum).val('');
+				
+				
+				// insert the new element after the last "duplicatable" input field
+				$('#hopeinput' + num).after(newElem);
+				 $('#hopehide' + newNum).hide();
+				
+				// enable the "remove" button
+				$('#hopedel').removeAttr("disabled");
+				
+				
+			});
+
+			$('#hopedel').click(function() {
+				
+				var num	= $('.hopeclonedInput').length;	// how many "duplicatable" input fields we currently have
+				$('#hopeinput' + num).remove();		// remove the last element
+
+				// enable the "add" button
+				$('#hopeadd').removeAttr("disabled");
+				
+				// if only one element remains, disable the "remove" button
+				if (num-1 == 1) $('#hopedel').attr('disabled','disabled');
+			});
+
+			$('#hopedel').attr('disabled','disabled');
 		});
 
 

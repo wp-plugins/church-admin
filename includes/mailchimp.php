@@ -142,7 +142,7 @@ function church_admin_mailchimp_sync()
 				if(is_email($person->email))
 				{
 					$groupings=array_filter(array($memb_level,$mins,$htjobs));
-					echo '<h2>'.$person->email.'<h2><pre> '.print_r($groupings,TRUE).'</pre>';
+					
 					$peeps[]=array('email'=>array('email'=>$person->email),'email_type'=>'html','merge_vars'=>array('FNAME'=>$person->first_name,'LNAME'=>$person->last_name,'GROUPINGS'=>$groupings));
 				}
 				

@@ -251,9 +251,11 @@ if(!empty($taskresult))
       //Pagination
 	    echo '<table class="widefat">';
 	    $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Date','church-admin').'</th>';
-	    foreach($taskresult AS $taskrow)
+	    $job=array();
+		foreach($taskresult AS $taskrow)
 	    {
 	      $thead.='<th>'.esc_html($taskrow->rota_task).'</th>';
+		  $job[]=$taskrow->rota_task;
 	    }
 		$thead.='<th>Copy from...</th>';
 	    $thead.='</tr>';
@@ -289,7 +291,7 @@ if(!empty($taskresult))
 				    $new_rota[$id]=church_admin_get_people_id($rota_jobs[$id]);
 				    
 				}
-				 echo'<td>'.esc_html(church_admin_get_people($rota_jobs[$id])).'</td>';
+				 echo'<td class="edit" id="'.$job[$order].'~'.$daterows->rota_id.'">'.esc_html(church_admin_get_people($rota_jobs[$id])).'</td>';
 				
 			    }
 			    else
@@ -315,6 +317,13 @@ if(!empty($taskresult))
 		}
 	    echo'</tbody>';
 	    echo'</table>';
+		echo'<script type="text/javascript">
+		 jQuery(document).ready(function($) {
+		 
+		$(".edit").editable(ajaxurl,{submitdata: {action: "ajax_rota_edit",security:"'.wp_create_nonce('ajax_rota_edit').'"}});    
+ });
+		
+		</script>';
 	}
     }
 }//end of non empty rota tasks.	

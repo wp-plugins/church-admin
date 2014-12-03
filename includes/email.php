@@ -182,21 +182,12 @@ function church_admin_email_build()
 
     //it returns the email_id from db
 
-    $sqlsafe=array(
-
-                    'subject'=>esc_sql(stripslashes($_POST['subject'])),
-
-                    'news'=>esc_sql(maybe_serialize($_POST['news'])),
-
-                    'events'=>esc_sql(maybe_serialize($_POST['events'])),
-
-                    'from_email'=>esc_sql(stripslashes($_POST['from_email'])),
-
-                    'from_name'=>esc_sql(stripslashes($_POST['from_name']))
-
-                    );
-
- 
+    $sqlsafe=array();
+	if(!empty($_POST['subject']))$sqlsafe['subject']=esc_sql(stripslashes($_POST['subject']));
+	if(!empty($_POST['news']))$sqlsafe['news']=esc_sql(maybe_serialize($_POST['news']));
+	if(!empty($_POST['events']))$sqlsafe['events']=esc_sql(maybe_serialize($_POST['events']));
+	if(!empty($_POST['from_email']))$sqlsafe['from_email']=esc_sql(stripslashes($_POST['from_email']));
+	if(!empty($_POST['from_name']))$sqlsafe['from_name']=esc_sql(stripslashes($_POST['from_name']));
 
     //Build Email
 
@@ -250,7 +241,7 @@ if  ($_FILES['userfile3']['size']>0)
 
     //handle latest news
 
-    if(count($_POST['post'])>0)
+    if(!empty($_POST['post'])&&count($_POST['post'])>0)
 
     {//latest news sections
 
@@ -342,7 +333,8 @@ if  ($_FILES['userfile3']['size']>0)
 
     //add posts
 
-    $message=str_replace('[posts]',$post_section,$message);
+    if(empty($post_section))$post_section='';
+	$message=str_replace('[posts]',$post_section,$message);
 
     
 
@@ -407,7 +399,7 @@ if  ($_FILES['userfile3']['size']>0)
 
 
     $sqlsafe['message']=esc_sql($message);
-
+	if(empty($attachments))$attachments=array();
     $email_id=$wpdb->get_var('SELECT email_id FROM '.$wpdb->prefix.'church_admin_email_build WHERE subject="'.$sqlsafe['subject'].'" AND message="'.$sqlsafe['message'].'" AND from_email="'.$sqlsafe['from_email'].'" AND from_name="'.$sqlsafe['from_name'].'" AND filename="'.esc_sql(maybe_serialize($attachments)).'"');
 
     if($email_id)
@@ -547,9 +539,23 @@ echo'<p><label><strong>'.__('Choose individuals','church-admin').'</strong></lab
     echo'</select></p></div>';
 
      echo'<p><input type="button" id="roleadd" value="'.__('Add another ministry','church-admin').'" /><input type="button" id="roledel" value="Remove ministry" /></p></fieldset>';
-
-  
-
+	//hope teams
+	$result=$wpdb->get_results('SELECT * FROM '.CA_HOP_TBL);
+	if(!empty($result))
+	{
+		 echo'<p><label><strong>'.__('A Hope Team','church-admin').'</strong></label><input type="radio" name="type" value="hope_team"/></p>';
+		$hope_team=array();
+		foreach($result AS $row) $hope_team[$row->hope_team_id]=$row->job;
+		echo'<fieldset id="hope_team">';
+		echo '<div class="hopeclonedInput" id="hopeinput1">';
+		echo'<p><label>'.__('Everyone in this Hope Team','church-admin').'</label><select name="hope_team_id[]" id="hope_team_id" class="hope_team_id">';
+		foreach($hope_team AS $key=>$value)
+		{
+			echo'<option value="'.$key.'">'.$value.'</option>';
+		}
+		echo'</select></p></div>';
+	     echo'<p><input type="button" id="hopeadd" value="'.__('Add another hope team','church-admin').'" /><input type="button" id="hopedel" value="Remove hope_team" /></p></fieldset>';
+	}
     echo'<p><input type="submit" class="secondary-button" value="'.__('Send Email','church-admin').'"/>';
 
     echo'</form></div>';
@@ -615,7 +621,17 @@ function church_admin_send_message($email_id)
       
 
     }
+	elseif(!empty($_POST['type']) && $_POST['type']=='hope_team')
 
+    {
+
+      foreach($_POST['hope_team_id'] AS $key=>$value)$r[]='b.department_id='.$value;
+
+      $sql='SELECT  a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.meta_type="hope_team" AND b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).')' ;
+
+      
+
+    }
     $results=$wpdb->get_results($sql);
 
     if($results)

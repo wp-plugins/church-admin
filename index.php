@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.611
+Version: 0.612
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.611';
+$church_admin_version = '0.612';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -342,6 +342,12 @@ function church_admin_init()
         wp_enqueue_script('jquery','','',NULL);
         wp_register_script('ca_email',  plugins_url('church-admin/includes/email.js',dirname(__FILE__) ), false, NULL);
         wp_enqueue_script('ca_email','','',NULL);
+    }
+	if(isset($_GET['action']) && ($_GET['action']=='church_admin_rota_list'||$_GET['action']=='church_admin_edit_rota'))
+    {
+        
+        wp_register_script('ca_editable',  plugins_url('church-admin/includes/jquery.jeditable.mini.js',dirname(__FILE__) ), array('jquery'), NULL,TRUE);
+        wp_enqueue_script('ca_editable');
     }
     if(!empty($_GET['action']) && ($_GET['action']=='church_admin_edit_household'||$_GET['action']=='church_admin_edit_service'||$_GET['action']=='church_admin_edit_small_group'))
     {
@@ -1078,7 +1084,24 @@ function church_admin_datadump ($table) {
  
 
 
-
+add_action('wp_ajax_ajax_rota_edit', 'church_admin_action_rota_edit');
+add_action('wp_ajax_nopriv_ajax_rota_edit', 'church_admin_action_rota_edit');
+function church_admin_action_rota_edit()
+{
+	
+	check_ajax_referer('ajax_rota_edit','security',TRUE);
+	global $wpdb;	
+	$id=$_POST['id'];
+	$details=explode('~',$id);
+	$job_id=$wpdb->get_var('SELECT rota_id FROM '.CA_RST_TBL.' WHERE rota_task="'.esc_sql($details[0]).'"');
+	$row=$wpdb->get_row('SELECT * FROM '.CA_ROT_TBL.' WHERE rota_id="'.esc_sql($details[1]).'"');
+	$jobs=maybe_unserialize($row->rota_jobs);
+	$jobs[$job_id]= church_admin_get_people_id($_POST['value']);
+	$sql='UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.esc_sql(maybe_serialize($jobs)).'" WHERE  rota_id="'.esc_sql($details[1]).'"';
+	echo $_POST['value'];
+	$wpdb->query($sql);
+	die();
+}
 add_action('wp_ajax_ca_mp3_action', 'church_admin_action_callback');
 add_action('wp_ajax_nopriv_ca_mp3_action', 'church_admin_action_callback');
 
