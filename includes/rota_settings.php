@@ -4,7 +4,18 @@ function church_admin_delete_rota_settings($id)
 {
     global $wpdb;
     $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota_settings WHERE rota_id='".esc_sql($id)."'");
-    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_option_id='".esc_sql($id)."'");
+     $result=$wpdb->get_results('SELECT * FROM '.CA_ROT_TBL );
+            if($result)
+            {
+                foreach($result AS $row)
+                {
+                    $jobs=unserialize($row->rota_jobs);
+                    unset($jobs[$id]);
+                    $rota_jobs=esc_sql(serialize($jobs));
+                    $wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.$rota_jobs.'" WHERE rota_id="'.$row->rota_id.'"');
+                }
+            
+            }
     require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
     add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
     do_meta_boxes('church-admin','advanced',null);
@@ -26,7 +37,10 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
         $id=$wpdb->get_var('SELECT rota_id FROM '.CA_RST_TBL.' WHERE rota_task="'.$rota_task.'"' );
         if(!$id)
         {
-            $sql='INSERT INTO '.CA_RST_TBL.' (rota_task,department_id,initials) VALUES("'.$rota_task.'","'.$department_id.'","'.$initials.'")';
+			$rota_order=$wpdb->get_var('SELECT MAX(rota_order) FROM '.CA_RST_TBL)+1;
+			
+            $sql='INSERT INTO '.CA_RST_TBL.' (rota_task,department_id,initials,rota_order) VALUES("'.$rota_task.'","'.$department_id.'","'.$initials.'","'.esc_sql($rota_order).'")';
+			
             $wpdb->query($sql);
             $job_id=$wpdb->insert_id;
     
@@ -37,7 +51,8 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
                 foreach($result AS $row)
                 {
                     $jobs=unserialize($row->rota_jobs);
-                    $jobs["$rota_task"]=array();
+					
+                    $jobs[$job_id]=serialize(array());
                     $rota_jobs=esc_sql(serialize($jobs));
                     $wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.$rota_jobs.'" WHERE rota_id="'.$row->rota_id.'"');
                 }

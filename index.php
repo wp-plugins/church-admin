@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.612
+Version: 0.613
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.612';
+$church_admin_version = '0.613';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -323,7 +323,7 @@ function church_admin_init()
 
     ca_thumbnails();
 
-
+	if(isset($_GET['ca_app'])){require_once(plugin_dir_path(__FILE__).'includes/json.php');church_admin_json($_GET['ca_app']);exit();}
     if(isset($_GET['download'])){church_admin_download($_GET['download']);exit();}
     if (isset($_GET['action'])&&($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'||$_GET['action']=='church_admin_new_calendar')||!is_admin())
     {
@@ -492,7 +492,7 @@ function church_admin_menus()
 }
 
 // Admin Bar Customisation
-function mytheme_admin_bar_render() {
+function church_admin_admin_bar_render() {
 /**
  *
  * Admin Bar Menu
@@ -513,7 +513,7 @@ function mytheme_admin_bar_render() {
 }
 
 // Finally we add our hook function
-add_action( 'wp_before_admin_bar_render', 'mytheme_admin_bar_render' );
+add_action( 'wp_before_admin_bar_render', 'church_admin_admin_bar_render' );
 
 
 

@@ -140,9 +140,10 @@ function ca_display_file($file_id=NULL)
     $sql='SELECT a.*,b.* FROM '.CA_FIL_TBL.' a, '.CA_SERM_TBL.' b WHERE a.series_id=b.series_id AND a.file_id="'.esc_sql($file_id).'"';
     
     $data=$wpdb->get_row($sql);
-    $data->speaker_name=$data->speaker;
+    
     if($data)
     {
+		$data->speaker_name=$data->speaker;
         $template=str_replace('[VIDEO_URL]',"\r\n".$data->video_url."\r\n",$template);
 		$template=str_replace('[FILE_TITLE]',$data->file_title,$template);
 		$template=str_replace('[FILE_ID]',$data->file_id,$template);
@@ -170,7 +171,7 @@ function ca_display_file($file_id=NULL)
     }
     else
     {
-        return "File not found";
+        return "";
     }
     
 }

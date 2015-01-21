@@ -214,7 +214,7 @@ if(!empty($taskresult))
 	  $p->items($items);
 	  $p->limit(10); // Limit entries per page
 	  
-	  $p->target($_SERVER['REQUEST_URI']);
+	  $p->target(admin_url().'admin.php?page=church_admin/index.php&action=church_admin_rota_list');
 	  if(!isset($p->paging))$p->paging=1; 
 	  if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
 	  $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
@@ -282,18 +282,18 @@ if(!empty($taskresult))
 		$rota_jobs =maybe_unserialize($daterows->rota_jobs);
 		if(!empty($rota_jobs))
 		{
+			
 		    foreach($rota_order AS $order=>$id)
 		    {
+			
 			if(!empty($rota_jobs[$id]))
 			    {
-				if(!is_array(maybe_unserialize($rota_jobs[$id])))
-				{//rota job is in old format
-				    $new_rota[$id]=church_admin_get_people_id($rota_jobs[$id]);
-				    
+					if(!is_array(maybe_unserialize($rota_jobs[$id])))
+					{//rota job is in old format
+						$new_rota[$id]=church_admin_get_people_id($rota_jobs[$id]);
+				    }
+					echo'<td class="edit" id="'.$job[$order].'~'.$daterows->rota_id.'">'.esc_html(church_admin_get_people($rota_jobs[$id])).'</td>';
 				}
-				 echo'<td class="edit" id="'.$job[$order].'~'.$daterows->rota_id.'">'.esc_html(church_admin_get_people($rota_jobs[$id])).'</td>';
-				
-			    }
 			    else
 			    {
 				echo'<td>&nbsp;</td>';
