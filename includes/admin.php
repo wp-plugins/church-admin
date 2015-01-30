@@ -16,8 +16,8 @@ function church_admin_front_admin()
 	<form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>';
    
 	echo '<h3>Worship Albums I\'m listening to on Itunes...</h3>';
-	echo'<p><a href="https://itunes.apple.com/gb/album/newday-live-2014/id925436883?uo=4&at=10lMFD" target="Newday 2014 on itunes_store"  class="alignleft"><img src="'.plugins_url('images/ND14-Cover-150x150.jpg',dirname(__FILE__) ).'"/></a><a href="https://itunes.apple.com/gb/album/live-from-new-york-martin/id578670133?uo=4&at=10lMFD" class="alignleft" target="Jesus Culture Live in New York on itunes_store"><img src="'.plugins_url('images/jesus-culture-new-york.jpg',dirname(__FILE__) ).'"/></a>';
-	echo'<a href="https://itunes.apple.com/gb/album/the-art-of-celebration/id820496065?uo=4&at=10lMFD" class="alignleft" target="Rend Collective on itunes_store"><img src="'.plugins_url('images/rend-collective.jpg',dirname(__FILE__) ).'"/></a></p>';
+	echo'<p><a href="https://itunes.apple.com/gb/album/campfire-christmas-vol.-1/id937837331?uo=4&at=10lMFD" target="Rend Collective Campfire Christmas on itunes_store"  class="alignleft"><img src="'.plugins_url('images/campfire-christmas.jpg',dirname(__FILE__) ).'"/></a><a href="https://itunes.apple.com/gb/album/live-from-new-york-martin/id578670133?uo=4&at=10lMFD" class="alignleft" target="Jesus Culture Live in New York on itunes_store"><img src="'.plugins_url('images/jesus-culture-new-york.jpg',dirname(__FILE__) ).'"/></a>';
+	echo'<a href="https://itunes.apple.com/gb/album/the-art-of-celebration/id820496065?uo=4&at=10lMFD" class="alignleft" target="Rend Collective on itunes_store"><img src="'.plugins_url('images/rend-collective.jpg',dirname(__FILE__) ).'"/></a><br style="clear:left"/></p>';
 	echo'</div>';
     echo'<div class="church_admin_left" ><h3>Plugin News</h3>';
 	require_once(plugin_dir_path(dirname(__FILE__)).'includes/news-feed.php');
@@ -51,7 +51,7 @@ function church_admin_front_admin()
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");}
 			if(church_admin_level_check('Sermons'))	{add_meta_box("church-admin-sermons", __('Sermon mp3 podcasting', 'church-admin'), "church_admin_sermons_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-hope-team", __('Hope Team', 'church-admin'), "church_admin_hope_team_meta_box", "church-admin");}
-			
+			if(church_admin_level_check('Prayer Chain')){	add_meta_box("church-admin-prayer-chain", __('Prayer Chain', 'church-admin'), "church_admin_prayer_chain_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){ 	add_meta_box("church-admin-departments", __('Ministries', 'church-admin'), "church_admin_departments_meta_box", "church-admin");}
 			if(church_admin_level_check('Member Type')){	add_meta_box("church-admin-member-types", __('Member Types', 'church-admin'), "church_admin_member_types_meta_box", "church-admin");}
 			if(church_admin_level_check('Funnel')){ 	add_meta_box("churchadmin-follow-up", __('Follow Up', 'church-admin'), "church_admin_followup_meta_box", "church-admin");}
@@ -69,7 +69,13 @@ function church_admin_front_admin()
 
 
 }
-
+function church_admin_prayer_chain_meta_box()
+{
+//show backup
+    
+		echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=prayer_chain_message','prayer_chain_message').'">Send Prayer Chain Message</a></p>';
+		
+}
 
 function church_admin_hope_team_meta_box()
 {

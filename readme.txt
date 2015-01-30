@@ -60,6 +60,10 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.701 =
+* Rota CSV bug fix
+= 0.700 =
+* Prayer Chain messaging added
 = 0.613 =
 * New rota job bug fix
 * Sermon podcast warning bug fix

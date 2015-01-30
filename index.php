@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.613
+Version: 0.701
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.613';
+$church_admin_version = '0.701';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -103,6 +103,7 @@ define('CA_PEO_TBL',$wpdb->prefix.'church_admin_people');
 define('CA_SMG_TBL',$wpdb->prefix.'church_admin_smallgroup');
 define('CA_MET_TBL',$wpdb->prefix.'church_admin_people_meta');
 define('CA_ATT_TBL',$wpdb->prefix.'church_admin_attendance');
+define('CA_IND_TBL',$wpdb->prefix.'church_admin_individual_attendance');
 define('CA_ROT_TBL',$wpdb->prefix.'church_admin_rotas');
 define('CA_RST_TBL',$wpdb->prefix.'church_admin_rota_settings');
 define('CA_SER_TBL',$wpdb->prefix.'church_admin_services');
@@ -229,6 +230,7 @@ $rota_order=ca_rota_order();
     if(empty($level['Attendance']))$level['Attendance']='administrator';
     if(empty($level['Member Type']))$level['Member Type']='administrator';
     if(empty($level['Service']))$level['Service']='administrator';
+	if(empty($level['Prayer Chain']))$level['Prayer Chain']='administrator';
     update_option('church_admin_levels',$level);
     
     $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
@@ -448,7 +450,7 @@ function church_admin_public_header()
 
 //grab includes
 
-
+if(isset($_GET['page'])&&$_GET['page']=='church_admin_prayer_chain')require(plugin_dir_path(__FILE__).'includes/prayer_chain.php');
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_main')require(plugin_dir_path(__FILE__).'includes/directory.php');
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_address_list'){require(plugin_dir_path(__FILE__).'includes/directory.php');}
 if(isset($_GET['page'])&&$_GET['page']=='church_admin_small_groups')require(plugin_dir_path(__FILE__).'includes/small_groups.php');
@@ -569,6 +571,10 @@ function church_admin_main()
     {
 	switch($_GET['action'])
 	{
+	
+		//prayer chain 
+		
+		case'prayer_chain_message':if(church_admin_level_check('Prayer Chain')){require_once(plugin_dir_path(__FILE__).'includes/prayer_chain.php');church_admin_prayer_chain();}else{echo"You don't have permission to send a prayer chain message"; }break;
 		//hope team
 		case'hope_team_jobs':check_admin_referer('hope_team_jobs');require_once(plugin_dir_path(__FILE__).'includes/hope-team.php');church_admin_hope_team_jobs($id);break;
 		case'edit_hope_team_job':check_admin_referer('hope_team_jobs');require_once(plugin_dir_path(__FILE__).'includes/hope-team.php');church_admin_edit_hope_team_job($id);break;
@@ -979,7 +985,7 @@ function church_admin_download($file)
 		case'addresslist':if(wp_verify_nonce($_GET['addresslist'],'member'.$_GET['member_type_id'])){require(plugin_dir_path(__FILE__).'includes/pdf_creator.php');church_admin_address_pdf($_GET['member_type_id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
 		case'vcf':if(wp_verify_nonce($_GET['vcf'],$_GET['id'])){require(plugin_dir_path(__FILE__).'includes/pdf_creator.php');ca_vcard($_GET['id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
 		case'mailinglabel':if(wp_verify_nonce($_GET['mailinglabel'],'mailinglabel'.$_GET['member_tye_id'])){require(plugin_dir_path(__FILE__).'includes/pdf_creator.php');church_admin_label_pdf($_GET['member_type_id']);}else{echo'<p>You can only download if coming from a valid link</p>';}break;
-        case 'rotacsv':if(wp_verify_nonce($_GET['rotacsv'],'rotacsv')){require(plugin_dir_path(__FILE__).'inlcudes/rota.php');church_admin_rota_csv($_GET['service_id']); }else{echo'<p>You can only download if coming from a valid link</p>';}break;
+        case 'rotacsv':if(wp_verify_nonce($_GET['rotacsv'],'rotacsv')){require(plugin_dir_path(__FILE__).'includes/rota.php');church_admin_rota_csv($_GET['service_id']); }else{echo'<p>You can only download if coming from a valid link</p>';}break;
     }
 }
 function church_admin_delete_backup()

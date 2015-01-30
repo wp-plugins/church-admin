@@ -30,7 +30,7 @@ function church_admin_install()
         $sql = 'CREATE TABLE '.CA_PEO_TBL.' (first_name VARCHAR(100),last_name VARCHAR(100), date_of_birth DATE, member_type_id INT(11),attachment_id INT(11), roles TEXT, sex INT(1),mobile VARCHAR(15), email TEXT,people_type_id INT(11),smallgroup_id INT(11),household_id INT(11),member_data TEXT, user_id INT(11),people_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (people_id));';
         $wpdb->query($sql);
     }
-
+	
     //add attachement_id to people table for photo storage
      if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "attachment_id"')!='attachment_id')
     {
@@ -38,7 +38,13 @@ function church_admin_install()
     $wpdb->query($sql);
     
      }
+     //add attachement_id to people table for prayer chain
+     if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "prayer_chain"')!='prayer_chain')
+    {
+    $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD prayer_chain INT(1) NOT NULL DEFAULT "0" AFTER `attachment_id`';
+    $wpdb->query($sql);
     
+     }
     
     
     //people_meta table    
@@ -305,6 +311,14 @@ $wpdb->query ($sql);
     {
 
 	$sql="CREATE TABLE   IF NOT EXISTS  ". $table_name ."  (date DATE NOT NULL ,adults INT(11) NOT NULL,children INT(11)NOT NULL,rolling_adults INT(11) NOT NULL,rolling_children INT(11)NOT NULL,service_id INT(11), attendance_id INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY );";
+	$wpdb->query ($sql);
+    }
+	 //install attendance table
+    $table_name = CA_IND_TBL;
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+    {
+
+	$sql="CREATE TABLE   IF NOT EXISTS  ". $table_name ."  (date DATE NOT NULL ,people_id INT(11) NOT NULL,meeting_type TEXT, meeting_id INT(11), attendance_id INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY );";
 	$wpdb->query ($sql);
     }
     

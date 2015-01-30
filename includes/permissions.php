@@ -94,10 +94,14 @@ function church_admin_permissions()
 				}
 				if(!empty($_POST['Service']))
 				{
-					$service=church_admin_get_user_id($_POST['small_groups']);
+					$service=church_admin_get_user_id($_POST['Service']);
 					if(!empty($service))$user_permissions['Service']=$service;
 				}
-				
+				if(!empty($_POST['Prayer_Chain']))
+				{
+					$Prayer_Chain=church_admin_get_user_id($_POST['Prayer_Chain']);
+					if(!empty($Prayer_Chain))$user_permissions['Prayer Chain']=$Prayer_Chain;
+				}
 				if(!empty($user_permissions))
 
 				{//some people have been specified so save them	
@@ -149,7 +153,7 @@ function church_admin_permissions()
 			if(empty($user_permissions['Small Groups'])) $user_permissions['Small Groups'] ='';
 
 			if(empty($user_permissions['Service'])) $user_permissions['Service'] = '';
-
+			if(empty($user_permissions['Prayer Chain'])) $user_permissions['Prayer Chain'] = '';
 		
 
 			echo'<form action="" method="post">';
@@ -222,7 +226,11 @@ function church_admin_permissions()
 			echo church_admin_autocomplete('Service','service','ser',$user_permissions['Service'],TRUE); 
 
 			echo '</p>';
+			echo'<p><label>'.__('Prayer Chain','church-admin').'</label>';
 
+			echo church_admin_autocomplete('Prayer_Chain','prayer-chain','pc',$user_permissions['Prayer Chain'],TRUE); 
+
+			echo '</p>';
 			echo'<p class="submit"><input type="hidden" name="save" value="yes"/><input type="submit" value="'.__('Save','church-admin').'" class="primary-button"/></p>';
 
 			echo'</form></div></div>';

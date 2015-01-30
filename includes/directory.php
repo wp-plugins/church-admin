@@ -314,18 +314,19 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			$member_data=$data->member_data;
 			
 		}
+		if(!empty($_POST['prayer_chain'])){$prayer_chain=1;}else{$prayer_chain=0;}
 		if(!empty($_POST['ID'])&&ctype_digit($_POST['ID'])){$sql['user_id']=$_POST['ID'];}else{$sql['user_id']='';}
 		if($people_id)
 		{//update
 			
-			$query='UPDATE '.CA_PEO_TBL.' SET user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['sg'].'",smallgroup_attendance="'.$sql['smallgroup_attendance'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
+			$query='UPDATE '.CA_PEO_TBL.' SET prayer_chain="'.$prayer_chain.'", user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['sg'].'",smallgroup_attendance="'.$sql['smallgroup_attendance'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
 		    $wpdb->query($query);
 			
 			
 		}//end update
 		else
 		{
-			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,smallgroup_attendance,attachment_id,user_id) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$sql['smallgroup_attendance'].'","'.$attachment_id.'","'.$sql['user_id'].'")');
+			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,smallgroup_attendance,attachment_id,user_id,prayer_chain) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$sql['smallgroup_attendance'].'","'.$attachment_id.'","'.$sql['user_id'].'","'.$prayer_chain.'")');
 			$people_id=$wpdb->insert_id;
 		}
 		if(!empty($_POST['create_user']))
@@ -569,6 +570,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			}
 			echo'<p><label>Create a new Wordpress User</label><input type="checkbox" name="create_user" value="yes"/></p>';
 		}
+		echo'<p><label>'.__('Prayer Chain','church-admin').'</label><input type="checkbox" name="prayer_chain"'.checked($data->prayer_chain,1,FALSE).' /></p>';
 	}//only authorised people to edit wordpress user
 		echo'<p class="submit"><input type="hidden" name="edit_people" value="yes"/><input type="submit" value="'.__('Save Details','church-admin').'&raquo;" /></p></form>';
     }
