@@ -648,6 +648,75 @@ function html2rgb($color)
 
     return array($r, $g, $b);
 }
+
+function church_admin_horiz_pdf($service_id)
+{
+	global $wpdb;
+	if(!empty($_GET['rota_id']))
+	{
+		
+		require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
+		$pdf=new FPDF();
+		$rota_jobs=$initials=array();
+		foreach($_GET['rota_id'] AS $key=>$value){$rota_jobs[]=' rota_id="'.$value.'" ';}
+		if(!empty($_GET['initials']))foreach($_GET['initials'] AS $key=>$value){$initials[$value]=TRUE;}
+		$rota_tasks=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' WHERE ('.implode(" OR ",$rota_jobs).') ORDER BY rota_order');
+		$wanted_jobs=array();
+		foreach($rota_tasks AS $rota_task){$wanted_jobs[$rota_task->rota_id]=$rota_task->rota_task;}
+		$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>CURDATE() ORDER BY rota_date ASC';
+		
+			$rota_results=$wpdb->get_results($sql);
+			
+			if(!empty($rota_results))
+			{
+				$pdf->AddPage('L',get_option('church_admin_pdf_size'));
+				
+				$pdf->SetFont('Arial','',16);
+				
+				$text='Rota';
+				;
+				$pdf->Cell(0,10,$text,0,2,'C');
+				$pdf->SetFont('Arial','B',10);
+				//job titles
+				$pdf->Cell(30,7,__('Date','church-admin'),1,0,'C');
+				foreach($wanted_jobs AS $key=>$value)
+				{
+					if($value=='Sermon Title'){$w=90;}else{$w=45;}
+
+					$pdf->Cell($w,7,$value,1,0,'C');
+				}	
+				$pdf->Ln();
+				$pdf->SetFont('Arial','',10);
+				foreach($rota_results AS $rota_row)
+				{
+					//date
+					$pdf->Cell(30,7,mysql2date('d/m/Y',$rota_row->rota_date),1,0,'C');
+					$jobs_for_day=maybe_unserialize($rota_row->rota_jobs);
+					foreach($wanted_jobs AS $key=>$value)
+					{
+						$people=church_admin_get_people($jobs_for_day[$key]);
+						if(!empty($initials[$key]))
+						{
+							$ppl=iconv('UTF-8', 'ISO-8859-1',church_admin_initials($jobs_for_day[$key]));
+						}
+						else
+						{
+							$ppl=iconv('UTF-8', 'ISO-8859-1',$people);
+						}
+						if($value=='Sermon Title'){$w=90;}else{$w=45;}
+						$pdf->Cell($w,7,$ppl,1,0,'L');
+					}
+					$pdf->Ln();
+				}
+			
+			}
+		
+		
+	$pdf->Output();
+	}
+	
+
+}
 function church_admin_rota_pdf($service_id=1)
 {
     
@@ -972,4 +1041,101 @@ function church_admin_hope_team_pdf()
 	}
 	$pdf->Output();
 }
+
+function church_admin_kidswork_pdf()
+{
+	global $wpdb;
+	$kidsworkGroups=$wpdb->get_results('SELECT * FROM '.CA_KID_TBL.' ORDER BY youngest DESC');
+	
+    global $wpdb,$member_type;
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
+	//cache small group pdf
+	$wpdb->show_errors();
+	$kidsworkgroups=$groupnames=array();
+	$count=0;
+	$leader=array();
+	
+	$count=$noofgroups=0;
+	//get groups
+	$results=$wpdb->get_results('SELECT * FROM '.CA_KID_TBL);
+	if(!empty($results))
+	{
+		foreach($results AS $row)
+		{
+			$noofgroups++;
+			$groupname[$row->id]=iconv('UTF-8', 'ISO-8859-1',$row->group_name);//title first
+			$sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name,kidswork_override FROM '.CA_PEO_TBL.' WHERE date_of_birth<"'.$row->youngest.'" AND date_of_birth>"'.$row->oldest.'" AND date_of_birth!="0000-00-00" ORDER BY date_of_birth,last_name ';
+			$peopleresults = $wpdb->get_results($sql);
+			if(!empty($peopleresults))
+			{
+				foreach($peopleresults AS $people) 
+				{
+					if(empty($people->kidswork_override)){$kidsworkgroups[$row->id][]=$people->name;$count++;}else{$kidsworkgroups[$people->kidswork_override][]=$people->name;$count++;}
+				}
+			}
+		}
+	}
+	
+	
+	
+	$counter=$noofgroups;
+
+	$pdf=new FPDF();
+	$pageno=0;
+	$x=10;
+	$y=20;
+	$w=1;
+	$width=55;
+	$pdf->AddPage('L',get_option('church_admin_pdf_size'));
+	$pdf->SetFont('Arial','B',16);
+	
+	$whichtype=array();
+	
+	$text=implode(", ",$whichtype).' '.__('Kidswork Group List','church-admin').' '.date("d-m-Y").'  '.$count.' '.__('people','church-admin');
+	$pdf->Cell(0,10,$text,0,2,'C');
+	$pageno+=1;
+
+
+
+	foreach($groupname AS $id=>$groupname)
+	{
+		$text='';
+		if($w==6)
+		{
+			$pdf->SetFont('Arial','B',16);
+			$pdf->AddPage('L',get_option('church_admin_pdf_size'));
+			
+			$whichtype=array();
+			foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
+			$text=implode(", ",$whichtype).' '.__('Kidswork Group List','church-admin').' '.date("d-m-Y").'  '.$count.' '.__('people','church-admin');
+			$pdf->Cell(0,10,$text,0,2,'C');
+			$x=10;
+			$y=20;
+			$w=1;
+		}
+		$newx=$x+(($w-1)*$width);
+		if($pageno>1) {$newx=$x+(($z-($pageno*5))*$width);}
+		$pdf->SetXY($newx,$y);
+		$pdf->SetFont('Arial','B',10);
+		$pdf->Cell($width,8,iconv('UTF-8', 'ISO-8859-1',$groupname),1,1,'C');
+		$pdf->SetFont('Arial','',10);
+		$pdf->SetXY($newx,$y+8);
+		
+			
+			$pdf->SetFont('Arial','',10);
+			$text='';
+			if(!empty($kidsworkgroups[$id]))$text=implode("\n",$kidsworkgroups[$id]);
+			$pdf->MultiCell($width,5,$text."\n",'LR');
+			
+			$pdf->SetX($newx);
+	
+		
+		$pdf->Cell($width,0,"",'LB',2,'L');
+		$w++;
+	}
+	$pdf->Output();
+}
+
+
+
 ?>

@@ -315,18 +315,19 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			
 		}
 		if(!empty($_POST['prayer_chain'])){$prayer_chain=1;}else{$prayer_chain=0;}
+		if(empty($sql['kidswork_override'])){$sql['kidswork_override']=NULL;}
 		if(!empty($_POST['ID'])&&ctype_digit($_POST['ID'])){$sql['user_id']=$_POST['ID'];}else{$sql['user_id']='';}
 		if($people_id)
 		{//update
 			
-			$query='UPDATE '.CA_PEO_TBL.' SET prayer_chain="'.$prayer_chain.'", user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['sg'].'",smallgroup_attendance="'.$sql['smallgroup_attendance'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
+			$query='UPDATE '.CA_PEO_TBL.' SET prayer_chain="'.$prayer_chain.'",kidswork_override="'.$sql['kidswork_override'].'", user_id="'.$sql['user_id'].'",first_name="'.$sql['first_name'].'" ,prefix="'.$sql['prefix'].'", last_name="'.$sql['last_name'].'" , email="'.$sql['email'].'" , mobile="'.$sql['mobile'].'" , sex="'.$sql['sex'].'" ,people_type_id="'.$sql['people_type_id'].'", member_type_id="'.$sql['member_type_id'].'" , date_of_birth="'.$dob.'",member_data="'.esc_sql($member_data).'",smallgroup_id="'.$sql['sg'].'",smallgroup_attendance="'.$sql['smallgroup_attendance'].'", attachment_id="'.$attachment_id.'",user_id="'.$sql['user_id'].'" WHERE household_id="'.esc_sql($household_id).'" AND people_id="'.esc_sql($people_id).'"';
 		    $wpdb->query($query);
 			
 			
 		}//end update
 		else
 		{
-			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,smallgroup_attendance,attachment_id,user_id,prayer_chain) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$sql['smallgroup_attendance'].'","'.$attachment_id.'","'.$sql['user_id'].'","'.$prayer_chain.'")');
+			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,smallgroup_attendance,attachment_id,user_id,prayer_chain,kidswork_override) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$sql['smallgroup_attendance'].'","'.$attachment_id.'","'.$sql['user_id'].'","'.$prayer_chain.'","'.$sql['kidswork_override'].'")');
 			$people_id=$wpdb->insert_id;
 		}
 		if(!empty($_POST['create_user']))
@@ -470,11 +471,19 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		</script>';
 	if(church_admin_level_check('Directory'))
 	{//only available to authorised people
-		echo'<p><label>'.__('Current Member Type','church-admin').'</label><span style="display:inline-block">';
-		$first=$option='';
-		foreach($member_type AS $key=>$value)
-		{
-			echo'<input type="radio" name="member_type_id" value="'.$key.'"';
+		$kidswork_groups=$wpdb->get_results('SELECT * FROM '.CA_KID_TBL);
+		if(!empty($kidswork_groups))
+		{//add an override	
+			echo'<p><label>'.__('Override kids work group','church-admin').'</label><select name="kidswork_override">';
+			echo'<option value="" '.selected($data->kidswork_override,NULL).'>'.__('Assign by age automatically','church-admin').'</option>';
+			foreach($kidswork_groups AS $kwgp)echo'<option value="'.$kwgp->id.'" '.selected($data->kidswork_override,$kwgp->id).'>'.esc_html($kwgp->group_name).'</option>';
+			echo'</select></p>';
+		}
+	echo'<p><label>'.__('Current Member Type','church-admin').'</label><span style="display:inline-block">';
+	$first=$option='';
+	foreach($member_type AS $key=>$value)
+	{
+		echo'<input type="radio" name="member_type_id" value="'.$key.'"';
 			if(!empty($data->member_type_id)&&$data->member_type_id==$key)echo' checked="checked" ';
 			echo ' />'.$value.'<br/>';
 	   
@@ -690,7 +699,7 @@ $out.= '; var beginLng =';
 		if($person->user_id)
 		{
 		    $user_info=get_userdata($person->user_id);
-		    $person_user= $user_info->user_login.'<br/>('.church_admin_get_capabilities($person->user_id).')';
+		    if(!empty($user_info))$person_user= $user_info->user_login.'<br/>('.church_admin_get_capabilities($person->user_id).')';
 		}
 		else
 		{
@@ -710,7 +719,8 @@ $out.= '; var beginLng =';
 		echo '</td><td>'.esc_html($person->mobile).'</td>';
 		if(church_admin_level_check('Directory'))
 		{//only Directory level users gets these columns!
-			echo '<td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_move_person&amp;people_id='.$person->people_id,'move_person').'">Move</a></td><td>'.$person_user.'</td>';
+			echo '<td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_move_person&amp;people_id='.$person->people_id,'move_person').'">Move</a></td>';
+			if(!empty($person_user)){echo'<td>'.$person_user.'</td>';}else{echo'<td>&nbsp;</td>';}
 			
 		}
 		echo'</tr>';

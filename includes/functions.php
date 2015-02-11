@@ -2,7 +2,7 @@
 
 function church_admin_initials($people)
 {
-	
+	$people=maybe_unserialize($people);
 	if(!empty($people))
 	{
 		

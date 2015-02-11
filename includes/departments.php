@@ -21,12 +21,25 @@ function church_admin_department_list()
 
 function church_admin_view_department($id)
 {
+		echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_department_list",'department_list').'">'.__('Ministry List','church-admin').'</a></p>';
 		global $wpdb;$departments;
 		$departments=get_option('church_admin_departments');
 		$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" AND b.meta_type="ministry" ORDER BY a.last_name ASC';
 		
 		$results=$wpdb->get_results($sql);
-		
+		if(!empty($_POST))
+		{
+			$peoples_id=maybe_unserialize(church_admin_get_people_id($_POST['people']));
+			if(!empty($peoples_id)) 
+				{
+					foreach($peoples_id AS $key=>$people_id)
+					{
+						$check=$wpdb->get_var('SELECT people_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND department_id="'.esc_sql($id).'" AND meta_type="ministry"');
+						$sql='INSERT INTO '.CA_MET_TBL.' (people_id,department_id,meta_type)VALUES("'.esc_sql($people_id).'","'.esc_sql($id).'","ministry")';
+						if(empty($check))$wpdb->query($sql);
+					}
+				}
+		}
 		if(!empty($results))
 		{
 			if(!empty($_POST['view_departments']))
@@ -42,34 +55,27 @@ function church_admin_view_department($id)
 					}
 					
 				}
-				$peoples_id=maybe_unserialize(church_admin_get_people_id($_POST['people']));
-					
-				if(!empty($peoples_id)) 
-				{
-					foreach($peoples_id AS $key=>$people_id)
-					{
-						$check=$wpdb->get_var('SELECT people_id FROM '.CA_MET_TBL.' WHERE people_id="'.esc_sql($people_id).'" AND department_id="'.esc_sql($id).'" AND meta_type="ministry"');
-						$sql='INSERT INTO '.CA_MET_TBL.' (people_id,department_id,meta_type)VALUES("'.esc_sql($people_id).'","'.esc_sql($id).'","ministry")';
-						if(empty($check))$wpdb->query($sql);
-					}
-				}
+				
 				
 			
 			}		
-		}	//department contains people
+		}	
 	$results=$wpdb->get_results('SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" AND b.meta_type="ministry" ORDER BY a.last_name,a.first_name ASC');
-		if(!empty($results))
-		{
-			echo '<h2>'.sprintf(__('Viewing who is in "%1s" ministry','church-admin'),$departments[$id]).'</h2><form action="" method="POST"><table class="widefat" ><thead><tr><th>'.__('Remove','church-admin').'</th><th>'.__('Person','church-admin').'</th></tr></thead><tbody>';
-			foreach($results AS $row)
-			{
-				$delete='<input type="checkbox" name="'.$row->people_id.'" value="x"/>';
-				echo'<tr><td>'.$delete.'</td><td>'.$row->name.'</td></tr>';
-			}
-			echo'</table>';
+		
+			echo '<h2>'.sprintf(__('Viewing who is in "%1s" ministry','church-admin'),$departments[$id]).'</h2><form action="" method="POST">';
+			if(!empty($results))
+			{//department contains people
+				echo'<table class="widefat" ><thead><tr><th>'.__('Remove','church-admin').'</th><th>'.__('Person','church-admin').'</th></tr></thead><tbody>';
+				foreach($results AS $row)
+				{
+					$delete='<input type="checkbox" name="'.$row->people_id.'" value="x"/>';
+					echo'<tr><td>'.$delete.'</td><td>'.$row->name.'</td></tr>';
+				}
+				echo'</table>';
+			}//department contains people
 			echo'<p>Add people:'.church_admin_autocomplete('people','friends','to',NULL).'</p>';
 			echo'<p><input type="hidden" name="view_departments" value="yes"/><input type="submit" value="'.__('Update','church-admin').'"/></p></form>';
-		}//department contains people
+		
 		
 
 }

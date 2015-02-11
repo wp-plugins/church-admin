@@ -148,10 +148,21 @@ function ca_display_file($file_id=NULL)
 		$template=str_replace('[FILE_TITLE]',$data->file_title,$template);
 		$template=str_replace('[FILE_ID]',$data->file_id,$template);
 		$template=str_replace('[FILE_DATE]',mysql2date(get_option('date_format'),$data->pub_date),$template);
-        $template=str_replace('[FILE_NAME]',$url.$data->file_name,$template);
+        
 		$template=str_replace('[FILE_PLAYS]','Played: <span class="plays'.$data->file_id.'">'.church_admin_plays($data->file_id).'</span> times',$template);
-        $template=str_replace('[FILE_URI]',$url.$data->file_name,$template);
-        $template=str_replace('[FILE_DOWNLOAD]','<a href="'.$url.$data->file_name.'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
+       
+        if(!empty($data->file_name) && file_exists($url.$data->file_name))
+		{
+			$template=str_replace('[FILE_NAME]',$url.$data->file_name,$template);
+			$template=str_replace('[FILE_URI]',$url.$data->file_name,$template);
+			$template=str_replace('[FILE_DOWNLOAD]','<a href="'.$url.$data->file_name.'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
+		}
+		if(!empty($data->external_file))
+		{
+			$template=str_replace('[FILE_NAME]',$data->external_file,$template);
+			$template=str_replace('[FILE_URI]',$data->external_file,$template);
+			$template=str_replace('[FILE_DOWNLOAD]','<a href="'.$data->external_file.'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
+		}
         if(file_exists($path.$data->transcript))
         {
 			$template=str_replace('[TRANSCRIPT]','<a href="'.$url.$data->transcript.'" title="'.esc_html($data->transcript).'">'.esc_html($data->transcript).'</a>',$template);

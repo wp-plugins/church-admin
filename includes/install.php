@@ -5,7 +5,7 @@ function church_admin_install()
  *
  * Installs WP tables and options
  * 
- * @author  Andy Moyle
+ * @author  Andy MoyleF
  * @param    null
  * @return   
  * @version  0.11
@@ -329,7 +329,13 @@ $wpdb->query ($sql);
         $sql="CREATE TABLE IF NOT EXISTS ". $table_name ." (recipient varchar(500) NOT NULL,  from_name text NOT NULL,  from_email text NOT NULL,  copy text NOT NULL, subject varchar(500) NOT NULL, message text NOT NULL,attachment text NOT NULL,sent datetime NOT NULL,email_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (email_id));";
         $wpdb->query ($sql);
     }
-
+    //install kids work table
+   
+    if($wpdb->get_var('show tables like "'.CA_KID_TBL.'"') != CA_KID_TBL) 
+    {
+        $sql="CREATE TABLE IF NOT EXISTS ". CA_KID_TBL." (group_name TEXT NOT NULL,  youngest DATE NOT NULL,  oldest DATE NOT NULL,department_id INT(11), id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id));";
+        $wpdb->query ($sql);
+    }
 
     
     //install calendar table1
@@ -517,6 +523,11 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "last_updated"')!='last
     $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD last_updated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP';
     $wpdb->query($sql);
 }
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "kidswork_override"')!='kidswork_override')
+{
+    $sql='ALTER TABLE '.CA_PEO_TBL.' ADD `kidswork_override` INT(11) NOT NULL AFTER `last_updated`;';
+    $wpdb->query($sql);
+}
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "prefix"')!='prefix')
 {
     $sql='ALTER TABLE  '.CA_PEO_TBL.' ADD prefix TEXT ';
@@ -542,6 +553,11 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "file_subtitle"')!='fil
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD file_subtitle TEXT';
     $wpdb->query($sql);
 }
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "external_file"')!='external_file')
+{
+    $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD external_file TEXT';
+    $wpdb->query($sql);
+}	
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "transcript"')!='transcript')
 {
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD transcript TEXT';

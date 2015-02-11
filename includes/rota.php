@@ -140,14 +140,14 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 	}
 	echo'</div></div>';	
 }
+
+
 function church_admin_rota_list($service_id=NULL)
 {
 global$wpdb,$rota_order,$days;
 $wpdb->show_errors();
 global $church_admin_version;
-    //Meta Box
-    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
-    add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
+    
     ?>
     <div class="wrap" id="church-admin">
 	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
@@ -206,36 +206,12 @@ if(!empty($taskresult))
     {//service chosen
 	
 	 // number of total rows in the database
-      require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
-      $items=$wpdb->get_var('SELECT COUNT(DISTINCT(rota_date)) FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'"');
-	  
-	  
-	  $p = new pagination;
-	  $p->items($items);
-	  $p->limit(10); // Limit entries per page
-	  
-	  $p->target(admin_url().'admin.php?page=church_admin/index.php&action=church_admin_rota_list');
-	  if(!isset($p->paging))$p->paging=1; 
-	  if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
-	  $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
-	  $p->calculate(); // Calculates what to show
-	  $p->parameterName('paging');
-	  $p->adjacents(1); //No. of page away from the current page
-	  if(!isset($_GET['paging']))
-	  {
-	      $p->page = 1;
-	  }
-	  else
-	  {
-	      $p->page = $_GET['paging'];
-	  }
-	  //Query for limit paging
-	  $limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
+     
 	  
 	
 	//grab already set dates from db after today
 	
-	$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date '.$limit;
+	$sql='SELECT * FROM '.CA_ROT_TBL.' WHERE rota_date>="'.date('Y-m-d').'" AND service_id="'.esc_sql($service_id).'" ORDER BY rota_date ';
 
 	$results=$wpdb->get_results($sql);
 	
@@ -244,11 +220,7 @@ if(!empty($taskresult))
 		//build rota tableheader
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
 	         echo'<h2>Rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
-			 // Pagination
-			echo'<div class="tablenav"><div class="tablenav-pages">';
-			echo $p->getOutput();  
-			echo'</div></div>';
-      //Pagination
+			echo'<p>'.__('Click a table cell to edit it','church-admin').'</p>';
 	    echo '<table class="widefat">';
 	    $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Date','church-admin').'</th>';
 	    $job=array();

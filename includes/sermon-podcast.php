@@ -139,7 +139,7 @@ function ca_podcast_list_files()
 	$path=$upload_dir['basedir'].'/sermons/';
 	$url=content_url().'/uploads/sermons/';
     echo'<h2>Sermon Podcast Files</h2>';
-    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file','edit_podcast_file').'">Upload File</a></p>';
+    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file','edit_podcast_file').'">Upload or add external mp3 File</a></p>';
     echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=check_files','check_podcast_file').'">Add Already Uploaded Files</a></p>';
     if(!file_exists($path.'podcast.xml'))
     {
@@ -158,7 +158,9 @@ function ca_podcast_list_files()
             $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file&amp;id='.$row->file_id,'edit_podcast_file').'">Edit</a>';
             $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_file&amp;id='.$row->file_id,'delete_podcast_file').'">Delete</a>';
             $series_name=$wpdb->get_var('SELECT series_name FROM '.CA_SERM_TBL.' WHERE series_id="'.esc_sql($row->series_id).'"');
-            if(file_exists($path.$row->file_name)){$file='<a href="'.$url.$row->file_name.'">'.esc_html($row->file_name).'</a>';$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'"/>';}else{$file='&nbsp;';$okay='<img src="'.plugins_url('images/red.png',dirname(__FILE__) ).'"/>';}
+            if(!empty($row->file_name)&&file_exists($path.$row->file_name)){$file='<a href="'.$url.$row->file_name.'">'.esc_html($row->file_name).'</a>';$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'"/>';}
+			elseif(!empty($row->external_file)){$file='<a href="'.$row->external_file.'">'.esc_html($row->external_file).'</a>';$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'"/>';}
+			else{$file='&nbsp;';$okay='<img src="'.plugins_url('images/red.png',dirname(__FILE__) ).'"/>';}
             $table.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.date(get_option('date_format'),strtotime($row->pub_date)).'</td><td>'.esc_html($row->file_title).'</td><td>'.esc_html(church_admin_get_people($row->speaker)).'</td><td>'.$file.'</td><td>'.$okay.'</td><td>'.esc_html($row->length).'</td><td>'.$row->video_url.'</td>';
             if(file_exists($path.$row->transcript)){$table.='<td><a href="'.$url.$row->transcript.'">'.esc_html($row->transcript).'</a></td>';}else{$table.='<td>&nbsp;</td>';}
             $table.='<td>'.$series_name.'</td><td>[church_admin type="podcast" file_id="'.$row->file_id.'"]</td></tr>';
@@ -204,40 +206,39 @@ function ca_podcast_edit_file($id=NULL)
     echo'<h2>'.$title.' File</h2>';
     if(!empty($_POST['save_file']))
     {//process form
-        
-        
-        //handle upload
-        //mp3s
-        $arr_file_type = wp_check_filetype(basename($_FILES['file']['name']));
-        $uploaded_file_type = $arr_file_type['type'];
-       
-        // Set an array containing a list of acceptable formats
-        $allowed_file_types = array( 'audio/mpeg','audio/mpeg3','audio/x-mpeg-3','video/mpeg','video/x-mpeg','application/pdf');
-        // If the uploaded file is the right format
-        if(in_array($uploaded_file_type, $allowed_file_types))
-        {//valid image
-            $tmp_name = $_FILES["file"]["tmp_name"];
-            $name = $_FILES["file"]["name"];
-            $x=1;
-            $type=substr($name,-3);
-            $split=sanitize_title(substr($name,0,-4));
-            $file_name=$split.'.'.$type;
-            while(file_exists($path.$file_name))
-            {
-                
-                $file_name=$split.$x.'.'.$type;
-                $x++;
-            }
-            
-            if(!move_uploaded_file($tmp_name, $path.$file_name)) echo"<p>File Upload issue</p>";
-             
-        }    
-        if(empty($file_name) &&!empty($current_data->file_name))$file_name=$current_data->file_name;   
+        $length='00:00';
+		$file_name='';
+        if(!empty($_FILES['file']['name']))
+		{
+			//handle upload
+			//mp3s
+			$arr_file_type = wp_check_filetype(basename($_FILES['file']['name']));
+			$uploaded_file_type = $arr_file_type['type'];
+			// Set an array containing a list of acceptable formats
+			$allowed_file_types = array( 'audio/mpeg','audio/mpeg3','audio/x-mpeg-3','video/mpeg','video/x-mpeg','application/pdf');
+			// If the uploaded file is the right format
+			if(in_array($uploaded_file_type, $allowed_file_types))
+			{//valid image
+				$tmp_name = $_FILES["file"]["tmp_name"];
+				$name = $_FILES["file"]["name"];
+				$x=1;
+				$type=substr($name,-3);
+				$split=sanitize_title(substr($name,0,-4));
+				$file_name=$split.'.'.$type;
+				while(file_exists($path.$file_name))
+				{
+					$file_name=$split.$x.'.'.$type;
+					$x++;
+				}
+				if(!move_uploaded_file($tmp_name, $path.$file_name)) echo"<p>File Upload issue</p>";
+            }    
+			if(empty($file_name) &&!empty($current_data->file_name))$file_name=$current_data->file_name;   
             require_once(plugin_dir_path(dirname(__FILE__)).'includes/mp3.php');
             $m = new mp3file($path.$file_name);
             $a = $m->get_metadata();
             $length=esc_sql($a['Length mm:ss']);
-        //end mp3
+			//end mp3
+		}
         //transcript
         $arr_file_type = wp_check_filetype(basename($_FILES['transcript']['name']));
         $uploaded_file_type = $arr_file_type['type'];
@@ -286,20 +287,20 @@ function ca_podcast_edit_file($id=NULL)
         if(!empty($_POST['private'])){$private="1";}else{$private="0";}
         if(empty($_POST['pub_date'])){$sqlsafe['pub_date']=date("Y-m-d" );}else{$sqlsafe['pub_date']=$_POST['pub_date'];}
 		if(empty($transcript))$transcript='';
-		
+	
         $sqlsafe['pub_date'].=' 12:00:00';
-        if(empty($id))$id=$wpdb->get_var('SELECT file_id FROM '.CA_FIL_TBL.' WHERE length="'.$length.'" AND private="'.$private.'" AND file_name="'.$file_name.'" AND file_title="'.$sqlsafe['file_title'].'" AND file_description="'.$sqlsafe['file_description'].'" AND service_id="'.$sqlsafe['service_id'].'" AND series_id="'.$sqlsafe['series_id'].'" AND speaker="'.$speaker.'"');
+        if(empty($id))$id=$wpdb->get_var('SELECT file_id FROM '.CA_FIL_TBL.' WHERE external_file="'.$sqlsafe['audio_url'].'" AND length="'.$length.'" AND private="'.$private.'" AND file_name="'.$file_name.'" AND file_title="'.$sqlsafe['file_title'].'" AND file_description="'.$sqlsafe['file_description'].'" AND service_id="'.$sqlsafe['service_id'].'" AND series_id="'.$sqlsafe['series_id'].'" AND speaker="'.$speaker.'"');
         
         
         if(!empty($id))
         {//update
-            $sql='UPDATE '.CA_FIL_TBL.' SET video_url="'.$sqlsafe['video_url'].'",transcript="'.$transcript.'",file_subtitle="'.$sqlsafe['file_subtitle'].'",pub_date="'.$sqlsafe['pub_date'].'",length="'.$length.'", private="'.$private.'",last_modified="'.date("Y-m-d H:i:s" ).'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , service_id="'.$sqlsafe['service_id'].'",series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
+            $sql='UPDATE '.CA_FIL_TBL.' SET external_file="'.$sqlsafe['audio_url'].'", video_url="'.$sqlsafe['video_url'].'",transcript="'.$transcript.'",file_subtitle="'.$sqlsafe['file_subtitle'].'",pub_date="'.$sqlsafe['pub_date'].'",length="'.$length.'", private="'.$private.'",last_modified="'.date("Y-m-d H:i:s" ).'",file_name="'.$file_name.'" , file_title="'.$sqlsafe['file_title'].'" , file_description="'.$sqlsafe['file_description'].'" , service_id="'.$sqlsafe['service_id'].'",series_id="'.$sqlsafe['series_id'].'" , speaker="'.$speaker.'" WHERE file_id="'.esc_sql($id).'"';
 			
             $wpdb->query($sql);
         }//end update
         else
         {//insert
-            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified,transcript,video_url)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqlsafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'","'.$transcript.'","'.$sqlsafe['video_url'].'")';
+            $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified,transcript,video_url,external_file)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqlsafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'","'.$transcript.'","'.$sqlsafe['video_url'].'","'.$sqlsafe['audio_url'].'")';
             $wpdb->query($sql);
         }//end insert
         
@@ -382,7 +383,10 @@ function ca_podcast_edit_file($id=NULL)
 	//javascript to bring up date picker
         echo'<p><label for="pub_date">'.__('Publication Date','church-admin').'</label><input type="text" name="pub_date" id="pub_date" value="'.date('Y-m-d',strtotime($current_data->pub_date)).'"/></p>';
         echo'<p><label for="file">'.__('Mp3 File to Upload','church-admin').'</label><input type="file" name="file" id="file"/></p>';
-        echo'<p><label for="transcript">'.__('Transcript to Upload ','church-admin').'</label><input type="file" name="transcript" id="transcript"/></p>';
+        echo'<p><label for="external_file">'.__('External Audio mp3 URL','church-admin').'</label><input type="text" name="audio_url" id="audio_url"';
+		if(!empty($current_data->external_file))echo' value="'.$current_data->external_file.'" ';
+		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</p>';
+		echo'<p><label for="transcript">'.__('Transcript to Upload ','church-admin').'</label><input type="file" name="transcript" id="transcript"/></p>';
         echo'<p><label for="video_url">'.__('Video URL','church-admin').'</label><input type="text" name="video_url" id="video_url"';
 		if(!empty($current_data->video_url))echo' value="'.$current_data->video_url.'" ';
 		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</p>';
@@ -411,7 +415,7 @@ function ca_podcast_delete_file($id=NULL)
         if(!empty($_POST['sure']))
         {//end sure so delete
 			$upload_dir = wp_upload_dir();
-            unlink($upload_dir['basedir'].'/sermons/'.$data->file_name);
+            if(!empty($data->file_name)&&file_exists($upload_dir['basedir'].'/sermons/'.$data->file_name))unlink($upload_dir['basedir'].'/sermons/'.$data->file_name);
             $wpdb->query('DELETE FROM '.CA_FIL_TBL.' WHERE file_id="'.esc_sql($id).'"');
             ca_podcast_xml();//update podcast feed
             echo'<div class="updated fade">'.$data->file_title.' '.__('from','church-admin').' '.$data->series_name.' '.__('deleted','church-admin').'</p></div>';
@@ -633,8 +637,8 @@ function ca_podcast_xml()
             $output .= '<itunes:subtitle>'.$row->file_subtitle.'</itunes:subtitle>';
             $output .= '<itunes:summary>'.$row->file_description.'</itunes:summary>';
             //$output .=  '<itunes:image href="'..'" />';
-            $output .= '<enclosure url="'.$url.$row->file_name.'" length="'.filesize($path.$row->file_name).'" type="audio/mpeg" />';
-            $output .= '<guid>'.$url.$row->file_name.'</guid>';
+            if(!empty($row->file_name)){$output .= '<enclosure url="'.$url.$row->file_name.'" length="'.filesize($path.$row->file_name).'" type="audio/mpeg" />';$output .= '<guid>'.$url.$row->file_name.'</guid>';}else{$output .= '<enclosure url="'.$row->external_file.'" length="" type="audio/mpeg" />';$output .= '<guid>'.$row->external_file.'</guid>';}
+            
             $output .= '<pubDate>'.$row->publ_date.' '.date('O').'</pubDate>';
             $output .= '<itunes:duration>'.$row->length.'</itunes:duration>';
             //$output .= '<itunes:keywords></itunes:keywords>';
@@ -703,7 +707,8 @@ function church_admin_latest_sermons_widget_output($limit=5,$title)
 		foreach($sermons AS $sermon)
 		{
 			$speaker=church_admin_get_people($sermon->speaker);
-			$out.='<p><a href="'.$url.$sermon->file_name.'"  title="'.esc_html($sermon->file_title).'">'.$sermon->file_title.'</a><br/>By '.$speaker.' on '.mysql2date(get_option('date_format'),$sermon->pub_date).'<br/>';
+			if(!empty($sermon->file_name)){$out.='<p><a href="'.$url.$sermon->file_name.'"  title="'.esc_html($sermon->file_title).'">'.$sermon->file_title.'</a>';}else{$out.='<p><a href="'.$sermon->external_file.'"  title="'.esc_html($sermon->file_title).'">'.$sermon->file_title.'</a>';}
+			$out.='<br/>By '.$speaker.' on '.mysql2date(get_option('date_format'),$sermon->pub_date).'<br/>';
 	
 			$out.='<audio class="sermonmp3" id="'.$sermon->file_id.'" src="'.CA_POD_URL.$sermon->file_name.'" preload="none"/><br/>'; 
 			

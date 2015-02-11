@@ -43,6 +43,7 @@ function church_admin_front_admin()
 			echo'</form>';
 			
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-kidswork", __('Kidswork Groups', 'church-admin'), "church_admin_kidswork_meta_box", "church-admin");}
 			if(church_admin_level_check('Calendar')){  add_meta_box("church-admin-facilities", __('Facilities', 'church-admin'), "church_admin_facilities_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'),
 			"church_admin_shortcodes_meta_box", "church-admin");}
@@ -187,12 +188,18 @@ function church_admin_sermons_meta_box()
 {
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=list_sermon_series",'list_sermon_series').'">'.__('List Sermon Series','church-admin').'</a></p>';
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=list_files",'list_files').'">'.__('List Sermon Files','church-admin').'</a></p>';
-    echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=edit_file",'edit_podcast_file').'">'.__('Upload Sermon File','church-admin').'</a></p>';
+    echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=edit_file",'edit_podcast_file').'">'.__('Upload or attach external sermon mp3 file','church-admin').'</a></p>';
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=check_files",'check_files').'">'.__('Attach Uploaded Files','church-admin').'</a></p>';
     echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=podcast_settings",'podcast_settings').'">'.__('iTunes Compatible RSS Settings','church-admin').'</a></p>';
     
 }
-
+function church_admin_kidswork_meta_box()
+{
+    echo'<p>'.__('In this section you can set up the kids work age groups','church-admin').'</p>';
+    echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=edit_kidswork",'edit_kidswork').'">'.__('Add a kidswork group','church-admin').'</a></p>';
+	 echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=kidswork",'kidswork').'">'.__('Kidswork Groups','church-admin').'</a></p>'; 
+	echo'<p><a href="'.wp_nonce_url("admin.php?download=kidswork_pdf",'kidswork_pdf').'">'.__('Kidswork PDF','church-admin').'</a></p>'; 
+}
 function church_admin_departments_meta_box()
 {
     echo'<p>'.__('In this section you can set up the ministry a person is involved in or a role that they have e.g. Elder or Small Group Leader or P.A. operator','church-admin').'</p>';
@@ -229,7 +236,21 @@ function church_admin_rota_meta_box()
 {
     global $wpdb,$days;
     $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
-    
+	$email_day=get_option('church_admin_email_rota_day');
+	if(!empty($email_day)) echo'<p>This weeks rotas are automatically emailed on '.$days[$email_day+1].', when your website is first accessed that day!</p>';
+	echo'<form action="" method="POST">';
+	echo'<p><label>Automatically email current week\'s rota</label>';
+	echo'<select name="email_rota_day">';
+	echo'<option value="8"'.selected( $email_day, NULL ).'>'.__('No Auto Send','church-admin').'</option>';
+		echo'<option value="1"'.selected( $email_day, 1 ).'>'.__('Monday','church-admin').'</option>';
+	echo'<option value="2"'.selected( $email_day, 2 ).'>'.__('Tuesday','church-admin').'</option>';
+	echo'<option value="3"'.selected( $email_day, 3 ).'>'.__('Wednesday','church-admin').'</option>';
+	echo'<option value="4"'.selected( $email_day, 4 ).'>'.__('Thursday','church-admin').'</option>';
+	echo'<option value="5"'.selected( $email_day, 5 ).'>'.__('Friday','church-admin').'</option>';
+	echo'<option value="6"'.selected( $email_day, 6 ).'>'.__('Saturday','church-admin').'</option>';
+	echo'<option value="7"'.selected( $email_day, 7 ).'>'.__('Sunday','church-admin').'</option>';
+	echo'</select><input type="submit" value="Save"/></p></form>';
+	
     echo'<form action="'.admin_url().'" method="GET"><input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="action" value="church_admin_email_rota"/>';
     echo'<p><label>'.__('Email out service rota','church-admin').'</label><select name="service_id">';
     echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
@@ -267,6 +288,22 @@ function church_admin_rota_meta_box()
 			    {
 				echo'<a href="'.home_url().'/?download=rotacsv&amp;rotacsv='.wp_create_nonce('rotacsv').'&amp;service_id='.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</a><br/>';}
 			    echo'</p>';
+				
+				echo'<h2>Horizontal Rota PDF </h2><form action="'.home_url().'" method="GET"><p><input type="hidden" name="download" value="horizontal_rota_pdf"/><select name="service_id">';
+				
+				$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+			    foreach($services AS $service)
+			    {	
+					echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</option>';
+				}
+				echo'</select></p>';
+				$rota_jobs=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
+				foreach($rota_jobs AS $rota_job)
+				{
+					echo'<p><label>'.$rota_job->rota_task.'</label><input type="checkbox" name="rota_id[]" value="'.$rota_job->rota_id.'"/>'.__('Initials?','church-admin').'<input type="checkbox" name="initials[]" value="'.$rota_job->rota_id.'"/></p>';
+		
+				}
+				echo'<p><input type="submit" value="Create PDF"/></p></form>';
 }
 function church_admin_calendar_meta_box()
 {
