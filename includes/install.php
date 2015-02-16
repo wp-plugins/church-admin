@@ -15,7 +15,38 @@ function church_admin_install()
  */ 
     global $wpdb,$church_admin_version;
     $wpdb->show_errors();
-    //household table    
+    //sermon podcast table install
+
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SERM_TBL.'"') != CA_SERM_TBL)
+    {
+        $sql='CREATE TABLE  '.CA_SERM_TBL.' (`series_name` TEXT NOT NULL ,`series_image` TEXT NOT NULL,`series_description` TEXT NOT NULL ,`series_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
+        $wpdb->query($sql);
+    }
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_FIL_TBL.'"') != CA_FIL_TBL)
+    {
+        $sql='CREATE TABLE  '.CA_FIL_TBL.' (`file_name` TEXT NOT NULL ,`file_title` TEXT NOT NULL ,`file_description` TEXT NOT NULL ,`service_id` INT(11),`bible_passages` TEXT NOT NULL,`private` INT(1) NOT NULL DEFAULT "0",`length` TEXT NOT NULL, `pub_date` DATETIME, last_modified DATETIME, `series_id` INT( 11 ) NOT NULL ,`transcript` TEXT,`video_url` TEXT, `speaker` TEXT NOT NULL,`file_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
+        $wpdb->query($sql);
+    }
+    if($wpdb->get_var('SHOW TABLES LIKE "'.CA_BIB_TBL.'"') != CA_BIB_TBL)
+    {
+	$sql='CREATE TABLE IF NOT EXISTS '.CA_BIB_TBL.' (`bible_id` int(10) NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL, PRIMARY KEY (`bible_id`)) ENGINE=MyISAM ;';
+	$wpdb->query($sql);
+	$sql="INSERT INTO ".CA_BIB_TBL." (`bible_id`, `name`) VALUES(1, 'Genesis'),(2, 'Exodus'),(3, 'Leviticus'),(4, 'Numbers'),(5, 'Deuteronomy'),(6, 'Joshua'),(7, 'Judges'),(8, 'Ruth'),(9, '1 Samuel'),(10, '2 Samuel'),(11, '1 Kings'),(12, '2 Kings'),(13, '1 Chronicles'),(14, '2 Chronicles'),(15, 'Ezra'),(16, 'Nehemiah'),(17, 'Esther'),(18, 'Job'),(19, 'Psalm'),(20, 'Proverbs'),(21, 'Ecclesiastes'),(22, 'Song of Solomon'),(23, 'Isaiah'),(24, 'Jeremiah'),(25, 'Lamentations'),(26, 'Ezekiel'),(27, 'Daniel'),(28, 'Hosea'),(29, 'Joel'),(30, 'Amos'),(31, 'Obadiah'),(32, 'Jonah'),(33, 'Micah'),(34, 'Nahum'),(35, 'Habakkuk'),(36, 'Zephaniah'),(37, 'Haggai'),(38, 'Zechariah'),(39, 'Malachi'),(40, 'Matthew'),(41, 'Mark'),(42, 'Luke'),(43, 'John'),(44, 'Acts'),(45, 'Romans'),(46, '1 Corinthians'),(47, '2 Corinthians'),(48, 'Galatians'),(49, 'Ephesians'),(50, 'Philippians'),(51, 'Colossians'),(52, '1 Thessalonians'),(53, '2 Thessalonians'),(54, '1 Timothy'),(55, '2 Timothy'),(56, 'Titus'),(57, 'Philemon'),(58, 'Hebrews'),(59, 'James'),(60, '1 Peter'),(61, '2 Peter'),(62, '1 John'),(63, '2 John'),(64, '3 John'),(65, 'Jude'),(66, 'Revelation')";
+	$wpdb->query($sql);
+    }
+	
+	if($wpdb->get_var('SHOW TABLES LIKE "'.CA_FAC_TBL.'"')!=CA_FAC_TBL)
+{
+	$sql="CREATE TABLE IF NOT EXISTS ". CA_FAC_TBL ."  (facility_name TEXT,facilities_order INT(11),  facilities_id INT(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`facilities_id`))" ;
+        $wpdb->query ($sql);
+}
+if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOP_TBL.'"') != CA_HOP_TBL)
+{
+
+	 $sql = 'CREATE TABLE IF NOT EXISTS '.CA_HOP_TBL.' (  `job` text NOT NULL,  `ts` datetime NOT NULL,  `hope_team_id` int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (`hope_team_id`)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1';
+	 $wpdb->query($sql);
+}
+	//household table    
     
 	
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOU_TBL.'"') != CA_HOU_TBL)
@@ -591,12 +622,7 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "meta_type"')!='meta_ty
     $wpdb->query($sql);
 	
 }
-if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_HOP_TBL.'"') != CA_HOP_TBL)
-{
 
-	 $sql = 'CREATE TABLE IF NOT EXISTS '.CA_HOP_TBL.' (  `job` text NOT NULL,  `ts` datetime NOT NULL,  `hope_team_id` int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (`hope_team_id`)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1';
-	 $wpdb->query($sql);
-}
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
 {
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD plays INT(11)';
@@ -608,11 +634,6 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "initials"')!='initials
     $wpdb->query($sql);
 }
 
-if($wpdb->get_var('SHOW TABLES LIKE "'.CA_FAC_TBL.'"')!=CA_FAC_TBL)
-{
-	$sql="CREATE TABLE IF NOT EXISTS ". CA_FAC_TBL ."  (facility_name TEXT,facilities_order INT(11),  facilities_id INT(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`facilities_id`))" ;
-        $wpdb->query ($sql);
-}
 
 //make sure tables are UTF8  
     $sql='ALTER TABLE '. CA_ATT_TBL.' CONVERT TO CHARACTER SET '.DB_CHARSET;
@@ -678,25 +699,7 @@ if(empty($departments))
     $departments=array('1'=>__('Small Group Leader','church-admin'),'2'=>__('Elder','church-admin'));
     update_option('church_admin_roles',$departments);
 }
-//sermon podcast table install
 
-    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SERM_TBL.'"') != CA_SERM_TBL)
-    {
-        $sql='CREATE TABLE  '.CA_SERM_TBL.' (`series_name` TEXT NOT NULL ,`series_image` TEXT NOT NULL,`series_description` TEXT NOT NULL ,`series_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
-        $wpdb->query($sql);
-    }
-    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_FIL_TBL.'"') != CA_FIL_TBL)
-    {
-        $sql='CREATE TABLE  '.CA_FIL_TBL.' (`file_name` TEXT NOT NULL ,`file_title` TEXT NOT NULL ,`file_description` TEXT NOT NULL ,`service_id` INT(11),`bible_passages` TEXT NOT NULL,`private` INT(1) NOT NULL DEFAULT "0",`length` TEXT NOT NULL, `pub_date` DATETIME, last_modified DATETIME, `series_id` INT( 11 ) NOT NULL ,`transcript` TEXT,`video_url` TEXT, `speaker` TEXT NOT NULL,`file_id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci;';
-        $wpdb->query($sql);
-    }
-    if($wpdb->get_var('SHOW TABLES LIKE "'.CA_BIB_TBL.'"') != CA_BIB_TBL)
-    {
-	$sql='CREATE TABLE IF NOT EXISTS '.CA_BIB_TBL.' (`bible_id` int(10) NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL, PRIMARY KEY (`bible_id`)) ENGINE=MyISAM ;';
-	$wpdb->query($sql);
-	$sql="INSERT INTO ".CA_BIB_TBL." (`bible_id`, `name`) VALUES(1, 'Genesis'),(2, 'Exodus'),(3, 'Leviticus'),(4, 'Numbers'),(5, 'Deuteronomy'),(6, 'Joshua'),(7, 'Judges'),(8, 'Ruth'),(9, '1 Samuel'),(10, '2 Samuel'),(11, '1 Kings'),(12, '2 Kings'),(13, '1 Chronicles'),(14, '2 Chronicles'),(15, 'Ezra'),(16, 'Nehemiah'),(17, 'Esther'),(18, 'Job'),(19, 'Psalm'),(20, 'Proverbs'),(21, 'Ecclesiastes'),(22, 'Song of Solomon'),(23, 'Isaiah'),(24, 'Jeremiah'),(25, 'Lamentations'),(26, 'Ezekiel'),(27, 'Daniel'),(28, 'Hosea'),(29, 'Joel'),(30, 'Amos'),(31, 'Obadiah'),(32, 'Jonah'),(33, 'Micah'),(34, 'Nahum'),(35, 'Habakkuk'),(36, 'Zephaniah'),(37, 'Haggai'),(38, 'Zechariah'),(39, 'Malachi'),(40, 'Matthew'),(41, 'Mark'),(42, 'Luke'),(43, 'John'),(44, 'Acts'),(45, 'Romans'),(46, '1 Corinthians'),(47, '2 Corinthians'),(48, 'Galatians'),(49, 'Ephesians'),(50, 'Philippians'),(51, 'Colossians'),(52, '1 Thessalonians'),(53, '2 Thessalonians'),(54, '1 Timothy'),(55, '2 Timothy'),(56, 'Titus'),(57, 'Philemon'),(58, 'Hebrews'),(59, 'James'),(60, '1 Peter'),(61, '2 Peter'),(62, '1 John'),(63, '2 John'),(64, '3 John'),(65, 'Jude'),(66, 'Revelation')";
-	$wpdb->query($sql);
-    }
     
     $file_template=get_option('ca_podcast_file_template');
     if(empty($file_template))

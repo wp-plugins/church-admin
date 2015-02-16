@@ -23,10 +23,10 @@ function church_admin_front_admin()
 	require_once(plugin_dir_path(dirname(__FILE__)).'includes/news-feed.php');
 	echo church_admin_news_feed();
 	echo '<h3>Other Plugins You may find useful</h3>';
-	echo	'<p><a href="https://wordpress.org/plugins/never-loose-contact-form">Never Loose Contact Form</a> - a spam free contact form that saves to database and emails the admin email the message.<br/>';
-	echo'<a href="https://wordpress.org/plugins/emergency-password-reset/">Emergency Password Reset</a> - If you think you may have been hacked, the first thing is to change the passwords of all users automatically which logs everyone out.</p>';
+	echo	'<p><a href="https://wordpress.org/plugins/never-loose-contact-form">Never Loose Contact Form</a> - a spam free contact form that saves to database and emails the admin email the message.</p>';
+
 	echo'</div>';
-	//echo'<div class="church_admin_left" ><h3>Rollup Worship banners</h3><p><a href="http://www.worshipbanners.co.uk"  class="alignleft" ><img src="'.plugins_url('images/roll-up-banner-examples.PNG',dirname(__FILE__) ).'"  alt="Worship Banners"/></a><p>Now with mainland Europe Delivery! <a href="http://www.worshipbanners.co.uk">Why not have a look?</a></p></div>';
+	
 	
 	echo'<div class="clear"></div>';
 	
