@@ -23,7 +23,7 @@ This plugin is for church wordpress site - it adds an easy to use address direct
 *   SMS - send bulk sms to members using www.bulksms.co.uk account (not just UK!)
 
 *   Sunday Rota - create and show rotas for your volunteers.
-
+* Kidswork - automatically sort children into their age groups, with manual override
 *   Attendance tracking 
 
 *   Ministries - people can have different ministries they are involved in and be sent SMS or email by role, other functions coming soon.
