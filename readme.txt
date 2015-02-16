@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.722 =
+* Sermon podcast file not found error fix
 = 0.721 = 
 * Add kids work age ranges
 * Add wp-cron for emailing out service rotas with no extra message
