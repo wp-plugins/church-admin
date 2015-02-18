@@ -43,24 +43,27 @@ function church_admin_front_admin()
 			echo'</form>';
 			
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-backup", __('Church Admin Backup', 'church-admin'), "church_admin_backup_meta_box", "church-admin");}
-			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-kidswork", __('Kidswork Groups', 'church-admin'), "church_admin_kidswork_meta_box", "church-admin");}
-			if(church_admin_level_check('Calendar')){  add_meta_box("church-admin-facilities", __('Facilities', 'church-admin'), "church_admin_facilities_meta_box", "church-admin");}
-			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'),
-			"church_admin_shortcodes_meta_box", "church-admin");}
-			if(church_admin_level_check('Bulk Email')){	add_meta_box("church-admin-communications", __('Communications', 'church-admin'), "church_admin_communications_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-recent-people-activity", __('Recent People Activity', 'church-admin'), "church_admin_recent_people_activity_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-people-functions", __('People Functions', 'church-admin'), "church_admin_people_functions_meta_box", "church-admin");}
+			if(church_admin_level_check('Bulk Email')){	add_meta_box("church-admin-communications", __('Communications', 'church-admin'), "church_admin_communications_meta_box", "church-admin");}
 			if(church_admin_level_check('Sermons'))	{add_meta_box("church-admin-sermons", __('Sermon mp3 podcasting', 'church-admin'), "church_admin_sermons_meta_box", "church-admin");}
+			if(church_admin_level_check('Rota')){ 		add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");}
+			if(church_admin_level_check('Small Groups')){ 	add_meta_box("church-admin-small_groups", __('Small Groups', 'church-admin'), "church_admin_smallgroups_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-kidswork", __('Kidswork Groups', 'church-admin'), "church_admin_kidswork_meta_box", "church-admin");}
+			if(church_admin_level_check('Calendar')){  add_meta_box("church-admin-facilities", __('Facilities', 'church-admin'), "church_admin_facilities_meta_box", "church-admin");}
+			if(church_admin_level_check('Calendar')){ 	add_meta_box("church-admin-calendar", __('Calendar', 'church-admin'), "church_admin_calendar_meta_box", "church-admin");}
+			
 			if(church_admin_level_check('Directory')){	add_meta_box("church-admin-hope-team", __('Hope Team', 'church-admin'), "church_admin_hope_team_meta_box", "church-admin");}
 			if(church_admin_level_check('Prayer Chain')){	add_meta_box("church-admin-prayer-chain", __('Prayer Chain', 'church-admin'), "church_admin_prayer_chain_meta_box", "church-admin");}
 			if(church_admin_level_check('Directory')){ 	add_meta_box("church-admin-departments", __('Ministries', 'church-admin'), "church_admin_departments_meta_box", "church-admin");}
 			if(church_admin_level_check('Member Type')){	add_meta_box("church-admin-member-types", __('Member Types', 'church-admin'), "church_admin_member_types_meta_box", "church-admin");}
 			if(church_admin_level_check('Funnel')){ 	add_meta_box("churchadmin-follow-up", __('Follow Up', 'church-admin'), "church_admin_followup_meta_box", "church-admin");}
-			if(church_admin_level_check('Rota')){ 		add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");}
-			if(church_admin_level_check('Calendar')){ 	add_meta_box("church-admin-calendar", __('Calendar', 'church-admin'), "church_admin_calendar_meta_box", "church-admin");}
-			if(church_admin_level_check('Small Groups')){ 	add_meta_box("church-admin-small_groups", __('Small Groups', 'church-admin'), "church_admin_smallgroups_meta_box", "church-admin");}
+			
+			
 			if(church_admin_level_check('Attendance')){	add_meta_box("church-admin-attendance", __('Attendance', 'church-admin'), "church_admin_attendance_meta_box", "church-admin");}
 			if(church_admin_level_check('Service')){  add_meta_box("church-admin-services", __('Services', 'church-admin'), "church_admin_services_meta_box", "church-admin");}
+			if(church_admin_level_check('Directory')){  add_meta_box("church-admin-shortcodes", __('Shortcodes', 'church-admin'),
+			"church_admin_shortcodes_meta_box", "church-admin");}
 			$activation_errors=get_option('church_admin_plugin_error');
 			if(!empty($activation_errors)){  add_meta_box("church-admin-errors", __('Activation Errors', 'church-admin'),'church_admin_errors_meta_box','church-admin');}
 			do_meta_boxes('church-admin','advanced',null);

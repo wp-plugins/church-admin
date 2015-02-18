@@ -327,7 +327,9 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		}//end update
 		else
 		{
-			$wpdb->query('INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,smallgroup_attendance,attachment_id,user_id,prayer_chain,kidswork_override) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['smallgroup_id'].'","'.$sql['smallgroup_attendance'].'","'.$attachment_id.'","'.$sql['user_id'].'","'.$prayer_chain.'","'.$sql['kidswork_override'].'")');
+		$sql='INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,smallgroup_attendance,attachment_id,user_id,prayer_chain,kidswork_override) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['sg'].'","'.$sql['smallgroup_attendance'].'","'.$attachment_id.'","'.$sql['user_id'].'","'.$prayer_chain.'","'.$sql['kidswork_override'].'")';
+		echo $sql;
+			$wpdb->query($sql);
 			$people_id=$wpdb->insert_id;
 		}
 		if(!empty($_POST['create_user']))
@@ -397,7 +399,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		echo'<div id="post-body" class="metabox-holder columns-2"><!-- meta box containers here -->';
 		
 		echo'<div class="updated fade"><p><strong>'.__('Person Edited','church-admin').' <br/>';
-		if(church_admin_level_check('Directory')) echo'<a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$sql['member_type_id'].'">'.__('Back to Directory','church-admin').'</a>';
+		if(church_admin_level_check('Directory') &&!empty($sql['member_type_id'])) echo'<a href="./admin.php?page=church_admin/index.php&amp;action=church_admin_address_list&amp;member_type_id='.$sql['member_type_id'].'">'.__('Back to Directory','church-admin').'</a>';
 		echo'</strong></p></div>';
 	
 		church_admin_display_household($household_id);
@@ -538,8 +540,8 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 	}//only available to authorised people
 	//small group
 	
-		$sg=maybe_unserialize($data->smallgroup_id);
-		if(!is_array($sg))$sg=array(0=>$data->smallgroup_id);
+		if(!empty($data->smallgroup_id))$sg=maybe_unserialize($data->smallgroup_id);
+		if(!empty($sg)&&!is_array($sg))$sg=array(0=>$data->smallgroup_id);
 		echo'<p><label>'.__('Small Group','church-admin').'</label><span style="display:inline-block">';
 		$smallgroups=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
 		$first=$option='';
@@ -579,6 +581,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			}
 			echo'<p><label>Create a new Wordpress User</label><input type="checkbox" name="create_user" value="yes"/></p>';
 		}
+		if(empty($data->prayer_chain))$data->prayer_chain=1;
 		echo'<p><label>'.__('Prayer Chain','church-admin').'</label><input type="checkbox" name="prayer_chain"'.checked($data->prayer_chain,1,FALSE).' /></p>';
 	}//only authorised people to edit wordpress user
 		echo'<p class="submit"><input type="hidden" name="edit_people" value="yes"/><input type="submit" value="'.__('Save Details','church-admin').'&raquo;" /></p></form>';

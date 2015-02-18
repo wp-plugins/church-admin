@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.724 =
+* Small bug fixes
 = 0.723 =
 * New install activation errors remove 
 = 0.722 =

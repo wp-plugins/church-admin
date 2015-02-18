@@ -18,7 +18,7 @@ function church_admin_copy_rota($copy_id,$rota_id)
 	{
 		$wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.esc_sql($rota_jobs).'" WHERE rota_id="'.esc_sql($rota_id).'"');
 		echo'<div class="updated fade".<p><strong>People copied over</strong></p></div>';
-		$service_id=$wpdb->get_var('SELECT service_id FROM '.CA_ROT_TBL.'WHERE rota_id="'.esc_sql($rota_id).'"');
+		$service_id=$wpdb->get_var('SELECT service_id FROM '.CA_ROT_TBL.' WHERE rota_id="'.esc_sql($rota_id).'"');
 		church_admin_rota_list($service_id);
 	}
 }
