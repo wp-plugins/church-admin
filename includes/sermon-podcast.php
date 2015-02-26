@@ -710,7 +710,7 @@ function church_admin_latest_sermons_widget_output($limit=5,$title)
 			if(!empty($sermon->file_name)){$out.='<p><a href="'.$url.$sermon->file_name.'"  title="'.esc_html($sermon->file_title).'">'.$sermon->file_title.'</a>';}else{$out.='<p><a href="'.$sermon->external_file.'"  title="'.esc_html($sermon->file_title).'">'.$sermon->file_title.'</a>';}
 			$out.='<br/>By '.$speaker.' on '.mysql2date(get_option('date_format'),$sermon->pub_date).'<br/>';
 	
-			$out.='<audio class="sermonmp3" id="'.$sermon->file_id.'" src="'.CA_POD_URL.$sermon->file_name.'" preload="none"/><br/>'; 
+			$out.='<audio class="sermonmp3" id="'.$sermon->file_id.'" src="'.CA_POD_URL.$sermon->file_name.'" preload="none"></audio><br/>'; 
 			
 		}
 	}

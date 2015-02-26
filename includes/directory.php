@@ -328,7 +328,7 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 		else
 		{
 		$sql='INSERT INTO '.CA_PEO_TBL.' ( first_name,prefix,last_name,email,mobile,sex,people_type_id,member_type_id,date_of_birth,household_id,member_data,smallgroup_id,smallgroup_attendance,attachment_id,user_id,prayer_chain,kidswork_override) VALUES("'.$sql['first_name'].'","'.$sql['prefix'].'","'.$sql['last_name'].'" , "'.$sql['email'].'" , "'.$sql['mobile'].'" , "'.$sql['sex'].'" ,"'.$sql['people_type_id'].'", "'.$sql['member_type_id'].'" , "'.$dob.'" , "'.esc_sql($household_id).'","'.esc_sql($member_data).'" ,"'.$sql['sg'].'","'.$sql['smallgroup_attendance'].'","'.$attachment_id.'","'.$sql['user_id'].'","'.$prayer_chain.'","'.$sql['kidswork_override'].'")';
-		echo $sql;
+		
 			$wpdb->query($sql);
 			$people_id=$wpdb->insert_id;
 		}

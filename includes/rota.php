@@ -57,7 +57,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 		{
 			$rota_jobs=maybe_unserialize($results->rota_jobs);
 			//build rota with jobs
-			$user_message.=stripslashes($_POST['message']);
+			$user_message=stripslashes($_POST['message']);
 			//fix floated images for email
 			$user_message=str_replace('class="alignleft ','style="float:left;margin-right:20px;" class="',$user_message);
 			$user_message=str_replace('class="alignright ','style="float:right;margin-left:20px;" class="',$user_message);
@@ -67,7 +67,9 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 			{
 				foreach($rota_tasks AS $task_row)
 				{
-					if(!empty($rota_jobs[$task_row->rota_id])) $message.='<tr><td><strong>'.esc_html($task_row->rota_task).': </strong></td><td>'.esc_html(church_admin_get_people($rota_jobs[$task_row->rota_id])).'</td></tr>';
+					$people=maybe_unserialize($rota_jobs[$task_row->rota_id]);
+					
+					if(!empty($people)){ $message.='<tr><td><strong>'.esc_html($task_row->rota_task).': </strong></td><td>'.esc_html(church_admin_get_people($people)).'</td></tr>';}
 				}
 				$message.='</tbody></table>';
 			}
@@ -90,7 +92,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 			$message.='';
 			if(!empty($people_ids))
 			{
-				echo'<div class="updated fade"<p><strong>Building email list for service</strong></p></div>';
+				echo'<div class="updated fade"><p><strong>Building email list for service</strong></p></div>';
 				foreach($people_ids AS $key=>$people_id)
 				{
 					$row=$wpdb->get_row('SELECT CONCAT_WS(" ", first_name,last_name) AS name, email FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($people_id).'"');
@@ -102,7 +104,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 						{
 							add_filter( 'wp_mail_content_type', 'set_html_content_type' );
 							$headers = 'From: '.get_option('blogname').' <'.get_option('admin_email').'>' . "\r\n";
-							if(wp_mail($row->email,"This week's service rota",$email_content,$headers)){echo'<p>Email to '.$row->name.' send immediately</p>';}
+							if(wp_mail($row->email,"This week's service rota",$email_content,$headers)){echo'<p>Email to '.$row->name.' sent immediately</p>';}
 							remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
 						}
 						else
@@ -119,7 +121,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 		wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
 		wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
 		
-		echo'</form></div> <script type="text/javascript">
+		echo'</form> <script type="text/javascript">
 		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
 			       
 				postboxes.add_postbox_toggles( "church-admin");
@@ -134,7 +136,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 		
 		echo'<h2>Email service rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2><form action="" method="post">';
 		echo'<p>The email will contain a salutation and the service rota. Please add your own message</p>';
-		the_editor('','message',"", true);
+		wp_editor('','message',"", true);
 		echo'<p><input type="hidden" name="rota_email" value="yes"/><input type="submit" class="primary-button" value="Send to rota participants"/></p>';
 		echo'</form>';
 	}

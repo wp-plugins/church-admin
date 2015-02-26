@@ -11,13 +11,15 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
   $out.='</p></form>';
   $memb=explode(',',$member_type_id);
       foreach($memb AS $key=>$value){if(ctype_digit($value))  $membsql[]='member_type_id='.$value;}
-      if(!empty($membsql)) {$memb_sql='('.implode(' || ',$membsql).')';}else{$memb_sql='';}
+      if(!empty($membsql)) {$memb_sql=' ('.implode(' || ',$membsql).')';}else{$memb_sql='';}
     if(empty($_POST['ca_search']))
     {
 		$limit='';
 		$membsql=array();
       
-      $sql='SELECT household_id FROM '.CA_PEO_TBL.' WHERE '.$memb_sql.'  GROUP BY household_id ORDER BY last_name ASC ';
+      $sql='SELECT household_id FROM '.CA_PEO_TBL;
+	  if(!empty($memb_sql)) $sql.=' WHERE '.$memb_sql;
+	  $sql.='  GROUP BY household_id ORDER BY last_name ASC ';
       $results=$wpdb->get_results($sql);
       $items=$wpdb->num_rows;
       // number of total rows in the database
