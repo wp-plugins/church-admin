@@ -14,10 +14,9 @@ function church_admin_front_admin()
 	<div id="poststuff">';
 	echo '<div class="church_admin_left"><p><label>'.__('If you find the plugin helpful, please contribute!','church-admin').'</label>
 	<form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>';
-   
-	echo '<h3>Worship Albums I\'m listening to on Itunes. Click to buy...</h3>';
-	echo'<p><a href="https://itunes.apple.com/gb/album/the-stream/id969351904?uo=4&at=10lMFD" title="Olly Knight The Stream on itunes_store"  class="alignleft"><img src="'.plugins_url('images/the-stream.jpg',dirname(__FILE__) ).'" width="135" height="135"/></a><a href="https://itunes.apple.com/gb/album/live-from-new-york-martin/id578670133?uo=4&at=10lMFD" class="alignleft" title="Jesus Culture Live in New York on itunes_store"><img src="'.plugins_url('images/jesus-culture-new-york.jpg',dirname(__FILE__) ).'"/></a>';
-	echo'<a href="https://itunes.apple.com/gb/album/the-art-of-celebration/id820496065?uo=4&at=10lMFD" class="alignleft" title="Rend Collective on itunes_store"><img src="'.plugins_url('images/rend-collective.jpg',dirname(__FILE__) ).'"/></a><br style="clear:left"/></p>';
+   echo'<h3>Worship Albums I\'m listening to on Itunes. Click to buy...</h3>';
+echo'<table><tr><td><a href="https://itunes.apple.com/gb/album/the-stream/id969351904?uo=4&at=10lMFD" title="Olly Knight The Stream on itunes_store"  class="alignleft">Olly Knight<br/><img src="'.plugins_url('images/the-stream.jpg',dirname(__FILE__) ).'" width="135" height="135"/></a></td><td><a href="https://itunes.apple.com/gb/album/live-from-new-york-martin/id578670133?uo=4&at=10lMFD" class="alignleft" title="Jesus Culture Live in New York on itunes_store">Jesus Culture<br/><img src="'.plugins_url('images/jesus-culture-new-york.jpg',dirname(__FILE__) ).'"/></a></td><td><a href="https://itunes.apple.com/gb/album/the-art-of-celebration/id820496065?uo=4&at=10lMFD" class="alignleft" title="Rend Collective on itunes_store">Rend Collective<br/><img src="'.plugins_url('images/rend-collective.jpg',dirname(__FILE__) ).'"/></a><br style="clear:left"/></td></tr></table>';
+	
 	echo'</div>';
     echo'<div class="church_admin_left" ><h3>Plugin News</h3>';
 	require_once(plugin_dir_path(dirname(__FILE__)).'includes/news-feed.php');
