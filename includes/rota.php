@@ -67,9 +67,12 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 			{
 				foreach($rota_tasks AS $task_row)
 				{
-					$people=maybe_unserialize($rota_jobs[$task_row->rota_id]);
-					
-					if(!empty($people)){ $message.='<tr><td><strong>'.esc_html($task_row->rota_task).': </strong></td><td>'.esc_html(church_admin_get_people($people)).'</td></tr>';}
+					$service=maybe_unserialize($task_row->service_id);
+					if(is_array($service)&&in_array($service_id,$service))
+					{
+						$people=maybe_unserialize($rota_jobs[$task_row->rota_id]);
+						if(!empty($people)){ $message.='<tr><td><strong>'.esc_html($task_row->rota_task).': </strong></td><td>'.esc_html(church_admin_get_people($people)).'</td></tr>';}
+					}
 				}
 				$message.='</tbody></table>';
 			}
@@ -221,15 +224,20 @@ if(!empty($taskresult))
 	{
 		//build rota tableheader
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	         echo'<h2>Rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
-			echo'<p>'.__('Click a table cell to edit it','church-admin').'</p>';
+	    echo'<h2>Rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
+		echo'<p>'.__('Click a table cell to edit it','church-admin').'</p>';
+		
 	    echo '<table class="widefat">';
 	    $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Date','church-admin').'</th>';
 	    $job=array();
 		foreach($taskresult AS $taskrow)
 	    {
-	      $thead.='<th>'.esc_html($taskrow->rota_task).'</th>';
-		  $job[]=$taskrow->rota_task;
+			$service=maybe_unserialize($taskrow->service_id);
+			if(is_array($service)&&in_array($service_id,$service))
+			{
+				$thead.='<th>'.esc_html($taskrow->rota_task).'</th>';
+				$job[]=$taskrow->rota_task;
+			}
 	    }
 		$thead.='<th>Copy from...</th>';
 	    $thead.='</tr>';
@@ -266,7 +274,7 @@ if(!empty($taskresult))
 					{//rota job is in old format
 						$new_rota[$id]=church_admin_get_people_id($rota_jobs[$id]);
 				    }
-					echo'<td class="edit" id="'.$job[$order].'~'.$daterows->rota_id.'">'.esc_html(church_admin_get_people($rota_jobs[$id])).'</td>';
+					if(!empty($job[$order]))echo'<td class="edit" id="'.$job[$order].'~'.$daterows->rota_id.'">'.esc_html(church_admin_get_people($rota_jobs[$id])).'</td>';
 				}
 			    else
 			    {
@@ -349,7 +357,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
     {//service chosen
 	$task_result=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 	if(!empty($_POST['edit_rota']))
-    	{
+    {
 			
 	    	    
 	    if(!empty($_POST['rota_date'])&& church_admin_checkdate($_POST['rota_date']))
@@ -408,42 +416,45 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    
 	    foreach($task_result as $task_row)
 	    {
-		
-		$job=array();
-	        if(!empty($jobs->rota_jobs))$job=unserialize($jobs->rota_jobs);
-	        echo '<p><label>'.$task_row->rota_task.':</label>';
-		if(!empty($task_row->department_id))
-		{
-		    if(!empty($job[$task_row->rota_id])){$current=$job[$task_row->rota_id];}else{$current='';}
-		    
-		    echo church_admin_autocomplete($task_row->rota_id,'friends'.$task_row->rota_task,'to'.$task_row->rota_task,$current,FALSE);
-		}
-		else
-		{	$curr_data='';
-		    if(!empty($job[$task_row->rota_id]))$curr_data=maybe_unserialize($job[$task_row->rota_id]);
-		    $people=array();
-		    if(is_array($curr_data))
-		    {
-			foreach($curr_data AS $key=>$value)
+			$services=maybe_unserialize($task_row->service_id);
+			if(is_array($services)&&in_array($service_id,$services))
 			{
-			    if(ctype_digit($value))
-			    {//id
-				$people[]=church_admin_get_person($value);
-			    }//id
-			    else
-			    {//text
-				$people[]=$value;
-			    }//text
+				$job=array();
+				if(!empty($jobs->rota_jobs))$job=unserialize($jobs->rota_jobs);
+				echo '<p><label>'.$task_row->rota_task.':</label>';
+				if(!empty($task_row->department_id))
+				{
+					if(!empty($job[$task_row->rota_id])){$current=$job[$task_row->rota_id];}else{$current='';}
+		    
+					echo church_admin_autocomplete($task_row->rota_id,'friends'.$task_row->rota_task,'to'.$task_row->rota_task,$current,FALSE);
+				}
+				else
+				{	$curr_data='';
+					if(!empty($job[$task_row->rota_id]))$curr_data=maybe_unserialize($job[$task_row->rota_id]);
+					$people=array();
+					if(is_array($curr_data))
+					{
+						foreach($curr_data AS $key=>$value)
+						{
+							if(ctype_digit($value))
+							{//id
+								$people[]=church_admin_get_person($value);
+							}//id
+							else
+							{//text
+								$people[]=$value;
+							}//text
+						}
+					}else{$people[]=$curr_data;}
+		    
+					echo'<input type="text" name="'.$task_row->rota_id.'"';
+		    
+					if(!empty($people)){echo ' value="'.esc_html(implode(", ",$people)).'"';}
+					echo'/>';
+				}
+				echo'</p>';
 			}
-		    }else{$people[]=$curr_data;}
-		    
-		    echo'<input type="text" name="'.$task_row->rota_id.'"';
-		    
-		    if(!empty($people)){echo ' value="'.esc_html(implode(", ",$people)).'"';}
-		    echo'/>';
 		}
-		echo'</p>';
-	}
 	    echo'<p class="submit"><input type="submit" name="edit_rota" value="'.__('Save','church-admin').' &raquo;" /></p></form>';
 	}//end form
     
@@ -531,12 +542,18 @@ if(!empty($taskresult))
 	$results=$wpdb->get_results($sql);
 	if($results)
 	{
-	    $cols=array();
+	    $cols=$allowed_jobs=array();
 		//build rota tableheader
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	        foreach($taskresult AS $taskrow)
+	    foreach($taskresult AS $taskrow)
 	    {
-	      $cols[]='"'.esc_html($taskrow->rota_task).'"';
+			$service=maybe_unserialize($taskrow->service_id);
+			if(is_array($service)&&in_array($service_id,$service))
+			{
+				$cols[]='"'.esc_html($taskrow->rota_task).'"';
+				$allowed_jobs[]=$taskrow->rota_id;
+			}
+			
 	    }
 	    $csv.='"'.__('Date','church-admin').'",'.implode(',',$cols)."\r\n";
 
@@ -556,13 +573,13 @@ if(!empty($taskresult))
 		{
 		    foreach($rota_order AS $order=>$id)
 		    {
-			if(!empty($rota_jobs[$id]))
-			{
-			    //add entry
-			    $line[]='"'.church_admin_get_people($rota_jobs[$id]).'"';
-			}else {$line[]='""';}
-		    }
-		}
+				if(!empty($rota_jobs[$id]))
+				{
+					//add entry
+					$line[]='"'.church_admin_get_people($rota_jobs[$id]).'"';
+					}else {$line[]='""';}
+				}
+			}
 		if(!empty($line)){$csv.=implode(',',$line)."\r\n";}else{$csv.="\r\n";}
 		}
 	    

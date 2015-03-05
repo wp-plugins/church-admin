@@ -62,7 +62,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
     else
     {//search form
       $s=esc_sql(stripslashes($_POST['ca_search']));
-      $sql='SELECT DISTINCT household_id FROM '.CA_PEO_TBL.' WHERE (first_name LIKE("%'.$s.'%")||last_name LIKE("%'.$s.'%")||email LIKE("%'.$s.'%"))AND '.$memb_sql;
+      $sql='SELECT DISTINCT household_id FROM '.CA_PEO_TBL.' WHERE (first_name LIKE("%'.$s.'%")||last_name LIKE("%'.$s.'%")||email LIKE("%'.$s.'%")||mobile LIKE("%'.$s.'%"))AND '.$memb_sql;
     
       $results=$wpdb->get_results($sql);
       if(!$results)

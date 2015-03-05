@@ -5,7 +5,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.725
+Version: 0.727
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -47,7 +47,7 @@ Copyright (C) 2010 Andy Moyle
 */
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.725';
+$church_admin_version = '0.727';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -358,7 +358,7 @@ function church_admin_init()
         wp_enqueue_script('js_map', plugins_url('church-admin/includes/maps.js',dirname(__FILE__) ),'',NULL);
         
     }
-    if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_series_event_edit'||$_GET['action']=='church_admin_single_event_edit'||$_GET['action']=='church_admin_edit_attendance'||$_GET['action']=='church_admin_new_edit_calendar'||$_GET['action']=='edit_kidswork'))
+    if(isset($_GET['action'])&& ($_GET['action']=='church_admin_edit_people'||$_GET['action']=='church_admin_add_calendar'||$_GET['action']=='church_admin_series_event_edit'||$_GET['action']=='church_admin_single_event_edit'||$_GET['action']=='church_admin_edit_attendance'||$_GET['action']=='church_admin_new_edit_calendar'||$_GET['action']=='edit_kidswork'||$_GET['action']=='individual_attendance'))
     {
         wp_enqueue_script( 'jquery-ui-datepicker','','',NULL );
         wp_enqueue_style( 'jquery.ui.theme',plugins_url('css/jquery-ui-1.8.21.custom.css',__FILE__) ,'',NULL );

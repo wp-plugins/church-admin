@@ -291,16 +291,37 @@ if(OLD_CHURCH_ADMIN_VERSION<0.5973)
 $sql='CREATE TABLE IF NOT EXISTS '.$wpdb->prefix.'church_admin_email_build (  recipients text NOT NULL,  subject text NOT NULL,  message text NOT NULL,  send_date date NOT NULL,  filename text NOT NULL,  from_name varchar(500) NOT NULL,  from_email varchar(500) NOT NULL,  email_id int(11) NOT NULL auto_increment,  PRIMARY KEY  (email_id)) ;';
 $wpdb->query ($sql);
 }
-
+//services
+    
+    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SER_TBL.'"') != CA_SER_TBL)
+    {
+        $sql = 'CREATE TABLE '.CA_SER_TBL.' ( service_name TEXT, service_day INT(1),service_time TIME, venue VARCHAR(100),address TEXT,lat VARCHAR(50),lng VARCHAR(50),first_meeting DATE,service_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (service_id));';
+        $wpdb->query($sql);
+	$wpdb->query('INSERT INTO '.CA_SER_TBL.' (service_name,service_day,service_time,venue,address,lat,lng,first_meeting) VALUES ("'.__('Sunday Service','church-admin').'","1","10:00","'.__('Main Venue','church-admin').'","'.esc_sql(serialize(array('address_line1'=>"",'address_line2'=>"",'town'=>"",'county'=>"",'postcode'=>""))).'","52.0","0.0","'.date('Y-m-d').'")');
+    }
+    
 
     //install rota settings table
     $table_name = CA_RST_TBL;
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
     {
-	$sql="CREATE TABLE  ". $table_name ."  (rota_task TEXT NOT NULL ,task_order INT(11),rota_id INT( 11 ) NOT NULL AUTO_INCREMENT ,PRIMARY KEY (  rota_id ));";
+	$sql="CREATE TABLE  ". $table_name ."  (rota_task TEXT NOT NULL ,rota_order INT(11),rota_id INT( 11 ) NOT NULL AUTO_INCREMENT ,PRIMARY KEY (  rota_id ));";
 	$wpdb->query ($sql);
     }
-    
+
+    if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "service_id"')!='service_id')
+	{
+		$sql='ALTER TABLE  '.CA_RST_TBL.' ADD service_id TEXT AFTER `rota_order`';
+		$wpdb->query($sql);
+		//add default services
+		$services=$wpdb->get_results('SELECT service_id FROM '.CA_SER_TBL);
+		if(!empty($services))
+		{
+			$ser=array();
+			foreach($services AS $service)$ser[]=$service->service_id;
+		}
+		$wpdb->query('UPDATE '.CA_RST_TBL.' SET service_id="'.esc_sql(serialize($ser)).'"');
+	}
     //install rotas table
     $table_name = CA_ROT_TBL;
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
@@ -332,9 +353,55 @@ $wpdb->query ($sql);
 	    }
 	}
     
+  if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "rota_order"')!='rota_order')
+{
+    $sql='ALTER TABLE  '.CA_RST_TBL.' ADD rota_order INT(11)';
+    $wpdb->query($sql);
+    //order current rota jobs as
+    $result=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_id');
+    $x=1;
+    $order=array();
+    if($result)
+    {
+	foreach($result AS $row)
+	{
+	    $order[$x]=$row->rota_task;
+	    $wpdb->query('UPDATE '.CA_RST_TBL.' SET rota_order ="'.$x.'" WHERE rota_id="'.$row->rota_id.'"');
+	    $x++;
+	}
+    }
+    //adjust rota table so it is normalised
+   
+    $results=$wpdb->get_results('SELECT * FROM '.CA_ROT_TBL);
+    if($results)
+    {
+	 
+	foreach($results AS $row)
+	{
+	    $tasks=maybe_unserialize($row->rota_jobs);
+	    if($tasks)
+	    {
+		$new_rota=array();
+		foreach($tasks AS $task_name=>$person)
+		{
+		    $id=array_search($task_name,$order);
+		    if($id) $new_rota[$id]=$person;
+		}
+		$sql='UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.esc_sql(maybe_serialize($new_rota)).'" WHERE rota_id="'.esc_sql($row->rota_id).'"';
+		
+		$wpdb->query($sql);
+	    }
+	}
+    }
     
+}    
   
-    
+     if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "department_id"')!='department_id')
+{
+    //add department_id to allow choosing people easily default NULL no department, 0 = whole list, int = department_id
+    $sql='ALTER TABLE  '.CA_RST_TBL.' ADD department_id INT(11) DEFAULT 1';
+    $wpdb->query($sql);
+ }
     
     //install attendance table
     $table_name = CA_ATT_TBL;
@@ -468,21 +535,8 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
 ) ENGINE = MYISAM CHARACTER SET '.DB_CHARSET.';';
 	$wpdb->query($sql);
     }
- //services
-    
-    if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SER_TBL.'"') != CA_SER_TBL)
-    {
-        $sql = 'CREATE TABLE '.CA_SER_TBL.' ( service_name TEXT, service_day INT(1),service_time TIME, venue VARCHAR(100),address TEXT,lat VARCHAR(50),lng VARCHAR(50),first_meeting DATE,service_id int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (service_id));';
-        $wpdb->query($sql);
-	$wpdb->query('INSERT INTO '.CA_SER_TBL.' (service_name,service_day,service_time,venue,address,lat,lng,first_meeting) VALUES ("'.__('Sunday Service','church-admin').'","1","10:00","'.__('Main Venue','church-admin').'","'.esc_sql(serialize(array('address_line1'=>"",'address_line2'=>"",'town'=>"",'county'=>"",'postcode'=>""))).'","52.0","0.0","'.date('Y-m-d').'")');
-    }
-    
- if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "department_id"')!='department_id')
-{
-    //add department_id to allow choosing people easily default NULL no department, 0 = whole list, int = department_id
-    $sql='ALTER TABLE  '.CA_RST_TBL.' ADD department_id INT(11) DEFAULT 1';
-    $wpdb->query($sql);
- }
+ 
+
   if($wpdb->get_var('SHOW COLUMNS FROM '.CA_SMG_TBL.' LIKE "smallgroup_order"')!='smallgroup_order')
 {
     $sql='ALTER TABLE  '.CA_SMG_TBL.' ADD smallgroup_order INT(11)';
@@ -491,48 +545,7 @@ member_type_id INT( 11 )  ,department_id INT( 11 )  , funnel_order INT(11), peop
  }
 
 
- if($wpdb->get_var('SHOW COLUMNS FROM '.CA_RST_TBL.' LIKE "rota_order"')!='rota_order')
-{
-    $sql='ALTER TABLE  '.CA_RST_TBL.' ADD rota_order INT(11)';
-    $wpdb->query($sql);
-    //order current rota jobs as
-    $result=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_id');
-    $x=1;
-    $order=array();
-    if($result)
-    {
-	foreach($result AS $row)
-	{
-	    $order[$x]=$row->rota_task;
-	    $wpdb->query('UPDATE '.CA_RST_TBL.' SET rota_order ="'.$x.'" WHERE rota_id="'.$row->rota_id.'"');
-	    $x++;
-	}
-    }
-    //adjust rota table so it is normalised
-   
-    $results=$wpdb->get_results('SELECT * FROM '.CA_ROT_TBL);
-    if($results)
-    {
-	 
-	foreach($results AS $row)
-	{
-	    $tasks=maybe_unserialize($row->rota_jobs);
-	    if($tasks)
-	    {
-		$new_rota=array();
-		foreach($tasks AS $task_name=>$person)
-		{
-		    $id=array_search($task_name,$order);
-		    if($id) $new_rota[$id]=$person;
-		}
-		$sql='UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.esc_sql(maybe_serialize($new_rota)).'" WHERE rota_id="'.esc_sql($row->rota_id).'"';
-		
-		$wpdb->query($sql);
-	    }
-	}
-    }
-    
-} 
+
 
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_SMG_TBL.' LIKE "lat"')!='lat')
 {

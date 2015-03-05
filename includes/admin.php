@@ -302,9 +302,10 @@ function church_admin_rota_meta_box()
 				$rota_jobs=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
 				foreach($rota_jobs AS $rota_job)
 				{
-					echo'<p><label>'.$rota_job->rota_task.'</label><input type="checkbox" name="rota_id[]" value="'.$rota_job->rota_id.'"/>'.__('Initials?','church-admin').'<input type="checkbox" name="initials[]" value="'.$rota_job->rota_id.'"/></p>';
+					echo'<div style="float:left;width:32%"><p><label style="width:50%">'.$rota_job->rota_task.'</label><input type="checkbox" name="rota_id[]" value="'.$rota_job->rota_id.'"/> '.__('Initials?','church-admin').'<input type="checkbox" name="initials[]" value="'.$rota_job->rota_id.'"/></p></div>';
 		
 				}
+				
 				echo'<p><input type="submit" value="Create PDF"/></p></form>';
 }
 function church_admin_calendar_meta_box()

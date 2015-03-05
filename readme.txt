@@ -60,6 +60,10 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.727 =
+* Added mobile number to directory search
+= 0.726 =
+* Tie rota/schedule tasks to particular services (default all)
 = 0.725 =
 * Remove error when no member_type_is is specified in address-list shortcode
 = 0.724 =
