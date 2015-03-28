@@ -232,13 +232,14 @@ function ca_podcast_edit_file($id=NULL)
 				}
 				if(!move_uploaded_file($tmp_name, $path.$file_name)) echo"<p>File Upload issue</p>";
             }    
-			if(empty($file_name) &&!empty($current_data->file_name))$file_name=$current_data->file_name;   
+		}
+		if(empty($file_name) &&!empty($current_data->file_name))$file_name=$current_data->file_name;   
             require_once(plugin_dir_path(dirname(__FILE__)).'includes/mp3.php');
             $m = new mp3file($path.$file_name);
             $a = $m->get_metadata();
             $length=esc_sql($a['Length mm:ss']);
 			//end mp3
-		}
+		
         //transcript
         $arr_file_type = wp_check_filetype(basename($_FILES['transcript']['name']));
         $uploaded_file_type = $arr_file_type['type'];
@@ -449,7 +450,7 @@ function ca_podcast_check_files()
 	$path=$upload_dir['basedir'].'/sermons/';
 	$url=content_url().'/uploads/sermons/';
 	$files=scandir($path);
-    $exclude_list = array(".", "..", "index.php","podcast.xml");
+    $exclude_list = array(".", "..", "index.php","podcast.xml",".htaccess");
     $files = array_diff($files, $exclude_list);
   
     

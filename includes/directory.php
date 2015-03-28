@@ -581,8 +581,10 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
 			}
 			echo'<p><label>Create a new Wordpress User</label><input type="checkbox" name="create_user" value="yes"/></p>';
 		}
-		if(empty($data->prayer_chain))$data->prayer_chain=0;
-		echo'<p><label>'.__('Prayer Chain','church-admin').'</label><input type="checkbox" name="prayer_chain"'.checked($data->prayer_chain,1,FALSE).' /></p>';
+		
+		echo'<p><label>'.__('Prayer Chain','church-admin').'</label><input type="checkbox" name="prayer_chain"';
+		if(!empty($data->prayer_chain))echo ' checked="checked" ';
+		echo'/></p>';
 	}//only authorised people to edit wordpress user
 		echo'<p class="submit"><input type="hidden" name="edit_people" value="yes"/><input type="submit" value="'.__('Save Details','church-admin').'&raquo;" /></p></form>';
     }

@@ -1,6 +1,6 @@
 === church_admin ===
 Contributors: andymoyle
-Donate link: http://www.themoyles.co.uk/
+Donate link: http://www.churchadminplugin.com/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
 Tested up to: 4.1
@@ -51,7 +51,7 @@ The # should be replaced with which member types you want displayed as a comma s
 
 == Frequently Asked Questions ==
 
-http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
+http://www.churchadminplugin.com/support/
 
 == Screenshots ==
 1. Adding a category to the calendar section
@@ -60,6 +60,8 @@ http://www.themoyles.co.uk/church-admin-wordpress-plugin/plugin-support
 
 
 == Changelog ==
+= 0.730 = 
+* Individual Tracked attendance Added
 = 0.727 =
 * Added mobile number to directory search
 = 0.726 =

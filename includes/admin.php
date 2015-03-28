@@ -10,7 +10,7 @@ function church_admin_front_admin()
     add_screen_option('layout_columns', array('max' => 1, 'default' => 1) );
     
     $user_permissions=get_option('church_admin_user_permissions');
-	echo'<div class="wrap" id="church-admin"><div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v'.$church_admin_version.'</h2>
+	echo'<div class="wrap" id="church-admin"><div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v'.$church_admin_version.' <a href="http://www.churchadminplugin.com/support/">http://www.churchadminplugin.com/support/</a></h2>
 	<div id="poststuff">';
 	echo '<div class="church_admin_left"><p><label>'.__('If you find the plugin helpful, please contribute!','church-admin').'</label>
 	<form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"  name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></p>';
@@ -358,6 +358,7 @@ function church_admin_errors_meta_box()
 function church_admin_attendance_meta_box()
 {
     global $wpdb,$days;
+	echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=individual_attendance">'.__('Individual Attendance','church-admin').'</a></p>';
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_metrics">'.__('Church Attendance Data','church-admin').'</a></p>';
 			    $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 			    foreach($services AS $service)  echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_attendance_list&amp;service_id='.$service->service_id.'">'.sprintf( __('Attendance list for %1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</a></p>';
