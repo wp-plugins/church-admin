@@ -238,6 +238,22 @@ function church_admin_rota_meta_box()
 {
     global $wpdb,$days;
     $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+	if($wpdb->num_rows>1)
+			    {
+				echo'<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_rota_list" method="POST">';
+				echo'<h2><label>Select a service rota</label><select name="service_id" onchange="this.form.submit();">';
+				echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
+			        foreach($services AS $service)
+				{
+				    echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</option>';
+				}
+				echo'</select></h2>';
+				echo'</form>';
+			    }
+			    else
+			    {
+				echo'<a href="admin.php?page=church_admin/index.php&amp;action=church_admin_rota_list&service_id=1">View service rota</a>';
+			    }
 	$email_day=get_option('church_admin_email_rota_day');
 	if(!empty($email_day)) echo'<p>This weeks rotas are automatically emailed on '.$days[$email_day+1].', when your website is first accessed that day!</p>';
 	echo'<form action="" method="POST">';
