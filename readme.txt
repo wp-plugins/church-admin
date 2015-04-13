@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.731 =
+* Fixed multiple services rota/schedule bug, edit facilities bug, mailchimp sync bug on fresh mailchimp account
 = 0.730 = 
 * Individual Tracked attendance Added
 = 0.727 =

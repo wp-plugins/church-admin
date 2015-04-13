@@ -14,9 +14,9 @@ function  church_admin_facilities()
 		echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Facility','church-admin').'</th><th>'.__('Facility Shortcode','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Facility','church-admin').'</th><th>'.__('Facility Shortcode','church-admin').'</th></tr></tfoot><tbody class="content">';
 		foreach($facilities AS $facility)
 		{
-			$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_facility&amp;facility_id='.$facility->facilities_id,'edit_facility').'">'.__('Edit','church-admin').'</a>';
+			$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_facility&amp;facilities_id='.$facility->facilities_id,'edit_facility').'">'.__('Edit','church-admin').'</a>';
         
-            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_facility&facility_id='.$facility->facilities_id,'delete_facility').'">'.__('Delete','church-admin').'</a>';
+            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_facility&facilities_id='.$facility->facilities_id,'delete_facility').'">'.__('Delete','church-admin').'</a>';
 			echo'<tr class="sortable-row" id="'.$facility->facilities_id.'"><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($facility->facility_name).'</td><td>[church_admin type="calendar" facilities_id="'.$facility->facilities_id.'"]</td></tr>';
        
 		}
@@ -52,7 +52,7 @@ function church_admin_edit_facility($facilities_id=NULL)
 		if(empty($facilities_id))$facilities_id=$wpdb->get_var('SELECT facilities_id FROM '.CA_FAC_TBL.' WHERE facility_name="'.esc_sql(stripslashes($_POST['facility'])).'"');
 	   if(!empty($facilities_id))
         {
-            $wpdb->query('UPDATE '.CA_FAC_TBL.' SET facility_name="'.esc_sql(stripslashes($_POST['facility'])).'" WHERE facility_id="'.esc_sql($facilities_id).'"');
+            $wpdb->query('UPDATE '.CA_FAC_TBL.' SET facility_name="'.esc_sql(stripslashes($_POST['facility'])).'" WHERE facilities_id="'.esc_sql($facilities_id).'"');
         }
         else
         {
@@ -73,7 +73,7 @@ function church_admin_edit_facility($facilities_id=NULL)
         echo'<p><label>'.__('Facility','church-admin').'</label><input type="text" name="facility" ';
         if(!empty($facilities_id))
 	{
-	    $type=$wpdb->get_var('SELECT facility FROM '.CA_FAC_TBL.' WHERE facilities_id="'.esc_sql($facilities_id).'"');
+	    $type=$wpdb->get_var('SELECT facility_name FROM '.CA_FAC_TBL.' WHERE facilities_id="'.esc_sql($facilities_id).'"');
 	    echo'value="'.$type.'" ';
 	}
         echo'/></p>';

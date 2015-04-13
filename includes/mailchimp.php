@@ -69,43 +69,62 @@ function church_admin_mailchimp_sync()
 		update_option('church_admin_mailchimp',array('api_key'=>$api_key,'listID'=>$listID,'member_level_id'=>$member_level_id,'ministry_id'=>$ministry_id));
 		//check for groups within groupings! Grouping = member level or ministry, group = the various levels, ministries
 		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>$listID));
-		
-		foreach($groupings AS $grouping)
+		if(!empty($groupings))
 		{
-			
-			$groups=$grouping['groups'];
-			if(!empty($groups))
-			{//check all are present
-				$gp=array();
-				//get all group names in array
-				foreach($groups AS $group)
-				{
-					$gp[]=$group['name'];
-				}
-			}
-			//member levels
-			
-			foreach($member_levels AS $id=>$type)
+			foreach($groupings AS $grouping)
 			{
-				if(!in_array($type,$gp)&&$grouping['id']==$id)
+			
+				$groups=$grouping['groups'];
+				if(!empty($groups))
+				{//check all are present
+					$gp=array();
+					//get all group names in array
+					foreach($groups AS $group)
+					{
+						$gp[]=$group['name'];
+					}
+				}
+				//member levels
+				foreach($member_levels AS $id=>$type)
+				{
+					if(!in_array($type,$gp)&&$grouping['id']==$id)
+					{
+						$MailChimp->call('lists/interest-group-add', array('id'=>$listID,'grouping_id'=>$id,'group_name'=>$type));		
+						echo'<p>Added "'.$type.'" group to Member Level grouping on Mailchimp</p>';
+					}
+				
+				}	
+			
+				//ministries
+			
+				foreach($ministries AS $key=>$ministry)
+				{
+					if(!in_array($ministry,$gp)&&$grouping['id']==$ministry_id)
+					{
+						$MailChimp->call('lists/interest-group-add', array('id'=>$listID,'grouping_id'=>$ministry_id,'group_name'=>$ministry));
+						echo'<p>Added "'.$ministry.'" group to Ministries grouping on Mailchimp</p>';
+					}
+				
+				}
+
+			}
+		}
+		else
+		{//create groupings
+			foreach($member_levels AS $id=>$type)
 				{
 					$MailChimp->call('lists/interest-group-add', array('id'=>$listID,'grouping_id'=>$id,'group_name'=>$type));		
 					echo'<p>Added "'.$type.'" group to Member Level grouping on Mailchimp</p>';
-				}
+					
 				
-			}
-			//ministries
-			
+				}
 			foreach($ministries AS $key=>$ministry)
-			{
-				if(!in_array($ministry,$gp)&&$grouping['id']==$ministry_id)
 				{
 					$MailChimp->call('lists/interest-group-add', array('id'=>$listID,'grouping_id'=>$ministry_id,'group_name'=>$ministry));
 					echo'<p>Added "'.$ministry.'" group to Ministries grouping on Mailchimp</p>';
-				}
+					
 				
-			}
-
+				}
 		}
 		echo'<div class="updated fade">Mailchimp groups created/updated</div>';
 		
