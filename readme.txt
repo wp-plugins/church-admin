@@ -6,7 +6,7 @@ Requires at least: 2.7.0
 Tested up to: 4.1
 Stable tag: 0.800
 
-A church admin plugin with address book, attendance tracking, small group management, sunday rota/schedules, sermon audio and video podcasting (iTunes compatable), bulk sms and mailshot facilities. 
+A church admin plugin with address book, attendance tracking, small group management, rota/schedules, sermon audio & video podcasting, bulk sms and mailshot facilities. 
 
 == Description ==
 
