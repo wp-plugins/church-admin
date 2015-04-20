@@ -2,8 +2,6 @@
 function church_admin_service_list()
 {
     global $wpdb,$days;
-    echo'<div class="wrap church_admin"><h2>Services List</h2>';
-    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_service','edit_service').'">Add a service</a></p>';
     echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></tfoot><tbody>';
     
     $sql='SELECT * FROM '.CA_SER_TBL;

@@ -15,7 +15,7 @@ function church_admin_recent_people_activity()
 	$p = new pagination;
 	$p->items($items);
 	$p->limit(10); // Limit entries per page
-	$p->target("admin.php?page=church_admin/index.php&amp;action=church_admin_people_activity");
+	$p->target("admin.php?page=church_admin/index.php&tab=address&action=church_admin_people_activity");
 	if(!isset($p->paging))$p->paging=1; 
 	if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
 	$p->currentPage($_GET[$p->paging]); // Gets and validates the current page

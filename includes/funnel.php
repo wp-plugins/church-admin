@@ -4,9 +4,6 @@
 function church_admin_funnel_list()
 {
     global $wpdb,$member_type,$people_type;
-    echo'<h2>'.__('Follow Up Funnel','church-admin').'</h2>';
-    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel','edit_funnel').'">'.__('Add a follow up funnel','church-admin').'</a></p>';
-    
     $departments=get_option('church_admin_departments');
     $result=$wpdb->get_results('SELECT * FROM '.CA_FUN_TBL .'  ORDER BY funnel_order');
     if($result)

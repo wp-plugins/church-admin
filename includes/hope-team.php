@@ -3,8 +3,8 @@
 function church_admin_hope_team_jobs()
 {
 	global $wpdb;
-	$out='<h2>'.__('Hope Team Jobs','church-admin').'</h2>';
-	$out.='<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_hope_team_job','hope_team_jobs').'">Add a job</a></p>';
+	
+	$out='';
 	$results=$wpdb->get_results('SELECT * FROM '.CA_HOP_TBL);
 	if(!empty($results))
 	{	

@@ -154,28 +154,24 @@ global$wpdb,$rota_order,$days;
 $wpdb->show_errors();
 global $church_admin_version;
     
-    ?>
-    <div class="wrap" id="church-admin">
-	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
-	<div id="poststuff">
-    <?php
+   
     
 	$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 	if($wpdb->num_rows>1)
 			    {
-				echo'<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_rota_list" method="POST">';
-				echo'<p><label>Select a service rota</label><select name="service_id" onchange="this.form.submit();">';
+				echo'<form action="admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_rota_list" method="POST">';
+				echo'<table class="form-table"><tbody><tr><th scope="row">Select a service rota</th><td><select name="service_id" >';
 				echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
 			        foreach($services AS $service)
 				{
 				    echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</option>';
 				}
-				echo'</select></p>';
+				echo'</select> <input type="submit" value="'.__('Select','church-admin').'"/></tr></tbody></table>';
 				echo'</form>';
 			    }
 			    else
 			    {
-				echo'<a href="admin.php?page=church_admin/index.php&amp;action=church_admin_rota_list&service_id=1">View service rota</a>';
+				echo'<p><a href="admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_rota_list&service_id=1">View service rota</a></p>';
 			    }
 
 //check rota settings!
@@ -200,14 +196,14 @@ if(!empty($taskresult))
 	}
 	else
 	{
-	    echo'<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_rota_list" method="POST">';
-	    echo'<p><label>'.__('Which Service?','church-admin').'</label><select name="service_id">';
+	    echo'<form action="admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_rota_list" method="POST">';
+	    echo'<table class="form-table"><tbody><tr><th scope=row>'.__('Which Service?','church-admin').'</th><td><select name="service_id">';
 	    foreach($services AS $service)
 	    {
 		echo'<option value="'.$service->service_id.'">'.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</option>';
 	    }
-	    echo'</select></p>';
-	    echo'<p class="submit"><input type="submit" name="choose_service" value="'.__('Choose service','church-admin').' &raquo;" /></p></form></div>';
+	    echo'</select></td>';
+	    echo'<td><input type="submit" name="choose_service" value="'.__('Choose service','church-admin').' &raquo;" /></td></tr></tbody></table></form>';
 	}
     }
     if($service_id)
@@ -260,8 +256,8 @@ if(!empty($taskresult))
 	    foreach($results AS $daterows)
 	    {
 		$new_rota=array();
-	       $edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota&id='.$daterows->rota_id;
-	        $delete_url='admin.php?page=church_admin/index.php&action=church_admin_delete_rota&id='.$daterows->rota_id;
+	       $edit_url='admin.php?page=church_admin/index.php&tab=calendar&action=church_admin_edit_rota&tab=calendar&id='.$daterows->rota_id;
+	        $delete_url='admin.php?page=church_admin/index.php&tab=calendar&action=church_admin_delete_rota&tab=calendar&id='.$daterows->rota_id;
 		//start building row
 		echo '<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">'.__('Edit','church-admin').'</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">'.__('Delete','church-admin').'</a></td><td>'.mysql2date('jS M Y',$daterows->rota_date).'</td>';
 		//get rota task people for that date
@@ -291,7 +287,7 @@ if(!empty($taskresult))
 		}
 		//copy section
 		echo'<td><form action="'.admin_url().'admin.php" method="GET">';
-		echo'<input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="action" value="copy_rota_data"/>';
+		echo'<input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="tab" value="rota"/><input type="hidden" name="action" value="copy_rota_data"/>';
 		echo wp_nonce_field('copy_rota','copy_rota');
 		echo'<input type="hidden" name="rota_id" value="'.$daterows->rota_id.'"/><select name="copy_id">';
 		echo $date_options.'</select>';
@@ -319,19 +315,19 @@ else
 	echo'<h2>'.__('Rota for ','church-admin').$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
 	if($rota_list==0)
 	{
-		echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota&service_id=".$_POST['service_id'],'edit_rota').'">'.__('Add to rota','church-admin').'</a></p>';	
+		echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_edit_rota&service_id=".$_POST['service_id'],'edit_rota').'">'.__('Add to rota','church-admin').'</a></p>';	
 	}
 			
 	if ($rota_jobs==0) 
 	{
 		echo'<div id="message" class="updated fade"><p><strong>';
-		echo '<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_add_rota_settings",'add_rota_settings').'" >'.__('You need to add some rota jobs first','church-admin').' &raquo;<a/></p></div>';
+		echo '<a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_add_rota_settings",'add_rota_settings').'" >'.__('You need to add some rota jobs first','church-admin').' &raquo;<a/></p></div>';
 	}
 
 
 }//end of rota list function
     
-    ?></div><?php
+    
 }
 
 
@@ -479,33 +475,10 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 function church_admin_delete_rota($id)
 {
     global $wpdb;
-     //Meta Box
-    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
-    add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
-    ?>
-    <div class="wrap" id="church-admin">
-	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v<?php echo $church_admin_version;?> -Rota</h2>
-	<div id="poststuff">
-    <?php
-    require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
-    echo'<form  method="get" action="">';
-	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
-	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
-		
-	//church_admin_collapseBoxForUser($current_user->ID,"church-admin-people-functions");
-	add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
-	do_meta_boxes('church-admin','advanced',null);
-	echo'</form></div> <script type="text/javascript">
-		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
-			       
-				postboxes.add_postbox_toggles( "church-admin");
-				});
-		</script><!-- End Meta Box Section-->';
-	//Meta Box
-    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_id='".esc_sql($id)."'");
+      $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rotas WHERE rota_id='".esc_sql($id)."'");
     echo'<div class="updated fade"><p>'.__('Rota Deleted','church-admin').'</p></div>';
     church_admin_rota_list();
-    ?></div></div><?php
+   
 }
 
 function church_admin_rota_csv($service_id=NULL)
@@ -532,7 +505,7 @@ if(!empty($taskresult))
 	}
 	else
 	{
-	    echo'<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_rota_list" method="POST">';
+	    echo'<form action="admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_rota_list" method="POST">';
 	    echo'<p><label>'.__('Which Service?','church-admin').'</label><select name="service_id">';
 	    foreach($services AS $service)
 	    {

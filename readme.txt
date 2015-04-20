@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.800 = 
+* Admin screen tidy up to make it easier to use and more in tune with Wordpress styling
 = 0.731 =
 * Fixed multiple services rota/schedule bug, edit facilities bug, mailchimp sync bug on fresh mailchimp account
 = 0.730 = 

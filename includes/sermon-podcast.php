@@ -16,7 +16,7 @@ function ca_podcast_list_series()
     global $wpdb;
     $wpdb->show_errors();
 
-    echo'<div class="wrap"><h2>Sermon Series</h2>';
+    echo'<h2>Sermon Series</h2>';
     echo'<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_sermon_series','edit_sermon_series').'">Add a Sermon Series</a></p>';
             
     //grab files from table
@@ -138,9 +138,7 @@ function ca_podcast_list_files()
 	$upload_dir = wp_upload_dir();
 	$path=$upload_dir['basedir'].'/sermons/';
 	$url=content_url().'/uploads/sermons/';
-    echo'<h2>Sermon Podcast Files</h2>';
-    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file','edit_podcast_file').'">Upload or add external mp3 File</a></p>';
-    echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=check_files','check_podcast_file').'">Add Already Uploaded Files</a></p>';
+   
     if(!file_exists($path.'podcast.xml'))
     {
         ca_podcast_xml();

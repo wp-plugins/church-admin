@@ -10,8 +10,8 @@ function  church_admin_member_type()
         $wpdb->query('UPDATE '.CA_HOU_TBL.' SET member_type_id="'.esc_sql((int)$_POST['reassign']).'" WHERE member_type_id="'.esc_sql((int)$_POST['current']).'"');
         echo'<div class="updated fade"><p>'.__('People reassigned','church-admin').'</p></div>';
     }
-    echo'<h2>'.__('Member Types','church-admin').'</h2>';
-    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_member_type','edit_member_type').'">'.__('Add Member Type','church-admin').'</a></p>';
+   
+    
     echo'<p>'.__('Member Types can be sorted by drag and drop, for use in other parts of the plugin','church-admin').'</p>';
     echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Type','church-admin').'</th><th>'.__('Reassign','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Type','church-admin').'</th><th>'.__('Reassign','church-admin').'</th></tr></tfoot><tbody class="content">';
     

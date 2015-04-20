@@ -1,3 +1,4 @@
+
 .church_admin label{float:left;width:200px;font-weight:700;}
 .church_admin input{}
 .church_admin_photos{height:75px;margin-bottom:5px;}
@@ -12,6 +13,7 @@
 .church_admin_address_map:after,.church_admin_address:after{clear:both;}
 .church-admin-sermons-widget .audiojs{overflow:hidden;width:90%}
 .church-map{height:550px;display:block}
+#admin_map{width:1000px;height:250px;margin-bottom:10px}
 table.church_admin_calendar{empty-cells:show;table-layout:fixed;font-size:10pt;border-collapse:collapse}
 .church_admin_calendar td{border:1px solid gray;border-collapse:collapse;font-size:10pt;padding:3px !important;vertical-align:top}
 .church_admin_calendar tr{vertical-align:top}

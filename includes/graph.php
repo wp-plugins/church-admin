@@ -60,7 +60,7 @@ function church_admin_weekly_attendance_graph($year,$service_id)
 		$myPicture->drawLegend(510,475,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL)); 
 		$upload_dir = wp_upload_dir();
 		$path=$upload_dir['basedir'].'/church-admin-cache/';
-		$myPicture->render($path.'weekly-attendance'.$year.'.png'); 
+		$myPicture->render($path.'weekly-attendance-'.$service_id.'-'.$year.'.png'); 
 	}//end result
 }
 

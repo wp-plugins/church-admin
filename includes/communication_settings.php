@@ -10,8 +10,7 @@ function church_admin_settings()
     $levels=get_option('church_admin_levels');
    $available_levels=get_option($wpdb->prefix.'user_roles');
    $email_settings=get_option('church_admin_smtp');
-   echo'<h2>'.__('Church Admin Plugin Settings','church-admin').'</h2>';
-      echo'<div class="wrap church_admin">';
+  
    if(!empty($_POST['save_setting']))
    {
       switch($_POST['sms_type'])
@@ -75,7 +74,7 @@ function church_admin_settings()
 	    break;
 	    case 'cron':
 		wp_clear_scheduled_hook('church_admin_bulk_email');
-		echo'<p><a href="'.site_url().'/?download=cron-instructions&amp;cron-instructions='.wp_create_nonce('cron-instructions').'">'.__('PDF Instructions for email cron setup','church-admin').'</a></p>';
+		echo'<p><a href="'.site_url().'/?download=cron-instructions&amp;cron-instructions='.wp_create_nonce('cron-instructions').'">'.__('PDF Instructions for email cron setup','church-admin').'</a></td></tr>';
 		break;
 	    default:
 	       wp_clear_scheduled_hook('church_admin_bulk_email');
@@ -95,33 +94,33 @@ function church_admin_settings()
 	 
 	 
 	 unset($_POST);
-	 echo'<div class="updated fade"><p>'.__('Settings Updated','church-admin').'</p></div>';
-	 echo'<p><a href="'.site_url().'/?download=cron-instructions&amp;cron-instructions='.wp_create_nonce('cron-instructions').'&amp;">'.__('PDF Instructions for email cron setup','church-admin').'</a></p>';
+	 echo'<div class="updated fade"><p>'.__('Settings Updated','church-admin').'</td></tr></div>';
+	 echo'<p><a href="'.site_url().'/?download=cron-instructions&amp;cron-instructions='.wp_create_nonce('cron-instructions').'&amp;">'.__('PDF Instructions for email cron setup','church-admin').'</a></td></tr>';
 	 church_admin_settings();
-	 echo'</div>';
+	
    }
    else
    {
       echo'<form action="" method="POST">';
-      echo'<h3>'.__('General Settings','church-admin').'</h3>';
-      echo'<p><label>'.__('Directory Records per page','church-admin').'</label><input type="text" name="church_admin_page_limit" value="'.get_option('church_admin_page_limit').'"/></p>';
-      echo '<p><label>'.__('Calendar width in pixels','church-admin').'</label><input type="text" name="church_admin_calendar_width" value="'.get_option('church_admin_calendar_width').'"/></p>';
-	echo '<p><label>'.__('PDF Page Size','church-admin').'</label><select name="church_admin_pdf_size">';
+      echo'<h2>'.__('General Settings','church-admin').'</h2>';
+      echo'<table class="form-table"><tr><th scope="row">'.__('Directory Records per page','church-admin').'</th><td><input type="text" name="church_admin_page_limit" value="'.get_option('church_admin_page_limit').'"/></td></tr>';
+      echo '<tr><th scope="row">'.__('Calendar width in pixels','church-admin').'</th><td><input type="text" name="church_admin_calendar_width" value="'.get_option('church_admin_calendar_width').'"/></td></tr>';
+	echo '<tr><th scope="row">'.__('PDF Page Size','church-admin').'</th><td><select name="church_admin_pdf_size">';
 	if(get_option('church_admin_pdf_size')=='Letter')
 	{echo '<option value="">Letter</option><option value="A4">A4</option><option value="Legal">Legal</option>';}
 	elseif(get_option('church_admin_pdf_size')=='Legal')
 	{echo '<option value="Legal">Legal</option><option value="A4">A4</option><option value="Letter">Letter</option>';}
 	else
 	{echo '<option value="A4">A4</option><option value="Legal">Legal</option><option value="Letter">Letter</option>';}
-	echo'</select></p>';
+	echo'</select></td></tr>';
 	//email template top image
-	echo'<p><label>'.__('Email template header image url','church-admin').'</label><input type="text" name="church_admin_email_image" value="'.get_option('church_admin_email_image').'"/></p>';
+	echo'<tr><th scope="row">'.__('Email template header image url','church-admin').'</th><td><input type="text" name="church_admin_email_image" value="'.get_option('church_admin_email_image').'"/></td></tr>';
 	//end email template top image
-	echo'<p><label>'.__('Facebook page URL','church-admin').'</label><input type="text" name="church_admin_facebook" value="'.get_option('church_admin_facebook').'"/></p>';
-	echo'<p><label>'.__('Twitter Username','church-admin').'</label><input type="text" name="church_admin_twitter" value="'.get_option('church_admin_twitter').'"/></p>';
-	echo'<p><label>'.__('Feedburner uri','church-admin').'</label><input type="text" name="church_admin_feedburner" value="'.get_option('church_admin_feedburner').'"/></p>';
+	echo'<tr><th scope="row">'.__('Facebook page URL','church-admin').'</th><td><input type="text" name="church_admin_facebook" value="'.get_option('church_admin_facebook').'"/></td></tr>';
+	echo'<tr><th scope="row">'.__('Twitter Username','church-admin').'</th><td><input type="text" name="church_admin_twitter" value="'.get_option('church_admin_twitter').'"/></td></tr>';
+	echo'<tr><th scope="row">'.__('Feedburner uri','church-admin').'</th><td><input type="text" name="church_admin_feedburner" value="'.get_option('church_admin_feedburner').'"/></td></tr>';
 	//mailing label size
-	echo '<p><label>Avery &#174; Label</label><select name="church_admin_label">';
+	echo '<tr><th scope="row">Avery &#174; Label</th><td><select name="church_admin_label">';
 
 	$l=get_option('church_admin_label');
 	echo'<option value="L7163"';
@@ -147,53 +146,56 @@ function church_admin_settings()
 	echo'>8600</option>';
 	echo'<option value="3422"';
 	if($l=='3422') echo' selected="selected" ';
-	echo'>3422</option></select></p>';
-	
+	echo'>3422</option></select></td></tr>';
+	echo'<h2>'.__('Permissions','church-admin').'</h2>';
+	echo'<p>You can either set individuals  or allow roles like admin/editor/subscriber to have permission for various tasks</td></tr>';
+	echo'<p><a href="admin.php?page=church_admin_permissions">Set individual permissions</a></td></tr>';
 	echo '<h2>'.__('Set Levels for plugin functions','church-admin').'</h2>';
 	foreach($levels AS $key=>$value)
 	{
-	    echo'<p><label>'.$key.'</label><select name="level'.$key.'">';
+	    echo'<tr><th scope="row">'.$key.'</th><td><select name="level'.$key.'">';
 	    echo'<option value="'.$value.'" selected="selected">'.$value.'</option>';
 	    foreach($available_levels AS $avail_key=>$avail_value)echo'<option value="'.$avail_key.'">'.$avail_key.'</option>';
-	    echo'</select></p>';
+	    echo'</select></td></tr>';
 	 }
-	echo'<h3>'.__('Email Settings','church-admin').'</h3>';
+	 echo'</tbody></table>';
+	echo'<h2>'.__('Email Settings','church-admin').'</h2>';
 	
-	echo'<p>'.__('Emails can be sent immediately or in batches. If you are on a shared host, many hosts limit how many email you are allowed to send an hour. Typically that can be as little as 100. Please choose the appropriate option for your setup.','church-admin').'</p>';
+	echo'<p>'.__('Emails can be sent immediately or in batches. If you are on a shared host, many hosts limit how many email you are allowed to send an hour. Typically that can be as little as 100. Please choose the appropriate option for your setup.','church-admin').'</td></tr>';
         echo'<form action="" method="post">';
-	echo'<p><label>'.__('Send Emails Immediately','church-admin').'</label><input type="radio" name="cron" value="immediate" ';
+	echo'<table class="form-table"><tr><th scope="row">'.__('Send Emails Immediately','church-admin').'</th><td><input type="radio" name="cron" value="immediate" ';
 	if (get_option('church_admin_cron')=='immediate') echo 'checked="checked"';
-	echo'/></p><p> '.__('Or if on a share host, please setup queueing below','church-admin').'...';
-	echo '<p><label>'.__('Max emails per hour? (required)','church-admin').'</label><input type="text" name="quantity" value="'.get_option('church_admin_bulk_email').'"/></p><p> There are two ways to set up sending emails in batches</p><p><strong>Using cron</strong> the best method if you are on a Linux based host. The server checks and sends any emails queued every hour in batches set by you.</p><p><strong>Using wp_cron</strong> - wp-cron works by scheduling every hour, but relies on people visiting your site regularly to do it in the background. (only option on windows hosts!)</p><p><label>I want to use cron:</label><input type="radio" name="cron" value="cron" ';
+	echo'/></td></tr><p> '.__('Or if on a share host, please setup queueing below','church-admin').'...';
+	echo '<tr><th scope="row">'.__('Max emails per hour? (required)','church-admin').'</th><td><input type="text" name="quantity" value="'.get_option('church_admin_bulk_email').'"/></td></tr><p> There are two ways to set up sending emails in batches</td></tr><p><strong>Using cron</strong> the best method if you are on a Linux based host. The server checks and sends any emails queued every hour in batches set by you.</td></tr><p><strong>Using wp_cron</strong> - wp-cron works by scheduling every hour, but relies on people visiting your site regularly to do it in the background. (only option on windows hosts!)</td></tr><tr><th scope="row">I want to use cron:</th><td><input type="radio" name="cron" value="cron" ';
         if (get_option('church_admin_cron')=='cron') echo 'checked="checked"';
-        echo'/></p><p><label>'.__('I want to use wp-cron:','church-admin').'</label><input type="radio" name="cron" value="wp-cron"';
+        echo'/></td></tr><tr><th scope="row">'.__('I want to use wp-cron:','church-admin').'</th><td><input type="radio" name="cron" value="wp-cron"';
         if (get_option('church_admin_cron')=='wp-cron') echo 'checked="checked"';
-        echo'/></p>';
-	echo'<p>'.__('Use wordpress email function (leave settings below blank) or set up an smtp server','church-admin').'...</p>';
+        echo'/></td></tr>';
+	echo'<p>'.__('Use wordpress email function (leave settings below blank) or set up an smtp server','church-admin').'...</td></tr>';
 	
-	echo '<p><label>'.__('SMTP host','church-admin').'</label><input type="text" name="smtp_host" value="'.$email_settings['host'].'"/></p>';
-        echo '<p><label>'.__('SMTP username','church-admin').'</label><input type="text" name="smtp_username" value="'.$email_settings['username'].'"/></p>';
-        echo '<p><label>'.__('SMTP password','church-admin').'</label><input type="text" name="smtp_password" value="'.$email_settings['password'].'"/></p>';
-	echo '<p><label>'.__('SMTP port','church-admin').'</label><input type="text" name="smtp_port" value="'.$email_settings['port'].'"/></p>';
-        echo '<p><label>'.__('SMTP ssl?','church-admin').'</label>Yes<input type="checkbox" name="smtp_ssl" value="yes" /></p>';
-	
+	echo '<tr><th scope="row">'.__('SMTP host','church-admin').'</th><td><input type="text" name="smtp_host" value="'.$email_settings['host'].'"/></td></tr>';
+        echo '<tr><th scope="row">'.__('SMTP username','church-admin').'</th><td><input type="text" name="smtp_username" value="'.$email_settings['username'].'"/></td></tr>';
+        echo '<tr><th scope="row">'.__('SMTP password','church-admin').'</th><td><input type="text" name="smtp_password" value="'.$email_settings['password'].'"/></td></tr>';
+	echo '<tr><th scope="row">'.__('SMTP port','church-admin').'</th><td><input type="text" name="smtp_port" value="'.$email_settings['port'].'"/></td></tr>';
+        echo '<tr><th scope="row">'.__('SMTP ssl?','church-admin').'</th><td>Yes<input type="checkbox" name="smtp_ssl" value="yes" /></td></tr>';
+	echo'</tbody></table>';
         
         
-	echo'<h3>'.__('Bulk SMS Settings','church-admin').'</h3>';
-	echo'<p>'.__('Set up an account with','church-admin').' <a href="http://community.bulksms.co.uk">http://community.bulksms.co.uk</a>'.__('Prices start at 3.9 per sms','church-admin').'</p>';
-	echo'<p>'.__('Once you have registered fill out the form below','church-admin').'</p>';
+	echo'<h2>'.__('Bulk SMS Settings','church-admin').'</h2>';
+	echo'<p>'.__('Set up an account with','church-admin').' <a href="http://community.bulksms.co.uk">http://community.bulksms.co.uk</a>'.__('Prices start at 3.9 per sms','church-admin').'</td></tr>';
+	echo'<p>'.__('Once you have registered fill out the form below','church-admin').'</td></tr>';
 	$sms_type=get_option('church_admin_bulksms');
 	
-	echo'<p><label>Which bulksms.co.uk account type are you using?</label><input type="radio" name="sms_type" value="community"';
+	echo'<table class="form-table><tbody><tr><th scope="row">Which bulksms.co.uk account type are you using?</th><td><input type="radio" name="sms_type" value="community"';
 	if(empty($sms_type)||$sms_type=='http://community.bulksms.co.uk') echo' checked="checked" ';
 	echo'/>Community or <input type="radio" name="sms_type" value="normal"';
 	if($sms_type=='http://bulksms.co.uk') echo' checked="checked" ';
 	echo' />Normal';
-	echo'<p><label >'.__('SMS username','church-admin').'</label><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></p>';
-	echo'<p><label>'.__('SMS password','church-admin').'</label><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></p>';
-	echo'<p><label >'.__('SMS reply eg:447777123456','church-admin').'</label><input type="text" name="sms_reply" value="'.get_option('church_admin_sms_reply').'" /></p>';
-	echo'<p><label >'.__('Country code eg 44','church-admin').'</label><input type="text" name="sms_iso" value="'.get_option('church_admin_sms_iso').'" /></p>';
-   echo'<p class="submit"><input type="hidden" name="save setting" value="1"/><input type="submit"  value="'.__('Save Settings','church-admin').' &raquo;" /></p></form></div>';
+	echo'<tr><th scope="row" >'.__('SMS username','church-admin').'</th><td><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></td></tr>';
+	echo'<tr><th scope="row">'.__('SMS password','church-admin').'</th><td><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></td></tr>';
+	echo'<tr><th scope="row" >'.__('SMS reply eg:447777123456','church-admin').'</th><td><input type="text" name="sms_reply" value="'.get_option('church_admin_sms_reply').'" /></td></tr>';
+	echo'<tr><th scope="row" >'.__('Country code eg 44','church-admin').'</th><td><input type="text" name="sms_iso" value="'.get_option('church_admin_sms_iso').'" /></td></tr>';
+   echo'<tr><th scope="row" >&nbsp;</th><td><input type="hidden" name="save setting" value="1"/><input class="button-settings" type="submit"  value="'.__('Save Settings','church-admin').' &raquo;" /></td></tr></tbody></table></form>';
   
    }
    

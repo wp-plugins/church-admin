@@ -43,15 +43,15 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 	$facs=$wpdb->get_results('SELECT * FROM '.CA_FAC_TBL.' ORDER BY facilities_order');
 	if(!empty($facs))
 	{
-		$out.='<p><label>Choose facility</label><form action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar" method="POST"><select name="facilities_id">';
+		$out.='<p><label>Choose facility</label><form action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar&tab=calendar" method="POST"><select name="facilities_id">';
 		if(!empty($facilities_id)) {$out.='<option value="'.$facilities_id.'">'.$facility.'</option>';}
 		$out.='<option value="">'.__('N/A','church-admin').'</option>';
 		foreach($facs AS $fac){$out.='<option value="'.$fac->facilities_id.'">'.$fac->facility_name.'</option>';}
 		$out.='</select><input type="submit" name="'.__('Choose facility','church-admin').'"/></form></p>';
 	}
 	$out.='<p>Double click on an event to edit, or a day to add an event</p>';
-	$out.='<p><a href="'.admin_url().'?page=church_admin/index.php&action=church_admin_calendar_list">Old Style Calendar List</a></p>';
-	$out.='<table class="church_admin_calendar"><tr><td colspan="7" class="calendar-date-switcher"><form method="post" action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar">'.__('Month','church-admin').'<select name="ca_month">';
+	$out.='<p><a href="'.admin_url().'?page=church_admin/index.php&action=church_admin_calendar_list&tab=calendar">Old Style Calendar List</a></p>';
+	$out.='<table class="church_admin_calendar"><tr><td colspan="7" class="calendar-date-switcher"><form method="post" action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar&tab=calendar">'.__('Month','church-admin').'<select name="ca_month">';
 	$first=$option='';
 	for($q=0;$q<=12;$q++)
 	{
@@ -76,8 +76,8 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 	$out.=$first.$option;
 	$out.='</select><input  type="submit" value="'.__('Submit','church-admin').'"/></form></td></tr>';
 	$out.='<tr><td colspan="3" class="calendar-date-switcher">';
-	if($now==date('M Y')){$out.='&nbsp;';}else{$out.='<form action="'.get_permalink().'" name="previous" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime("$now -1 month")).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime("$now -1 month")).'"/><input type="submit" value="Previous" class="calendar-date-switcher"/></form>';}
-	$out.='</td><td class="calendar-date-switcher">'.$now.'</td><td class="calendar-date-switcher" colspan="3"><form action="'.get_permalink().'" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td></tr>
+	if($now==date('M Y')){$out.='&nbsp;';}else{$out.='<form action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar&tab=calendar" name="previous" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime("$now -1 month")).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime("$now -1 month")).'"/><input type="submit" value="Previous" class="calendar-date-switcher"/></form>';}
+	$out.='</td><td class="calendar-date-switcher">'.$now.'</td><td class="calendar-date-switcher" colspan="3"><form action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar&tab=calendar" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td></tr>
 	<tr><td  ><strong>'.__('Sunday','church-admin').'</strong></td>
     <td ><strong>'.__('Monday','church-admin').'</strong></td>
     <td ><strong>'.__('Tuesday','church-admin').'</strong></td>
@@ -144,7 +144,7 @@ if( $numcellsleft != $numinrow )
 }
 $out.='</tr></table>';
 
-$out.='<script type="text/javascript">	jQuery(document).ready(function($) {$(".cal").bind("dblclick", function(event) {window.location.href = "'.admin_url().'?page=church_admin/index.php&action=church_admin_new_edit_calendar&id="+event.target.id';
+$out.='<script type="text/javascript">	jQuery(document).ready(function($) {$(".cal").bind("dblclick", function(event) {window.location.href = "'.admin_url().'?page=church_admin/index.php&action=church_admin_new_edit_calendar&tab=calendar&id="+event.target.id';
 if(!empty($facilities_id))$out.='+ "&facilities_id='.$facilities_id.'"';
 $out.='});});</script></div><!--wrap church-admin-->';
 echo $out;
@@ -159,8 +159,8 @@ function church_admin_category_list()
     $results=$wpdb->get_results('SELECT * FROM '.CA_CAT_TBL);
     foreach($results AS $row)
     {
-        $edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_category&amp;id='.$row->cat_id,'edit_category').'">'.__('Edit','church-admin').'</a>';;
-        $delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_category&amp;id='.$row->cat_id,'delete_category').'">'.__('Delete','church-admin').'</a>';
+        $edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_category&tab=calendar&amp;id='.$row->cat_id,'edit_category').'">'.__('Edit','church-admin').'</a>';;
+        $delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_category&tab=calendar&amp;id='.$row->cat_id,'delete_category').'">'.__('Delete','church-admin').'</a>';
         $shortcode='[church_admin type=calendar-list category='.$row->cat_id.' weeks=4]';
         $table.='<tr><td>'.$edit_url.'</td><td>'.$delete_url.'</td><td style="background:'.$row->bgcolor.'">'.esc_html($row->category).'</td><td>'.$shortcode.'</td></tr>';
     }
@@ -415,10 +415,10 @@ function church_admin_event_edit($date_id,$event_id,$edit_type,$date,$facilities
 			if($multi>1)
 			{
 				echo'<p><label>Single or Series Edit?</label><input type="radio" name="edit_type" value="single" checked="checked"/> Single or <input type="radio" name="edit_type" value="series"/> Series</p>';
-				if(!empty($data->event_id))echo '<p><label>&nbsp;</label><a class="button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id='.$data->event_id.'&amp;date_id='.$data->date_id,'series_event_delete').'">'.__('Delete this series event','church-admin').'</a></p>';
+				if(!empty($data->event_id))echo '<p><label>&nbsp;</label><a class="button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&tab=calendar&tab=calendar&amp;event_id='.$data->event_id.'&amp;date_id='.$data->date_id,'series_event_delete').'">'.__('Delete this series event','church-admin').'</a></p>';
 			}
 		}
-		if(!empty($data->date_id))echo '<p><label>&nbsp;</label><a  class="button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id='.$data->event_id.'&amp;date_id='.$data->date_id,'single_event_delete').'">'.__('Delete this single event','church-admin').'</a></p>';
+		if(!empty($data->date_id))echo '<p><label>&nbsp;</label><a  class="button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&tab=calendar&amp;event_id='.$data->event_id.'&amp;date_id='.$data->date_id,'single_event_delete').'">'.__('Delete this single event','church-admin').'</a></p>';
 		echo church_admin_calendar_form($data,$error,1,$date,$facilities_id);
 		echo '<p><label>&nbsp;</label><input type="submit" name="edit_event" value="'.__('Save Event','church-admin').'"/></form></div>'; 
 		}
@@ -699,7 +699,7 @@ $events=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_DATE_TBL);
     $sqlnow=date("Y-m%", $current);
     $sqlnext=date("Y-m-d",$next);
     
-    echo '<table><tr><td><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_calendar_list&amp;date='.$previous.'">'.__('Prev','church-admin').'</a> '.$now.' <a href="admin.php?page=church_admin/index.php&amp;action=church_admin_calendar_list&amp;date='.$next.'">'.__('Next','church-admin').'</a></td><td>';
+    echo '<table><tr><td><a href="admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_calendar_list&amp;date='.$previous.'">'.__('Prev','church-admin').'</a> '.$now.' <a href="admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_calendar_list&amp;date='.$next.'">'.__('Next','church-admin').'</a></td><td>';
     echo'<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_calendar_list" method="post"><select name="date">';
 	echo '<option value="'.$entereddate.'">'.date('M Y',$entereddate).'</option>';
 //generate a form to access calendar
@@ -719,8 +719,8 @@ echo '</select><input type="submit" value="'.__('Go to date','church-admin').'"/
     foreach($result AS $row)
     {
     //create links
-    $single_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;'.$entereddate,'single_event_edit').'">'.__('Edit','church-admin').'</a>';
-    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series_event_edit').'">'.__('Edit Series','church-admin').'</a>';}
+    $single_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_edit&tab=calendar&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;'.$entereddate,'single_event_edit').'">'.__('Edit','church-admin').'</a>';
+    if($row->recurring=='s'){$series_edit_url='&nbsp;';}else{$series_edit_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_edit&tab=calendar&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series_event_edit').'">'.__('Edit Series','church-admin').'</a>';}
     $single_delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_single_event_delete&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'single_event_delete').'">'.__('Delete this one','church-admin').'</a>';
 
     if($row->recurring=='s'){$series_delete_url='&nbsp;';}else{$series_delete_url='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_series_event_delete&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id.'&amp;date='.$entereddate,'series_event_delete').'">'.__('Delete Series','church-admin').'</a>';}

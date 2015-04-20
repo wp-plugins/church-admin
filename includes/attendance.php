@@ -117,7 +117,7 @@ if(isset($_POST['edit_att']))
 }
 else
 {
-echo'<div class="wrap church_admin"><h2>'.__('Attendance','church-admin').'</h2>';
+echo'<h2>'.__('Attendance','church-admin').'</h2>';
 echo '<form action="" method="post" name="add_attendance" id="add_attendance">';
 
 //service
@@ -229,7 +229,7 @@ else
      $totaltable=$aggtable=$childtable=$adulttable='<p>'.__('No attendance recorded yet','church-admin').'</p>';
 }
 
-     echo'<div class="church_admin wrap"><h2>'.__('Attendance Figures','church-admin').'</h2>';
+     echo'<h2>'.__('Attendance Figures','church-admin').'</h2>';
      echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance','edit_attendance').'">'.__('Add attendance','church-admin').'</a>';
      $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
      
@@ -247,6 +247,6 @@ else
      echo '<h2>'.__('Total Attendance for','church-admin').' '.$service_details.'</h2>'.$totaltable;
      echo '<h2>'.__('Adults Attendance for','church-admin').' '.$service_details.'</h2>'.$adulttable;
      echo '<h2>'.__('Children Attendance for','church-admin').' '.$service_details.'</h2>'.$childtable;
-     echo'</div>';
+  
 }
 ?>

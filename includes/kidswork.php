@@ -3,8 +3,8 @@
 function church_admin_kidswork()
 {
 	global $wpdb;
-	$out='<h2>'.__('Kidswork','church-admin').'</h2>';
-	$out.='<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_kidswork','edit_kidswork').'">Add a kidswork age group</a></p>';
+	
+	$out='<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=ministries&action=edit_kidswork','edit_kidswork').'">Add a kidswork age group</a></p>';
 	$out.='<p>'.__('The dates will go up a year on January 1st automatically.','church-admin');
 	//autocorrect
 	if(date('z')==0){$wpdb->query('UPDATE '.CA_KID_TBL.' SET youngest = youngest + INTERVAL 1 YEAR, oldest = oldest + INTERVAL 1 YEAR');}
@@ -16,10 +16,11 @@ function church_admin_kidswork()
 		$out.='<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Group Name','church-admin').'</th><th>'.__('Youngest','church-admin').'</th><th>'.__('Oldest','church-admin').'</th></tr></thead><tbody>';
 		foreach($results AS $row)
 		{
-			$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_kidswork&amp;id='.$row->id,'edit_kidswork').'">'.__('Edit','church-admin').'</a>';
-			$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_kidswork&amp;id='.$row->id,'delete_kidswork').'">'.__('Delete','church-admin').'</a>';
+			$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=ministries&action=edit_kidswork&id='.$row->id,'edit_kidswork').'">'.__('Edit','church-admin').'</a>';
+			$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=ministries&action=delete_kidswork&id='.$row->id,'delete_kidswork').'">'.__('Delete','church-admin').'</a>';
 			$out.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$row->group_name.'</td><td>'.mysql2date(get_option('date_format'),$row->youngest).'</td><td>'.mysql2date(get_option('date_format'),$row->oldest).'</td></tr>';
 		}
+		$out.='</table>';
 	}
 	echo $out;
 }
@@ -55,7 +56,7 @@ function church_admin_edit_kidswork($id=NULL)
 	else
 	{
 		if(!empty($id))$data=$wpdb->get_row('SELECT * FROM '.CA_KID_TBL.' WHERE id="'.esc_sql($id).'"');
-		echo'<div class="wrap church_admin"><h2>'.__('Add a kids work group','church-admin').'<form action="" method="POST">';
+		echo'<h2>'.__('Add a kids work group','church-admin').'<form action="" method="POST">';
 		echo'<p><label for="group_name">'.__('Group Name','church-admin').'</label><input type="text" name="group_name" id="group_name" ';
 		if(!empty($data->group_name)) echo'value="'.esc_html($data->group_name).'"';
 		echo'/></p>';
@@ -88,7 +89,7 @@ function church_admin_edit_kidswork($id=NULL)
 			echo'</select>';
 		}
 		echo'</p>';
-		echo'<p><input type="hidden" name="save" value="yes"/><input type="submit" value="Save"/></p></form></div>';
+		echo'<p><input type="hidden" name="save" value="yes"/><input type="submit" value="Save"/></p></form>';
 		
 	}
 }
