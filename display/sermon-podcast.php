@@ -33,7 +33,7 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
 			{
 				$preacher_header[].='<a href="'.get_permalink().'?speaker_name='.urlencode($value).'">'.esc_html($value).'</a>';
 			}
-			$header.=esc_html(implode(', ',$preacher_header)).'</p>';
+			$header.=implode(', ',$preacher_header).'</p>';
 		}
 		//End Add filter by preacher name
 		
@@ -48,7 +48,7 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
 			{
 				$series_header[].='<a href="'.get_permalink().'?series_id='.urlencode($serie->series_id).'">'.esc_html($serie->series_name).'</a>';
 			}
-			$header.=esc_html(implode(', ',$series_header)).'</p>';
+			$header.=implode(', ',$series_header).'</p>';
 	 }
 	
 	require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
