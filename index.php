@@ -519,7 +519,7 @@ function church_admin_admin_bar_render() {
  $wp_admin_bar->add_menu( array('parent' => false, 'id' => 'church_admin', 'title' => __('Church Admin','church-admin'), 'href' => admin_url().'admin.php?page=church_admin/index.php' ));
  $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'church_admin_settings', 'title' => __('Settings','church-admin'), 'href' => admin_url().'admin.php?page=church_admin/index.php&action=church_admin_settings' ));
 	$wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'church_admin_permissions', 'title' => __('Permissions','church-admin'), 'href' => admin_url().'admin.php?page=church_admin_permissions' ));
-  $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'plugin_support', 'title' => __('Plugin Support','church-admin'), 'href' => 'http://www.themoyles.co.uk/web-development/church-admin-wordpress-plugin/plugin-support' ));
+  $wp_admin_bar->add_menu(array('parent' => 'church_admin','id' => 'plugin_support', 'title' => __('Plugin Support','church-admin'), 'href' => 'http://www.churchadminplugin.com/support/' ));
 }
 
 // Finally we add our hook function
