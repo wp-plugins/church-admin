@@ -715,7 +715,7 @@ $out.= '; var beginLng =';
 		if(church_admin_level_check('Directory'))
 		{//only Directory level users gets these columns!
 			echo '<td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_move_person&amp;people_id='.$person->people_id,'move_person').'">Move</a></td>';
-			if(!empty($person_user)){echo'<td>'.esc_html($person_user).'</td>';}else{echo'<td>&nbsp;</td>';}
+			if(!empty($person_user)){echo'<td>'.$person_user.'</td>';}else{echo'<td>&nbsp;</td>';}
 			
 		}
 		echo'</tr>';
