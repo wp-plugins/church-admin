@@ -26,7 +26,7 @@ $result=$wpdb->get_results($sql);
 $out.='<table><tr><td>';
 if($now==date('M Y')){$out.='&nbsp;';}else{$out.='<form action="'.get_permalink().'" name="previous" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime("$now -1 month")).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime("$now -1 month")).'"/><input class="calendar-date-switcher" type="submit" value="Previous" /></form>';}
 $out.='</td>
-                    <td ><h2>'.$now.'</h2></td>
+                    <td ><h2>'.esc_html($now).'</h2></td>
                     <td ><form action="'.get_permalink().'" method="post"><input type="hidden" name="ca_month" value="'.date('m',strtotime($now.' +1 month')).'"/><input type="hidden" name="ca_year" value="'.date('Y',strtotime($now.' +1 month')).'"/><input type="submit" class="calendar-date-switcher" value="Next"/></form></td>
                 
                 

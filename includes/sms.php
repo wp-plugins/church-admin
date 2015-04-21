@@ -1,6 +1,5 @@
 <?php
-
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 function church_admin_send_sms()
 {
@@ -178,7 +177,7 @@ if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
 	$results=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
 	foreach($results AS $row)
 	{
-		echo'<option value="'.$row->id.'">'.$row->group_name.'</option>';
+		echo'<option value="'.intval($row->id).'">'.esc_html($row->group_name).'</option>';
 	}
 	echo'</select></p></fieldset>';
 	echo'<p><label><strong>'.__('Choose individuals','church-admin').'</strong></label><input type="radio" name="type" value="individuals"  /></p>';
@@ -189,7 +188,7 @@ if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
     $results=$wpdb->get_results('SELECT CONCAT_WS(", ",last_name,first_name) AS name,people_id FROM '.CA_PEO_TBL.' WHERE email!="" AND last_name!="" AND first_name!="" ORDER BY last_name');
     foreach($results AS $row)
     {
-        echo '<option value="'.$row->people_id.'">'.$row->name.'</option>';
+        echo '<option value="'.intval($row->people_id).'">'.esc_html($row->name).'</option>';
     }
     echo'</select></p></div>';
     echo'<p><input type="button" id="btnAdd" value="'.__('Add another person','church-admin').'" /><input type="button" id="btnDel" value="'.__('Remove person','church-admin').'" /></p></fieldset>';
@@ -209,7 +208,7 @@ if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
 
     {
 
-      echo'<option value="'.$key.'">'.$value.'</option>';
+      echo'<option value="'.esc_html($key).'">'.esc_html($value).'</option>';
 
     }
 
@@ -225,7 +224,7 @@ if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
     $results=$wpdb->get_results('SELECT job,hope_team_id FROM '.CA_HOP_TBL);
     foreach($results AS $row)
     {
-        echo '<option value="'.$row->hope_team_=id.'">'.$row->job.'</option>';
+        echo '<option value="'.intval($row->hope_team_id).'">'.esc_html($row->job).'</option>';
     }
     echo'</select></p></fieldset>';
     

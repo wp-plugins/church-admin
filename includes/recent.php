@@ -14,7 +14,7 @@ function church_admin_recent_display($month)
             {
                 $assign=$next_action='coming soon';
                 $address=implode(', ',array_filter(unserialize($row->address)));
-                echo'<tr><td>'.mysql2date(get_option('date_format'),$row->last_update).'</td><td>'.$row->first_name.', '.$row->last_name.'</td><td>'.$address.'</td><td>'.$row->mobile.'</td><td>'.$row->phone.'</td><td>'.$row->email.'</td><td>'.$next_action.'</td><td>'.$assign.'</td></tr>';
+                echo'<tr><td>'.mysql2date(get_option('date_format'),$row->last_update).'</td><td>'.esc_html($row->first_name.', '.$row->last_name).'</td><td>'.esc_html($address).'</td><td>'.esc_html($row->mobile).'</td><td>'.esc_html($row->phone).'</td><td>'.esc_html($row->email).'</td><td>'.$next_action.'</td><td>'.$assign.'</td></tr>';
             }
             echo'</tbody></table>';
         }
@@ -55,7 +55,7 @@ function church_admin_recent_visitors($member_type_id=1)
 			foreach($people AS $person)
 			{
 			
-				$out.='<p><a title="Edit person" href="'.wp_nonce_url('admin.php?page=church-admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.$person['people_id'],'edit_people').'">'.$person['first_name'].'</a> <a href="'.wp_nonce_url('admin.php?page=church-admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$person['household_id'],'edit_household').'" title="edit household">'.$person['last_name'].'</a></p>';
+				$out.='<p><a title="Edit person" href="'.wp_nonce_url('admin.php?page=church-admin/index.php&amp;action=church_admin_edit_people&amp;people_id='.intval($person['people_id']),'edit_people').'">'.esc_html($person['first_name']).'</a> <a href="'.wp_nonce_url('admin.php?page=church-admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.intval($person['household_id']),'edit_household').'" title="edit household">'.esc_html($person['last_name']).'</a></p>';
 				
 			}
 			$out.='<p>&nbsp;</p>';

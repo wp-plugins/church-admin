@@ -17,13 +17,13 @@ function church_admin_individual_attendance()
 	if (!empty($_POST['save_attendance']))
 	{//process form
 	
-		$meeting=explode('-',$_POST['meeting']);
+		$meeting=explode('-',santitize_text_field($_POST['meeting']));
 		$sqlsafe=array();
 		$adult=$child=0;
 		foreach($_POST AS $key=>$value)$sqlsafe[$key]=esc_sql(stripslashes_deep($value));
 		foreach($sqlsafe['people_id'] AS $key=>$person)
 		{
-			$id=$wpdb->get_var('SELECT attendance_id FROM '.CA_IND_TBL.' WHERE `date`="'.$sqlsafe['date'].'" AND people_id="'.$person.'" AND meeting_type="'.esc_sql($meeting[0]).'" AND meeting_id="'.esc_sql($meeting[1]).'"');
+			$id=$wpdb->get_var('SELECT attendance_id FROM '.CA_IND_TBL.' WHERE `date`="'.$sqlsafe['date'].'" AND people_id="'.intval($person).'" AND meeting_type="'.esc_sql($meeting[0]).'" AND meeting_id="'.esc_sql($meeting[1]).'"');
 			if(!$id)
 			{
 				$wpdb->query('INSERT INTO '.CA_IND_TBL.' (`date`,people_id,meeting_type,meeting_id)VALUES("'.$sqlsafe['date'].'","'.$person.'","'.esc_sql($meeting[0]).'","'.esc_sql($meeting[1]).'")');
@@ -76,7 +76,7 @@ function church_admin_individual_attendance()
 		$smallgroups=$wpdb->get_results('SELECT * FROM '.CA_SMG_TBL);
 		if(!empty($smallgroups))
 		{
-			foreach($smallgroups AS $smallgroup)$option.='<option class="smallgroup" value="smallgroup-'.$smallgroup->id.'">Small Group - '.$smallgroup->group_name.'</option>';
+			foreach($smallgroups AS $smallgroup)$option.='<option class="smallgroup" value="smallgroup-'.intval($smallgroup->id).'">Small Group - '.esc_html($smallgroup->group_name).'</option>';
 		}
 		if(!empty($option))
 		{
@@ -92,7 +92,7 @@ function church_admin_individual_attendance()
 		{
 			foreach($people AS $person)
 			{
-				echo'<p><label>'.$person->name.'</label><input type="checkbox" name="people_id[]" value="'.$person->people_id.'"/></p>';
+				echo'<p><label>'.esc_html($person->name).'</label><input type="checkbox" name="people_id[]" value="'.intval($person->people_id).'"/></p>';
 			}
 		}
 		echo'<p><label>'.__('Comma Separated Visitors','church-admin').'</label><input type="text" name="visitors"/></p>';

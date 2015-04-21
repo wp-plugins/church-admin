@@ -1,9 +1,9 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_delete_rota_settings($id)
 {
     global $wpdb;
-    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota_settings WHERE rota_id='".esc_sql($id)."'");
+    $wpdb->query("DELETE FROM ".$wpdb->prefix."church_admin_rota_settings WHERE rota_id='".esc_sql(intval($id))."'");
      $result=$wpdb->get_results('SELECT * FROM '.CA_ROT_TBL );
             if($result)
             {
@@ -12,14 +12,11 @@ function church_admin_delete_rota_settings($id)
                     $jobs=unserialize($row->rota_jobs);
                     unset($jobs[$id]);
                     $rota_jobs=esc_sql(serialize($jobs));
-                    $wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.$rota_jobs.'" WHERE rota_id="'.$row->rota_id.'"');
+                    $wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.$rota_jobs.'" WHERE rota_id="'.intval($row->rota_id).'"');
                 }
             
             }
-    require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
-    add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
-    do_meta_boxes('church-admin','advanced',null);
-    church_admin_rota_settings_list();
+       church_admin_rota_settings_list();
 }
 
 function church_admin_edit_rota_settings($id=NULL)
@@ -57,24 +54,19 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
 					
                     $jobs[$job_id]=serialize(array());
                     $rota_jobs=esc_sql(serialize($jobs));
-                    $wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.$rota_jobs.'" WHERE rota_id="'.$row->rota_id.'"');
+                    $wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.$rota_jobs.'" WHERE rota_id="'.intval($row->rota_id).'"');
                 }
             
             }
             echo'<div id="message" class="updated fade"><p><strong> Rota Job Added</strong></p></div>';
-            require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
-            add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
-            do_meta_boxes('church-admin','advanced',null);
-            church_admin_rota_settings_list();  
+            
         }else
         {
             $sql='UPDATE '.CA_RST_TBL.' SET rota_task="'.esc_sql(stripslashes($_POST['rota_task'])).'",service_id="'.esc_sql(serialize($services)).'",department_id="'.$department_id.'",initials="'.$initials.'" WHERE rota_id="'.esc_sql($id).'"';
             
             $wpdb->query($sql);
             echo'<div id="message" class="updated fade"><p><strong> Rota Job Updated</strong></p></div>';
-            require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
-            add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
-            do_meta_boxes('church-admin','advanced',null);
+            
             church_admin_rota_settings_list();  
         }
     }//insert
@@ -84,9 +76,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
         
         $wpdb->query($sql);
         echo'<div id="message" class="updated fade"><p><strong> Rota Job Updated</strong></p></div>';
-         require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
-        add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
-        do_meta_boxes('church-admin','advanced',null);
+        
         church_admin_rota_settings_list();
     }//update
 }
@@ -96,7 +86,7 @@ echo'<h1>'.__('Set up Rotas','church-admin').'</h1><h2>'.__('Edit a Rota Job','c
 if ( function_exists('wp_nonce_field') ) wp_nonce_field('edit_rota_settings');
 $rota_task=$wpdb->get_row("SELECT * FROM ".$wpdb->prefix."church_admin_rota_settings WHERE rota_id='".esc_sql($id)."'");
 echo'<p><label>'.__('Rota Job','church-admin').':</label><input type="text" name="rota_task" ';
-if(!empty($rota_task->rota_task)) echo'value="'.esc_sql($rota_task->rota_task).'"';
+if(!empty($rota_task->rota_task)) echo'value="'.esc_html($rota_task->rota_task).'"';
 echo'/></p>';
 echo'<p><label>'.__('Use Autocomplete','church-admin').'</label><input type="checkbox" name="department_id" value="1"';
 if(!empty($rota_task->department_id)&&$rota_task->department_id>0) echo' checked="checked" ';
@@ -112,9 +102,9 @@ $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 			$ser=array();
 			foreach($services AS $service)
 			{
-				echo'<input type="checkbox" name="service_id[]" value="'.$service->service_id.'" ';
+				echo'<input type="checkbox" name="service_id[]" value="'.intval($service->service_id).'" ';
 				if(is_array($current_services) && (in_array($service->service_id,$current_services))) echo' checked="checked" ';
-				echo'/>'.$service->service_name.'<br/>';
+				echo'/>'.esc_html($service->service_name).'<br/>';
 			}
 		}
 echo'<p class="submit"><input type="submit" name="edit_rota_setting" value="'.__('Save Rota Job','church-admin').' &raquo;" /></p></form>

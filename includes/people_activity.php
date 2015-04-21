@@ -18,7 +18,7 @@ function church_admin_recent_people_activity()
 	$p->target("admin.php?page=church_admin/index.php&tab=address&action=church_admin_people_activity");
 	if(!isset($p->paging))$p->paging=1; 
 	if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
-	$p->currentPage($_GET[$p->paging]); // Gets and validates the current page
+	$p->currentPage(intval($_GET[$p->paging])); // Gets and validates the current page
 	$p->calculate(); // Calculates what to show
 	$p->parameterName('paging');
 	$p->adjacents(1); //No. of page away from the current page
@@ -28,7 +28,7 @@ function church_admin_recent_people_activity()
 	}
 	else
 	{
-	    $p->page = $_GET['paging'];
+	    $p->page = intval($_GET['paging']);
 	}
         //Query for limit paging
 	$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
@@ -91,14 +91,14 @@ function church_admin_funnel_assign($people_id,$funnel_id,$member_type_id)
         if($people)
         {//people available to assign to
             $fun_display.='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_assign_funnel" method="post">';
-            $fun_display.='<input type="hidden" name="people_id" value="'.$people_id.'"/>';
-            $fun_display.='<input type="hidden" name="funnel_id" value="'.$funnel_id.'"/>';
-            $fun_display.='<input type="hidden" name="member_type_id" value="'.$member_type_id.'"/>';
-            $fun_display.='<p>'.sprintf(__('Assign %1$s to ','church-admin'),$funnel_details->action).': <select name="assign_id" onchange="this.form.submit()">';
+            $fun_display.='<input type="hidden" name="people_id" value="'.intval($people_id).'"/>';
+            $fun_display.='<input type="hidden" name="funnel_id" value="'.intval($funnel_id).'"/>';
+            $fun_display.='<input type="hidden" name="member_type_id" value="'.intval($member_type_id).'"/>';
+            $fun_display.='<p>'.sprintf(__('Assign %1$s to ','church-admin'),esc_html($funnel_details->action)).': <select name="assign_id" onchange="this.form.submit()">';
             $fun_display.='<option value="">'.__('Select someone...','church-admin').'</option>';
             foreach ($people AS $person)
             {
-                $fun_display.='<option value="'.$person->people_id.'">'.$person->name.'</option>';
+                $fun_display.='<option value="'.intval($person->people_id).'">'.esc_html($person->name).'</option>';
             }
             $fun_display.='</select></form>';
         }
@@ -157,13 +157,13 @@ if($results)
             $message.='<h2>'.$f_row->action.' '.__('assigned on','church-admin').' '.mysql2date(get_option('date_format'),$f_row->assigned_date).'</h2>';
             $message.='<table><tr><td>Name</td><td>'.esc_html($f_row->first_name.' '.$f_row->last_name).'</td></tr>';
             if(!empty($f_row->address))$message.='<tr><td>'.__('Address','church-admin').'</td><td>'.esc_html($f_row->address).'</td></tr>';
-            if(!empty($f_row->email))$message.='<tr><td>'.__('Email','church-admin').'</td><td><a href="mailto:'.$f_row->email.'">'.$f_row->email.'</a></td></tr>';
+            if(!empty($f_row->email)&&is_email($f_row->email))$message.='<tr><td>'.__('Email','church-admin').'</td><td><a href="mailto:'.$f_row->email.'">'.$f_row->email.'</a></td></tr>';
             if(!empty($f_row->mobile))$message.='<tr><td>'.__('Mobile','church-admin').'</td><td>'.esc_html($f_row->mobile).'</td></tr>';
             if(!empty($f_row->phone))$message.='<tr><td>'.__('Phone','church-admin').'</td><td>'.esc_html($f_row->phone).'</td></tr>';
            $message.='</table>';
             
         }
-        echo $assign->first_name.' '.$assign->last_name.'<br/>';
+        echo esc_html($assign->first_name.' '.$assign->last_name).'<br/>';
         wp_mail($assign->email,__("You've been assigned some follow up tasks",'church-admin'),$message);
         $wpdb->query('UPDATE '.CA_FP_TBL.' SET email="'.date('Y-m-d').'" WHERE assign_id="'.esc_sql($assign->people_id).'" AND email="0000-00-00"');
     }

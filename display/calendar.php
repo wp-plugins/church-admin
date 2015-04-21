@@ -43,17 +43,15 @@ for ($x=$actualyear;$x<=$actualyear+15;$x++)
 {
     if(isset($_POST['ca_year'])&&$_POST['ca_year']==$x)
     {
-	$first="<option value=\"$x\" >$x</option>";
+	$first='<option value="'.intval($x).'" >'.intval($x).'</option>';
     }
     else
     {
-	$option.= "<option value=\"$x\">$x</option>";
+	$option.='<option value="'.intval($x).'" >'.intval($x).'</option>';
     }
 }
 $out.=$first.$option;
-$out.='</select><input  type="submit" value="Submit"/></form></td></tr>            
-            
-';
+$out.='</select><input  type="submit" value="'.__('Submit','church-admin').'"/></form></td></tr> ';
 $out.=
 '<tr>
                
@@ -114,7 +112,7 @@ for( $counter = 1; $counter <= $numdaysinmonth; $counter ++ )
 			$popup.="<br/>".mysql2date(get_option('time_format'),$row->start_time)." - ".mysql2date(get_option('time_format'),$row->end_time)."<br/>".$row->category." Event<br/>";
 			if($row->recurring=='s'){$type='church_admin_single_event_edit';$nonce='single_event_edit';}else{$type='church_admin_series_event_edit';$nonce='series_event_edit';}
 			$popup.='<a title="'.__('Edit Entry','church-admin').'" href="'.wp_nonce_url(admin_url().'?page=church_admin/index.php&amp;action='.$type.'&amp;event_id='.$row->event_id.'&amp;date_id='.$row->date_id,$nonce).'"><img src="'.plugins_url('images/edit_event.png',dirname(__FILE__) ) .'" width="32" height="32" alt="'.__('Edit Entry','church-admin').'"/></a>';
-            $out.= '<div class="church_admin_cal_item" id="ca'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.mysql2date(get_option('time_format'),$row->start_time).' '.htmlentities($row->title).'... </div></p><div id="div'.$row->date_id.'" class="church_admin_tooltip"  >'.$popup.'</div><br/>';
+            $out.= '<div class="church_admin_cal_item" id="ca'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.mysql2date(get_option('time_format'),$row->start_time).' '.esc_html($row->title).'... </div></p><div id="div'.intval($row->date_id).'" class="church_admin_tooltip"  >'.$popup.'</div><br/>';
         }
     }    
     $out.="</td>\n";

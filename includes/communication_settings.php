@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /*
  This file contains the communications settings
  2011-03-05 Removed create cronemail.php - now permanently there

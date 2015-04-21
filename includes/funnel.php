@@ -1,10 +1,10 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 function church_admin_funnel_list()
 {
     global $wpdb,$member_type,$people_type;
-    $departments=get_option('church_admin_departments');
+	$departments=get_option('church_admin_departments');
     $result=$wpdb->get_results('SELECT * FROM '.CA_FUN_TBL .'  ORDER BY funnel_order');
     if($result)
     {
@@ -12,9 +12,11 @@ function church_admin_funnel_list()
         echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></tfoot><tbody>';
         foreach($result AS $row)
         {
-            $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel&amp;funnel_id='.$row->funnel_id,'edit_funnel').'">'.__('Edit','church-admin').'</a>';
-            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_funnel&amp;funnel_id='.$row->funnel_id,'delete_funnel').'">'.__('Delete','church-admin').'</a>';
-            echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$row->action.'</td><td>'.$member_type[$row->member_type_id].'</td><td>'.$departments[$row->department_id].'</td></tr>';
+            $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel&amp;funnel_id='.intval($row->funnel_id),'edit_funnel').'">'.__('Edit','church-admin').'</a>';
+            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_funnel&amp;funnel_id='.intval($row->funnel_id),'delete_funnel').'">'.__('Delete','church-admin').'</a>';
+            echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($row->action).'</td><td>';
+			if(!empty($member_type[$row->member_type_id])){echo esc_html($member_type[$row->member_type_id]);}else{echo'&nbsp;';}
+			echo '</td><td>'.$departments[$row->department_id].'</td></tr>';
         }
     }
 }
@@ -36,7 +38,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
             {
                 if(!in_array(stripslashes($_POST['new_department']),$departments))
                 {
-                    $departments[]=stripslashes($_POST['new_department']);
+                    $departments[]=sanitize_text_field(stripslashes($_POST['new_department']));
                     $_POST['department']=key($departments);
                     update_option('church_admin_departments',$departments);
                     church_admin_update_department(key($departments),$people_id,'ministry');
@@ -60,7 +62,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
            
            //funnel action
            echo'<p><label>'.__('Funnel Action','church-admin').'</label><input type="text" name="action" ';
-           if(!empty($data->action))echo ' value="'.$data->action.'" ';
+           if(!empty($data->action))echo ' value="'.esc_html($data->action).'" ';
            echo'/></p>';
            //member type
            echo'<p><label>'.__('Link to Member Type','church-admin').'</label><select name="member_type_id">';
@@ -68,7 +70,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
            $option='';
            foreach($member_type AS $id=>$type)
            {
-             if($id==$data->member_type_id){$first='<option value="'.$id.'" selected="selected">'.$type.'</option>'; }else{$option.='<option value="'.$id.'" >'.$type.'</option>';}
+             if($id==$data->member_type_id){$first='<option value="'.intval($id).'" selected="selected">'.esc_html($type).'</option>'; }else{$option.='<option value="'.intval($id).'" >'.esc_html($type).'</option>';}
            }
            echo $first.$option.'</option></select></p>';
            //responsible department
@@ -76,7 +78,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
            $first=$option='';
            foreach($departments AS $id=>$type)
            {
-             if($id==$data->member_type_id){$first='<option value="'.$id.'" selected="selected">'.$type.'</option>'; }else{$option.='<option value="'.$id.'" >'.$type.'</option>';}
+             if($id==$data->member_type_id){$first='<option value="'.intval($id).'" selected="selected">'.esc_html($type).'</option>'; }else{$option.='<option value="'.intvall($id).'" >'.esc_html($type).'</option>';}
            }
            echo $first.$option.'</option></select>';
            echo '<input type="text" name="new_department" onfocus="javascript:this.value=\'\';" value="'.__('Or add a new department','church-admin').'"/></p>';

@@ -43,7 +43,7 @@ function church_admin_json_media()
 		
 		if(!empty($results))
 		{
-			foreach($results AS $row)$output['media'][]=array('title'=>$row->file_title,'id'=>$row->file_id,'description'=>$row->file_description,'file_url'=>$url.$row->file_name);
+			foreach($results AS $row)$output['media'][]=array('title'=>esc_html($row->file_title),'id'=>intval($row->file_id),'description'=>esc_html($row->file_description),'file_url'=>esc_url($url.$row->file_name));
 		}
 		
 		return json_encode($output);
@@ -69,7 +69,7 @@ function church_admin_json_search()
 		{
 			if(empty($row->phone))$row->phone='';
 			if(empty($row->mobile))$row->mobile='';
-			$output[]=array('id'=>$row->people_id,'name'=>$row->first_name.' '.$row->last_name,'email'=>$row->email,'phone'=>array('mobile'=>$row->mobile,'home'=>$row->phone),'address'=>$row->address);
+			$output[]=array('id'=>intval($row->people_id),'name'=>esc_html($row->first_name).' '.esc_html($row->last_name),'email'=>esc_html($row->email),'phone'=>array('mobile'=>esc_html($row->mobile),'home'=>esc_html($row->phone)),'address'=>esc_html($row->address));
 		}
 	}
 return json_encode($output);
@@ -86,7 +86,7 @@ function church_admin_json_address()
 	{
 		foreach($results AS $row)
 		{
-			$output[]=array('id'=>$row->people_id,'name'=>$row->name,'email'=>$row->email,'phone'=>array('mobile'=>$row->mobile,'home'=>$row->phone),'address'=>$row->address);
+			$output[]=array('id'=>intval($row->people_id),'name'=>esc_html($row->name),'email'=>esc_html($row->email),'phone'=>array('mobile'=>esc_html($row->mobile),'home'=>esc_html($row->phone)),'address'=>esc_html($row->address));
 		}
 		return json_encode($output);
 		//return $output;
@@ -105,7 +105,7 @@ function church_admin_json_services()
 	{
 		foreach($services AS $service)
 		{
-			$output[]=array('name'=>$service->service_name,'day'=>$days[$service->service_day],'time'=>$service->service_time,'service_venue'=>$service->venue,'address'=>$service->address);
+			$output[]=array('name'=>esc_html($service->service_name),'day'=>esc_html($days[$service->service_day]),'time'=>esc_html($service->service_time),'service_venue'=>esc_html($service->venue),'address'=>esc_html($service->address));
 		}
 		return json_encode($output);
 	

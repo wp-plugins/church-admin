@@ -23,7 +23,7 @@ if ( function_exists( 'fetch_feed' ) )
 		{
 		    // Loop through each feed item and display each item as a hyperlink.
 		    foreach ( $rss_items as $item ) { 
-		    $output.='<li><a target="_blank"  href="'. $item->get_permalink() .'" title="Posted '.$item->get_date('j F Y | g:i a').'">'.$item->get_title().'</a></li>';
+		    $output.='<li><a target="_blank"  href="'. esc_url($item->get_permalink()) .'" title="Posted '.$item->get_date('j F Y | g:i a').'">'.esc_html($item->get_title()).'</a></li>';
 		} 
 		}
     } else { 

@@ -1,5 +1,5 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$member_type_id=1)
 {
@@ -27,30 +27,30 @@ function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$m
     {//process
         
 	
-	$sql=array();
-	foreach ($_POST AS $key=>$value)$sql[$key]=esc_sql(stripslashes_deep($value));
-	$household_id=$wpdb->get_var('SELECT household_id FROM '.CA_HOU_TBL.' WHERE address="'.$sql['address'].'" AND lat="'.$sql['lat'].'" AND lng="'.$sql['lng'].'" AND phone="'.$sql['phone'].'"');
+	$form=$sql=array();
+	foreach ($_POST AS $key=>$value)$form[$key]=stripslashes_deep($value);
+	$household_id=$wpdb->get_var('SELECT household_id FROM '.CA_HOU_TBL.' WHERE address="'.esc_sql(sanitize_text_field($form['address'])).'" AND lat="'.esc_sql(sanitize_text_field($form['lat'])).'" AND lng="'.esc_sql(sanitize_text_field($form['lng'])).'" AND phone="'.esc_sql(sanitize_text_field($form['phone'])).'"');
 	if(empty($household_id))
 	{//insert
-	    $success=$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (address,lat,lng,phone) VALUES("'.$sql['address'].'", "'.$sql['lat'].'","'.$sql['lng'].'","'.$sql['phone'].'" )');
+	    $success=$wpdb->query('INSERT INTO '.CA_HOU_TBL.' (address,lat,lng,phone) VALUES("'.esc_sql(sanitize_text_field($form['address'])).'", "'.esc_sql(sanitize_text_field($form['lat'])).'","'.esc_sql(sanitize_text_field($form['lng'])).'","'.esc_sql(sanitize_text_field($form['phone'])).'" )');
 	    $household_id=$wpdb->insert_id;
 	}//end insert
 	else
 	{//update
-	   $success=$wpdb->query('UPDATE '.CA_HOU_TBL.' SET address="'.$sql['address'].'" , lat="'.$sql['lat'].'" , lng="'.$sql['lng'].'" , phone="'.$sql['phone'].'" WHERE household_id="'.esc_sql($household_id).'"');
+	   $success=$wpdb->query('UPDATE '.CA_HOU_TBL.' SET address="'.esc_sql(sanitize_text_field($form['address'])).'" , lat="'.esc_sql(sanitize_text_field($form['lat'])).'" , lng="'.esc_sql(sanitize_text_field($form['lng'])).'" , phone="'.esc_sql(sanitize_text_field($form['phone'])).'" WHERE household_id="'.esc_sql($household_id).'"');
 	}//update
 	$sql=array();
         for($x=0;$x<count($_POST['first_name']);$x++)
         {
 			$y=$x+1;
             if($_POST['sex'.$y]=='male'){$sex=1;}else{$sex=0;}
-            if(!empty($_POST['first_name'][$x])){$first_name=$_POST['first_name'][$x];}else{$first_name='';}
-			if(!empty($_POST['prefix'][$x])){$prefix=$_POST['prefix'][$x];}else{$prefix='';}
-            if(!empty($_POST['last_name'][$x])){$last_name=$_POST['last_name'][$x];}else{$last_name='';}
-            if(!empty($_POST['mobile'][$x])){$mobile=$_POST['mobile'][$x];}else{$mobile='';}
-            if(!empty($_POST['email'][$x])){$email=$_POST['email'][$x];}else{$email='';}
-            if(!empty($_POST['people_type_id'][$x])){$people_type_id=$_POST['people_type_id'][$x];}else{$people_type_id='';}
-            $sql[]='("'.esc_sql(stripslashes($first_name)).'","'.esc_sql(stripslashes($prefix)).'","'.esc_sql(stripslashes($last_name)).'","'.esc_sql(stripslashes($mobile)).'","'.esc_sql(stripslashes($email)).'","'.$sex.'","'.esc_sql($household_id).'","'.esc_sql((int)$people_type_id).'","'.$member_type_id.'")';
+            if(!empty($_POST['first_name'][$x])){$first_name=sanitize_text_field($form['first_name'][$x]);}else{$first_name='';}
+			if(!empty($_POST['prefix'][$x])){$prefix=sanitize_text_field($form['prefix'][$x]);}else{$prefix='';}
+            if(!empty($_POST['last_name'][$x])){$last_name=sanitize_text_field($form['last_name'][$x]);}else{$last_name='';}
+            if(!empty($_POST['mobile'][$x])){$mobile=sanitize_text_field($form['mobile'][$x]);}else{$mobile='';}
+            if(!empty($_POST['email'][$x])){$email=sanitize_text_field($form['email'][$x]);}else{$email='';}
+            if(!empty($_POST['people_type_id'][$x])){$people_type_id=sanitize_text_field($form['people_type_id'][$x]);}else{$people_type_id='';}
+            $sql[]='("'.esc_sql($first_name).'","'.esc_sql($prefix).'","'.esc_sql($last_name).'","'.esc_sql($mobile).'","'.esc_sql($email).'","'.$sex.'","'.esc_sql($household_id).'","'.esc_sql((int)$people_type_id).'","'.$member_type_id.'")';
         
         }
         $query='INSERT INTO '.CA_PEO_TBL.' (first_name,prefix,last_name,mobile,email,sex,household_id,people_type_id,member_type_id) VALUES '.implode(",",$sql);

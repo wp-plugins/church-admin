@@ -28,8 +28,8 @@ function church_admin_prayer_chain()
 			$ids=maybe_unserialize($id);
 			foreach($ids as $key=>$value)
 			{
-				$wpdb->query('UPDATE '.CA_PEO_TBL.' set prayer_chain=1 WHERE people_id="'.esc_sql($value).'"');
-				echo'<div class="updated fade"><p><strong>'.church_admin_get_person($value).' added to prayer chain</strong></p></div>';
+				$wpdb->query('UPDATE '.CA_PEO_TBL.' set prayer_chain=1 WHERE people_id="'.esc_sql(intval($value)).'"');
+				echo'<div class="updated fade"><p><strong>'.esc_html(church_admin_get_person($value)).' added to prayer chain</strong></p></div>';
 			}
 			
 		}
@@ -42,7 +42,7 @@ function church_admin_prayer_chain()
 			$ids=maybe_unserialize($id);
 			foreach($ids as $key=>$value)
 			{
-				$wpdb->query('UPDATE '.CA_PEO_TBL.' set prayer_chain=0 WHERE people_id="'.esc_sql($value).'"');
+				$wpdb->query('UPDATE '.CA_PEO_TBL.' set prayer_chain=0 WHERE people_id="'.esc_sql(intval($value)).'"');
 				echo'<div class="updated fade"><p>'.$_POST['name'].' taken off prayer chain<strong></p></div>';
 			}
 			
@@ -52,7 +52,7 @@ function church_admin_prayer_chain()
 	if(!empty($results))
 	{
 		echo'<h2> The prayer chain is made up of...</h2><p>';
-		foreach($results AS $row) echo $row->name.', ';
+		foreach($results AS $row) echo esc_html($row->name).', ';
 		echo'</p>';
 	}
 	$count=$wpdb->get_var('SELECT COUNT(prayer_chain) FROM '.CA_PEO_TBL.' WHERE prayer_chain=1');
@@ -147,7 +147,7 @@ function church_admin_prayer_chain()
 				{
 					foreach($results AS $row)
 					{
-						if(QueueEmail($row->email,__('Prayer Chain Request','church-admin'),$message,'','',get_option('admin_email'),''))echo'<p>Prayer request sent to '.$row->name.'</p>';
+						if(QueueEmail($row->email,__('Prayer Chain Request','church-admin'),$message,'','',get_option('admin_email'),''))echo'<p>Prayer request sent to '.esc_html($row->name).'</p>';
 					}
 				}
 			}
@@ -191,3 +191,4 @@ echo'<p><input type="hidden" name="send_prayer_message" value="yes"/><input type
 	}
 	
 }
+?>

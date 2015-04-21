@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function  church_admin_member_type()
 {
     global $wpdb;
@@ -26,15 +27,15 @@ function  church_admin_member_type()
         }
         else
         {
-            $delete=$check .' '.__('people who are','church-admin').' '.$membertype;
+            $delete=$check .' '.__('people who are','church-admin').' '.esc_html($membertype);
             $reassign='<form action="admin.php?page=church_admin/index.php&amp;action=church_admin_member_type" method="post">'.__('Reassign people to','church-admin').' ';
             $reassign.='<select name="reassign">';
-			foreach($member_type AS $mtid=>$value)if($mtid!=$id) $reassign.='<option value="'.$mtid.'">'.$value.'</option>';
-            $reassign.='</select><input type="hidden" name="current" value="'.$id.'"/><input type="submit" value="Reassign"/></form>';
+			foreach($member_type AS $mtid=>$value)if($mtid!=$id) $reassign.='<option value="'.intval($mtid).'">'.esc_html($value).'</option>';
+            $reassign.='</select><input type="hidden" name="current" value="'.intval($id).'"/><input type="submit" value="Reassign"/></form>';
         }
             
         
-        echo'<tr class="sortable-row" id="'.$id.'"><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$membertype.'</td><td>'.$reassign.'</td></tr>';
+        echo'<tr class="sortable-row" id="'.intval($id).'"><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($membertype).'</td><td>'.$reassign.'</td></tr>';
        
     }
     echo'</tbody></table>';
@@ -110,7 +111,7 @@ function church_admin_edit_member_type($member_type_id=NULL)
         if(!empty($member_type_id))
 	{
 	    $type=$wpdb->get_var('SELECT member_type FROM '.CA_MTY_TBL.' WHERE member_type_id="'.esc_sql($member_type_id).'"');
-	    echo'value="'.$type.'" ';
+	    echo'value="'.esc_html($type).'" ';
 	}
         echo'/></p>';
         echo'<p class="submit"><input type="hidden" name="edit_member_type" value="yes"/><input type="submit" value="'.__('Save Member Type','church-admin').' &raquo;" /></p></form></div>';

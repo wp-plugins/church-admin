@@ -13,12 +13,12 @@ function church_admin_copy_rota($copy_id,$rota_id)
  * 
  */
 	global $wpdb;
-	$rota_jobs=$wpdb->get_var('SELECT rota_jobs FROM '.CA_ROT_TBL.' WHERE rota_id="'.esc_sql($copy_id).'"');
+	$rota_jobs=$wpdb->get_var('SELECT rota_jobs FROM '.CA_ROT_TBL.' WHERE rota_id="'.esc_sql(intval($copy_id)).'"');
 	if(!empty($rota_jobs))
 	{
-		$wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.esc_sql($rota_jobs).'" WHERE rota_id="'.esc_sql($rota_id).'"');
+		$wpdb->query('UPDATE '.CA_ROT_TBL.' SET rota_jobs="'.esc_sql($rota_jobs).'" WHERE rota_id="'.esc_sql(intval($rota_id)).'"');
 		echo'<div class="updated fade".<p><strong>People copied over</strong></p></div>';
-		$service_id=$wpdb->get_var('SELECT service_id FROM '.CA_ROT_TBL.' WHERE rota_id="'.esc_sql($rota_id).'"');
+		$service_id=$wpdb->get_var('SELECT service_id FROM '.CA_ROT_TBL.' WHERE rota_id="'.esc_sql(intval($rota_id)).'"');
 		church_admin_rota_list($service_id);
 	}
 }
@@ -40,9 +40,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 	//grab service details
 	$sql='SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"';
 	$service=$wpdb->get_row($sql);
-    /* Add screen option: user can choose between 1 or 2 columns (default 2) */
-		add_screen_option('layout_columns', array('max' => 2, 'default' => 1) );
-		echo'<div class="wrap" id="church-admin"><div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v'.$church_admin_version.' -Rota</h2><div id="poststuff">    ';
+    
 	
 	
 	if(!empty($_POST['rota_email']))
@@ -113,32 +111,21 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 						}
 						else
 						{			      
-							if(QueueEmail($row->email,"This week's service rota",$email_content,'',get_option('blogname'),get_option('admin_email'),'',''))echo'<p>Email to '.$row->name.' queued</p>';
+							if(QueueEmail($row->email,"This week's service rota",$email_content,'',get_option('blogname'),get_option('admin_email'),'',''))echo'<p>Email to '.esc_html($row->name).' queued</p>';
 						}
 					}
 				}	
 			}
 		}
-		require_once(plugin_dir_path(dirname(__FILE__)).'includes/admin.php');
-		add_meta_box("church-admin-rota", __('Rota', 'church-admin'), "church_admin_rota_meta_box", "church-admin");
-		echo'<form  method="get" action="">';
-		wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); 
-		wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
 		
-		echo'</form> <script type="text/javascript">
-		jQuery(document).ready(function($){$(".if-js-closed").removeClass("if-js-closed").addClass("closed");
-			       
-				postboxes.add_postbox_toggles( "church-admin");
-				});
-		</script><!-- End Meta Box Section-->';
-		do_meta_boxes('church-admin','advanced',null);
+		
 		
 	}//end send out email
 	else
 	{
 		
 		
-		echo'<h2>Email service rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2><form action="" method="post">';
+		echo'<h2>Email service rota  for  '.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</h2><form action="" method="post">';
 		echo'<p>The email will contain a salutation and the service rota. Please add your own message</p>';
 		wp_editor('','message',"", true);
 		echo'<p><input type="hidden" name="rota_email" value="yes"/><input type="submit" class="primary-button" value="Send to rota participants"/></p>';
@@ -164,7 +151,7 @@ global $church_admin_version;
 				echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
 			        foreach($services AS $service)
 				{
-				    echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</option>';
+				    echo'<option value="'.intval($service->service_id).'">'.esc_html(sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time)).'</option>';
 				}
 				echo'</select> <input type="submit" value="'.__('Select','church-admin').'"/></tr></tbody></table>';
 				echo'</form>';
@@ -200,7 +187,7 @@ if(!empty($taskresult))
 	    echo'<table class="form-table"><tbody><tr><th scope=row>'.__('Which Service?','church-admin').'</th><td><select name="service_id">';
 	    foreach($services AS $service)
 	    {
-		echo'<option value="'.$service->service_id.'">'.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</option>';
+		echo'<option value="'.intval($service->service_id).'">'.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</option>';
 	    }
 	    echo'</select></td>';
 	    echo'<td><input type="submit" name="choose_service" value="'.__('Choose service','church-admin').' &raquo;" /></td></tr></tbody></table></form>';
@@ -404,17 +391,17 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	        $next_date=$wpdb->get_var('SELECT DATE_ADD(MAX(rota_date), INTERVAL 7 DAY) FROM '.$wpdb->prefix.'church_admin_rotas LIMIT 1');
 	        if(empty($next_date))$next_date=date("Y-m-d",strtotime("next Sunday"));
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	         echo'<h2>Add to rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
+	         echo'<h2>Add to rota  for  '.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</h2>';
 		echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#rota_date\').datepicker({dateFormat : "yy-mm-dd", changeYear: true });});</script>';
 	
 		 echo'<p><label>Rota Date:</label><input type="text" id="rota_date" name="rota_date" ';
-	        if(!empty($next_date)) echo ' value="'.$next_date.'" ';
+	        if(!empty($next_date)) echo ' value="'.esc_html($next_date).'" ';
 		echo'/></p>';
 	    
 	    }else
 	    {
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	        echo'<h2>Edit rota for '.mysql2date('d/m/Y',$jobs->rota_date).' and '.$service->service_name.' at '.$service->service_time.' '.$service->venue.'</h2>';
+	        echo'<h2>Edit rota for '.esc_html(mysql2date('d/m/Y',$jobs->rota_date).' and '.$service->service_name.' at '.$service->service_time.' '.$service->venue).'</h2>';
 	    }
 	    //grab different jobs
 	    
@@ -452,7 +439,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 						}
 					}else{$people[]=$curr_data;}
 		    
-					echo'<input type="text" name="'.$task_row->rota_id.'"';
+					echo'<input type="text" name="'.intval($task_row->rota_id).'"';
 		    
 					if(!empty($people)){echo ' value="'.esc_html(implode(", ",$people)).'"';}
 					echo'/>';
@@ -509,7 +496,7 @@ if(!empty($taskresult))
 	    echo'<p><label>'.__('Which Service?','church-admin').'</label><select name="service_id">';
 	    foreach($services AS $service)
 	    {
-		echo'<option value="'.$service->service_id.'">'.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</option>';
+		echo'<option value="'.intval($service->service_id).'">'.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</option>';
 	    }
 	    echo'</select></p>';
 	    echo'<p class="submit"><input type="submit" name="choose_service" value="'.__('Choose service','church-admin').' &raquo;" /></p></form></div>';
@@ -566,7 +553,7 @@ if(!empty($taskresult))
 		}
 	    
 	}
-	$filename="Rota-for-service-".$check->service_name.".csv";
+	$filename="Rota-for-service-".esc_html($check->service_name).".csv";
 	header("Cache-Control: public");
 	header("Content-Description: File Transfer");
 	header("Content-Disposition: attachment; filename=$filename");

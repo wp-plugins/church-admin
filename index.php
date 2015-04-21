@@ -1,11 +1,10 @@
 <?php
-
 /*
 
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.800
+Version: 0.810
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -45,10 +44,11 @@ Copyright (C) 2010 Andy Moyle
 
 
 */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 if(isset($_GET['ca_app'])){require_once(plugin_dir_path(__FILE__).'includes/json.php');church_admin_json($_GET['ca_app']);exit();}
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.800';
+$church_admin_version = '0.810';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -179,8 +179,8 @@ if(is_dir(OLD_CHURCH_ADMIN_EMAIL_CACHE))
 	if (is_writable(ABSPATH.'.htaccess')&&empty($htaccess_done))
 	{
     
-	    if (!$handle = fopen(ABSPATH.'.htaccess', 'a')) {echo "Cannot open file (ABSPATH.'.htaccess')";}
-	    elseif(fwrite($handle, $htaccess) === FALSE) {echo "Cannot write to file (".ABSPATH.".htaccess)";}
+	    if (!$handle = fopen(ABSPATH.'.htaccess', 'a')) {echo 'Cannot open file ('.ABSPATH.'.htaccess)';}
+	    elseif(fwrite($handle, $htaccess) === FALSE) {echo 'Cannot write to  file ('.ABSPATH.'.htaccess)';}
 	    else{fclose($handle);}
 	    update_option('church_admin_htaccess','1');
 	} 
@@ -326,8 +326,7 @@ function church_admin_init()
 		wp_enqueue_script('postbox','','',NULL);
 
     ca_thumbnails();
-	wp_register_script('ca_tabs', plugins_url('church-admin/includes/tabbed-nav.js',dirname(__FILE__) ) , false, '1.0');
-    wp_enqueue_script('ca_tabs','','',NULL);
+
 	
 	
     if(isset($_GET['download'])){church_admin_download($_GET['download']);exit();}
@@ -586,15 +585,19 @@ function church_admin_main()
 	switch($_GET['action'])
 	{
 		//main menu sections
-		case'small_groups':church_admin_smallgroups_main();break;
-		case'ministries':church_admin_ministries();break;
-		case'people':church_admin_people_main();break;
-		case'communication':church_admin_communication();break;
+		case'small_groups':if(church_admin_level_check('Small Groups')){church_admin_smallgroups_main();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
+		case'ministries':if(church_admin_level_check('Directory')){church_admin_ministries();break;}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
+		case'people':if(church_admin_level_check('Directory')){church_admin_people_main();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
+		case'communication':if(church_admin_level_check('Prayer Chain')){church_admin_communication();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		case'rota':if(church_admin_level_check('Rota')){church_admin_rota_main($service_id);}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		case'tracking':if(church_admin_level_check('Attendance')){church_admin_tracking();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
-		case 'podcast':church_admin_podcast();break;
-		case 'settings':church_admin_settings_menu();break;
-		case 'calendar':require_once(plugin_dir_path(__FILE__).'includes/calendar.php');church_admin_new_calendar(time(),$facilities_id);break;
+		case 'podcast':if(church_admin_level_check('Directory')){church_admin_podcast();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
+		case 'settings':if(current_user_can('manage_options')){church_admin_settings_menu();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
+		case 'calendar':if(church_admin_level_check('Calendar')){require_once(plugin_dir_path(__FILE__).'includes/calendar.php');church_admin_new_calendar(time(),$facilities_id);}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
+		
+		
+		
+		
 		//kids work
 		case 'edit_kidswork':require_once(plugin_dir_path(__FILE__).'includes/kidswork.php');church_admin_edit_kidswork($id);break;
 		case 'delete_kidswork':require_once(plugin_dir_path(__FILE__).'includes/kidswork.php');church_admin_delete_kidswork($id);break;
@@ -883,9 +886,9 @@ function church_admin_map($atts, $content = null)
     extract(shortcode_atts(array('zoom'=>13,'member_type_id'=>1,'small_group'=>1,'unattached'=>0), $atts));
     global $wpdb;
     $service=$wpdb->get_row('SELECT lat,lng FROM '.CA_SER_TBL.' LIMIT 1');
-    $out.='<div class="church-map"><script type="text/javascript">var xml_url="'.site_url().'/?download=address-xml&member_type_id='.$member_type_id.'&small_group='.$small_group.'&unattached='.$unattached.'&address-xml='.wp_create_nonce('address-xml').'";';
-    $out.=' var lat='.$service->lat.';';
-    $out.=' var lng='.$service->lng.';';
+    $out.='<div class="church-map"><script type="text/javascript">var xml_url="'.site_url().'/?download=address-xml&member_type_id='.intval($member_type_id).'&small_group='.esc_html($small_group).'&unattached='.esc_html($unattached).'&address-xml='.wp_create_nonce('address-xml').'";';
+    $out.=' var lat='.esc_html($service->lat).';';
+    $out.=' var lng='.esc_html($service->lng).';';
     
     $out.='jQuery(document).ready(function(){
     load(lat,lng,xml_url);});</script><div id="map"></div>';
@@ -978,7 +981,7 @@ function church_admin_sermons_widget($args)
     $title=$options['title'];
 	$limit=$options['sermons'];
     echo $before_widget;
-    if ( $title )echo $before_title . $title . $after_title;
+    if ( $title )echo $before_title . esc_html($title) . $after_title;
 	require_once(plugin_dir_path(__FILE__).'includes/sermon-podcast.php');
     echo church_admin_latest_sermons_widget_output($limit,$title);
     echo $after_widget;

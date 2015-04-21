@@ -31,9 +31,9 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
 			$preacher_header=array();
 			foreach($preachers AS $key=>$value)
 			{
-				$preacher_header[].='<a href="'.get_permalink().'?speaker_name='.urlencode($value).'">'.$value.'</a>';
+				$preacher_header[].='<a href="'.get_permalink().'?speaker_name='.urlencode($value).'">'.esc_html($value).'</a>';
 			}
-			$header.=implode(', ',$preacher_header).'</p>';
+			$header.=esc_html(implode(', ',$preacher_header)).'</p>';
 		}
 		//End Add filter by preacher name
 		
@@ -46,9 +46,9 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
 		$series_header=array();
 			foreach($series AS $serie)
 			{
-				$series_header[].='<a href="'.get_permalink().'?series_id='.urlencode($serie->series_id).'">'.$serie->series_name.'</a>';
+				$series_header[].='<a href="'.get_permalink().'?series_id='.urlencode($serie->series_id).'">'.esc_html($serie->series_name).'</a>';
 			}
-			$header.=implode(', ',$series_header).'</p>';
+			$header.=esc_html(implode(', ',$series_header)).'</p>';
 	 }
 	
 	require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
@@ -63,8 +63,8 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
     {//series_id specified
         $series=$wpdb->get_row('SELECT * FROM '.CA_SERM_TBL.' WHERE series_id="'.esc_sql($series_id).'"');
         $ser_header.=get_option('ca_podcast_event_template');
-        $ser_header.=str_replace('[SERIES_NAME]',$series->series_name,$ser_header);
-        $ser_header.=str_replace('[SERIES_DESCRIPTION]',$series->series_description,$ser_header);
+        $ser_header.=str_replace('[SERIES_NAME]',esc_html($series->series_name),$ser_header);
+        $ser_header.=str_replace('[SERIES_DESCRIPTION]',esc_html($series->series_description),$ser_header);
 		$header.=$ser_header;
         $sql='SELECT file_id FROM '.CA_FIL_TBL.' WHERE series_id="'.esc_sql($series_id).'"';
     }//end series_id specified
@@ -88,7 +88,7 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
 		$p->target(get_permalink());
 		if(!isset($p->paging))$p->paging=1; 
 		if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
-		$p->currentPage($_GET[$p->paging]); // Gets and validates the current page
+		$p->currentPage(intval($_GET[$p->paging])); // Gets and validates the current page
 		$p->calculate(); // Calculates what to show
 		$p->parameterName('paging');
 		$p->adjacents(1); //No. of page away from the current page
@@ -98,7 +98,7 @@ function ca_podcast_display($series_id=NULL,$file_id=NULL,$speaker_name=NULL)
 		}
 		else
 		{
-			$p->page = $_GET['paging'];
+			$p->page = intval($_GET['paging']);
 		}
         //Query for limit paging
 		$limit = " LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
@@ -144,29 +144,29 @@ function ca_display_file($file_id=NULL)
     if($data)
     {
 		$data->speaker_name=$data->speaker;
-        $template=str_replace('[VIDEO_URL]',"\r\n".$data->video_url."\r\n",$template);
-		$template=str_replace('[FILE_TITLE]',$data->file_title,$template);
-		$template=str_replace('[FILE_ID]',$data->file_id,$template);
+        $template=str_replace('[VIDEO_URL]',"\r\n".esc_url($data->video_url)."\r\n",$template);
+		$template=str_replace('[FILE_TITLE]',esc_html($data->file_title),$template);
+		$template=str_replace('[FILE_ID]',esc_html($data->file_id),$template);
 		$template=str_replace('[FILE_DATE]',mysql2date(get_option('date_format'),$data->pub_date),$template);
         
-		$template=str_replace('[FILE_PLAYS]','Played: <span class="plays'.$data->file_id.'">'.church_admin_plays($data->file_id).'</span> times',$template);
+		$template=str_replace('[FILE_PLAYS]','Played: <span class="plays'.intval($data->file_id).'">'.esc_html(church_admin_plays($data->file_id)).'</span> times',$template);
 		
         if(!empty($data->file_name) && file_exists($path.$data->file_name))
 		{
 			
-			$template=str_replace('[FILE_NAME]',$url.$data->file_name,$template);
-			$template=str_replace('[FILE_URI]',$url.$data->file_name,$template);
-			$template=str_replace('[FILE_DOWNLOAD]','<a href="'.$url.$data->file_name.'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
+			$template=str_replace('[FILE_NAME]',esc_url($url.$data->file_name),$template);
+			$template=str_replace('[FILE_URI]',esc_url($url.$data->file_name),$template);
+			$template=str_replace('[FILE_DOWNLOAD]','<a href="'.esc_url($url.$data->file_name).'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
 		}
 		elseif(!empty($data->external_file))
 		{
 			$template=str_replace('[FILE_NAME]',$data->external_file,$template);
 			$template=str_replace('[FILE_URI]',$data->external_file,$template);
-			$template=str_replace('[FILE_DOWNLOAD]','<a href="'.$data->external_file.'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
+			$template=str_replace('[FILE_DOWNLOAD]','<a href="'.esc_url($data->external_file).'" title="'.esc_html($data->file_title).'">'.strtoupper(esc_html($data->file_title)).'</a>',$template);
 		}
         if(file_exists($path.$data->transcript))
         {
-			$template=str_replace('[TRANSCRIPT]','<a href="'.$url.$data->transcript.'" title="'.esc_html($data->transcript).'">'.esc_html($data->transcript).'</a>',$template);
+			$template=str_replace('[TRANSCRIPT]','<a href="'.esc_url($url.$data->transcript).'" title="'.esc_html($data->transcript).'">'.esc_html($data->transcript).'</a>',$template);
         
 		}
 		else
@@ -174,9 +174,9 @@ function ca_display_file($file_id=NULL)
 			$template=str_replace('[TRANSCRIPT]','',$template);
         
 		}	
-        $template=str_replace('[FILE_DESCRIPTION]',$data->file_description,$template);
-        $template=str_replace('[SERIES_NAME]','<a href="'.get_permalink().'?series_id='.$data->series_id.'">'.$data->series_name.'</a>',$template);
-        $template=str_replace('[SPEAKER_NAME]','<a href="'.get_permalink().'?speaker_name='.urlencode($data->speaker_name).'">'.$data->speaker_name.'</a>',$template);
+        $template=str_replace('[FILE_DESCRIPTION]',esc_html($data->file_description),$template);
+        $template=str_replace('[SERIES_NAME]','<a href="'.esc_url(get_permalink().'?series_id='.$data->series_id).'">'.esc_html($data->series_name).'</a>',$template);
+        $template=str_replace('[SPEAKER_NAME]','<a href="'.esc_url(get_permalink().'?speaker_name='.urlencode($data->speaker_name)).'">'.esc_html($data->speaker_name).'</a>',$template);
         //$template=str_replace('[SPEAKER_DESCRIPTION]',$data->speaker_description,$template);
       
 		return $template;

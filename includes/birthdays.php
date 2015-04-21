@@ -1,5 +1,5 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_frontend_birthdays($member_type_id=1, $deltadays=30)
 
 {
@@ -40,7 +40,7 @@ function church_admin_frontend_birthdays($member_type_id=1, $deltadays=30)
 
 	{
 
-		$out .= '<p><strong>'.sprintf( __('Birthdays within the next %1$s  days','church-admin'),$deltadays).':</strong></p>';
+		$out .= '<p><strong>'.sprintf( __('Birthdays within the next %1$s  days','church-admin'),esc_html($deltadays)).':</strong></p>';
 
 		$out .= '<table cellspacing="0" cellpadding=0 width="100%">';
 
@@ -132,7 +132,7 @@ function church_admin_birthday_widget_control_form()
 
 	{
 
-		echo'<p>'.$value.' <input type="checkbox" name="member_type_id[]" value="'.$key.'" ';
+		echo'<p>'.esc_html($value).' <input type="checkbox" name="member_type_id[]" value="'.esc_html($key).'" ';
 
 		if(!empty($stored)&& in_array($key,$stored)) echo' checked="checked" ';
 
@@ -144,7 +144,7 @@ function church_admin_birthday_widget_control_form()
 
     echo '<p><label for="days">'.__('How many days to show','church-admin').'?</label><select name="days">';
 
-    if(isset($option['days'])) echo '<option value="'.$option['days'].'">'.$option['days'].'</option>';
+    if(isset($option['days'])) echo '<option value="'.esc_html($option['days']).'">'.esc_html($option['days']).'</option>';
 
     for($x=1;$x<=365;$x++){echo '<option value="'.$x.'">'.$x.'</option>';}
 

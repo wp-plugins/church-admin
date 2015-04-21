@@ -6,22 +6,9 @@ function church_admin_permissions()
 
 {
 
-
-
 	global $wpdb,$church_admin_version;
 
-	
-
-	
-
-	echo' <div class="wrap" id="church-admin">
-
-	<div id="icon-index" class="icon32"><br/></div><h2>Church Admin Plugin v'.$church_admin_version.'</h2>
-
-	<div id="poststuff">';
-
 	$check=$wpdb->get_var('SELECT COUNT(user_id) FROM '.CA_PEO_TBL);
-
 	if(empty($check))
 
 	{

@@ -42,30 +42,16 @@ function church_admin_frontend_small_groups($member_type_id=1)
 				{
 					if(!empty($sg[$id]))
 					{
-						$out.='<h3>'.$sg[$id].'</h3><p>';
-						$out.=implode('<br/>',$people).'</p>';
+						$out.='<h3>'.esc_html($sg[$id]).'</h3><p>';
+						$out.=esc_html(implode('<br/>',$people)).'</p>';
 					}
 				}
 			}
 		}
 		
 	}
-	/*foreach ($results as $row) 
-	{
-		$leaders=maybe_unserialize($row->leader);
-		$ldr_names=array();
-		if(is_array($leaders))foreach($leaders AS $key=>$value)$ldr_names[]=$wpdb->get_var('SELECT CONCAT_WS(" ", first_name,last_name) FROM '.CA_PEO_TBL.' WHERE people_id ="'.esc_sql($value).'"');
-		$sql='SELECT CONCAT_WS(" ", first_name,last_name) AS name FROM '.CA_PEO_TBL.' WHERE smallgroup_id ="'.esc_sql($row->id).'"'.$memb_sql;
-		
-		$people_results=$wpdb->get_results($sql);
-		$out.='<h3>'.esc_html($row->group_name);
-		if(!empty($leaders)&&is_array($leaders))$out.=' '.__('led by','church-admin').' '.esc_html(implode(", ",$ldr_names));
-		$out.='</h3><p>';
-		if($people_results) foreach($people_results AS $people){$out.=esc_html($people->name).'<br/>';}
-		$out.='</p>';
-	}*/
 	
 	return $out;
 }
 
-?>	
+?>

@@ -1,5 +1,5 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_front_admin()
 {
 	global $church_admin_version;
@@ -110,7 +110,7 @@ function church_admin_settings_menu()
         echo '<p>These are your current member types</p>';
         foreach($results AS $row)
         {
-            echo'<p><label>'.$row->member_type.': </label>member_type_id='.esc_html($row->member_type_id).'</p>';
+            echo'<p><label>'.esc_html($row->member_type).': </label>member_type_id='.intval($row->member_type_id).'</p>';
         }
     }
     //recent
@@ -130,7 +130,7 @@ function church_admin_settings_menu()
         echo '<p>These are your current services</p>';
         foreach($results AS $row)
         {
-            echo'<p><label>'.$row->service_name.' on '.$days[$row->service_day].' at '.$row->service_time.' </label>service_id='.esc_html($row->service_id).'</p>';
+            echo'<p><label>'.esc_html($row->service_name).' on '.esc_html($days[$row->service_day]).' at '.esc_html($row->service_time).' </label>service_id='.intval($row->service_id).'</p>';
         }
     }
     
@@ -141,7 +141,7 @@ function church_admin_settings_menu()
     {
         foreach($results AS $row)
         {
-             $shortcode='<strong>[church_admin type=calendar-list category='.$row->cat_id.' weeks=4]</strong>';
+             $shortcode='<strong>[church_admin type=calendar-list category='.esc_html($row->cat_id).' weeks=4]</strong>';
             echo'<p><label>Calendar List by Category '.esc_html($row->category).'</label>'.$shortcode.'</p>';
         }
     }
@@ -245,7 +245,7 @@ function church_admin_smallgroups_main()
     echo '<p><strong>'.__('Download a small group PDF','church-admin').'</strong></p><form name="address_list_form" action="'.home_url().'" method="get"><input type="hidden" name="download" value="smallgroup"/>';
 	foreach($member_type AS $key=>$value)
 	{
-		echo'<p><label>'.$value.'</label><input type="checkbox" value="'.$key.'" name="member_type_id[]"/></p>';
+		echo'<p><label>'.esc_html($value).'</label><input type="checkbox" value="'.esc_html($key).'" name="member_type_id[]"/></p>';
 	}
 	echo wp_nonce_field('smallgroup','smallgroup');
 	echo'<input type="submit" value="'.__('Download','church-admin').'"/></form></p>';
@@ -290,7 +290,7 @@ function church_admin_people_main()
 			    foreach($member_type AS $key=>$value)
 			    {
 					$count=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL.' WHERE member_type_id="'.esc_sql($key).'"');
-					echo '<option value="'.$key.'" >'.$value.' ('.$count.' people)</option>';
+					echo '<option value="'.esc_html($key).'" >'.esc_html($value).' ('.$count.' people)</option>';
 			    }
 			    echo'</select><input type="submit" value="'.__('Go','church-admin').'"/></form></td></tr></tbody></table>';
 			    echo '<hr/><table class="form-table"><tbody><tr><th scope="row">'.__('Download an address list PDF','church-admin').'</th><td>';
@@ -298,11 +298,11 @@ function church_admin_people_main()
 			    {
 				foreach($member_type AS $key=>$value)
 				{
-				    echo'<a href="'.home_url().'/?download=mailinglabel&amp;mailinglabel='.wp_create_nonce('mailinglabel'.$key).'&amp;member_type_id='.$key.'">'.$value.' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</a><br/>';
+				    echo'<a href="'.home_url().'/?download=mailinglabel&amp;mailinglabel='.wp_create_nonce('mailinglabel'.$key).'&amp;member_type_id='.intval($key).'">'.esc_html($value).' - Avery &reg; '.get_option('church_admin_label').' Mailing Labels</a><br/>';
 				}
 				foreach($member_type AS $key=>$value)
 				{
-				    echo'<a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce('member'.$key).'&amp;member_type_id='.$key.'">'.$value.' '.__('Address List PDF','church-admin').'</a><br/>';
+				    echo'<a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce('member'.$key).'&amp;member_type_id='.intval($key).'">'.esc_html($value).' '.__('Address List PDF','church-admin').'</a><br/>';
 				}
 			    }
 			    echo'</td></tr></tbody></table>';
@@ -311,11 +311,11 @@ function church_admin_people_main()
 				echo wp_nonce_field('people-csv','people-csv');
 			    foreach($member_type AS $key=>$value)
 				{
-						echo '<input type="checkbox" name="member_type_id[]" value="'.$key.'"/>'.$value.'<br/>';
+						echo '<input type="checkbox" name="member_type_id[]" value="'.esc_html($key).'"/>'.esc_html($value).'<br/>';
 				}
 				foreach($people_type AS $key=>$value)
 				{
-						echo '<input type="checkbox" name="people_type_id[]" value="'.$key.'"/> '.$value.'<br/>';
+						echo '<input type="checkbox" name="people_type_id[]" value="'.esc_html($key).'"/> '.esc_html($value).'<br/>';
 				}
 				echo'<input type="checkbox" name="sex[]" value="1" />Male<br/>';
 				echo'<input type="checkbox" name="sex[]" value="0" />Female<br/>';

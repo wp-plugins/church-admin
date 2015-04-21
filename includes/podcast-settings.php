@@ -279,14 +279,14 @@ $language_codes = array(
 				$settings=get_option('ca_podcast_settings');
             echo'<h2>Podcast Settings for RSS file</h2>';
             echo'<form action="" enctype="multipart/form-data" method="post">';
-			echo'<p><label>Itunes Link</label><input id="title" type="text" name="itunes_link" value="'.esc_html($settings['itunes_link']).'"/></p>';
+			echo'<p><label>Itunes Link</label><input id="title" type="text" name="itunes_link" value="'.esc_url($settings['itunes_link']).'"/></p>';
 			
             echo'<h2>File Template</h2>';
-            echo'<textarea rows="20" cols="200" name="file_template">'.get_option('ca_podcast_file_template').'</textarea>';
+            echo'<textarea rows="20" cols="200" name="file_template">'.esc_textarea(get_option('ca_podcast_file_template')).'</textarea>';
             echo'<h2>Speaker Template</h2>';
-            echo'<textarea rows="20" cols="200" name="speaker_template">'.get_option('ca_podcast_speaker_template').'</textarea>';
+            echo'<textarea rows="20" cols="200" name="speaker_template">'.esc_textarea(get_option('ca_podcast_speaker_template')).'</textarea>';
             echo'<h2>Series Template</h2>';
-            echo'<textarea rows="20" cols="200" name="series_template">'.get_option('ca_podcast_series_template').'</textarea>';
+            echo'<textarea rows="20" cols="200" name="series_template">'.esc_textarea(get_option('ca_podcast_series_template')).'</textarea>';
             echo'<h2>Podcast Settings for RSS file</h2>';
             echo'<p><label for="title">Podcast title (255 charas)</label><input id="title" type="text" name="title" value="'.esc_html($settings['title']).'"/></p>';
             echo'<p><label for="copyright">Copyright Message: &copy;</label><input id="copyright" type="text" name="copyright" value="'.esc_html($settings['copyright']).'"/></p>';
@@ -304,18 +304,18 @@ $language_codes = array(
             $first=$option='';
             foreach($language_codes AS $key=>$value)
             {
-                if($key==$settings['language']){$first='<option value="'.$key.'" selected="selected" >'.$value.'</option>';}else{ $option.='<option value="'.$key.'">'.$value.'</option>';}
+                if($key==$settings['language']){$first='<option value="'.intval($key).'" selected="selected" >'.esc_html($value).'</option>';}else{ $option.='<option value="'.intval($key).'">'.esc_html($value).'</option>';}
             }
             echo $first.$option.'</select></p>';
             echo'<p><label for="category">Itunes Category</label><select id="category" name="category">';
             $first=$option='';
             foreach($cats AS $key=>$value)
             {
-                if($value==$settings['category']){$first='<option value="'.$value.'" selected="selected" >'.$value.'</option>';}else{ $option.='<option value="'.$value.'">'.$value.'</option>';}
+                if($value==$settings['category']){$first='<option value="'.intval($value).'" selected="selected" >'.esc_html($value).'</option>';}else{ $option.='<option value="'.intval($value).'">'.esc_html($value).'</option>';}
             }
             echo $first.$option.'</select></p>';
             echo'<p><label for="image">Image</label><input type="file" name="image"/>';
-            if(!empty($settings['image']))echo'<br/><img src="'.$settings['image'].'">';
+            if(!empty($settings['image']))echo'<br/><img src="'.esc_url($settings['image']).'">';
             echo'</p>';
             echo '<p><input type="hidden" name="save_settings" value="yes"/><input type="submit" class="primary-button" value="Save Podcast XML settings"/></p></form>';
 
@@ -350,4 +350,4 @@ $language_codes = array(
         return "&#".str_pad(ord($char), 3, '0', STR_PAD_LEFT).";";
     }
     
-?>  
+?>

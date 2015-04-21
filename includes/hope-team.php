@@ -12,9 +12,9 @@ function church_admin_hope_team_jobs()
 		$out.='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Job Title</th></tr></thead><tbody>';
 		foreach($results AS $row)
 		{
-		$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_hope_team_job&amp;id='.$row->hope_team_id,'hope_team_jobs').'">Edit</a>';
-		$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_hope_team_job&amp;id='.$row->hope_team_id,'delete_hope_team_job').'">Delete</a>';
-		$out.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$row->job.'</td></tr>';
+		$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_hope_team_job&amp;id='.intval($row->hope_team_id),'hope_team_jobs').'">Edit</a>';
+		$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_hope_team_job&amp;id='.intval($row->hope_team_id),'delete_hope_team_job').'">Delete</a>';
+		$out.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($row->job).'</td></tr>';
 		}
 		$out.='</tbody></table>';
 	}
@@ -51,7 +51,7 @@ function church_admin_edit_hope_team_job($id=NULL)
 	{
 		echo'<form action="" method="POST">';
 	    echo'<p><label>'.__('Job Name?','church-admin').'</label><input type="text" name="job" ';
-		if(!empty($job)) echo 'value="'.$job.'" ';
+		if(!empty($job)) echo 'value="'.esc_html($job).'" ';
 		echo'/></p>';
 		 echo'<p class="submit"><input type="hidden" name="save_job" value="yes"/><input type="submit" name="save" value="'.__('Save','church-admin').' &raquo;" /></p></form></div>';
 	}
@@ -97,7 +97,7 @@ function church_admin_edit_hope_team($people_id)
 		$jobs=$wpdb->get_results('SELECT * FROM '.CA_HOP_TBL);
 		foreach($jobs AS $job)
 		{
-			 echo'<p><label>'.$job->job.'</label><input type=checkbox name="job-'.$job->hope_team_id.'"  value="yes"/></p>';
+			 echo'<p><label>'.$job->job.'</label><input type=checkbox name="job-'.intval($job->hope_team_id).'"  value="yes"/></p>';
 		}
 		echo'<p><label>Anything else</label><textarea name="other">';
 		echo'</textarea></p>';

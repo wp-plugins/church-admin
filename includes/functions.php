@@ -1,5 +1,5 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_initials($people)
 {
 	$people=maybe_unserialize($people);
@@ -104,7 +104,7 @@ function church_admin_autocomplete($name='people',$first_id='friends',$second_id
 			}
 		}else$current=$current_data;
     }
-    $out= '<input id="'.$first_id.'" class="to" type="text" name="'.$name.'" value="'.$current.'"/> ';
+    $out= '<input id="'.$first_id.'" class="to" type="text" name="'.esc_html($name).'" value="'.esc_html($current).'"/> ';
     $out.='<script type="text/javascript">
 
 	jQuery(document).ready(function ($){
@@ -170,7 +170,7 @@ function church_admin_get_person($id)
 */
  global $wpdb;
     $name=$wpdb->get_var('SELECT CONCAT_WS(" ",first_name,last_name) FROM '.CA_PEO_TBL.' WHERE people_id="'.esc_sql($id).'"');
-    if($name){return $name;}else{return FALSE;}
+    if($name){return esc_html($name);}else{return FALSE;}
 }
 function church_admin_get_name_from_user($id)
 {
@@ -188,7 +188,7 @@ function church_admin_get_name_from_user($id)
  global $wpdb;
  $wpdb->show_errors;
     $name=$wpdb->get_var('SELECT CONCAT_WS(" ",first_name,last_name) FROM '.CA_PEO_TBL.' WHERE user_id="'.esc_sql($id).'"');
-    if($name){return $name;}else{return FALSE;}
+    if($name){return esc_html($name);}else{return FALSE;}
 }
 function church_admin_get_people($idArray)
 {

@@ -85,16 +85,16 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 		if($people->people_type_id=='1')
 		{
 			if(!empty($people->prefix)){$prefix=$people->prefix.' ';}else{$prefix='';}
-			$last_name=$prefix.$people->last_name;
-			$adults[$last_name][]=$people->first_name;
-			if(!empty($people->email)&&$people->email!=end($emails)) $emails[$people->first_name]=$people->email;
-			if(!empty($people->mobile)&&$people->mobile!=end($mobiles))$mobiles[$people->first_name]=$people->mobile;
+			$last_name=esc_html($prefix.$people->last_name);
+			$adults[$last_name][]=esc_html($people->first_name);
+			if(!empty($people->email)&&$people->email!=end($emails)) $emails[$people->first_name]=esc_html($people->email);
+			if(!empty($people->mobile)&&$people->mobile!=end($mobiles))$mobiles[$people->first_name]=esc_html($people->mobile);
 			if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
 			$x++;
 		}
 		else
 		{
-			$children[]=$people->first_name;
+			$children[]=esc_html($people->first_name);
 			if(!empty($people->attachment_id))$photos[$people->first_name]=$people->attachment_id;
 		}
 	  
@@ -162,13 +162,13 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 	{
 		if(!empty($api_key))
 		{
-			$map_url='http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&amp;zoom=15&amp;markers='.$address->lat.','.$address->lng.'&amp;size=200x200&amp;sensor=false&key='.$api_key;
+			$map_url=esc_url('http://maps.google.com/maps/api/staticmap?center='.$address->lat.','.$address->lng.'&amp;zoom=15&amp;markers='.$address->lat.','.$address->lng.'&amp;size=200x200&amp;sensor=false&key='.$api_key);
 		}
 		else
 		{
 			$map_url='http://dummyimage.com/200x200/de21de/101017&amp;text=Please+add+a+Google+api+key+to+shortcode';
 		}
-	$out.="\r\n\t".'<div class="church_admin_address_map">'."\r\n\t\t".'<p><a href="http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&amp;t=m&amp;z=16"><img src="'.$map_url.'" height="200" width="200" alt="Map"/></a></p>'."\r\n\t";
+	$out.="\r\n\t".'<div class="church_admin_address_map">'."\r\n\t\t".'<p><a href="'.esc_url('http://maps.google.com/maps?q='.$address->lat.','.$address->lng.'&amp;t=m&amp;z=16').'"><img src="'.$map_url.'" height="200" width="200" alt="Map"/></a></p>'."\r\n\t";
     $out.='</div><!--church_admin_address_map-->'."\r\n\t";
     }
    

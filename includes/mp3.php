@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /*
 php5 class (will not work in php4)
 for detecting bitrate and duration of regular mp3 files (not VBR files)

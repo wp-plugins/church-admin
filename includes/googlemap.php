@@ -20,11 +20,11 @@ while ($row = @mysql_fetch_assoc($result)){
   $node = $doc->create_element("marker");
   $newnode = $parnode->append_child($node);
 
-  $newnode->set_attribute("name", $row['name']);
-  $newnode->set_attribute("address", $row['address']);
-  $newnode->set_attribute("lat", $row['lat']);
-  $newnode->set_attribute("lng", $row['lng']);
-  $newnode->set_attribute("type", $row['type']);
+  $newnode->set_attribute("name", ent2ncr($row['name']));
+  $newnode->set_attribute("address", ent2ncr($row['address']));
+  $newnode->set_attribute("lat", ent2ncr($row['lat']));
+  $newnode->set_attribute("lng", ent2ncr($row['lng']));
+  $newnode->set_attribute("type", ent2ncr($row['type']));
 }
 
 $xmlfile = $doc->dump_mem();

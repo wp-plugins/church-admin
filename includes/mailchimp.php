@@ -15,12 +15,12 @@ function church_admin_mailchimp_sync()
 		$result=$wpdb->get_results('SELECT * FROM '.CA_HOP_TBL);
 		$hope_teams=array();
 		foreach($result AS $row)$hope_teams[$row->hope_team_id]=$row->job;
-		$api_key=stripslashes($_POST['api_key']);
-		$listID=stripslashes($_POST['listID']);
+		$api_key=sanitize_text_field(stripslashes($_POST['api_key']));
+		$listID=sanitize_text_field(stripslashes($_POST['listID']));
 		$MailChimp = new MailChimp($api_key);
 		$mailchimp_data['api_key']=$api_key;
 		//check for groupings
-		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>$listID));
+		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>intval($listID)));
 		if(!empty($groupings))
 		{
 		
@@ -57,7 +57,7 @@ function church_admin_mailchimp_sync()
 		{
 			$mem_id=$MailChimp->call('lists/interest-grouping-add',array('id'=>$listID,'type'=>'checkboxes','groups'=>$member_levels,'name'=>translate('Member Levels','church-admin')));
 			$member_level_id=$mem_id['id'];
-			echo'<p>Added "'.translate('Member Levels','church-admin').'" grouping on Mailchimp</p>';
+			echo'<p>Added "'.esc_html(translate('Member Levels','church-admin')).'" grouping on Mailchimp</p>';
 		}
 		if(empty($ministry_id)) 
 		{
@@ -66,9 +66,9 @@ function church_admin_mailchimp_sync()
 			echo'<p>Added "'.translate('Ministries','church-admin').'" grouping on Mailchimp</p>';
 		}
 		
-		update_option('church_admin_mailchimp',array('api_key'=>$api_key,'listID'=>$listID,'member_level_id'=>$member_level_id,'ministry_id'=>$ministry_id));
+		update_option('church_admin_mailchimp',array('api_key'=>$api_key,'listID'=>intval($listID),'member_level_id'=>intval($member_level_id),'ministry_id'=>intval($ministry_id)));
 		//check for groups within groupings! Grouping = member level or ministry, group = the various levels, ministries
-		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>$listID));
+		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>intval($listID)));
 		if(!empty($groupings))
 		{
 			foreach($groupings AS $grouping)
@@ -90,7 +90,7 @@ function church_admin_mailchimp_sync()
 					if(!in_array($type,$gp)&&$grouping['id']==$id)
 					{
 						$MailChimp->call('lists/interest-group-add', array('id'=>$listID,'grouping_id'=>$id,'group_name'=>$type));		
-						echo'<p>Added "'.$type.'" group to Member Level grouping on Mailchimp</p>';
+						echo'<p>Added "'.esc_html($type).'" group to Member Level grouping on Mailchimp</p>';
 					}
 				
 				}	
@@ -102,7 +102,7 @@ function church_admin_mailchimp_sync()
 					if(!in_array($ministry,$gp)&&$grouping['id']==$ministry_id)
 					{
 						$MailChimp->call('lists/interest-group-add', array('id'=>$listID,'grouping_id'=>$ministry_id,'group_name'=>$ministry));
-						echo'<p>Added "'.$ministry.'" group to Ministries grouping on Mailchimp</p>';
+						echo'<p>Added "'.esc_html($ministry).'" group to Ministries grouping on Mailchimp</p>';
 					}
 				
 				}
@@ -114,14 +114,14 @@ function church_admin_mailchimp_sync()
 			foreach($member_levels AS $id=>$type)
 				{
 					$MailChimp->call('lists/interest-group-add', array('id'=>$listID,'grouping_id'=>$id,'group_name'=>$type));		
-					echo'<p>Added "'.$type.'" group to Member Level grouping on Mailchimp</p>';
+					echo'<p>Added "'.esc_html($type).'" group to Member Level grouping on Mailchimp</p>';
 					
 				
 				}
 			foreach($ministries AS $key=>$ministry)
 				{
 					$MailChimp->call('lists/interest-group-add', array('id'=>$listID,'grouping_id'=>$ministry_id,'group_name'=>$ministry));
-					echo'<p>Added "'.$ministry.'" group to Ministries grouping on Mailchimp</p>';
+					echo'<p>Added "'.esc_html($ministry).'" group to Ministries grouping on Mailchimp</p>';
 					
 				
 				}
@@ -173,7 +173,7 @@ function church_admin_mailchimp_sync()
 				echo'<h2>'.__('Here are the errors for that mailchimp sync','church-admin').'</h2>';
 				foreach($subs['errors'] AS $errors)
 				{
-					echo'<p>'.$errors['error'].'</p>';
+					echo'<p>'.esc_html($errors['error']).'</p>';
 				}
 			}
 		}
@@ -187,10 +187,10 @@ function church_admin_mailchimp_sync()
 		echo '<p>'.__('Sync all your directory contacts, their ministries and member level to a given list in your Mailchimp account. You will need to enable an api key and get your list id','church-admin').'</p>';
 		echo'<form action="" method="post">';
 		echo'<p><label>'.__('Mailchimp API Key','church-admin').'</label><input type="text" name="api_key" ';
-		if(!empty($mailchimp_data['api_key'])){echo ' value="'.$mailchimp_data['api_key'].'" ';}
+		if(!empty($mailchimp_data['api_key'])){echo ' value="'.esc_html($mailchimp_data['api_key']).'" ';}
 		echo'/></p>';
 		echo'<p><label>'.__('List ID','church-admin').'</label><input type="text" name="listID" ';
-		if(!empty($mailchimp_data['listID'])){echo ' value="'.$mailchimp_data['listID'].'" ';}
+		if(!empty($mailchimp_data['listID'])){echo ' value="'.esc_html($mailchimp_data['listID']).'" ';}
 		echo'/></p>';
 		echo'<p><input type="submit" value="Save"/></p>';
 	}

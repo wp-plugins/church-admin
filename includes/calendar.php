@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /*
 2011-02-04 added calendar single and series delete; fixed slashes problem
 2011-03-14 fixed errors not sowing as red since 0.32.4
@@ -44,9 +45,9 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 	if(!empty($facs))
 	{
 		$out.='<p><label>Choose facility</label><form action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar&tab=calendar" method="POST"><select name="facilities_id">';
-		if(!empty($facilities_id)) {$out.='<option value="'.$facilities_id.'">'.$facility.'</option>';}
+		if(!empty($facilities_id)) {$out.='<option value="'.esc_html($facilities_id).'">'.esc_html($facility).'</option>';}
 		$out.='<option value="">'.__('N/A','church-admin').'</option>';
-		foreach($facs AS $fac){$out.='<option value="'.$fac->facilities_id.'">'.$fac->facility_name.'</option>';}
+		foreach($facs AS $fac){$out.='<option value="'.esc_html($fac->facilities_id).'">'.esc_html($fac->facility_name).'</option>';}
 		$out.='</select><input type="submit" name="'.__('Choose facility','church-admin').'"/></form></p>';
 	}
 	$out.='<p>Double click on an event to edit, or a day to add an event</p>';
@@ -57,7 +58,7 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 	{
 		$mon=date('m',($current+$q*(28*24*60*60)));
 		$MON=date('M',($current+$q*(28*24*60*60)));
-		if(isset($_POST['ca_month'])&&$_POST['ca_month']==$mon) {$first="<option value=\"$mon\" selected=\"selected\">$MON</option>";}else{$out.= "<option value=\"$mon\">$MON</option>";}
+		if(isset($_POST['ca_month'])&&$_POST['ca_month']==$mon) {$first='<option value="'.esc_html($mon).'" selected="selected">'.esc_html($MON).'</option>';}else{$out.= '<option value="'.esc_html($mon).'">'.esc_html($MON).'</option>';}
 	}
 	$out.=$first.$option;
 	$out.='</select>'.__('Year','church-admin').'<select name="ca_year">';
@@ -66,11 +67,11 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 	{
 		if(isset($_POST['ca_year'])&&$_POST['ca_year']==$x)
 		{
-			$first="<option value=\"$x\" >$x</option>";
+			$first='<option value="'.esc_html($x).'" >'.esc_html($x).'</option>';
 		}
 		else
 		{
-			$option.= "<option value=\"$x\">$x</option>";
+			$option.='<option value="'.esc_html($x).'" >'.esc_html($x).'</option>';
 		}
 	}
 	$out.=$first.$option;
@@ -117,7 +118,7 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
         foreach($result AS $row)
         {
 			
-            $out.= '<div id="item'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.mysql2date(get_option('time_format'),$row->start_time).' '.htmlentities($row->title).'... </div></p>';
+            $out.= '<div id="item'.$row->date_id.'"style="background-color:'.$row->bgcolor.'" >'.mysql2date(get_option('time_format'),$row->start_time).' '.esc_html($row->title).'... </div></p>';
         }
     }    
     $out.="</td>\n";
@@ -174,7 +175,7 @@ function church_admin_add_category()
 	 $wpdb->show_errors;
     if(!empty($_POST))
     {
-        $sql='INSERT INTO '.CA_CAT_TBL.' (category,bgcolor)VALUES("'.esc_sql(stripslashes($_POST['category'])).'","'.esc_sql($_POST['color']).'")';
+        $sql='INSERT INTO '.CA_CAT_TBL.' (category,bgcolor)VALUES("'.esc_sql(sanitize_text_field(stripslashes($_POST['category']))).'","'.esc_sql(sanitize_text_field($_POST['color'])).'")';
 		echo $sql;
         $wpdb->query($sql);
         echo '<div id="message" class="updated fade">';
@@ -246,12 +247,12 @@ if(empty($data))$data=new stdClass();
   });
  </script>  
  <p><label >'.__('Category Name','church-admin').'</label><input type="text" name="category" ';
- if(!empty($data->category)) echo 'value="'.$data->category.'"';
+ if(!empty($data->category)) echo 'value="'.esc_html($data->category).'"';
 	echo'/></p>
   <p><label >'.__('Background Colour','church-admin').'</label><input type="text" ';
-  if(!empty($data->bgcolor)) echo' style="background:'.$data->bgcolor.'" ';
+  if(!empty($data->bgcolor)) echo' style="background:'.esc_html($data->bgcolor).'" ';
   echo' id="color" name="color" ';
-  if(!empty($data->bgcolor))echo' value="'.$data->bgcolor.'" ';
+  if(!empty($data->bgcolor))echo' value="'.esc_html($data->bgcolor).'" ';
   echo'/></p><div id="picker"></div>';
 }
 
@@ -287,7 +288,7 @@ function church_admin_event_edit($date_id,$event_id,$edit_type,$date,$facilities
 		//get next highest event_id
 		$event_id=$wpdb->get_var('SELECT MAX(event_id) FROM '.CA_DATE_TBL)+1;
 		$form=array();
-		foreach($_POST AS $key=>$value)$form[$key]=stripslashes($value);
+		foreach($_POST AS $key=>$value)$form[$key]=sanitize_text_field(stripslashes($value));
 		//adjust data
 		$form['start_time'].=':00';
 		$form['end_time'].=':00';
@@ -727,7 +728,7 @@ echo '</select><input type="submit" value="'.__('Go to date','church-admin').'"/
     
     //sort out category
     if(empty($row->bgcolor))$row->bgcolor='#FFF';
-     $table.='<tr><td>'.$single_edit_url.'</td><td>'.$series_edit_url.'</td><td>'.$single_delete_url.'</td><td>'.$series_delete_url.'</td><td>'.mysql2date('j F Y',$row->start_date).'</td><td>'.$row->start_time.'</td><td>'.$row->end_time.'</td><td>'.htmlentities($row->title).'</td><td style="background:'.$row->bgcolor.'">'.htmlentities($row->category).'</td><td>';
+     $table.='<tr><td>'.$single_edit_url.'</td><td>'.$series_edit_url.'</td><td>'.$single_delete_url.'</td><td>'.$series_delete_url.'</td><td>'.mysql2date('j F Y',$row->start_date).'</td><td>'.esc_html($row->start_time).'</td><td>'.esc_html($row->end_time).'</td><td>'.esc_html($row->title).'</td><td style="background:'.$row->bgcolor.'">'.esc_html($row->category).'</td><td>';
      if($row->year_planner){$table.=__('Yes','church-admin');}else{$table.='&nbsp;';}
      $table.='</td></tr>';
     }

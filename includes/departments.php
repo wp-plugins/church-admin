@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_department_list()
 {
     $departments=get_option('church_admin_departments');
@@ -10,7 +11,7 @@ function church_admin_department_list()
         {
             $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department&amp;department_id='.$id,'edit_department').'">'.__('Edit','church-admin').'</a>';
             if($id!=1){$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_department&amp;department_id='.$id,'delete_department').'">'.__('Delete','church-admin').'</a>';}else{$delete=__("Can't be deleted",'church-admin');}
-            $view='<a title="'.__('View people doing that ministry','church-admin').'" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_view_department&amp;department_id='.$id,'view_department').'">'.$department.'</a>';
+            $view='<a title="'.__('View people doing that ministry','church-admin').'" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_view_department&amp;department_id='.$id,'view_department').'">'.esc_html($department).'</a>';
             
 			echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.$view.'</td></tr>';
         }
@@ -62,14 +63,14 @@ function church_admin_view_department($id)
 		}	
 	$results=$wpdb->get_results('SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" AND b.meta_type="ministry" ORDER BY a.last_name,a.first_name ASC');
 		
-			echo '<h2>'.sprintf(__('Viewing who is in "%1s" ministry','church-admin'),$departments[$id]).'</h2><form action="" method="POST">';
+			echo '<h2>'.sprintf(__('Viewing who is in "%1s" ministry','church-admin'),esc_html($departments[$id])).'</h2><form action="" method="POST">';
 			if(!empty($results))
 			{//department contains people
 				echo'<table class="widefat" ><thead><tr><th>'.__('Remove','church-admin').'</th><th>'.__('Person','church-admin').'</th></tr></thead><tbody>';
 				foreach($results AS $row)
 				{
-					$delete='<input type="checkbox" name="'.$row->people_id.'" value="x"/>';
-					echo'<tr><td>'.$delete.'</td><td>'.$row->name.'</td></tr>';
+					$delete='<input type="checkbox" name="'.esc_html($row->people_id).'" value="x"/>';
+					echo'<tr><td>'.$delete.'</td><td>'.esc_html($row->name).'</td></tr>';
 				}
 				echo'</table>';
 			}//department contains people
@@ -106,7 +107,7 @@ function church_admin_edit_department($id)
     global $departments;
     if(isset($_POST['edit_department']))
     {//process
-        $dep_name=stripslashes($_POST['department_name']);
+        $dep_name=sanitize_text_field(stripslashes($_POST['department_name']));
         if($id)
         {//update current department name
             $departments[$id]=$dep_name;
@@ -134,7 +135,7 @@ function church_admin_edit_department($id)
         echo __('Ministry','church-admin').'</h2>';
         echo'<form action="" method="post">';
         echo'<p><label>'.__('Ministry Name','church-admin').'</label><input type="text" name="department_name" ';
-        if($id) echo ' value="'.$departments[$id].'" ';
+        if($id) echo ' value="'.esc_html($departments[$id]).'" ';
         echo'/></p>';
         echo'<p class="submit"><input type="hidden" name="edit_department" value="yes"/><input type="submit" value="'.__('Save Ministry','church-admin').'&raquo;" /></p></form></div>';
         

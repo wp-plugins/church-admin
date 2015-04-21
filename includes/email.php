@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 //2014-02-24 fixed encoding error
 function church_admin_send_email()
 
@@ -183,11 +184,11 @@ function church_admin_email_build()
     //it returns the email_id from db
 
     $sqlsafe=array();
-	if(!empty($_POST['subject']))$sqlsafe['subject']=esc_sql(stripslashes($_POST['subject']));
+	if(!empty($_POST['subject']))$sqlsafe['subject']=esc_sql(sanitize_text_field(stripslashes($_POST['subject'])));
 	if(!empty($_POST['news']))$sqlsafe['news']=esc_sql(maybe_serialize($_POST['news']));
 	if(!empty($_POST['events']))$sqlsafe['events']=esc_sql(maybe_serialize($_POST['events']));
-	if(!empty($_POST['from_email']))$sqlsafe['from_email']=esc_sql(stripslashes($_POST['from_email']));
-	if(!empty($_POST['from_name']))$sqlsafe['from_name']=esc_sql(stripslashes($_POST['from_name']));
+	if(!empty($_POST['from_email']))$sqlsafe['from_email']=esc_sql(sanitize_text_field(stripslashes($_POST['from_email'])));
+	if(!empty($_POST['from_name']))$sqlsafe['from_name']=esc_sql(sanitize_text_field(stripslashes($_POST['from_name'])));
 
     //Build Email
 
@@ -287,7 +288,7 @@ if  ($_FILES['userfile3']['size']>0)
 
             {
 
-                $post_section.='<img src="http://dummyimage.com/300x200/000/fff.jpg&text='.str_replace(' ', '+', $row->post_title).'" class="attachment-ca-email-thumb" title="'.$row->post_title.'" alt="'. $row->post_title.'"  ><img src="http://dummyimage.com/120x90/000/fff.jpg&text='.str_replace(' ', '+', $row->post_title).'" class="attachment-ca-120-thumb" style="display:none" title="'.$row->post_title.'" alt="'. $row->post_title.'"  >';
+                $post_section.='<img src="http://dummyimage.com/300x200/000/fff.jpg&text='.str_replace(' ', '+', $row->post_title).'" class="attachment-ca-email-thumb" title="'.esc_html($row->post_title).'" alt="'. esc_html($row->post_title).'"  ><img src="http://dummyimage.com/120x90/000/fff.jpg&text='.str_replace(' ', '+', esc_html($row->post_title)).'" class="attachment-ca-120-thumb" style="display:none" title="'.esc_html($row->post_title).'" alt="'. esc_html($row->post_title).'"  >';
 
             }
 
@@ -388,7 +389,7 @@ if  ($_FILES['userfile3']['size']>0)
 
     $handle=fopen($upload_dir['basedir'].'/church-admin-cache/'.$filename,"w")OR DIE("Couldn't open");
 
-    fwrite($handle, $message);  
+    fwrite($handle, esc_html($message));  
 
     fclose($handle);
 
@@ -440,7 +441,7 @@ if  ($_FILES['userfile3']['size']>0)
 
     echo'<h3>Use these social media buttons to post the email url...</h3><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=118790464849935&amp;xfbml=1"></script><fb:like href="'.content_url('/uploads/church-admin-cache/').$filename.'" send="false" width="450" show_faces="false" font="lucida grande"></fb:like></p>';
 
-echo '<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-text="'.$_POST['subject'].'" data-url="'.content_url('/uploads/church-admin-cache/').$filename.'">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script> '  ;
+echo '<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-text="'.$_POST['subject'].'" data-url="'.content_url('/uploads/church-admin-cache/').esc_url($filename).'">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script> '  ;
 
     
 
@@ -484,7 +485,7 @@ foreach($results AS $row)
 
 {
 
-    echo'<option value="'.$row->id.'">'.$row->group_name.'</option>';
+    echo'<option value="'.esc_html($row->id).'">'.esc_html($row->group_name).'</option>';
 
 }
 
@@ -506,7 +507,7 @@ echo'<p><label><strong>'.__('Choose individuals','church-admin').'</strong></lab
 
     {
 
-        echo '<option value="'.$row->people_id.'">'.$row->name.'</option>';
+        echo '<option value="'.esc_html($row->people_id).'">'.esc_html($row->name).'</option>';
 
     }
 
@@ -532,7 +533,7 @@ echo'<p><label><strong>'.__('Choose individuals','church-admin').'</strong></lab
 
     {
 
-      echo'<option value="'.$key.'">'.$value.'</option>';
+      echo'<option value="'.esc_html($key).'">'.esc_html($value).'</option>';
 
     }
 
@@ -551,7 +552,7 @@ echo'<p><label><strong>'.__('Choose individuals','church-admin').'</strong></lab
 		echo'<p><label>'.__('Everyone in this Hope Team','church-admin').'</label><select name="hope_team_id[]" id="hope_team_id" class="hope_team_id">';
 		foreach($hope_team AS $key=>$value)
 		{
-			echo'<option value="'.$key.'">'.$value.'</option>';
+			echo'<option value="'.esc_html($key).'">'.esc_html($value).'</option>';
 		}
 		echo'</select></p></div>';
 	     echo'<p><input type="button" id="hopeadd" value="'.__('Add another hope team','church-admin').'" /><input type="button" id="hopedel" value="Remove hope_team" /></p></fieldset>';
@@ -694,7 +695,7 @@ function church_admin_send_message($email_id)
 
 						$addresses[]=$row->email;
 
-                        if(QueueEmail($row->email,$email_data->subject,str_replace("<!--salutation-->",__('Dear','church-admin').' '.$row->first_name.',',$email_data->message),'',$email_data->from_name,$email_data->from_email,$email_data->filename)) echo'<p>'.$row->email.' queued</p>';
+                        if(QueueEmail($row->email,$email_data->subject,str_replace("<!--salutation-->",__('Dear','church-admin').' '.esc_html($row->first_name).',',esc_html($email_data->message)),'',esc_html($email_data->from_name),esc_html($email_data->from_email),esc_url($email_data->filename))) echo'<p>'.esc_html($row->email).' queued</p>';
 
                     }
 
@@ -790,7 +791,7 @@ function church_admin_send_message($email_id)
 
 			      if(wp_mail($row->email,$email_data->subject,str_replace('<!--salutation-->',__('Dear','church-admin').' '.$row->first_name.',',$email_data->message),$headers,unserialize($email_data->filename)))
 
-			      echo'<p>'.$row->email.' sent immediately</p>';
+			      echo'<p>'.esc_html($row->email).' sent immediately</p>';
 
 			   } 
 
@@ -808,7 +809,7 @@ function church_admin_send_message($email_id)
 
         
 
-    }else{echo'<p>'.__('No email address found for','church-admin').' '.$sql.'</p>';}
+    }else{echo'<p>'.__('No email address found for','church-admin').' '.esc_html($sql).'</p>';}
 
 }
 
@@ -837,4 +838,3 @@ return $output;
 }
 
 ?>
-
