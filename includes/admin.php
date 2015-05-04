@@ -3,11 +3,30 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_front_admin()
 {
 	global $church_admin_version;
+	//backup
+	$filename=get_option('church_admin_backup_filename');
+	
+	
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'];
+	if(!empty($filename))$loc=$path.'/church-admin-cache/'.$filename;
 	
 	?>
 	<!-- Create a header in the default WordPress 'wrap' container -->
     <div class="wrap">
-     <table class="form_table"><tbody><tr><th scope="row"><h1><span class="dashicons dashicons-admin-home"></span>Church Admin Plugin v<?php echo $church_admin_version;?></h1></th><td><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" class="alignright" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></td><td><a class="button-secondary" href="http://www.churchadminplugin.com">Support</a></td></tr></tbody></table>
+     <table class="form_table"><tbody><tr><th scope="row"><h1><span class="dashicons dashicons-admin-home"></span>Church Admin Plugin v<?php echo $church_admin_version;?></h1></th><td><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" class="alignright" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></td><td><a class="button-secondary" href="http://www.churchadminplugin.com">Support</a></td><td><a class="button-secondary" href="<?php echo wp_nonce_url('admin.php?page=church_admin/index.php&tab=settings&action=refresh_backup','refresh_backup');?>">Refresh DB Backup </a></td>
+	 
+	
+	 <?php
+	 if(file_exists($loc))
+    {
+		
+		echo'<td><a class="button-secondary"  target="_blank" href="'.$upload_dir['baseurl'].'/church-admin-cache/'.$filename.'">Download DB Backup</a></td>';
+		echo'<td><a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=settings&action=delete_backup','delete_backup').'">Delete DB Backup</a></td>';
+		
+    }
+	 ?>
+	 </tr></tbody></table>
         <h2 class="nav-tab-wrapper">
 			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span> Address</a>
 			<a href="admin.php?page=church_admin/index.php&amp;action=tracking&tab=tracking" class="nav-tab <?php echo $_GET['tab'] == 'tracking' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span> Tracking</a>
@@ -170,10 +189,10 @@ function church_admin_podcast()
 {
 	require_once(plugin_dir_path(__FILE__).'/sermon-podcast.php');	
 	echo'<h2>Podcast</h2>';
-	echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file','edit_podcast_file').'">Upload or add external mp3 File</a></p>';
-    echo '<p><a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=check_files','check_podcast_file').'">Add Already Uploaded Files</a></p>';
-	echo'<p><a class="button-secondary"  href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=list_sermon_series",'list_sermon_series').'">'.__('List Sermon Series','church-admin').'</a></p>';
-    echo'<p><a class="button-secondary"  href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=podcast_settings",'podcast_settings').'">'.__('iTunes Compatible RSS Settings','church-admin').'</a></p>';
+	echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file&tab=podcast','edit_podcast_file').'">Upload or add external mp3 File</a></p>';
+    echo '<p><a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=check_files&tab=podcast','check_podcast_file').'">Add Already Uploaded Files</a></p>';
+	echo'<p><a class="button-secondary"  href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=list_sermon_series&tab=podcast",'list_sermon_series').'">'.__('List Sermon Series','church-admin').'</a></p>';
+    echo'<p><a class="button-secondary"  href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=podcast_settings&tab=podcast",'podcast_settings').'">'.__('iTunes Compatible RSS Settings','church-admin').'</a></p>';
 	ca_podcast_list_files();
 	
 }
@@ -219,7 +238,7 @@ function church_admin_rota_main($service_id=NULL)
 	echo'<option value="7"'.selected( $email_day, 7 ).'>'.__('Sunday','church-admin').'</option>';
 	echo'</select><input type="submit" value="Save"/></p></form>';
 	
-    echo'<form action="'.admin_url().'" method="GET"><input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="action" value="church_admin_email_rota"/>';
+    echo'<form action="'.admin_url().'" method="GET"><input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="action" value="church_admin_email_rota"/><input type="hidden" name="tab" value="rota">';
     echo'<p><label>'.__('Email out service rota','church-admin').'</label><select name="service_id">';
     echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
     foreach($services AS $service)
@@ -229,9 +248,10 @@ function church_admin_rota_main($service_id=NULL)
     echo'</select><input type="submit" name="submit" value="Send service rota"></p>';
     echo'</form>';
     
-    echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
-			    echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota_settings",'edit_rota_settings').'" >'.__('Add more rota jobs','church-admin').'</a></p>';
-			    echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota",'edit_rota').'">'.__('Add dates to rota','church-admin').'</a></p>';
+    /*echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
+	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota_settings",'edit_rota_settings').'" >'.__('Add more rota jobs','church-admin').'</a></p>';
+	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota",'edit_rota').'">'.__('Add dates to rota','church-admin').'</a></p>';
+	*/
 	require_once(plugin_dir_path(__FILE__).'/rota.php');
 	church_admin_rota_list($service_id);
 				

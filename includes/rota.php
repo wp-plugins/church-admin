@@ -158,9 +158,11 @@ global $church_admin_version;
 			    }
 			    else
 			    {
-				echo'<p><a href="admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_rota_list&service_id=1">View service rota</a></p>';
+				echo'<p><a href="admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_list&service_id=1">View service rota</a></p>';
 			    }
-
+echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
+	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota_settings",'edit_rota_settings').'" >'.__('Add more rota jobs','church-admin').'</a></p>';
+	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota&tab=rota&service_id=".$service_id,'edit_rota').'">'.__('Add dates to rota','church-admin').'</a></p>';
 //check rota settings!
 $rota_jobs=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_jobs FROM ".$wpdb->prefix."church_admin_rota_settings");
 
@@ -377,7 +379,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    }//end insert
 	    
 	    $wpdb->query($sql);
-	    echo'<div class="wrap"><div class="updated fade"><p><strong>'.__('Rota updated','church-admin').' </strong></p></div>';
+	    echo'<div class="updated fade"><p><strong>'.__('Rota updated','church-admin').' </strong></p></div>';
 	    church_admin_rota_list($service_id);
 	}
 	else
@@ -394,9 +396,9 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	         echo'<h2>Add to rota  for  '.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</h2>';
 		echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#rota_date\').datepicker({dateFormat : "yy-mm-dd", changeYear: true });});</script>';
 	
-		 echo'<p><label>Rota Date:</label><input type="text" id="rota_date" name="rota_date" ';
+		 echo'<table class="form-table"><tbody><th scope="row">Rota Date:</th><td><input type="text" id="rota_date" name="rota_date" ';
 	        if(!empty($next_date)) echo ' value="'.esc_html($next_date).'" ';
-		echo'/></p>';
+		echo'/></td></tr>';
 	    
 	    }else
 	    {
@@ -413,7 +415,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 			{
 				$job=array();
 				if(!empty($jobs->rota_jobs))$job=unserialize($jobs->rota_jobs);
-				echo '<p><label>'.$task_row->rota_task.':</label>';
+				echo '<tr><th scope="row">'.$task_row->rota_task.':</th><td>';
 				if(!empty($task_row->department_id))
 				{
 					if(!empty($job[$task_row->rota_id])){$current=$job[$task_row->rota_id];}else{$current='';}
@@ -444,10 +446,10 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 					if(!empty($people)){echo ' value="'.esc_html(implode(", ",$people)).'"';}
 					echo'/>';
 				}
-				echo'</p>';
+				echo'</td></tr>';
 			}
 		}
-	    echo'<p class="submit"><input type="submit" name="edit_rota" value="'.__('Save','church-admin').' &raquo;" /></p></form>';
+	    echo'<tr><th scope="row">&nbsp;</th><td><input class="button-primary" type="submit" name="edit_rota" value="'.__('Save','church-admin').' &raquo;" /></td></tr></table></form>';
 	}//end form
     
     }//service chosen

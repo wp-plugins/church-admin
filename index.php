@@ -4,7 +4,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.810
+Version: 0.811
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 if(isset($_GET['ca_app'])){require_once(plugin_dir_path(__FILE__).'includes/json.php');church_admin_json($_GET['ca_app']);exit();}
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.810';
+$church_admin_version = '0.811';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -618,8 +618,8 @@ function church_admin_main()
 		//premissions
 		case'permissions':require_once(plugin_dir_path(__FILE__).'includes/permissions.php');church_admin_permissions();break;
 	//backups
-	    case'refresh_backup':check_admin_referer('refresh_backup');church_admin_backup();church_admin_front_admin();break;
-	    case'delete_backup':check_admin_referer('delete_backup');church_admin_delete_backup();church_admin_front_admin();break;
+	    case'refresh_backup':check_admin_referer('refresh_backup');church_admin_backup();break;
+	    case'delete_backup':check_admin_referer('delete_backup');church_admin_delete_backup();break;
 	//sermon podcasts
 	    case'list_speakers':require_once(plugin_dir_path(__FILE__).'includes/sermon-podcast.php');ca_podcast_list_speakers();break;
             case'edit_speaker':require_once(plugin_dir_path(__FILE__).'includes/sermon-podcast.php');ca_podcast_edit_speaker($id);break;
@@ -1030,6 +1030,8 @@ function church_admin_delete_backup()
 	$upload_dir = wp_upload_dir();
 	$path=$upload_dir['basedir']; 
 	if($filename&& file_exists($path.'/church-admin-cache/'.$filename))unlink($path.'/church-admin-cache/'.$filename);
+	echo'<div class="updated"><p>Backup deleted</p></div>';
+	church_admin_people_main();
 }
 function church_admin_backup()
 {
@@ -1066,6 +1068,8 @@ function church_admin_backup()
 		fwrite($fp, $gzdata);
 		fclose($fp);
 	}
+	//echo'<div class="updated"><p>Backup refreshed <a class="button-primary"  target="_blank" href="'.$upload_dir['baseurl'].'/church-admin-cache/'.$filename.'">Download DB Backup</a></p></div>';
+	//church_admin_people_main();
 }
 function church_admin_datadump ($table) {
 

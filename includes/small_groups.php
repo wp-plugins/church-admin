@@ -155,7 +155,7 @@ function church_admin_edit_small_group($id)
     if(isset($_POST['edit_small_group']))
     {
 	$form=array();
-	foreach($_POST AS $key=>$value)$form[$key]=santitize_text_field(stripslashes($value));
+	foreach($_POST AS $key=>$value)$form[$key]=sanitize_text_field(stripslashes($value));
 	$ldr=array();
 	if(!empty($_POST['leader1'])&&ctype_digit($_POST['leader1'])){$ldr['1']=$_POST['leader1'];}else{$ldr['1']='';}
 	if(!empty($_POST['leader2'])&&ctype_digit($_POST['leader2'])){$ldr['2']=$_POST['leader2'];}else{$ldr['2']='';}
@@ -181,12 +181,12 @@ function church_admin_edit_small_group($id)
 	$leaders=$wpdb->get_results('SELECT a.people_id, CONCAT_WS(" ", b.first_name,b.last_name) AS leader  FROM '.CA_MET_TBL.' a, '.CA_PEO_TBL.' b WHERE a.department_id=1 AND a.people_id=b.people_id AND a.meta_type="ministry"');
 	
 	    echo'<h2>'.__('Add/Edit Small Group','church-admin').'</h2><form action="" method="post">';
-	    echo'<p><label>'.__('Small group name','church-admin').'</label><input type="text" name="group_name"';
+	    echo'<table class="form-table"><tbody><tr><th scope="row">'.__('Small group name','church-admin').'</th><td><input type="text" name="group_name"';
 	    if(!empty($data->group_name)) echo ' value="'.esc_html($data->group_name).'" ';
-	    echo'/></p>';
-	    echo'<p><label>'.__('When','church-admin').'</label><input type="text" name="whenwhere"';
+	    echo'/></td></tr>';
+	    echo'<tr><th scope="row">'.__('When','church-admin').'</th><td><input type="text" name="whenwhere"';
 	    if(!empty($data->whenwhere)) echo ' value="'.esc_html($data->whenwhere).'" ';
-	    echo'/></p>';
+	    echo'/></td></tr>';
 	    
 		echo'<script type="text/javascript"> var beginLat =';
 		if(!empty($data->lat)) {echo esc_html($data->lat);}else {$data->lat='51.50351129583287';echo '51.50351129583287';}
@@ -194,16 +194,16 @@ function church_admin_edit_small_group($id)
 		if(!empty($data->lng)) {echo esc_html($data->lng);}else {$data->lng='-0.148193359375';echo'-0.148193359375';}
 		echo';</script>';
 	
-	    echo'<p><label>'.__('Address','church-admin').'</label><input type="text" id="address" name="address"';
+	    echo'<tr><th scope="row">'.__('Address','church-admin').'</th><td><input type="text" id="address" name="address"';
 	    if(!empty($data->address)) echo ' value="'.esc_html($data->address).'" ';
-	    echo'/></p>';
-		echo '<p><a href="#" id="geocode_address">'.__('Please click here to update map location','church-admin').'...</a><br/><span id="finalise" >Once you have updated your address, this map will show roughly where your address is.</span><input type="hidden" name="lat" id="lat" value="'.esc_html($data->lat).'"/><input type="hidden" name="lng" id="lng" value="'.esc_html($data->lng).'"/></p><div id="map" style="width:500px;height:300px"></div><br/ style="clear:left">';
+	    echo'/></td></tr>';
+		echo '<tr><th scope="row"><a href="#" id="geocode_address">'.__('Please click here to update map location','church-admin').'...</a></th><td><span id="finalise" >Once you have updated your address, this map will show roughly where your address is.</span><input type="hidden" name="lat" id="lat" value="'.esc_html($data->lat).'"/><input type="hidden" name="lng" id="lng" value="'.esc_html($data->lng).'"/><div id="map" style="width:500px;height:300px"></div></td></tr>';
 		
   
 	    if($leaders)
 	    {//leaders available
 		if(!empty($data->leader))$curr_leaders=unserialize($data->leader);
-		echo'<p><label>'.__('Leader','church-admin').'</label>';
+		echo'<tr><th scope="row">'.__('Leader','church-admin').'</th><td>';
 		echo'<select name="leader1">';
 		foreach($leaders AS $leader)
 		{
@@ -211,8 +211,8 @@ function church_admin_edit_small_group($id)
 		    if(!empty($curr_leaders)) selected($curr_leaders[1],$leader->people_id);
 		    echo' >'.($leader->leader).'</option>';
 		}
-		echo'</select></p>';
-		echo'<p><label>Leader</label>';
+		echo'</select></td></tr>';
+		echo'<tr><th scope="row">Leader</th><td>';
 		echo'<select name="leader2">';
 		echo'<option value="">'.__('Second Leader','church-admin').'</option>';
 		foreach($leaders AS $leader)
@@ -221,9 +221,9 @@ function church_admin_edit_small_group($id)
 		    if(!empty($curr_leaders))selected($curr_leaders[2],$leader->people_id);
 		    echo' >'.esc_html($leader->leader).'</option>';
 		}
-		echo'</select></p>';
+		echo'</select></td></tr>';
 	    }//leaders available
-	    echo'<p class="submit"><input type="submit" name="edit_small_group" value="'.__('Save Small Group','church-admin').' &raquo;" /></p></form>';
+	    echo'<tr><th scope="row">&nbsp;</th><td><input class="button-primary" type="submit" name="edit_small_group" value="'.__('Save Small Group','church-admin').' &raquo;" /></td></tr></tbody></table></form>';
 	
 	
     }

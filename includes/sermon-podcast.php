@@ -319,46 +319,46 @@ function ca_podcast_edit_file($id=NULL)
         $upload_mb = min($max_upload, $max_post, $memory_limit);
         echo'<p>You can upload a file up to '.$upload_mb.'MB </p>';
         echo '<form action="" method="POST"  enctype="multipart/form-data" id="churchAdminForm">';
-        echo'<p><label for="file_title">File Title</label><input type="text" name="file_title" id="file_title" ';
+        echo'<table class="form-table"><tbody><tr><th scope="row">'.__('File Title','church-admin').'</th><td><input type="text" name="file_title" id="file_title" ';
         if(!empty($current_data->file_title)) echo 'value="'.esc_html($current_data->file_title).'"';
-        echo'/></p>';
-        echo'<p><label for="file_subtitle">File SubTitle (a few words)</label><input type="text" name="file_subtitle" id="file_subtitle" ';
+        echo'/></td></tr>';
+        echo'<tr><th scope="row">'.__('File SubTitle (a few words)','church-admin').'</th><td><input type="text" name="file_subtitle" id="file_subtitle" ';
         if(!empty($current_data->file_subtitle)) echo 'value="'.esc_html($current_data->file_subtitle).'"';
-        echo'/></p>';
-        echo'<p><label for="file_description">File Description</label></p>';
+        echo'/></td></tr>';
+        echo'<tr><th scope="row">'.__('File Description','church-admin').'</th><td>';
         echo '<textarea name="file_description">';
         if(!empty($current_data->file_description)) echo esc_html($current_data->file_description);
-        echo'</textarea></p>';
-        echo'<p><label for="private">Logged in only?</label><input type="checkbox" name="private" value="yes"/></p>';
+        echo'</textarea></td></tr>';
+        echo'<tr><th scope="row">'.__('Logged in only','church-admin').'?</th><td><input type="checkbox" name="private" value="yes"/></td></tr>';
         //sermon series
         $series_res=$wpdb->get_results('SELECT * FROM '.CA_SERM_TBL.' ORDER BY series_id DESC');
         if($series_res)
         {
             $first='<option value="">'.__('Choose a sermon series...','church-admin').'</option>';
-            echo'<p><label for="event">Sermon Series</label><select name="series_id">';
+            echo'<tr><th scope="row">'.__('Sermon Series','church-admin').'</th><td><select name="series_id">';
             $first=$option='';
             foreach($series_res AS $series_row)
             {
-                if($series_row->series_id==$current_data->series_id)
+                if(!empty($series_row->series_id)&&!empty($current_date->series_id)&&$series_row->series_id==$current_data->series_id)
                 {
-                    $first='<option value="'.$series_row->series_id.'" selected="selected">'.esc_html($series_row->series_name).'</option>';
+                    $first='<option value="'.intval($series_row->series_id).'" selected="selected">'.esc_html($series_row->series_name).'</option>';
                 }
                 else
                 {
-                    $option.='<option value="'.$series_row->series_id.'">'.esc_html($series_row->series_name).'</option>';
+                    $option.='<option value="'.intval($series_row->series_id).'">'.esc_html($series_row->series_name).'</option>';
                 }
                 
             }
-            echo $first.$option.'</select></p>';
+            echo $first.$option.'</select></td></tr>';
         }
         
-            echo'<p><label>'.__('Create a new sermon series','church-admin').'</label><input type="text" name="sermon_series"/></p>';
+            echo'<tr><th scope="row">'.__('Create a new sermon series','church-admin').'</th><td><input type="text" name="sermon_series"/></td></tr>';
         
         //service
         $service_res=$wpdb->get_results('SELECT CONCAT_WS(" ",service_name,service_time) AS service_name FROM '.CA_SER_TBL.' ORDER BY service_id DESC');
         if($service_res)
         {
-            echo'<p><label for="event">'.__('Service','church-admin').'</label><select name="service_id">';
+            echo'<tr><th scope="row">'.__('Service','church-admin').'</th><td><select name="service_id">';
             $first=$option='';
             foreach($service_res AS $service_row)
             {
@@ -372,28 +372,28 @@ function ca_podcast_edit_file($id=NULL)
                 }
                 
             }
-            echo $first.$option.'</select></p>';
+            echo $first.$option.'</select></td></tr>';
         }
-        echo'<p><label>'.__('Speaker','church-admin').'</label>';
+        echo'<tr><th scope="row">'.__('Speaker','church-admin').'</th><td>';
         $s=array();
 	
         if(empty($current_data->speaker))$current_data->speaker='';
         echo church_admin_autocomplete('people','friends','to',$current_data->speaker); 
-        echo'</p>';
+        echo'</td></tr>';
         if(empty($current_data->pub_date))$current_data->pub_date=date('Y-m-d');
         //javascript to bring up date picker
 	echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#pub_date\').datepicker({dateFormat : "yy-mm-dd", changeYear: true ,yearRange: "1910:'.date('Y').'"});});</script>';
 	//javascript to bring up date picker
-        echo'<p><label for="pub_date">'.__('Publication Date','church-admin').'</label><input type="text" name="pub_date" id="pub_date" value="'.date('Y-m-d',strtotime($current_data->pub_date)).'"/></p>';
-        echo'<p><label for="file">'.__('Mp3 File to Upload','church-admin').'</label><input type="file" name="file" id="file"/></p>';
-        echo'<p><label for="external_file">'.__('External Audio mp3 URL','church-admin').'</label><input type="text" name="audio_url" id="audio_url"';
+        echo'<tr><th scope="row">'.__('Publication Date','church-admin').'</th><td><input type="text" name="pub_date" id="pub_date" value="'.date('Y-m-d',strtotime($current_data->pub_date)).'"/></td></tr>';
+        echo'<tr><th scope="row">'.__('Mp3 File to Upload','church-admin').'</th><td><input type="file" name="file" id="file"/></td></tr>';
+        echo'<tr><th scope="row">'.__('External Audio mp3 URL','church-admin').'</th><td><input type="text" name="audio_url" id="audio_url"';
 		if(!empty($current_data->external_file))echo' value="'.esc_url($current_data->external_file).'" ';
-		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</p>';
-		echo'<p><label for="transcript">'.__('Transcript to Upload ','church-admin').'</label><input type="file" name="transcript" id="transcript"/></p>';
-        echo'<p><label for="video_url">'.__('Video URL','church-admin').'</label><input type="text" name="video_url" id="video_url"';
+		echo'/></td></tr>';
+		echo'<tr><th scope="row">'.__('Transcript to Upload ','church-admin').'</th><td><input type="file" name="transcript" id="transcript"/></td></tr>';
+        echo'<tr><th scope="row">'.__('Video URL','church-admin').'</th><td><input type="text" name="video_url" id="video_url"';
 		if(!empty($current_data->video_url))echo' value="'.esc_url($current_data->video_url).'" ';
-		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</p>';
-        echo '<p><input type="hidden" name="save_file" value="save_file"/><input type="submit" id="submit" class="primary-button" value="Save File"/></p></form>';
+		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</td></tr>';
+        echo '<tr><th scope="row">&nbsp;</th><td><input type="hidden" name="save_file" value="save_file"/><input type="submit"  class="button-primary" id="submit" class="primary-button" value="Save File"/></td></tr></tbody></table></form>';
     }//form
     
     

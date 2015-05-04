@@ -6,6 +6,7 @@ function church_admin_kidswork()
 	
 	$out='<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=ministries&action=edit_kidswork','edit_kidswork').'">Add a kidswork age group</a></p>';
 	$out.='<p>'.__('The dates will go up a year on January 1st automatically.','church-admin');
+	$out.='<p><a class="button-secondary" target="_blank" href="'.site_url().'?download=kidswork_pdf">'.__('Kidswork PDF','church-admin').'</a></p>';
 	//autocorrect
 	if(date('z')==0){$wpdb->query('UPDATE '.CA_KID_TBL.' SET youngest = youngest + INTERVAL 1 YEAR, oldest = oldest + INTERVAL 1 YEAR');}
 	//get groups
