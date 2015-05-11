@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.812 =
+* Rota setting bug fix
 = 0.811 = 
 * Fixed bugs in rota and editing small groups
 = 0.810 =

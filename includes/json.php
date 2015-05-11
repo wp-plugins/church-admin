@@ -13,11 +13,26 @@ function church_admin_json()
 			case 'address-list':if(church_admin_check_auth()){echo church_admin_json_address();}else{echo'Not logged in';}break;
 			case 'services':echo church_admin_json_services();break;
 			case 'rota':echo church_admin_json_rota();break;
-			case 'small-groups':echo'Small groups';break;
+			case 'small-groups':echo church_admin_json_groups();break;
 		}//end switch
 	}
 }	
-
+function church_admin_json_groups()
+{
+	global $wpdb;
+	$sql='SELECT * FROM '.CA_SMG_TBL;
+	$results = $wpdb->get_results($sql);  
+	if(!empty($results))
+	{
+		foreach ($results as $row) 
+		{$output[]=array('name'=>esc_html($row->group_name),'whenwhere'=>esc_html($row->whenwhere),'address'=>esc_html($row->address),'lat'=>$row->lat,'lng'=>$row->lng);}
+		return json_encode($output);
+	}else 
+	{
+		$output=array('error'=>__('No small groups yet','church-admin'));
+		return json_encode($output);
+	}
+}
 function church_admin_json_calendar()
 {
 		global $wpdb;
@@ -39,7 +54,9 @@ function church_admin_json_media()
 		$url=content_url().'/uploads/sermons/';
 		$output=array('count'=>$count,'pages'=>ROUND($count/10));
 		if(!empty($_GET['page'])){$page=(int)($_GET['page']-1)*10;}else{$page=1;}
-		$results=$wpdb->get_results('SELECT a.*,b.* FROM '.CA_FIL_TBL.' a, '.CA_SERM_TBL.' b WHERE a.series_id=b.series_id ORDER BY a.pub_date DESC LIMIT '.$page.',10');
+		$sql='SELECT a.*,b.* FROM '.CA_FIL_TBL.' a, '.CA_SERM_TBL.' b WHERE a.series_id=b.series_id ORDER BY a.pub_date DESC LIMIT '.$page.',10';
+		
+		$results=$wpdb->get_results($sql);
 		
 		if(!empty($results))
 		{
@@ -79,6 +96,15 @@ function church_admin_json_address()
 {
 	global $wpdb;
 	$output=array();
+	if(!empty($_GET['member_type_id']))
+	{
+		$memb=explode(',',$_GET['member_type_id']);
+      foreach($memb AS $key=>$value){if(ctype_digit($value))  $membsql[]='member_type_id='.$value;}
+      
+	}
+	if(!empty($membsql)) {$memb_sql=' ('.implode(' || ',$membsql).')';}else{$memb_sql=' a.member_type_id=1 ';}
+	$count=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL.' a, '.CA_HOU_TBL.' b WHERE a.household_id=b.household_id AND '.$membsql);
+	$output=array('count'=>$count,'pages'=>ROUND($count/10));
 	if(!empty($_GET['page'])){$page=(int)($_GET['page']-1)*10;}else{$page=1;}
 	$results=$wpdb->get_results('SELECT a.people_id,CONCAT_WS(" ", a.first_name,a.last_name) AS name, a.email AS email, b.phone AS phone, a.mobile AS mobile, b.address AS address FROM '.CA_PEO_TBL.' a, '.CA_HOU_TBL.' b WHERE a.household_id=b.household_id AND (a.member_type_id=1 OR a.member_type_id=3 OR a.member_type_id=7) LIMIT '.$page.',10');
 	
@@ -86,7 +112,7 @@ function church_admin_json_address()
 	{
 		foreach($results AS $row)
 		{
-			$output[]=array('id'=>intval($row->people_id),'name'=>esc_html($row->name),'email'=>esc_html($row->email),'phone'=>array('mobile'=>esc_html($row->mobile),'home'=>esc_html($row->phone)),'address'=>esc_html($row->address));
+			$output['data'][]=array('id'=>intval($row->people_id),'name'=>esc_html($row->name),'email'=>esc_html($row->email),'phone'=>array('mobile'=>esc_html($row->mobile),'home'=>esc_html($row->phone)),'address'=>esc_html($row->address));
 		}
 		return json_encode($output);
 		//return $output;
@@ -109,6 +135,10 @@ function church_admin_json_services()
 		}
 		return json_encode($output);
 	
+	}else 
+	{
+		$output=array('error'=>__('No one is doing anything yet','church-admin'));
+		return json_encode($output);
 	}
 }
 
@@ -121,6 +151,7 @@ function church_admin_json_rota()
 	//rota details for upcoming sunday
 	$sql='SELECT * FROM '.CA_ROT_TBL.'  WHERE rota_date>"'.date('Y-m-d').'" AND service_id="1" ORDER BY rota_date ASC LIMIT 1';
 	$row=$wpdb->get_row($sql);
+	
 	if(!empty($row))
 	{
 		$rota_jobs=unserialize($row->rota_jobs);
