@@ -45,13 +45,14 @@ Copyright (C) 2010 Andy Moyle
 
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-if(isset($_GET['ca_app'])){require_once(plugin_dir_path(__FILE__).'includes/json.php');church_admin_json($_GET['ca_app']);exit();}
+
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
 $church_admin_version = '0.812';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
+
 if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
 {
 	church_admin_backup();
@@ -328,7 +329,7 @@ function church_admin_init()
     ca_thumbnails();
 
 	
-	
+	if(isset($_GET['ca_app'])){require_once(plugin_dir_path(__FILE__).'includes/json.php');church_admin_json($_GET['ca_app']);exit();}
     if(isset($_GET['download'])){church_admin_download($_GET['download']);exit();}
     if (isset($_GET['action'])&&($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_edit_category'||$_GET['action']=='church_admin_add_category'||$_GET['action']=='church_admin_new_calendar')||!is_admin())
     {
@@ -595,7 +596,8 @@ function church_admin_main()
 		case 'settings':if(current_user_can('manage_options')){church_admin_settings_menu();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		case 'calendar':if(church_admin_level_check('Calendar')){require_once(plugin_dir_path(__FILE__).'includes/calendar.php');church_admin_new_calendar(time(),$facilities_id);}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		
-		
+		//csv import 
+		case'csv-import':if(church_admin_level_check('Directory')){require_once(plugin_dir_path(__FILE__).'includes/directory.php');church_admin_import_csv();}break;
 		
 		
 		//kids work
