@@ -14,11 +14,7 @@ function church_admin_settings()
   
    if(!empty($_POST['save_setting']))
    {
-      switch($_POST['sms_type'])
-	  {
-		case'community':update_option('church_admin_bulksms','http://community.bulksms.co.uk');break;
-		case'normal':update_option('church_admin_bulksms','http://bulksms.co.uk');break;
-	  }
+      if(!empty($_POST['sms_type']))update_option('church_admin_bulksms',esc_html(stripslashes($_POST['sms_type'])));
       if(isset($_POST['church_admin_page_limit']))update_option('church_admin_page_limit',$_POST['church_admin_page_limit']);
       if(isset($_POST['church_admin_facebook']))update_option('church_admin_facebook',$_POST['church_admin_facebook']);
       if(isset($_POST['church_admin_twitter']))update_option('church_admin_twitter',$_POST['church_admin_twitter']);
@@ -183,15 +179,13 @@ function church_admin_settings()
         
         
 	echo'<h2>'.__('Bulk SMS Settings','church-admin').'</h2>';
-	echo'<p>'.__('Set up an account with','church-admin').' <a href="http://community.bulksms.co.uk">http://community.bulksms.co.uk</a>'.__('Prices start at 3.9 per sms','church-admin').'</td></tr>';
+	echo'<p>'.__('Set up an account with','church-admin').' <a href="http://bulksms.com">http://bulksms.com</a>'.__('Prices start at 3.9p (GBP) per sms','church-admin').'</td></tr>';
 	echo'<p>'.__('Once you have registered fill out the form below','church-admin').'</td></tr>';
 	$sms_type=get_option('church_admin_bulksms');
-	
-	echo'<table class="form-table><tbody><tr><th scope="row">Which bulksms.co.uk account type are you using?</th><td><input type="radio" name="sms_type" value="community"';
-	if(empty($sms_type)||$sms_type=='http://community.bulksms.co.uk') echo' checked="checked" ';
-	echo'/>Community or <input type="radio" name="sms_type" value="normal"';
-	if($sms_type=='http://bulksms.co.uk') echo' checked="checked" ';
-	echo' />Normal';
+	echo'<p>Please login into your bulksms.com account and find out your EAPI url from the <a href="https://www2.bulksms.com/home/profile/">profile page</a></p>';
+	echo'<table class="form-table"><tbody><tr><th scope="row">Bulksms EAPI url</th><td><input type="text" name="sms_type" ';
+	if(!empty($sms_type)){ echo' value="'.esc_html($sms_type).'" ';}
+	echo'/></td></tr>';
 	echo'<tr><th scope="row" >'.__('SMS username','church-admin').'</th><td><input type="text" name="sms_username" value="'.get_option('church_admin_sms_username').'" /></td></tr>';
 	echo'<tr><th scope="row">'.__('SMS password','church-admin').'</th><td><input type="text" name="sms_password" value="'.get_option('church_admin_sms_password').'" /></td></tr>';
 	echo'<tr><th scope="row" >'.__('SMS reply eg:447777123456','church-admin').'</th><td><input type="text" name="sms_reply" value="'.get_option('church_admin_sms_reply').'" /></td></tr>';

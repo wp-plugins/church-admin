@@ -71,8 +71,7 @@ function church_admin_send_sms()
 	    $msisdn = implode(',',$mobiles);     
 	    $message = stripslashes($_POST['counttxt']);
 	    $sms_type=get_option('church_admin_bulksms');
-		if(empty($sms_type)){$url = 'http://community.bulksms.co.uk:5567/eapi/submission/send_sms/2/2.0';}
-		else{$url = $sms_type.':5567/eapi/submission/send_sms/2/2.0';}
+		$url = $sms_type.'/submission/send_sms/2/2.0';
 	    $ch = curl_init();
 	    curl_setopt($ch, CURLOPT_URL, $url);
 	    curl_setopt ($ch, CURLOPT_PORT, $port);

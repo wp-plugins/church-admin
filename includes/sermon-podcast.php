@@ -306,7 +306,14 @@ function ca_podcast_edit_file($id=NULL)
             $sql='INSERT INTO '.CA_FIL_TBL.' (file_name,file_title,file_subtitle,file_description,private,length,service_id,series_id,speaker,pub_date,last_modified,transcript,video_url,external_file)VALUES("'.$file_name.'","'.$sqlsafe['file_title'].'","'.$sqlsafe['file_subtitle'].'","'.$sqlsafe['file_description'].'" ,"'.$private.'","'.$length.'","'.$sqlsafe['service_id'].'","'.$sqlsafe['series_id'].'","'.$speaker.'" ,"'.$sqlsafe['pub_date'].'","'.date("Y-m-d H:i:s" ).'","'.$transcript.'","'.$sqlsafe['video_url'].'","'.$sqlsafe['audio_url'].'")';
             $wpdb->query($sql);
         }//end insert
-        
+		//ping where sermons are shown
+		$id=church_admin_get_id_by_shortcode('podcast');
+		if(!empty($id))
+		{
+			generic_ping($id);
+			$datetime = date("Y-m-d H:i:s");   
+			$wpdb->query( "UPDATE `$wpdb->posts` SET `post_modified` = '".$datetime."' WHERE `ID` = '".$id."'" );
+		}
         ca_podcast_xml();//update podcast feed
         echo'<div class="updated fade"><p>File '.esc_html($file_name).' Saved</p></div>';
         ca_podcast_list_files();

@@ -245,8 +245,8 @@ if(!empty($taskresult))
 	    foreach($results AS $daterows)
 	    {
 		$new_rota=array();
-	       $edit_url='admin.php?page=church_admin/index.php&tab=calendar&action=church_admin_edit_rota&tab=calendar&id='.$daterows->rota_id;
-	        $delete_url='admin.php?page=church_admin/index.php&tab=calendar&action=church_admin_delete_rota&tab=calendar&id='.$daterows->rota_id;
+	       $edit_url='admin.php?page=church_admin/index.php&tab=rota&action=church_admin_edit_rota&id='.$daterows->rota_id;
+	        $delete_url='admin.php?page=church_admin/index.php&tab=rota&action=church_admin_delete_rota&id='.$daterows->rota_id;
 		//start building row
 		echo '<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">'.__('Edit','church-admin').'</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">'.__('Delete','church-admin').'</a></td><td>'.mysql2date('jS M Y',$daterows->rota_date).'</td>';
 		//get rota task people for that date
@@ -387,7 +387,8 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    $jobs=$wpdb->get_row('SELECT * FROM '.CA_ROT_TBL.' WHERE rota_id="'.esc_sql($id).'"');
 	    echo'<form id="churchAdminForm" name="churchAdminForm" action="" method="post">';
 	    echo'<input type="hidden" name="service_id" value="'.$service_id.'"/>';
-	    if(empty($jobs->rota_date))
+	    
+		if(empty($jobs->rota_date))
 	    {
 	        
 	        $next_date=$wpdb->get_var('SELECT DATE_ADD(MAX(rota_date), INTERVAL 7 DAY) FROM '.$wpdb->prefix.'church_admin_rotas LIMIT 1');
@@ -396,9 +397,9 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	         echo'<h2>Add to rota  for  '.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</h2>';
 		echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#rota_date\').datepicker({dateFormat : "yy-mm-dd", changeYear: true });});</script>';
 	
-		 echo'<table class="form-table"><tbody><th scope="row">Rota Date:</th><td><input type="text" id="rota_date" name="rota_date" ';
+		 echo'<table class="form-table"><tbody><tr><th scope="row">Rota Date:</th><td><input type="text" id="rota_date" name="rota_date" ';
 	        if(!empty($next_date)) echo ' value="'.esc_html($next_date).'" ';
-		echo'/></td></tr>';
+		echo'/></td></tr></tbody></table>';
 	    
 	    }else
 	    {
@@ -406,7 +407,7 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	        echo'<h2>Edit rota for '.esc_html(mysql2date('d/m/Y',$jobs->rota_date).' and '.$service->service_name.' at '.$service->service_time.' '.$service->venue).'</h2>';
 	    }
 	    //grab different jobs
-	    
+	    echo'<table class="form-table"><tbody>';
 	    
 	    foreach($task_result as $task_row)
 	    {

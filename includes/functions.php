@@ -1,5 +1,21 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+function church_admin_get_id_by_shortcode($shortcode) {
+	global $wpdb;
+
+	$id = NULL;
+
+	$sql = 'SELECT ID
+		FROM ' . $wpdb->posts . '
+		WHERE
+			post_type = "page"
+			AND post_status="publish"
+			AND post_content LIKE "%' . $shortcode . '%"';
+
+	$id = $wpdb->get_var($sql);
+	return $id;
+}
 function church_admin_initials($people)
 {
 	$people=maybe_unserialize($people);

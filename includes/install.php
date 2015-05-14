@@ -15,6 +15,10 @@ function church_admin_install()
  */ 
     global $wpdb,$church_admin_version;
     $wpdb->show_errors();
+	//bulksms update 
+	$eapi=get_option('church_admin_bulksms');
+	if($eapi=='http://community.bulksms.co.uk')update_option('church_admin_bulksms','http://community.bulksms.co.uk/eapi');
+	if($eapi=='http://bulksms.co.uk')update_option('church_admin_bulksms','http://bulksms.co.uk/eapi');
     //sermon podcast table install
 
     if ($wpdb->get_var('SHOW TABLES LIKE "'.CA_SERM_TBL.'"') != CA_SERM_TBL)
