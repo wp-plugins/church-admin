@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.814 =
+* Added facilities to main tabs
 = 0.813 =
 * Sends pings for page with podcast shortcode when sermon file added/edited
 * Fix old style rota edit layout

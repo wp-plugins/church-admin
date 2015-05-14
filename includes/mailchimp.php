@@ -20,7 +20,7 @@ function church_admin_mailchimp_sync()
 		$MailChimp = new MailChimp($api_key);
 		$mailchimp_data['api_key']=$api_key;
 		//check for groupings
-		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>intval($listID)));
+		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>$listID));
 		if(!empty($groupings))
 		{
 		
@@ -66,18 +66,20 @@ function church_admin_mailchimp_sync()
 			echo'<p>Added "'.translate('Ministries','church-admin').'" grouping on Mailchimp</p>';
 		}
 		
-		update_option('church_admin_mailchimp',array('api_key'=>$api_key,'listID'=>intval($listID),'member_level_id'=>intval($member_level_id),'ministry_id'=>intval($ministry_id)));
+		update_option('church_admin_mailchimp',array('api_key'=>$api_key,'listID'=>$listID,'member_level_id'=>intval($member_level_id),'ministry_id'=>intval($ministry_id)));
 		//check for groups within groupings! Grouping = member level or ministry, group = the various levels, ministries
-		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>intval($listID)));
+		$groupings=$MailChimp->call('lists/interest-groupings', array('id'=>$listID));
 		if(!empty($groupings))
 		{
 			foreach($groupings AS $grouping)
 			{
-			
+				if(!is_array($grouping))$grouping=array();
+				if(empty($grouping['groups']))$grouping['groups']=array();
 				$groups=$grouping['groups'];
+				$gp=array();
 				if(!empty($groups))
 				{//check all are present
-					$gp=array();
+					;
 					//get all group names in array
 					foreach($groups AS $group)
 					{
@@ -186,13 +188,13 @@ function church_admin_mailchimp_sync()
 		
 		echo '<p>'.__('Sync all your directory contacts, their ministries and member level to a given list in your Mailchimp account. You will need to enable an api key and get your list id','church-admin').'</p>';
 		echo'<form action="" method="post">';
-		echo'<p><label>'.__('Mailchimp API Key','church-admin').'</label><input type="text" name="api_key" ';
+		echo'<table class="form-table"><tbody><tr><th scope="row">'.__('Mailchimp API Key','church-admin').'</th><td><input type="text" name="api_key" ';
 		if(!empty($mailchimp_data['api_key'])){echo ' value="'.esc_html($mailchimp_data['api_key']).'" ';}
-		echo'/></p>';
-		echo'<p><label>'.__('List ID','church-admin').'</label><input type="text" name="listID" ';
+		echo'/></td></tr>';
+		echo'<tr><th scope="row">'.__('List ID','church-admin').'</th><td><input type="text" name="listID" ';
 		if(!empty($mailchimp_data['listID'])){echo ' value="'.esc_html($mailchimp_data['listID']).'" ';}
-		echo'/></p>';
-		echo'<p><input type="submit" value="Save"/></p>';
+		echo'/></td></tr>';
+		echo'<tr><td colspan="2"><input class="button-primary" type="submit" value="Save"/></td></tr></tbody></table>';
 	}
 
 }

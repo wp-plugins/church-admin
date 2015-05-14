@@ -8,10 +8,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 2014-10-06 Added facilities bookings
  
 */
+function church_admin_facilities($current=NULL,$facilities_id=NULL)
+{
+	global $wpdb;
+	echo'<h2>'.__('Use this section to organise facilities like rooms, video projectors','church-admin').'</h2>';
+	echo' <p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_facility&tab=facilities','edit_facility').'">'.__('Add Facility','church-admin').'</a></p>';
+	$facs=$wpdb->get_results('SELECT * FROM '.CA_FAC_TBL.' ORDER BY facilities_order');
+	if(!empty($facs))
+	{
+		echo'<form action="admin.php?page=church_admin/index.php&action=facilities&tab=facilities" method="POST"><table><tbody><tr><th scope="row">Choose facility</th><td><select name="facilities_id">';
+		foreach($facs AS $fac){echo'<option value="'.esc_html($fac->facilities_id).'">'.esc_html($fac->facility_name).'</option>';}
+		echo'</select><td><input type="submit" name="'.__('Choose facility','church-admin').'"/></td></tr></tbody></table></form>';
+	}
+	if(!empty($facilities_id)){church_admin_new_calendar($current,$facilities_id);}
+	
+}
 function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 {
 
 	global $wpdb;
+	$out='';
 	if(isset($_POST['ca_month']) && isset($_POST['ca_year'])){ $current=mktime(12,0,0,$_POST['ca_month'],14,$_POST['ca_year']);}
 	if(empty($current)){$current=time();}
 	$thismonth = (int)date("m",$current);
@@ -31,7 +47,7 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
     
     // get the month as a name
     $monthname = jdmonthname( $jd, 1 );
-	$out='<div class="wrap church_admin">';
+	
 	if(!empty($facilities_id))
 	{
 		$facility=$wpdb->get_var('SELECT facility_name FROM '.CA_FAC_TBL.' WHERE facilities_id="'.esc_sql($facilities_id).'"');
@@ -41,15 +57,7 @@ function church_admin_new_calendar($current=NULL,$facilities_id=NULL)
 		$out.='<h2>Calendar</h2>';
 	}
 	
-	$facs=$wpdb->get_results('SELECT * FROM '.CA_FAC_TBL.' ORDER BY facilities_order');
-	if(!empty($facs))
-	{
-		$out.='<p><label>Choose facility</label><form action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar&tab=calendar" method="POST"><select name="facilities_id">';
-		if(!empty($facilities_id)) {$out.='<option value="'.esc_html($facilities_id).'">'.esc_html($facility).'</option>';}
-		$out.='<option value="">'.__('N/A','church-admin').'</option>';
-		foreach($facs AS $fac){$out.='<option value="'.esc_html($fac->facilities_id).'">'.esc_html($fac->facility_name).'</option>';}
-		$out.='</select><input type="submit" name="'.__('Choose facility','church-admin').'"/></form></p>';
-	}
+	
 	$out.='<p>Double click on an event to edit, or a day to add an event</p>';
 	$out.='<p><a href="'.admin_url().'?page=church_admin/index.php&action=church_admin_calendar_list&tab=calendar">Old Style Calendar List</a></p>';
 	$out.='<table class="church_admin_calendar"><tr><td colspan="7" class="calendar-date-switcher"><form method="post" action="'.admin_url().'?page=church_admin/index.php&action=church_admin_new_calendar&tab=calendar">'.__('Month','church-admin').'<select name="ca_month">';
@@ -147,7 +155,7 @@ $out.='</tr></table>';
 
 $out.='<script type="text/javascript">	jQuery(document).ready(function($) {$(".cal").bind("dblclick", function(event) {window.location.href = "'.admin_url().'?page=church_admin/index.php&action=church_admin_new_edit_calendar&tab=calendar&id="+event.target.id';
 if(!empty($facilities_id))$out.='+ "&facilities_id='.$facilities_id.'"';
-$out.='});});</script></div><!--wrap church-admin-->';
+$out.='});});</script>';
 echo $out;
 }
 function church_admin_category_list()

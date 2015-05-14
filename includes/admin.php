@@ -28,16 +28,17 @@ function church_admin_front_admin()
 	 ?>
 	 </tr></tbody></table>
         <h2 class="nav-tab-wrapper">
-			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span> Address</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=tracking&tab=tracking" class="nav-tab <?php echo $_GET['tab'] == 'tracking' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span> Tracking</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=small_groups&tab=small_groups" class="nav-tab <?php echo $_GET['tab'] == 'small_groups' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-nametag"></span> Groups</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=communication&tab=communication" class="nav-tab <?php echo $_GET['tab'] == 'communication' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-megaphone"></span> Comms</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=rota&tab=rota" class="nav-tab <?php echo $_GET['tab'] == 'rota' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar"></span> Rota</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=calendar&tab=calendar" class="nav-tab <?php echo $_GET['tab'] == 'calendar' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar-alt"></span> Calendar</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=ministries&tab=ministries" class="nav-tab <?php echo $_GET['tab'] == 'ministries' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-clipboard"></span> Ministries</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>Address</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=tracking&tab=tracking" class="nav-tab <?php echo $_GET['tab'] == 'tracking' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>Tracking</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=small_groups&tab=small_groups" class="nav-tab <?php echo $_GET['tab'] == 'small_groups' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-nametag"></span>Groups</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=communication&tab=communication" class="nav-tab <?php echo $_GET['tab'] == 'communication' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-megaphone"></span>Comms</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=rota&tab=rota" class="nav-tab <?php echo $_GET['tab'] == 'rota' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar"></span>Rota</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=calendar&tab=calendar" class="nav-tab <?php echo $_GET['tab'] == 'calendar' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar-alt"></span>Calendar</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=facilities&tab=facilities" class="nav-tab <?php echo $_GET['tab'] == 'facilities' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar"></span>Facilities</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=ministries&tab=ministries" class="nav-tab <?php echo $_GET['tab'] == 'ministries' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-clipboard"></span>Ministries</a>
 			
-			<a href="admin.php?page=church_admin/index.php&amp;action=podcast&tab=podcast" class="nav-tab <?php echo $_GET['tab'] == 'podcast' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-playlist-audio"></span> Podcast</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=settings&tab=settings" class="nav-tab <?php echo $_GET['tab'] == 'settings' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-generic"></span> Settings</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=podcast&tab=podcast" class="nav-tab <?php echo $_GET['tab'] == 'podcast' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-playlist-audio"></span>Media</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=settings&tab=settings" class="nav-tab <?php echo $_GET['tab'] == 'settings' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-generic"></span>Settings</a>
 	</h2> 
         
          
