@@ -221,7 +221,7 @@ function church_admin_ministries()
 
 function church_admin_rota_main($service_id=NULL)
 {
-	global $days;
+	global $days,$wpdb;
 	echo'<h2>'.__('Rota','church-admin').'</h2>';
 	$email_day=get_option('church_admin_email_rota_day');
 	if(!empty($email_day)) echo'<p>This weeks rotas are automatically emailed on '.$days[$email_day+1].', when your website is first accessed that day!</p>';
@@ -239,6 +239,8 @@ function church_admin_rota_main($service_id=NULL)
 	echo'</select><input type="submit" value="Save"/></p></form>';
 	
     echo'<form action="'.admin_url().'" method="GET"><input type="hidden" name="page" value="church_admin/index.php"/><input type="hidden" name="action" value="church_admin_email_rota"/><input type="hidden" name="tab" value="rota">';
+	$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+	
     echo'<p><label>'.__('Email out service rota','church-admin').'</label><select name="service_id">';
     echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
     foreach($services AS $service)

@@ -131,7 +131,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 		echo'<p><input type="hidden" name="rota_email" value="yes"/><input type="submit" class="primary-button" value="Send to rota participants"/></p>';
 		echo'</form>';
 	}
-	echo'</div></div>';	
+		
 }
 
 
