@@ -4,7 +4,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.814
+Version: 0.815
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.814';
+$church_admin_version = '0.815';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -749,7 +749,7 @@ function church_admin_main()
 function church_admin_shortcode($atts, $content = null) 
 {
 	
-    extract(shortcode_atts(array("type" => 'address-list','days'=>30,'year'=>date('Y'),'service_id'=>1,'photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL,'api_key'=>NULL,'facilities_id'=>NULL), $atts));
+    extract(shortcode_atts(array("type" => 'address-list','days'=>30,'year'=>date('Y'),'service_id'=>1,'photo'=>NULL,'category'=>NULL,'weeks'=>4,'member_type_id'=>1,'kids'=>TRUE,'map'=>NULL,'series_id'=>NULL,'speaker_id'=>NULL,'file_id'=>NULL,'api_key'=>NULL,'facilities_id'=>NULL), $atts));
     church_admin_posts_logout();
     $out='';
     global $wpdb;
@@ -810,7 +810,7 @@ function church_admin_shortcode($atts, $content = null)
 	   
             $out.='<p><a href="'.home_url().'/?download=addresslist&amp;addresslist='.wp_create_nonce('member'.$member_type_id ).'&amp;member_type_id='.$member_type_id.'">'.__('PDF version','church-admin').'</a></p>';
             require_once(plugin_dir_path(__FILE__).'display/address-list.php');
-            $out.=church_admin_frontend_directory($member_type_id,$map,$photo,$api_key);
+            $out.=church_admin_frontend_directory($member_type_id,$map,$photo,$api_key,$kids);
         break;
         
 		case 'small-groups-list':

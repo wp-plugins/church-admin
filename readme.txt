@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.815 =
+* Added "kids" attribute to address list shortcode; 0 stops them showing
 = 0.814 =
 * Added facilities to main tabs
 = 0.813 =
