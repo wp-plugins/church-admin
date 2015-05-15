@@ -1,6 +1,6 @@
 <?php
 
-function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL,$api_key=NULL)
+function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL,$api_key=NULL,$kids=TRUE)
 {
 	//updte 2014-04-16 to validate and contain microdata
 	//update 2014-03-19 to allow for multiple surnames
@@ -104,8 +104,9 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
 	array_filter($adults);$adultline=array();
 	foreach($adults as $lastname=>$firstnames){$adultline[]=implode(" &amp; ",$firstnames).' '.$lastname;}
     $out .="\r\n". '<div class="church_admin_address" itemscope itemtype="http://schema.org/Person">'."\r\n\t".'<div class="church_admin_name_address" >'."\r\n\t\t".'<p><span itemprop="name"><strong>'.esc_html(implode(" &amp; ",$adultline)).'</strong></span>';
-    if(!empty($children))$out.='<br />'.esc_html(implode(", ",$children)).'<br/>';
-    $out.='</p>'."\r\n\t\t";
+	
+    if( !empty($kids)&&!empty($children))$out.='<br />'.esc_html(implode(", ",$children));
+   
     if(!empty($address->address))
 	{
 		$out.='<p><span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">'.str_replace(', ',',<br/> ',$address->address).'</span></p>';
