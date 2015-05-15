@@ -166,11 +166,11 @@ function church_admin_edit_household($household_id=NULL)
 	echo church_admin_address_form($data,$error=NULL);
 	//Phone
     
-    echo '<tr><th scope="row">'.__('Phone','church-admin').'</th><td><input type="text" name="phone" ';
+    echo '<table class="form-table"><tr><th scope="row">'.__('Phone','church-admin').'</th><td><input type="text" name="phone" ';
 	if(!empty($data->phone)) echo ' value="'.esc_html($data->phone).'"';
     if(!empty($errors['phone']))echo' class="red" ';
     echo '/></td></tr>';
-	echo'<p class="submit"><input type="hidden" name="edit_household" value="yes"/><input type="submit" value="'.__('Save Address','church-admin').'&raquo;" /></td></tr></form>';
+	echo'<tr><td colspan="2"><input type="hidden" name="edit_household" value="yes"/><input type="submit" value="'.__('Save Address','church-admin').'&raquo;" /></td></tr></form>';
     }//end household form
 
 	
@@ -613,8 +613,8 @@ $out.= '; var beginLng =';
     $out.= '/></td></tr>';
     if(!isset($data->lng))$data->lng='51.50351129583287';
     if(!isset($data->lat))$data->lat='-0.148193359375';
-    $out.= '<tr><th scope="row"><a href="#" id="geocode_address">'.__('Please click here to update map location','church-admin').'...</a></th><td><span id="finalise" >Once you have updated your address, this map will show roughly where your address is.</span><input type="hidden" name="lat" id="lat" value="'.$data->lat.'"/><input type="hidden" name="lng" id="lng" value="'.$data->lng.'"/></td></tr><div id="map" style="width:500px;height:300px"></div>';
-    $out.='<div style="clear:left"></div></tbody></table>';
+    $out.= '<tr><th scope="row"><a href="#" id="geocode_address">'.__('Please click here to update map location','church-admin').'...</a></th><td><span id="finalise" >Once you have updated your address, this map will show roughly where your address is.</span><input type="hidden" name="lat" id="lat" value="'.$data->lat.'"/><input type="hidden" name="lng" id="lng" value="'.$data->lng.'"/></td></tr><tr><td colspan="2"><div id="map" style="width:500px;height:300px"></div></td></tr>';
+    $out.='</tbody></table>';
     return $out;
     
 }
@@ -997,5 +997,31 @@ function church_admin_search($search)
 
 
 
-
+function church_admin_import_csv()
+{
+		global $wpdb;
+	if(!empty($_POST['save_csv']))
+	{
+		if(!empty($_FILES) && $_FILES['file']['error'] == 0)
+		{
+			$filename = $_FILES['file']['name'];
+			$upload_dir = wp_upload_dir();
+			$filedest = $upload_dir['path'] . '/' . $filename;
+			if(move_uploaded_file($_FILES['file']['tmp_name'], $filedest))echo '<p>File Uploaded and saved</p>';
+			
+			ini_set('auto_detect_line_endings',TRUE);
+			$file_handle = fopen($filedest, "r");
+			$header=fgetcsv($file_handle, '', ",");
+			 
+			print_r($header);
+		}
+	}
+	else
+	{
+		echo'<h2>Import csv</h2>';
+		echo'<form action="" method="POST" enctype="multipart/form-data">';
+		echo'<p><label>CSV File</label><input type="file" name="file"/><input type="hidden" name="save_csv" value="yes"/></p>';
+		echo'<p><input type="submit" Value="Upload"/></p></form>';
+	}
+}
 ?>
