@@ -28,7 +28,7 @@ function church_admin_frontend_directory($member_type_id=1,$map=NULL,$photo=NULL
       {
 	  $p = new pagination;
 	  $p->items($items);
-	  $p->limit(get_option('church_admin_page_limit')); // Limit entries per page
+	  $p->limit(10); // Limit entries per page
 	  
 	  $p->target(get_permalink());
 	  if(!isset($p->paging))$p->paging=1; 

@@ -58,12 +58,12 @@ function church_admin_edit_kidswork($id=NULL)
 	{
 		if(!empty($id))$data=$wpdb->get_row('SELECT * FROM '.CA_KID_TBL.' WHERE id="'.esc_sql($id).'"');
 		echo'<h2>'.__('Add a kids work group','church-admin').'<form action="" method="POST">';
-		echo'<p><label for="group_name">'.__('Group Name','church-admin').'</label><input type="text" name="group_name" id="group_name" ';
+		echo'<table class="form-table"><tbody><tr><th scope="row">'.__('Group Name','church-admin').'</th><td><input type="text" name="group_name" id="group_name" ';
 		if(!empty($data->group_name)) echo'value="'.esc_html($data->group_name).'"';
-		echo'/></p>';
-		echo'<p><label>'.__('Youngest','church-admin').'</label><input type=="text" name="youngest" class="youngest" ';
+		echo'/></td></tr>';
+		echo'<tr><th scope="row">'.__('Youngest','church-admin').'</th><td><input type=="text" name="youngest" class="youngest" ';
 		if(!empty($data->youngest)&&$data->youngest!='0000-00-00') echo ' value="'.esc_html($data->youngest).'" ';
-		echo'/></p>';
+		echo'/></td></tr>';
 		echo'<script type="text/javascript">
 		jQuery(document).ready(function(){
 			jQuery(\'.youngest\').datepicker({
@@ -71,7 +71,7 @@ function church_admin_edit_kidswork($id=NULL)
          });
 		});
 		</script>';
-		echo'<p><label>'.__('Oldest','church-admin').'</label><input type=="text" name="oldest" class="oldest" ';
+		echo'<tr><th scope="row">'.__('Oldest','church-admin').'</th><td><input type=="text" name="oldest" class="oldest" ';
 		if(!empty($data->oldest)&&$data->oldest!='0000-00-00') echo ' value="'.esc_html($data->oldest).'" ';
 		echo'/></p>';
 		echo'<script type="text/javascript">
@@ -81,16 +81,22 @@ function church_admin_edit_kidswork($id=NULL)
          });
 		});
 		</script>';
-		echo'<p><label for="department_id">'.__('Led by people from ','church-admin').'</label>';
+		echo'<tr><th scope="row">'.__('Led by people from ','church-admin').'</th><td>';
 		$departments=get_option('church_admin_departments');
 		if(!empty($departments))
 		{
 			echo'<select name="department_id">';
-			foreach($departments AS $id=>$name) echo'<option value="'.intval($id).'">'.esc_html($name).'</option>';
+			$first=$option='';
+			foreach($departments AS $id=>$name) 
+			{
+				if(!empty($data->department_id) && $data->department_id=$id) $first='<option selected="selected" value="'.intval($id).'">'.esc_html($name).'</option>';
+				$option.='<option value="'.intval($id).'">'.esc_html($name).'</option>';
+			}
+			echo $first.$option;
 			echo'</select>';
 		}
-		echo'</p>';
-		echo'<p><input type="hidden" name="save" value="yes"/><input type="submit" value="Save"/></p></form>';
+		echo'</td></tr>';
+		echo'<tr><th scope="row">&nbsp;</th><td><input type="hidden" name="save" value="yes"/><input type="submit" value="Save"/></td></tr></tbody></table></form>';
 		
 	}
 }

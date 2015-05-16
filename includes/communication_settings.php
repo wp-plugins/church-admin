@@ -14,6 +14,7 @@ function church_admin_settings()
   
    if(!empty($_POST['save_setting']))
    {
+	  if(!empty($_POST['pagination']))update_option('church_admin_pagination_limit',intval($_POST['pagination']));
       if(!empty($_POST['sms_type']))update_option('church_admin_bulksms',esc_html(stripslashes($_POST['sms_type'])));
       if(isset($_POST['church_admin_page_limit']))update_option('church_admin_page_limit',$_POST['church_admin_page_limit']);
       if(isset($_POST['church_admin_facebook']))update_option('church_admin_facebook',$_POST['church_admin_facebook']);
@@ -101,7 +102,8 @@ function church_admin_settings()
       echo'<form action="" method="POST">';
       echo'<h2>'.__('General Settings','church-admin').'</h2>';
       echo'<table class="form-table"><tr><th scope="row">'.__('Directory Records per page','church-admin').'</th><td><input type="text" name="church_admin_page_limit" value="'.get_option('church_admin_page_limit').'"/></td></tr>';
-      echo '<tr><th scope="row">'.__('Calendar width in pixels','church-admin').'</th><td><input type="text" name="church_admin_calendar_width" value="'.get_option('church_admin_calendar_width').'"/></td></tr>';
+     
+	echo '<tr><th scope="row">'.__('Calendar width in pixels','church-admin').'</th><td><input type="text" name="church_admin_calendar_width" value="'.get_option('church_admin_calendar_width').'"/></td></tr>';
 	echo '<tr><th scope="row">'.__('PDF Page Size','church-admin').'</th><td><select name="church_admin_pdf_size">';
 	if(get_option('church_admin_pdf_size')=='Letter')
 	{echo '<option value="">Letter</option><option value="A4">A4</option><option value="Legal">Legal</option>';}

@@ -104,7 +104,11 @@ function church_admin_address_list($member_type_id=1)
 	}
 	echo '</tbody></table>';
     echo '<div class="tablenav"><div class="tablenav-pages">';
+    // Pagination
+    echo '<div class="tablenav"><div class="tablenav-pages">';
     echo $p->show();  
+    echo '</div></div>';
+    //Pagination  
     
     }//end of items>0
     }	

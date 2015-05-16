@@ -15,6 +15,9 @@ function church_admin_install()
  */ 
     global $wpdb,$church_admin_version;
     $wpdb->show_errors();
+	//check for pagination limit
+	$page=get_option('church_admin_page_limit');
+	if(empty($page))update_option('church_admin_page_limit',10);
 	//bulksms update 
 	$eapi=get_option('church_admin_bulksms');
 	if($eapi=='http://community.bulksms.co.uk')update_option('church_admin_bulksms','http://community.bulksms.co.uk/eapi');
