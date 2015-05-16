@@ -14,7 +14,7 @@ function church_admin_recent_people_activity()
         echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_email_follow_up_activity','email_funnels').'">'.__('Email newly assigned follow-up activity','church-admin').'</a></p>';
 	$p = new pagination;
 	$p->items($items);
-	$p->limit(10); // Limit entries per page
+	$p->limit(get_option('church_admin_page_limit')); // Limit entries per page
 	$p->target("admin.php?page=church_admin/index.php&tab=address&action=church_admin_people_activity");
 	if(!isset($p->paging))$p->paging=1; 
 	if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
@@ -71,7 +71,11 @@ function church_admin_recent_people_activity()
 
             }
             echo '</tbody></table>';
+            // Pagination
             
+            echo  '<div class="tablenav"><div class="tablenav-pages">';
+            echo $p->show();  
+            echo  '</div></div>';
         }
     }
    

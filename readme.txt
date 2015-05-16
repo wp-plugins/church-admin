@@ -4,7 +4,7 @@ Donate link: http://www.churchadminplugin.com/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
 Tested up to: 4.2
-Stable tag: 0.816
+Stable tag: 0.817
 
 A church admin plugin with address book, attendance tracking, small group management, sunday rota/schedules, sermon audio and video podcasting (iTunes compatable), bulk sms and mailshot facilities. 
 
@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.817 =
+* Pagination limits added to admin area
 = 0.816 =
 * Added "kids" attribute to address list shortcode; 0 stops them showing
 = 0.814 =
