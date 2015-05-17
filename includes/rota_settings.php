@@ -30,7 +30,7 @@ if(isset($_POST['rota_task'])&&check_admin_referer('edit_rota_settings'))
 	$services=array();
 	
 	if(!empty($_POST['service_id'])){foreach($_POST['service_id'] AS $key=>$value){$services[]=(int)$value;}}else{$services=array('0'=>'1');}
-    if(!empty($_POST['department_id'])){(int)$department_id=esc_sql(stripslashes($_POST['department_id']));}else{$department_id="1";}
+    if(!empty($_POST['department_id'])){$department_id=1;}else{$department_id="0";}
 	if(!empty($_POST['initials'])){$initials=1;}else{$initials=0;}
     if(!$id)
     {//insert
