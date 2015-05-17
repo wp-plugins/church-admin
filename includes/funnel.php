@@ -61,29 +61,29 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
            echo'<form action="" method="POST">';
            
            //funnel action
-           echo'<p><label>'.__('Funnel Action','church-admin').'</label><input type="text" name="action" ';
+           echo'<table class="form-table"><tbody><tr><th scope="row">'.__('Funnel Action','church-admin').'</th><td><input type="text" name="action" ';
            if(!empty($data->action))echo ' value="'.esc_html($data->action).'" ';
-           echo'/></p>';
+           echo'/></td></tr>';
            //member type
-           echo'<p><label>'.__('Link to Member Type','church-admin').'</label><select name="member_type_id">';
+           echo'<tr><th scope="row">'.__('Link to Member Type','church-admin').'</th><td><select name="member_type_id">';
            $first='<option value="">'.__('Please select member type','church-admin').'</option>';
            $option='';
            foreach($member_type AS $id=>$type)
            {
              if($id==$data->member_type_id){$first='<option value="'.intval($id).'" selected="selected">'.esc_html($type).'</option>'; }else{$option.='<option value="'.intval($id).'" >'.esc_html($type).'</option>';}
            }
-           echo $first.$option.'</option></select></p>';
+           echo $first.$option.'</option></select></td></tr>';
            //responsible department
-           echo'<p><label>'.__('Ministry responsible for action','church-admin').'</label><select name="department_id">';
+           echo'<tr><th scope="row">'.__('Ministry responsible for action','church-admin').'</th><td><select name="department_id">';
            $first=$option='';
            foreach($departments AS $id=>$type)
            {
-             if($id==$data->member_type_id){$first='<option value="'.intval($id).'" selected="selected">'.esc_html($type).'</option>'; }else{$option.='<option value="'.intvall($id).'" >'.esc_html($type).'</option>';}
+             if($id==$data->member_type_id){$first='<option value="'.intval($id).'" selected="selected">'.esc_html($type).'</option>'; }else{$option.='<option value="'.intval($id).'" >'.esc_html($type).'</option>';}
            }
-           echo $first.$option.'</option></select>';
-           echo '<input type="text" name="new_department" onfocus="javascript:this.value=\'\';" value="'.__('Or add a new department','church-admin').'"/></p>';
-           echo'</p>';
-           echo'<p class="submit"><input type="hidden" name="edit_funnel" value="yes"/><input type="submit" value="'.__('Save Follow Up Funnel','church-admin').' &raquo;" /></p></form></div>';
+           echo $first.$option.'</option></select></td></tr>';
+           echo '<tr><th scope="row">'.__('Or create a new one','church-admin').'</th><td><input type="text" name="new_department" onfocus="javascript:this.value=\'\';" value="'.__('Or add a new department','church-admin').'"/></td></tr>';
+           
+           echo'<tr><th scope="row">&nbsp;</th><td><input type="hidden" name="edit_funnel" value="yes"/><input type="submit" value="'.__('Save Follow Up Funnel','church-admin').' &raquo;" /></td></tr></tbody></table></form>';
         }//form
       echo'</div>';
 }

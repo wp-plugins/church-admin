@@ -146,7 +146,7 @@ global $church_admin_version;
 	$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 	if($wpdb->num_rows>1)
 			    {
-				echo'<form action="admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_rota_list" method="POST">';
+				echo'<form action="admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_list" method="POST">';
 				echo'<table class="form-table"><tbody><tr><th scope="row">Select a service rota</th><td><select name="service_id" >';
 				echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
 			        foreach($services AS $service)

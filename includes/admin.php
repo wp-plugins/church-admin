@@ -251,7 +251,7 @@ function church_admin_rota_main($service_id=NULL)
     echo'</select><input type="submit" name="submit" value="Send service rota"></p>';
     echo'</form>';
     
-    /*echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
+    /*echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list&tab=rota","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
 	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota_settings",'edit_rota_settings').'" >'.__('Add more rota jobs','church-admin').'</a></p>';
 	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota",'edit_rota').'">'.__('Add dates to rota','church-admin').'</a></p>';
 	*/

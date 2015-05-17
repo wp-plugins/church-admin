@@ -979,7 +979,8 @@ function church_admin_search($search)
 	    }
 	    $adult=implode(" & ",$adults);
 	    if(!empty($children)){$kids=' ('.implode(", ",$children).')';}else{$kids='';}
-	    if(!empty($add_row->address))$add=esc_html($add_row->address);
+	    $add='';
+		if(!empty($add_row->address))$add=esc_html($add_row->address);
 	    
 	    if(!empty($add)){$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">'.esc_html($add).'</a>';}else{$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">Add Address</a>';}
 	    
@@ -995,6 +996,7 @@ function church_admin_search($search)
     else
     {
 	echo'<div class="updated fade"><p>'.__('Search','church-admin').' '.$s.' '.__('not found','church-admin').'</td></tr></div>';
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	church_admin_address_list('1');
     }
 }

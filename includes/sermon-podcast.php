@@ -362,14 +362,14 @@ function ca_podcast_edit_file($id=NULL)
             echo'<tr><th scope="row">'.__('Create a new sermon series','church-admin').'</th><td><input type="text" name="sermon_series"/></td></tr>';
         
         //service
-        $service_res=$wpdb->get_results('SELECT CONCAT_WS(" ",service_name,service_time) AS service_name FROM '.CA_SER_TBL.' ORDER BY service_id DESC');
+        $service_res=$wpdb->get_results('SELECT CONCAT_WS(" ",service_name,service_time) AS service_name,service_id FROM '.CA_SER_TBL.' ORDER BY service_id DESC');
         if($service_res)
         {
             echo'<tr><th scope="row">'.__('Service','church-admin').'</th><td><select name="service_id">';
             $first=$option='';
             foreach($service_res AS $service_row)
             {
-                if($service_row->series_id==$current_data->service_id)
+                if($service_row->service_id==$current_data->service_id)
                 {
                     $first='<option value="'.intval($service_row->service_id).'" selected="selected">'.esc_html($service_row->service_name).'</option>';
                 }
@@ -529,6 +529,14 @@ function ca_podcast_file_add($file_name=NULL)
            
             $wpdb->query($sql);
         }//end insert
+		//ping where sermons are shown
+		$id=church_admin_get_id_by_shortcode('podcast');
+		if(!empty($id))
+		{
+			generic_ping($id);
+			$datetime = date("Y-m-d H:i:s");   
+			$wpdb->query( "UPDATE `$wpdb->posts` SET `post_modified` = '".$datetime."' WHERE `ID` = '".$id."'" );
+		}
         ca_podcast_xml();//update podcast feed
         echo'<div class="updated fade"><p>File Saved</p></div>';
         ca_podcast_list_files();

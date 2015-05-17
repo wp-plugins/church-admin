@@ -1,6 +1,47 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 //2014-02-24 fixed encoding error
+
+function church_admin_email_list()
+{
+	global $wpdb;
+	$items=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_EBU_TBL.' WHERE email_recipients!=""' );
+	require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
+    if($items > 0)
+    {
+	
+	$p = new pagination;
+	$p->items($items);
+	$p->limit(get_option('church_admin_page_limit')); // Limit entries per page
+	$p->target("admin.php?page=church_admin/index.php&tab=people&action=church_admin_address_list&amp;member_type_id=".$member_type_id);
+	if(!isset($p->paging))$p->paging=1; 
+	if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
+	$p->currentPage((int)$_GET[$p->paging]); // Gets and validates the current page
+	$p->calculate(); // Calculates what to show
+	$p->parameterName('paging');
+	$p->adjacents(1); //No. of page away from the current page
+	if(!isset($_GET['paging']))
+	{
+	    $p->page = 1;
+	}
+	else
+	{
+	    $p->page = intval($_GET['paging']);
+	}
+        //Query for limit paging
+	$limit = esc_sql("LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit);
+    $result=$wpdb->get_results('SELECT * FROM '.CA_EBU_TBL.' WHERE email_recipients!="" '.$limit );
+	if(!empty($result))
+	{
+		echo'<table class="widefat"><thead><tr><th>Date</th><th>Subject</th><th>Resend?</th></tr></thead><tfoot><tr><th>Date</th><th>Subject</th><th>Resend?</th></tr></tfoot><tbody>';
+		foreach($result AS $row)
+		{
+			echo'<tr><td>'.mysql2date(get_option('date_format'),$row->send_date).'</td><td></td><td></td></tr>';
+		}
+	}
+	}
+}
+
 function church_admin_send_email()
 
 {
@@ -401,13 +442,13 @@ if  ($_FILES['userfile3']['size']>0)
 
     $sqlsafe['message']=esc_sql($message);
 	if(empty($attachments))$attachments=array();
-    $email_id=$wpdb->get_var('SELECT email_id FROM '.$wpdb->prefix.'church_admin_email_build WHERE subject="'.$sqlsafe['subject'].'" AND message="'.$sqlsafe['message'].'" AND from_email="'.$sqlsafe['from_email'].'" AND from_name="'.$sqlsafe['from_name'].'" AND filename="'.esc_sql(maybe_serialize($attachments)).'"');
+    $email_id=$wpdb->get_var('SELECT email_id FROM '.CA_EBU_TBL.' WHERE subject="'.$sqlsafe['subject'].'" AND message="'.$sqlsafe['message'].'" AND from_email="'.$sqlsafe['from_email'].'" AND from_name="'.$sqlsafe['from_name'].'" AND filename="'.esc_sql(maybe_serialize($attachments)).'"');
 
     if($email_id)
 
     {//update
 
-        $wpdb->query('UPDATE '.$wpdb->prefix.'church_admin_email_build SET subject="'.$sqlsafe['subject'].'",message="'.$sqlsafe['message'].'", from_email="'.$sqlsafe['from_email'].'" ,from_name="'.$sqlsafe['from_name'].'",filename="'.esc_sql(maybe_serialize($attachments)).'" WHERE email_id="'.esc_sql($email_id).'"');
+        $wpdb->query('UPDATE '.CA_EBU_TBL.' SET subject="'.$sqlsafe['subject'].'",message="'.$sqlsafe['message'].'", from_email="'.$sqlsafe['from_email'].'" ,from_name="'.$sqlsafe['from_name'].'",filename="'.esc_sql(maybe_serialize($attachments)).'" WHERE email_id="'.esc_sql($email_id).'"');
 
     }//end update
 
@@ -415,7 +456,7 @@ if  ($_FILES['userfile3']['size']>0)
 
     {//insert
 
-        $sql='INSERT INTO '.$wpdb->prefix.'church_admin_email_build (subject,message,from_email,from_name,send_date,filename) VALUES("'.$sqlsafe['subject'].'","'.$sqlsafe['message'].'","'.$sqlsafe['from_email'].'","'.$sqlsafe['from_name'].'","'.date('Y-m-d').'","'.esc_sql(maybe_serialize($attachments)).'")';
+        $sql='INSERT INTO '.CA_EBU_TBL.' (subject,message,from_email,from_name,send_date,filename) VALUES("'.$sqlsafe['subject'].'","'.$sqlsafe['message'].'","'.$sqlsafe['from_email'].'","'.$sqlsafe['from_name'].'","'.date('Y-m-d').'","'.esc_sql(maybe_serialize($attachments)).'")';
 
         
 
@@ -667,7 +708,7 @@ function church_admin_send_message($email_id)
 
 	 }
 
-        $sql='SELECT * FROM '.$wpdb->prefix.'church_admin_email_build WHERE email_id="'.esc_sql($email_id).'"';
+        $sql='SELECT * FROM '.CA_EBU_TBL.' WHERE email_id="'.esc_sql($email_id).'"';
 
   
 
@@ -803,7 +844,7 @@ function church_admin_send_message($email_id)
 
             }
 
-            $wpdb->query('UPDATE '.$wpdb->prefix.'church_admin_email_build SET recipients="'.esc_sql(maybe_serialize($addresses)).'" WHERE email_id="'.esc_sql($email_id).'"');
+            $wpdb->query('UPDATE '.CA_EBU_TBL.' SET recipients="'.esc_sql(maybe_serialize($addresses)).'" WHERE email_id="'.esc_sql($email_id).'"');
 
         }
 
