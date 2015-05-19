@@ -430,7 +430,7 @@ if  ($_FILES['userfile3']['size']>0)
 
     $handle=fopen($upload_dir['basedir'].'/church-admin-cache/'.$filename,"w")OR DIE("Couldn't open");
 
-    fwrite($handle, esc_html($message));  
+    fwrite($handle,$message);  
 
     fclose($handle);
 
