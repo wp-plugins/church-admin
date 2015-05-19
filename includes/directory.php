@@ -949,23 +949,24 @@ function church_admin_get_capabilities($id)
 
 function church_admin_search($search)
 {
-    global $wpdb;
+    global $wpdb,$rota_order;
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:200px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
     $s=esc_sql(stripslashes($search));
-    $sql='SELECT DISTINCT household_id FROM '.CA_PEO_TBL.' WHERE first_name LIKE("%'.$s.'%")||last_name LIKE("%'.$s.'%")||email LIKE("%'.$s.'%")||mobile LIKE("%'.$s.'%")';
-    
+    //try searching first name, last name, email, mobile separately
+	$sql='SELECT DISTINCT household_id FROM '.CA_PEO_TBL.' WHERE CONCAT_WS(" ",first_name,last_name) LIKE("%'.$s.'%")||CONCAT_WS(" ",first_name,prefix,last_name) LIKE("%'.$s.'%")||first_name LIKE("%'.$s.'%")||last_name LIKE("%'.$s.'%")||email LIKE("%'.$s.'%")||mobile LIKE("%'.$s.'%")';
     $results=$wpdb->get_results($sql);
     if(!$results)
-    {
-	$sql='SELECT DISTINCT household_id FROM '.CA_HOU_TBL.' WHERE address LIKE("%'.$s.'%")||phone LIKE("%'.$s.'%")';
-    
-	$results=$wpdb->get_results($sql);
+    {//try address
+		$sql='SELECT DISTINCT household_id FROM '.CA_HOU_TBL.' WHERE address LIKE("%'.$s.'%")||phone LIKE("%'.$s.'%")';
+		$results=$wpdb->get_results($sql);
     }
+	
     if($results)
     {
-	    echo'<div class="wrap church_admin"><h2>'.__('Address List','church-admin').'</h2><div class="updated fade"><p><strong>'.sprintf(__('Your search for %1$s yielded %2$s results','church-admin'),esc_html($s),$wpdb->num_rows).'</strong></td></tr></div>';
-	    echo '<table class="widefat"><thead><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Last name','church-admin').'</th><th>'.__('First Name(s)','church-admin').'</th><th>'.__('Address','church-admin').'</th><th>'.__('Last Update','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Last name','church-admin').'</th><th>'.__('First Name(s)','church-admin').'</th><th>'.__('Address','church-admin').'</th><th>'.__('Last Update','church-admin').'</th></tr></tfoot><tbody>';
-	foreach($results AS $row)
-	{
+	    
+	    echo '<h2>'.__('Address List Results','church-admin').' for "'.esc_html($search).'"</h2><table class="widefat"><thead><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Last name','church-admin').'</th><th>'.__('First Name(s)','church-admin').'</th><th>'.__('Address','church-admin').'</th><th>'.__('Last Update','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Last name','church-admin').'</th><th>'.__('First Name(s)','church-admin').'</th><th>'.__('Address','church-admin').'</th><th>'.__('Last Update','church-admin').'</th></tr></tfoot><tbody>';
+		foreach($results AS $row)
+		{
 	    
 	    //grab address
 	    $add_row=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($row->household_id).'"');
@@ -984,21 +985,92 @@ function church_admin_search($search)
 	    
 	    if(!empty($add)){$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">'.esc_html($add).'</a>';}else{$address='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household&amp;household_id='.$row->household_id,'edit_household').'">Add Address</a>';}
 	    
-	    $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_household&amp;household_id='.$row->household_id,'delete_household').'">Delete</a>';
+	    $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_household&amp;household_id='.$row->household_id,'delete_household').'">'.__('Delete Household','church-admin').'</a>';
 	    echo '<tr><td>'.$delete.'</td><td><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_display_household&amp;household_id='.$row->household_id,'display_household').'">'.esc_html($last_name).'</a></td><td>'.$adult.' '.$kids.'</td><td>'.$address.'</td><td>'.mysql2date('d/M/Y',$add_row->ts).'</td></tr>';
 	    
 	    
-	}
-	echo '</tbody></table>';
+		}
+		echo '</tbody></table>';
 	
 	
-    }
-    else
-    {
-	echo'<div class="updated fade"><p>'.__('Search','church-admin').' '.$s.' '.__('not found','church-admin').'</td></tr></div>';
-	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
-	church_admin_address_list('1');
-    }
+	
+    }//directory results
+	else{echo'<p>"'.esc_html($search).'" not found in directories.</p>';}
+	$people_id=church_admin_get_one_id($search);
+	$serial='s:'.strlen($people_id).':"'.$people_id.'";';
+	//search rota
+	$sql = 'SELECT * FROM '.CA_ROT_TBL.' WHERE rota_jobs LIKE  "%'.esc_sql($serial).'%" AND rota_date>="'.date('Y-m-d').'"';
+	
+	$result=$wpdb->get_results($sql);
+	if(!empty($result))
+	{
+		$taskresult=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.'  ORDER by rota_order');
+		echo '<h2>Rota Results for "'.esc_html($search).'"</h2>';
+	    $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Date','church-admin').'</th>';
+	    $job=array();
+		foreach($taskresult AS $taskrow)
+	    {
+			$service=maybe_unserialize($taskrow->service_id);
+			
+			
+				$thead.='<th>'.esc_html($taskrow->rota_task).'</th>';
+				$job[$taskrow->rota_id]=$taskrow->rota_task;
+			
+	    }
+		echo'<table class="widefat"><thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
+		foreach($result AS $row)
+		{
+			$edit_url='admin.php?page=church_admin/index.php&tab=rota&action=church_admin_edit_rota&id='.$daterows->rota_id;
+	        $delete_url='admin.php?page=church_admin/index.php&tab=rota&action=church_admin_delete_rota&id='.$daterows->rota_id;
+			//start building row
+			echo '<tr><td><a href="'.wp_nonce_url($edit_url, 'edit_rota').'">'.__('Edit','church-admin').'</a></td><td><a href="'.wp_nonce_url($delete_url, 'delete_rota').'">'.__('Delete','church-admin').'</a></td><td>'.mysql2date('jS M Y',$row->rota_date).'</td>';
+			$rota_jobs =maybe_unserialize($row->rota_jobs);
+			foreach($rota_order AS $order=>$id)
+		    {
+			
+				echo'<td class="edit" id="'.$job[$id].'~'.$row->rota_id.'">'.esc_html(church_admin_get_people($rota_jobs[$id])).'</td>';
+				}
+			    
+		    
+			echo'</tr>';//finish building row
+		}
+		echo'</tbody></table>';
+		echo'<script type="text/javascript">
+		 jQuery(document).ready(function($) {
+		 
+		$(".edit").editable(ajaxurl,{submitdata: {action: "ajax_rota_edit",security:"'.wp_create_nonce('ajax_rota_edit').'"}});    
+ });
+		
+		</script>';
+	}else{echo'<p>'.esc_html($search).' not found in rotas</p>';}
+	//search podcast
+	$upload_dir = wp_upload_dir();
+	$path=$upload_dir['basedir'].'/sermons/';
+	$url=content_url().'/uploads/sermons/';
+	$results=$wpdb->get_results('SELECT * FROM '.CA_FIL_TBL.' WHERE file_title LIKE "%'.$s.'%" OR file_description LIKE "%'.$s.'%" OR speaker LIKE "%'.esc_sql($serial).'%" OR speaker LIKE "%'.$s.'%" ORDER BY pub_date DESC');
+	if(!empty($results))
+	{
+		echo '<h2>Sermon Podcast Results for "'.esc_html($search).'"</h2>';
+		$table='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>Mp3 File</th></th><th>File Okay?</th><th>Length</th><th>Media</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>File</th><th>File Okay?</th><th>Length</th><th>Media</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
+        foreach($results AS $row)
+        {
+            if(file_exists(plugin_dir_path( $path.$row->file_name))){$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'" width="32" height="32"/>';}else{$okay='<img src="'.plugins_url('images/red.png',dirname(__FILE__) ) .'" width="32" height="32"/>';}
+            $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file&amp;id='.$row->file_id,'edit_podcast_file').'">Edit</a>';
+            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=delete_file&amp;id='.$row->file_id,'delete_podcast_file').'">Delete</a>';
+            $series_name=$wpdb->get_var('SELECT series_name FROM '.CA_SERM_TBL.' WHERE series_id="'.esc_sql($row->series_id).'"');
+            if(!empty($row->file_name)&&file_exists($path.$row->file_name)){$file='<a href="'.$url.esc_url($row->file_name).'">'.esc_html($row->file_name).'</a>';$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'"/>';}
+			elseif(!empty($row->external_file)){$file='<a href="'.esc_url($row->external_file).'">'.esc_html($row->external_file).'</a>';$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'"/>';}
+			else{$file='&nbsp;';$okay='<img src="'.plugins_url('images/red.png',dirname(__FILE__) ).'"/>';}
+            $table.='<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.date(get_option('date_format'),strtotime($row->pub_date)).'</td><td>'.esc_html($row->file_title).'</td><td>'.esc_html(church_admin_get_people($row->speaker)).'</td><td>'.$file.'</td><td>'.$okay.'</td><td>'.esc_html($row->length).'</td><td>'.$row->video_url.'</td>';
+            if(file_exists($path.$row->transcript)){$table.='<td><a href="'.esc_url($url.$row->transcript).'">'.esc_html($row->transcript).'</a></td>';}else{$table.='<td>&nbsp;</td>';}
+            $table.='<td>'.esc_html($series_name).'</td><td>[church_admin type="podcast" file_id="'.intval($row->file_id).'"]</td></tr>';
+        }
+        
+        $table.='</tbody></table>';
+        echo $table;
+	}else{echo'<p>'.esc_html($search).' not found in sermon podcasts</p>';}
+	//search calendar
+	
 }
 
 

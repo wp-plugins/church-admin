@@ -28,7 +28,7 @@ function church_admin_front_admin()
 	 ?>
 	 </tr></tbody></table>
         <h2 class="nav-tab-wrapper">
-			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>Address</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>People</a>
 			<a href="admin.php?page=church_admin/index.php&amp;action=tracking&tab=tracking" class="nav-tab <?php echo $_GET['tab'] == 'tracking' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>Tracking</a>
 			<a href="admin.php?page=church_admin/index.php&amp;action=small_groups&tab=small_groups" class="nav-tab <?php echo $_GET['tab'] == 'small_groups' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-nametag"></span>Groups</a>
 			<a href="admin.php?page=church_admin/index.php&amp;action=communication&tab=communication" class="nav-tab <?php echo $_GET['tab'] == 'communication' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-megaphone"></span>Comms</a>
@@ -49,6 +49,7 @@ function church_admin_front_admin()
 function church_admin_tracking()
 {
 	global $wpdb,$days;	
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	$upload_dir = wp_upload_dir();
 	$path=$upload_dir['basedir'].'/church-admin-cache/';
 	echo'<h2>'.__('Follow Up','church-admin').'</h2>';
@@ -77,6 +78,7 @@ function church_admin_tracking()
 function church_admin_settings_menu()
 {
 	global $wpdb,$days;
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	//errors
 	$error=get_option('church_admin_plugin_error');
 	if(!empty($error))
@@ -188,7 +190,8 @@ function church_admin_settings_menu()
 }
 function church_admin_podcast()
 {
-	require_once(plugin_dir_path(__FILE__).'/sermon-podcast.php');	
+	require_once(plugin_dir_path(__FILE__).'/sermon-podcast.php');
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	echo'<h2>Podcast</h2>';
 	echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_file&tab=podcast','edit_podcast_file').'">Upload or add external mp3 File</a></p>';
     echo '<p><a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=check_files&tab=podcast','check_podcast_file').'">Add Already Uploaded Files</a></p>';
@@ -201,6 +204,7 @@ function church_admin_ministries()
 {
 
 	//ministries
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	echo'<h2>Ministries</h2>';
 	require_once(plugin_dir_path(__FILE__).'/departments.php');
 	church_admin_department_list();
@@ -223,6 +227,7 @@ function church_admin_ministries()
 function church_admin_rota_main($service_id=NULL)
 {
 	global $days,$wpdb;
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	echo'<h2>'.__('Rota','church-admin').'</h2>';
 	$email_day=get_option('church_admin_email_rota_day');
 	if(!empty($email_day)) echo'<p>This weeks rotas are automatically emailed on '.$days[$email_day+1].', when your website is first accessed that day!</p>';
@@ -263,6 +268,7 @@ function church_admin_rota_main($service_id=NULL)
 function church_admin_smallgroups_main()
 {
     global $member_type;
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	require_once(plugin_dir_path(__FILE__).'/small_groups.php');
 	church_admin_small_groups();
     echo '<p><strong>'.__('Download a small group PDF','church-admin').'</strong></p><form name="address_list_form" action="'.home_url().'" method="get"><input type="hidden" name="download" value="smallgroup"/>';
@@ -276,6 +282,7 @@ function church_admin_smallgroups_main()
 }
 function church_admin_communication()
 {
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_send_sms&tab=communication">'.__('Send Bulk SMS','church-admin').'</a></p>';
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_send_email&tab=communication">'.__('Send Bulk Email','church-admin').'</a></p>';
 	echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=mailchimp_sync&tab=communication">'.__('Sync Mailchimp Account','church-admin').'</a></p>';

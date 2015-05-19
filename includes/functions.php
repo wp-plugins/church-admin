@@ -310,7 +310,13 @@ function church_admin_get_user_id($name)
     }
     if(!empty($user_ids)){ return maybe_serialize(array_filter($user_ids));}else{return NULL;}
 }
-
+function church_admin_get_one_id($name)
+{
+	global $wpdb;
+	$sql='SELECT people_id FROM '.CA_PEO_TBL.' WHERE CONCAT_WS(" ",first_name,last_name) REGEXP "^'.esc_sql($name).'" LIMIT 1';
+    $result=$wpdb->get_var($sql);
+	if(!empty($result)){return $result;}else{return $name;}
+}
 function church_admin_ajax_people()
 {
             /**

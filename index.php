@@ -4,7 +4,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.819
+Version: 0.820
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.819';
+$church_admin_version = '0.820';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -355,7 +355,7 @@ function church_admin_init()
         wp_register_script('ca_email',  plugins_url('church-admin/includes/email.js',dirname(__FILE__) ), false, NULL);
         wp_enqueue_script('ca_email','','',NULL);
     }
-	if(isset($_GET['action']) && ($_GET['action']=='church_admin_rota_list'||$_GET['action']=='rota'||$_GET['action']=='church_admin_edit_rota'))
+	if(!empty($_POST['church_admin_search'])||(isset($_GET['action']) && ($_GET['action']=='church_admin_rota_list'||$_GET['action']=='rota'||$_GET['action']=='church_admin_edit_rota')))
     {
         
         wp_register_script('ca_editable',  plugins_url('church-admin/includes/jquery.jeditable.mini.js',dirname(__FILE__) ), array('jquery'), NULL,TRUE);
