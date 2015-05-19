@@ -81,7 +81,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
              if($id==$data->member_type_id){$first='<option value="'.intval($id).'" selected="selected">'.esc_html($type).'</option>'; }else{$option.='<option value="'.intval($id).'" >'.esc_html($type).'</option>';}
            }
            echo $first.$option.'</option></select></td></tr>';
-           echo '<tr><th scope="row">'.__('Or create a new one','church-admin').'</th><td><input type="text" name="new_department" onfocus="javascript:this.value=\'\';" value="'.__('Or add a new department','church-admin').'"/></td></tr>';
+           echo '<tr><th scope="row">'.__('Or create a new ministry','church-admin').'</th><td><input type="text" name="new_department" onfocus="javascript:this.value=\'\';" value="'.__('Or add a new ministry','church-admin').'"/></td></tr>';
            
            echo'<tr><th scope="row">&nbsp;</th><td><input type="hidden" name="edit_funnel" value="yes"/><input type="submit" value="'.__('Save Follow Up Funnel','church-admin').' &raquo;" /></td></tr></tbody></table></form>';
         }//form
