@@ -287,6 +287,8 @@ function church_admin_communication()
     echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=church_admin_send_email&tab=communication">'.__('Send Bulk Email','church-admin').'</a></p>';
 	echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=mailchimp_sync&tab=communication">'.__('Sync Mailchimp Account','church-admin').'</a></p>';
 	echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=prayer_chain_message&tab=communication','prayer_chain_message').'">Send Prayer Chain Message</a></p>';
+	require_once(plugin_dir_path(__FILE__).'/email.php');
+	church_admin_email_list();
 }
 
 function church_admin_people_main()

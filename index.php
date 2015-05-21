@@ -4,7 +4,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.820
+Version: 0.821
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 //Version Number
 define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.820';
+$church_admin_version = '0.821';
 church_admin_constants();//setup constants first
 require_once(plugin_dir_path(__FILE__).'includes/admin.php');
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -349,7 +349,7 @@ function church_admin_init()
 		wp_enqueue_script('google_map_script', 'http://maps.googleapis.com/maps/api/js?sensor=false','',NULL);
 		wp_enqueue_script('ca_google_map_script', plugins_url('church-admin/includes/admin_sg_maps.js',dirname(__FILE__) ) ,'',NULL);
 	}
-    if(isset($_GET['action']) && ($_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_send_sms'))
+    if(isset($_GET['action']) && ($_GET['action']=='resend_email'||$_GET['action']=='church_admin_send_email'||$_GET['action']=='church_admin_send_sms'))
     {
         wp_enqueue_script('jquery','','',NULL);
         wp_register_script('ca_email',  plugins_url('church-admin/includes/email.js',dirname(__FILE__) ), false, NULL);
@@ -569,6 +569,7 @@ function church_admin_main()
 	$copy_id=!empty($_GET['copy_id'])?$_GET['copy_id']:NULL;
     $date_id=!empty($_GET['date_id'])?$_GET['date_id']:NULL;
     $event_id=!empty($_GET['event_id'])?$_GET['event_id']:NULL;
+	$email_id=!empty($_GET['email_id'])?$_GET['email_id']:NULL;
     $people_id=!empty($_GET['people_id'])?$_GET['people_id']:NULL;
     $household_id=!empty($_GET['household_id'])?$_GET['household_id']:NULL;
     $service_id=!empty($_REQUEST['service_id'])?$_REQUEST['service_id']:1;
@@ -640,7 +641,15 @@ function church_admin_main()
             case'podcast_settings':check_admin_referer('podcast_settings');require_once(plugin_dir_path(__FILE__).'includes/podcast-settings.php');ca_podcast_settings();break;
             
 	    case 'church_admin_send_sms':if(church_admin_level_check('Bulk SMS')){require_once(plugin_dir_path(__FILE__ ).'includes/sms.php');church_admin_send_sms();}break;
-	    
+	    case 'email_list':if(church_admin_level_check('Bulk Email')){require_once(plugin_dir_path(__FILE__).'includes/email.php');church_admin_email_list();}break;
+		case 'resend_email':if(church_admin_level_check('Bulk Email'))
+		{
+			$wpdb->query('INSERT INTO '.CA_EBU_TBL.' (subject,message,filename,from_name,from_email) SELECT subject,message,filename,from_name,from_email FROM '.CA_EBU_TBL.' WHERE email_id="'.esc_sql($email_id).'"');
+			$new_email_id=$wpdb->insert_id;
+			
+			require_once(plugin_dir_path(__FILE__).'includes/email.php');
+			church_admin_choose_recipients($new_email_id);
+		}break;
 	    case 'church_admin_send_email':if(church_admin_level_check('Bulk Email')){require_once(plugin_dir_path(__FILE__).'includes/email.php');church_admin_send_email();}break;
 	    case'church_admin_people_activity':if(church_admin_level_check('Directory')){require_once(plugin_dir_path(__FILE__).'includes/people_activity.php'); echo church_admin_recent_people_activity();}break;
 	    //attendance

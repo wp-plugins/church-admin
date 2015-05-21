@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_email_list()
 {
 	global $wpdb;
-	$items=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_EBU_TBL.' WHERE email_recipients!=""' );
+	$items=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_EBU_TBL.' WHERE recipients!=""' );
 	require_once(plugin_dir_path(dirname(__FILE__)).'includes/pagination.class.php');
     if($items > 0)
     {
@@ -13,7 +13,7 @@ function church_admin_email_list()
 	$p = new pagination;
 	$p->items($items);
 	$p->limit(get_option('church_admin_page_limit')); // Limit entries per page
-	$p->target("admin.php?page=church_admin/index.php&tab=people&action=church_admin_address_list&amp;member_type_id=".$member_type_id);
+	$p->target("admin.php?page=church_admin/index.php&tab=communications&action=email_list");
 	if(!isset($p->paging))$p->paging=1; 
 	if(!isset($_GET[$p->paging]))$_GET[$p->paging]=1;
 	$p->currentPage((int)$_GET[$p->paging]); // Gets and validates the current page
@@ -30,13 +30,18 @@ function church_admin_email_list()
 	}
         //Query for limit paging
 	$limit = esc_sql("LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit);
-    $result=$wpdb->get_results('SELECT * FROM '.CA_EBU_TBL.' WHERE email_recipients!="" '.$limit );
+    $result=$wpdb->get_results('SELECT * FROM '.CA_EBU_TBL.' WHERE recipients!="" ORDER BY send_date DESC '.$limit );
 	if(!empty($result))
 	{
-		echo'<table class="widefat"><thead><tr><th>Date</th><th>Subject</th><th>Resend?</th></tr></thead><tfoot><tr><th>Date</th><th>Subject</th><th>Resend?</th></tr></tfoot><tbody>';
+		echo'<h2>'.__('Sent Emails','church-admin').'</h2><table class="widefat"><thead><tr><th>Date</th><th>Subject</th><th>Excerpt</th><th>Resend?</th></tr></thead><tfoot><tr><th>Date</th><th>Subject</th><th>Excerpt</th><th>Resend?</th></tr></tfoot><tbody>';
 		foreach($result AS $row)
 		{
-			echo'<tr><td>'.mysql2date(get_option('date_format'),$row->send_date).'</td><td></td><td></td></tr>';
+			$startsAt = strpos($row->message, "<!--salutation-->") + strlen("{FINDME}");
+			$endsAt = strpos($row->message, "<!--News,events-->", $startsAt);
+			$message = strip_tags(substr($row->message, $startsAt+17, $endsAt - $startsAt));
+			$message=substr($message,0,500);
+			$resend='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=communications&action=resend_email&email_id='.intval($row->email_id),'resend_email').'">Resend</a>';
+			echo'<tr><td>'.mysql2date(get_option('date_format'),$row->send_date).'</td><td>'.$row->subject.'</td><td>'.$message.'</td><td>'.$resend.'</td></tr>';
 		}
 	}
 	}
@@ -502,7 +507,7 @@ function church_admin_choose_recipients($email_id)
 
     //this function displays a form to select recipients
 
-    echo'<h2>Now choose recipients...</h2><form action="" method="post"><input type="hidden" value="'.$email_id.'" name="email_id"/><input type="hidden" name="send_email" value="1"/>';
+    echo'<h2>Now choose recipients...</h2><form action="admin.php?page=church_admin/index.php&action=church_admin_send_email&email_id='.$email_id.'&tab=communication" method="post"><input type="hidden" value="'.$email_id.'" name="email_id"/><input type="hidden" name="send_email" value="1"/>';
 
  foreach($member_type AS $key=>$value)
 
@@ -600,7 +605,7 @@ echo'<p><label><strong>'.__('Choose individuals','church-admin').'</strong></lab
 	}
     echo'<p><input type="submit" class="secondary-button" value="'.__('Send Email','church-admin').'"/>';
 
-    echo'</form></div>';
+    echo'</form>';
 
 //end of choose recipients
 
@@ -843,8 +848,9 @@ function church_admin_send_message($email_id)
                     }
 
             }
-
-            $wpdb->query('UPDATE '.CA_EBU_TBL.' SET recipients="'.esc_sql(maybe_serialize($addresses)).'" WHERE email_id="'.esc_sql($email_id).'"');
+			$sql='UPDATE '.CA_EBU_TBL.' SET recipients="'.esc_sql(maybe_serialize($addresses)).'" , send_date="'.date('Y-m-d').'" WHERE email_id="'.esc_sql($email_id).'"';
+			
+            $wpdb->query($sql);
 
         }
 
