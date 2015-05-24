@@ -100,7 +100,7 @@ if(!empty($results))
 	
 	$whichtype=array();
 	foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
-	$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y").'  '.$count.' '.__('people','church-admin');
+	$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date(get_option('date_format')).'  '.$count.' '.__('people','church-admin');
 	$pdf->Cell(0,10,$text,0,2,'C');
 	$pageno+=1;
 
@@ -116,7 +116,7 @@ if(!empty($results))
 			
 			$whichtype=array();
 			foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
-			$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date("d-m-Y").'  '.$count.' '.__('people','church-admin');
+			$text=implode(", ",$whichtype).' '.__('Small Group List','church-admin').' '.date(get_option('date_format')).'  '.$count.' '.__('people','church-admin');
 			$pdf->Cell(0,10,$text,0,2,'C');
 			$x=10;
 			$y=20;
@@ -690,7 +690,7 @@ function church_admin_horiz_pdf($service_id)
 				foreach($rota_results AS $rota_row)
 				{
 					//date
-					$pdf->Cell(30,7,mysql2date('d/m/Y',$rota_row->rota_date),1,0,'C');
+					$pdf->Cell(30,7,mysql2date(get_option('date_format'),$rota_row->rota_date),1,0,'C');
 					$jobs_for_day=maybe_unserialize($rota_row->rota_jobs);
 					foreach($wanted_jobs AS $key=>$value)
 					{
@@ -762,7 +762,7 @@ function church_admin_rota_pdf($service_id=1)
 			
 				//Output date
 				$pdf->SetFont('Arial','B',8);
-				$pdf->Cell(45,7,mysql2date('d/m/Y',$rota_row->rota_date),1,0,'C',0);
+				$pdf->Cell(45,7,mysql2date(get_option('date_format'),$rota_row->rota_date),1,0,'C',0);
 				//put that service's jobs in an array with date and job_id for key
 				$jobs_for_day=maybe_unserialize($rota_row->rota_jobs);
 				
@@ -1091,7 +1091,7 @@ function church_admin_kidswork_pdf()
 	
 	$whichtype=array();
 	
-	$text=implode(", ",$whichtype).' '.__('Kidswork Group List','church-admin').' '.date("d-m-Y").'  '.$count.' '.__('people','church-admin');
+	$text=implode(", ",$whichtype).' '.__('Kidswork Group List','church-admin').' '.date(get_option('date_format')).'  '.$count.' '.__('people','church-admin');
 	$pdf->Cell(0,10,$text,0,2,'C');
 	$pageno+=1;
 
@@ -1107,7 +1107,7 @@ function church_admin_kidswork_pdf()
 			
 			$whichtype=array();
 			foreach($memb AS $key=>$value)$whichtype[]=$member_type[$value];
-			$text=implode(", ",$whichtype).' '.__('Kidswork Group List','church-admin').' '.date("d-m-Y").'  '.$count.' '.__('people','church-admin');
+			$text=implode(", ",$whichtype).' '.__('Kidswork Group List','church-admin').' '.date(get_option('date_format')).'  '.$count.' '.__('people','church-admin');
 			$pdf->Cell(0,10,$text,0,2,'C');
 			$x=10;
 			$y=20;
