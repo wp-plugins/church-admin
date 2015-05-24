@@ -474,7 +474,7 @@ function ca_podcast_check_files()
                 
                 $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=file_delete&file='.esc_html($entry),'file_delete').'">'.__('Delete','church-admin').'</a>';
                 $add='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=file_add&file='.esc_html($entry),'file_add').'">'.__('Add to podcast','church-admin').'</a>';
-                $table.='<tr><td>'.$delete.'</td><td>'.$entry.' '.intval($check).'</td><td>'.$add.'</td></tr>';
+                $table.='<tr><td>'.$delete.'</td><td>'.$entry.'</td><td>'.$add.'</td></tr>';
             }
         }
         $table.='</tbody></table>';
@@ -544,21 +544,21 @@ function ca_podcast_file_add($file_name=NULL)
     else
     {//form
         echo '<form action="" method="POST" id="churchAdminForm" enctype="multipart/form-data">';
-        echo'<p><label for="file_title">File Title</label><input type="text" name="file_title" id="file_name" ';
+        echo'<table class="form-table"><tbody><tr><th scope="row">File Title</th><td><input type="text" name="file_title" id="file_name" ';
         if(!empty($current_data->file_title)) echo 'value="'.esc_html($current_data->file_title).'"';
-        echo'/></p>';
-        echo'<p><label for="file_subtitle">File SubTitle (a few words)</label><input type="text" name="file_subtitle" id="file_subtitle" ';
+        echo'/></td></tr>';
+        echo'<tr><th scope="row">File SubTitle (a few words)</th><td><input type="text" name="file_subtitle" id="file_subtitle" ';
         if(!empty($current_data->file_subtitle)) echo 'value="'.esc_html($current_data->file_subtitle).'"';
-        echo'/></p>';
-        echo'<p><label for="file_description">File Description</label></p>';
+        echo'/></td></tr>';
+        echo'<tr><th scope="row">File Description</th><td>';
         echo '<textarea name="file_description">';
         if(!empty($current_data->file_description))echo esc_html($current_data->file_description);
-        echo'</textarea></p>';
-        echo'<p><label for="private">Logged in only?</label><input type="checkbox" name="private" value="yes"/></p>';
+        echo'</textarea></td></tr>';
+        echo'<tr><th scope="row">Logged in only?</th><td><input type="checkbox" name="private" value="yes"/></p>';
         $ev_res=$wpdb->get_results('SELECT * FROM '.CA_SERM_TBL.' ORDER BY series_id DESC');
         if($ev_res)
         {
-            echo'<p><label for="event">Event</label><select name="series_id">';
+            echo'<tr><th scope="row">Event</th><td><select name="series_id">';
             $first=$option='';
             foreach($ev_res AS $series_row)
             {
@@ -572,19 +572,19 @@ function ca_podcast_file_add($file_name=NULL)
                 }
                 
             }
-            echo $first.$option.'</select></p>';
+            echo $first.$option.'</select></td></tr>';
         }
         
-            echo'<p><label for="speaker">Speaker</label>';
+            echo'<tr><th scope="row">Speaker</th><td>';
             echo church_admin_autocomplete('speaker','friends','to', NULL);
-            echo'</p>';
+            echo'</td></tr>';
         
         if(empty($current_data->pub_date))$current_data->pub_date=date('Y-m-d H:i:s');
-        echo'<p><label for="file">Publication Date</label><input type="text" name="pub_date" value="'.esc_html($current_data->pub_date).'"/></p>';
-         echo'<p><label for="video_url">'.__('Video URL','church-admin').'</label><input type="text" name="video_url" id="video_url"';
+        echo'<tr><th scope="row">Publication Date</th><td><input type="text" name="pub_date" value="'.esc_html($current_data->pub_date).'"/></td></tr>';
+         echo'<tr><th scope="row">'.__('Video URL','church-admin').'</th><td><input type="text" name="video_url" id="video_url"';
 		if(!empty($current_data->video_url))echo' value="'.esc_url($current_data->video_url).'" ';
-		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</p>';
-        echo '<p><input type="hidden" name="save_file" value="save_file"/><input type="submit" class="primary-button" value="Save File"/></p></form>';
+		echo'/>'.__('Add [VIDEO_URL] to your sermon files template to display','church-admin').'</td></tr>';
+        echo '<tr><th scope="row">&nbsp;</th><td><input type="hidden" name="save_file" value="save_file"/><input type="submit" class="primary-button" value="Save File"/></td></tr></table></form>';
     }//form
     
     
