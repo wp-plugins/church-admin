@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.822 = 
+* Update US translation
 = 0.821 =
 * Archived email list and ability to resend
 = 0.820 =
