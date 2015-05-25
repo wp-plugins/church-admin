@@ -254,7 +254,7 @@ function church_admin_rota_main($service_id=NULL)
     {
        echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s ', 'church-admin'), $service->service_name,$days[$service->service_day],$service->service_time).'</option>';
     }
-    echo'</select><input type="submit" name="submit" value="Send service rota"></p>';
+    echo'</select><input type="submit" name="submit" value="'.__('Send service rota','church-admin').'"></p>';
     echo'</form>';
     
     /*echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list&tab=rota","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
