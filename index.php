@@ -69,11 +69,15 @@ add_action('load-church-admin', 'church_admin_add_screen_meta_boxes');
 
 // add localisation
 
-function ca_myplugin_init() {
-  load_plugin_textdomain( 'church-admin', false, plugin_dir_path( __FILE__) . 'languages/' ); 
+add_action( 'plugins_loaded', 'church_admin_load_textdomain' );
+/**
+ * Load plugin textdomain.
+ *
+ * @since 1.0.0
+ */
+function church_admin_load_textdomain() {
+  load_plugin_textdomain( 'church-admin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
 }
-add_action('init', 'ca_myplugin_init');
-
 //end add localisation
 
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));

@@ -106,12 +106,12 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 						{
 							add_filter( 'wp_mail_content_type', 'set_html_content_type' );
 							$headers = 'From: '.get_option('blogname').' <'.get_option('admin_email').'>' . "\r\n";
-							if(wp_mail($row->email,"This week's service rota",$email_content,$headers)){echo'<p>Email to '.$row->name.' sent immediately</p>';}
+							if(wp_mail($row->email,__("This week's service rota",'church-admin'),$email_content,$headers)){echo'<p>Email to '.$row->name.' sent immediately</p>';}
 							remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
 						}
 						else
 						{			      
-							if(QueueEmail($row->email,"This week's service rota",$email_content,'',get_option('blogname'),get_option('admin_email'),'',''))echo'<p>Email to '.esc_html($row->name).' queued</p>';
+							if(QueueEmail($row->email,__("This week's service rota",'church-admin'),$email_content,'',get_option('blogname'),get_option('admin_email'),'',''))echo'<p>Email to '.esc_html($row->name).' queued</p>';
 						}
 					}
 				}	
@@ -126,9 +126,9 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 		
 		
 		echo'<h2>Email service rota  for  '.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</h2><form action="" method="post">';
-		echo'<p>The email will contain a salutation and the service rota. Please add your own message</p>';
+		echo'<p>'.__('The email will contain a salutation and the service rota. Please add your own message','church-admin').'</p>';
 		wp_editor('','message',"", true);
-		echo'<p><input type="hidden" name="rota_email" value="yes"/><input type="submit" class="primary-button" value="Send to rota participants"/></p>';
+		echo'<p><input type="hidden" name="rota_email" value="yes"/><input type="submit" class="primary-button" value="'.__('Send to rota participants','church-admin').'"/></p>';
 		echo'</form>';
 	}
 		
@@ -158,7 +158,7 @@ global $church_admin_version;
 			    }
 			    else
 			    {
-				echo'<p><a href="admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_list&service_id=1">View service rota</a></p>';
+				echo'<p><a href="admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_list&service_id=1">'.__('View service rota','church-admin').'</a></p>';
 			    }
 echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
 	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota_settings",'edit_rota_settings').'" >'.__('Add more rota jobs','church-admin').'</a></p>';
@@ -280,7 +280,7 @@ if(!empty($taskresult))
 		echo wp_nonce_field('copy_rota','copy_rota');
 		echo'<input type="hidden" name="rota_id" value="'.$daterows->rota_id.'"/><select name="copy_id">';
 		echo $date_options.'</select>';
-		echo'<input type="submit" value="Copy rota"/></form></td>';
+		echo'<input type="submit" value="'.__('Copy rota','church-admin').'"/></form></td>';
 	    
 		echo'</tr>';//finish building row	
 		}

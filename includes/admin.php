@@ -27,6 +27,7 @@ function church_admin_front_admin()
     }
 	 ?>
 	 </tr></tbody></table>
+	
         <h2 class="nav-tab-wrapper">
 			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>People</a>
 			<a href="admin.php?page=church_admin/index.php&amp;action=tracking&tab=tracking" class="nav-tab <?php echo $_GET['tab'] == 'tracking' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>Tracking</a>
