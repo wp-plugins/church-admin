@@ -1,0 +1,2358 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Church Admin\n"
+"POT-Creation-Date: 2015-07-07 13:23+0100\n"
+"PO-Revision-Date: 2015-07-07 13:23+0100\n"
+"Last-Translator: Andy Moyle <clients@themoyles.co.uk>\n"
+"Language-Team: \n"
+"Language: en_AU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.2\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: C:/xampp/htdocs/thegatewaychurch/wp-content/plugins/"
+"church-admin\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ./includes\n"
+"X-Poedit-SearchPath-2: ./display\n"
+
+#: display/address-list.php:9 includes/admin.php:80 includes/admin.php:189
+#: includes/admin.php:202 includes/admin.php:225 includes/admin.php:299
+#: includes/admin.php:313 includes/admin.php:368 includes/directory.php:950
+msgid "Search"
+msgstr ""
+
+#: display/address-list.php:9 includes/admin.php:80 includes/admin.php:189
+#: includes/admin.php:202 includes/admin.php:225 includes/admin.php:299
+#: includes/admin.php:313 includes/admin.php:353 includes/admin.php:368
+#: includes/directory.php:23 includes/directory.php:950
+msgid "Go"
+msgstr ""
+
+#: display/address-list.php:176 display/calendar.php:114
+msgid "Edit Entry"
+msgstr ""
+
+#: display/address-list.php:176
+msgid "Download Vcard"
+msgstr ""
+
+#: display/calendar-list.php:34 includes/services.php:6
+msgid "Time"
+msgstr ""
+
+#: display/calendar-list.php:34
+msgid "Event"
+msgstr ""
+
+#: display/calendar.php:24
+msgid "Bookings Calendar for "
+msgstr ""
+
+#: display/calendar.php:40 includes/calendar.php:107
+msgid "Year"
+msgstr ""
+
+#: display/calendar.php:54 includes/calendar.php:122
+msgid "Submit"
+msgstr ""
+
+#: display/calendar.php:68 includes/admin.php:260 includes/calendar.php:134
+#: includes/calendar.php:624 includes/calendar.php:823
+#: includes/classes.php:172 index.php:245
+msgid "Sunday"
+msgstr ""
+
+#: display/calendar.php:69 includes/admin.php:254 includes/calendar.php:135
+#: includes/calendar.php:624 includes/calendar.php:823
+#: includes/classes.php:172 index.php:245
+msgid "Monday"
+msgstr ""
+
+#: display/calendar.php:70 includes/admin.php:255 includes/calendar.php:136
+#: includes/calendar.php:624 includes/calendar.php:823
+#: includes/classes.php:172 index.php:245
+msgid "Tuesday"
+msgstr ""
+
+#: display/calendar.php:71 includes/admin.php:256 includes/calendar.php:137
+#: includes/calendar.php:624 includes/calendar.php:823
+#: includes/classes.php:172 index.php:245
+msgid "Wednesday"
+msgstr ""
+
+#: display/calendar.php:72 includes/admin.php:257 includes/calendar.php:138
+#: includes/calendar.php:624 includes/calendar.php:823
+#: includes/classes.php:172 index.php:245
+msgid "Thursday"
+msgstr ""
+
+#: display/calendar.php:73 includes/admin.php:258 includes/calendar.php:139
+#: includes/calendar.php:624 includes/calendar.php:823
+#: includes/classes.php:172 index.php:245
+msgid "Friday"
+msgstr ""
+
+#: display/calendar.php:74 includes/admin.php:259 includes/calendar.php:140
+#: includes/calendar.php:624 includes/calendar.php:823
+#: includes/classes.php:172 index.php:245
+msgid "Saturday"
+msgstr ""
+
+#: display/rota.php:16 includes/rota.php:173 includes/rota.php:321
+#: includes/rota.php:483
+msgid "Which Service?"
+msgstr ""
+
+#: display/rota.php:19
+msgid "on"
+msgstr ""
+
+#: display/rota.php:19
+msgid "at"
+msgstr ""
+
+#: display/rota.php:22 includes/rota.php:179 includes/rota.php:327
+#: includes/rota.php:489
+msgid "Choose service"
+msgstr ""
+
+#: display/rota.php:33
+#, php-format
+msgid "Who is doing what at the next %1$s on %2$s at the %3$s"
+msgstr ""
+
+#: display/rota.php:34
+msgid "PDF Version of the rota for next 3 months"
+msgstr "PDF Version of the roster for next 3 months"
+
+#: display/rota.php:35
+msgid "Spreadsheet Version of the rota for next 3 months"
+msgstr "Spreadsheet Version of the roster for next 3 months"
+
+#: display/rota.php:55 includes/json.php:140 includes/json.php:171
+#: includes/rota.php:259
+msgid "No one is doing anything yet"
+msgstr ""
+
+#: display/sermon-podcast.php:18
+msgid "Show all sermons"
+msgstr ""
+
+#: display/sermon-podcast.php:30
+msgid "Filter by preacher"
+msgstr ""
+
+#: display/sermon-podcast.php:45
+msgid "Filter by series"
+msgstr ""
+
+#: includes/admin.php:33 includes/admin.php:326
+msgid "People"
+msgstr ""
+
+#: includes/admin.php:37 includes/admin.php:247 includes/permissions.php:157
+msgid "Rota"
+msgstr "Roster"
+
+#: includes/admin.php:58 includes/admin.php:328
+msgid "Attendance Tracking"
+msgstr ""
+
+#: includes/admin.php:59
+msgid "Add service attendance"
+msgstr ""
+
+#: includes/admin.php:60
+msgid "Individual Attendance"
+msgstr ""
+
+#: includes/admin.php:62
+#, php-format
+msgid "Attendance list for %1$s on %2$s at %3$s"
+msgstr ""
+
+#: includes/admin.php:87
+msgid "Clear activation errors log"
+msgstr ""
+
+#: includes/admin.php:90
+msgid "Services"
+msgstr ""
+
+#: includes/admin.php:91
+msgid "Add a service"
+msgstr ""
+
+#: includes/admin.php:98
+msgid "Backup"
+msgstr ""
+
+#: includes/admin.php:182
+msgid "Birthdays"
+msgstr ""
+
+#: includes/admin.php:193
+msgid "List Sermon Series"
+msgstr ""
+
+#: includes/admin.php:194
+msgid "iTunes Compatible RSS Settings"
+msgstr ""
+
+#: includes/admin.php:207
+msgid "Kids Work"
+msgstr ""
+
+#: includes/admin.php:211 includes/directory.php:522
+#: includes/directory.php:659 includes/directory.php:663
+#: includes/pdf_creator.php:1022 includes/sms.php:220
+msgid "Hope Team"
+msgstr ""
+
+#: includes/admin.php:231
+msgid "Select a service rota"
+msgstr ""
+
+#: includes/admin.php:232 includes/admin.php:267
+msgid "Choose a service"
+msgstr ""
+
+#: includes/admin.php:235 includes/admin.php:279 includes/attendance.php:52
+#: includes/attendance.php:243 includes/rota.php:324
+#, php-format
+msgid "%1$s on %2$s at %3$s"
+msgstr ""
+
+#: includes/admin.php:237
+msgid "Select"
+msgstr ""
+
+#: includes/admin.php:242
+msgid "View service rota"
+msgstr ""
+
+#: includes/admin.php:244
+msgid "View/Edit Rota Jobs"
+msgstr "View/Edit Roster Jobs"
+
+#: includes/admin.php:245
+msgid "Add more rota jobs"
+msgstr "Add more roster jobs"
+
+#: includes/admin.php:246
+msgid "Add dates to rota"
+msgstr ""
+
+#: includes/admin.php:249
+#, php-format
+msgid ""
+"This weeks rotas are automatically emailed on %1$s, when your website is "
+"first accessed that day."
+msgstr ""
+
+#: includes/admin.php:251
+msgid "Automatically email current week's rota"
+msgstr ""
+
+#: includes/admin.php:253
+msgid "No Auto Send"
+msgstr ""
+
+#: includes/admin.php:266
+msgid "Email out service rota"
+msgstr ""
+
+#: includes/admin.php:270
+#, php-format
+msgid "%1$s on %2$s at %3$s "
+msgstr ""
+
+#: includes/admin.php:272
+msgid "Send service rota"
+msgstr ""
+
+#: includes/admin.php:274
+msgid "Horizontal Rota PDF"
+msgstr ""
+
+#: includes/admin.php:274
+msgid "Select Service"
+msgstr ""
+
+#: includes/admin.php:285 includes/rota_settings.php:125
+msgid "Initials?"
+msgstr ""
+
+#: includes/admin.php:289
+msgid "Create PDF"
+msgstr ""
+
+#: includes/admin.php:302
+msgid "Download a small group PDF"
+msgstr ""
+
+#: includes/admin.php:308
+msgid "Download"
+msgstr ""
+
+#: includes/admin.php:314
+msgid "Send Bulk SMS"
+msgstr ""
+
+#: includes/admin.php:315
+msgid "Send Bulk Email"
+msgstr ""
+
+#: includes/admin.php:316
+msgid "Sync Mailchimp Account"
+msgstr ""
+
+#: includes/admin.php:329 includes/classes.php:6
+msgid "Classes"
+msgstr ""
+
+#: includes/admin.php:330 includes/admin.php:400
+msgid "Follow Up"
+msgstr ""
+
+#: includes/admin.php:331 includes/people_activity.php:13
+msgid "Recent People Activity"
+msgstr ""
+
+#: includes/admin.php:332 includes/admin.php:395
+msgid "Member Types"
+msgstr ""
+
+#: includes/admin.php:337 includes/admin.php:367 includes/email.php:88
+#: includes/sms.php:14
+msgid "Add a Household"
+msgstr ""
+
+#: includes/admin.php:338
+msgid "Add a new person (not connected to a current household)"
+msgstr ""
+
+#: includes/admin.php:346
+msgid "Select a directory to view"
+msgstr ""
+
+#: includes/admin.php:347 includes/directory.php:17
+msgid "Choose Member Type..."
+msgstr ""
+
+#: includes/admin.php:354
+msgid "Download an address list PDF"
+msgstr ""
+
+#: includes/admin.php:363
+msgid "Address List PDF"
+msgstr ""
+
+#: includes/admin.php:367
+msgid "Add a new person in a new household"
+msgstr ""
+
+#: includes/admin.php:369
+msgid "Download an csv of people"
+msgstr ""
+
+#: includes/admin.php:396
+msgid "Add a member Type"
+msgstr ""
+
+#: includes/attendance.php:53
+msgid "Attendance List for"
+msgstr ""
+
+#: includes/attendance.php:54 includes/attendance.php:234
+msgid "Add attendance"
+msgstr ""
+
+#: includes/attendance.php:60 includes/attendance.php:63
+#: includes/calendar.php:21 includes/calendar.php:24 includes/calendar.php:209
+#: includes/calendar.php:215 includes/calendar.php:775 includes/classes.php:12
+#: includes/classes.php:16 includes/departments.php:9
+#: includes/departments.php:12 includes/directory.php:659
+#: includes/directory.php:663 includes/directory.php:713
+#: includes/directory.php:1006 includes/directory.php:1023
+#: includes/facilities.php:30 includes/funnel.php:13 includes/funnel.php:18
+#: includes/funnel.php:36 includes/kidswork.php:17 includes/kidswork.php:20
+#: includes/member_type.php:17 includes/member_type.php:21
+#: includes/member_type.php:108 includes/people_activity.php:46
+#: includes/people_activity.php:64 includes/rota.php:203 includes/rota.php:235
+#: includes/rota_settings.php:125 includes/services.php:6
+msgid "Edit"
+msgstr ""
+
+#: includes/attendance.php:60 includes/attendance.php:64
+#: includes/calendar.php:21 includes/calendar.php:26 includes/calendar.php:209
+#: includes/calendar.php:216 includes/classes.php:12 includes/classes.php:17
+#: includes/classes.php:301 includes/departments.php:9
+#: includes/departments.php:13 includes/directory.php:75
+#: includes/directory.php:98 includes/directory.php:659
+#: includes/directory.php:663 includes/directory.php:713
+#: includes/directory.php:964 includes/directory.php:1006
+#: includes/directory.php:1023 includes/email.php:47 includes/funnel.php:13
+#: includes/funnel.php:19 includes/kidswork.php:17 includes/kidswork.php:21
+#: includes/member_type.php:17 includes/member_type.php:25
+#: includes/people_activity.php:46 includes/people_activity.php:65
+#: includes/rota.php:203 includes/rota.php:235 includes/rota_settings.php:125
+#: includes/sermon-podcast.php:466 includes/sermon-podcast.php:475
+#: includes/services.php:6
+msgid "Delete"
+msgstr ""
+
+#: includes/attendance.php:60 includes/attendance.php:145
+#: includes/birthdays.php:47 includes/classes.php:298
+#: includes/directory.php:1006 includes/email.php:47
+#: includes/individual_attendance.php:86 includes/pdf_creator.php:681
+#: includes/recent.php:12 includes/rota.php:203 includes/rota.php:514
+msgid "Date"
+msgstr ""
+
+#: includes/attendance.php:60 includes/attendance.php:156
+msgid "Adults"
+msgstr ""
+
+#: includes/attendance.php:60 includes/attendance.php:160
+msgid "Children"
+msgstr ""
+
+#: includes/attendance.php:60
+msgid "Total"
+msgstr ""
+
+#: includes/attendance.php:110
+msgid "Attendance added"
+msgstr ""
+
+#: includes/attendance.php:121 includes/permissions.php:193
+#: includes/small_groups.php:26
+msgid "Attendance"
+msgstr ""
+
+#: includes/attendance.php:125 includes/permissions.php:211
+#: includes/sermon-podcast.php:368
+msgid "Service"
+msgstr ""
+
+#: includes/attendance.php:163
+msgid "Add attendance for that date"
+msgstr ""
+
+#: includes/attendance.php:175
+msgid "Attendance record deleted"
+msgstr ""
+
+#: includes/attendance.php:191 includes/calendar.php:98
+msgid "Month"
+msgstr ""
+
+#: includes/attendance.php:230
+msgid "No attendance recorded yet"
+msgstr ""
+
+#: includes/attendance.php:233
+msgid "Attendance Figures"
+msgstr ""
+
+#: includes/attendance.php:244
+#, php-format
+msgid "View attendance table for %1$s  %2$s"
+msgstr ""
+
+#: includes/attendance.php:244
+#, php-format
+msgid "Edit week by week attendance for %1$s %2$s"
+msgstr ""
+
+#: includes/attendance.php:247
+msgid "Attendance Adults,Children (Total)"
+msgstr ""
+
+#: includes/attendance.php:248
+msgid "Total Attendance for"
+msgstr ""
+
+#: includes/attendance.php:249
+msgid "Adults Attendance for"
+msgstr ""
+
+#: includes/attendance.php:250
+msgid "Children Attendance for"
+msgstr ""
+
+#: includes/birthdays.php:43
+#, php-format
+msgid "Birthdays within the next %1$s  days"
+msgstr ""
+
+#: includes/birthdays.php:47 includes/classes.php:298
+#: includes/directory.php:659 includes/directory.php:663
+#: includes/people_activity.php:46 includes/recent.php:12
+#: includes/small_groups.php:26
+msgid "Name"
+msgstr ""
+
+#: includes/birthdays.php:125 includes/calendar_widget.php:29
+#: includes/sermon-podcast.php:698
+msgid "Title"
+msgstr ""
+
+#: includes/birthdays.php:127
+msgid "Which Member Types?"
+msgstr ""
+
+#: includes/birthdays.php:145
+msgid "How many days to show"
+msgstr ""
+
+#: includes/calendar.php:14
+msgid "Use this section to organise facilities like rooms, video projectors"
+msgstr ""
+
+#: includes/calendar.php:15
+msgid "Add Facility"
+msgstr ""
+
+#: includes/calendar.php:20
+msgid ""
+"Facilities can be sorted by drag and drop, for use in other parts of the "
+"plugin"
+msgstr ""
+
+#: includes/calendar.php:21 includes/facilities.php:31
+#: includes/facilities.php:32
+msgid "Facility"
+msgstr ""
+
+#: includes/calendar.php:21
+msgid "Facility Shortcode"
+msgstr ""
+
+#: includes/calendar.php:55
+msgid "Choose facility"
+msgstr ""
+
+#: includes/calendar.php:209 includes/calendar.php:576
+#: includes/calendar.php:766 includes/classes.php:213
+msgid "Category"
+msgstr ""
+
+#: includes/calendar.php:209
+msgid "Shortcode"
+msgstr ""
+
+#: includes/calendar.php:221
+msgid "Calendar Categories"
+msgstr ""
+
+#: includes/calendar.php:221
+msgid "Add a category"
+msgstr ""
+
+#: includes/calendar.php:234
+msgid "Category Added"
+msgstr ""
+
+#: includes/calendar.php:240 includes/calendar.php:242
+msgid "Add Category"
+msgstr ""
+
+#: includes/calendar.php:257
+msgid "Category Deleted"
+msgstr ""
+
+#: includes/calendar.php:258
+#, php-format
+msgid "Please note that %1$s event used that category and will need editing"
+msgstr ""
+
+#: includes/calendar.php:259
+#, php-format
+msgid "Please note that %1$s events used that category and will need editing"
+msgstr ""
+
+#: includes/calendar.php:273
+msgid "Category Edited"
+msgstr ""
+
+#: includes/calendar.php:279 includes/calendar.php:283
+msgid "Edit Category"
+msgstr ""
+
+#: includes/calendar.php:301
+msgid "Category Name"
+msgstr ""
+
+#: includes/calendar.php:304
+msgid "Background Colour"
+msgstr ""
+
+#: includes/calendar.php:314 includes/permissions.php:181
+msgid "Calendar"
+msgstr ""
+
+#: includes/calendar.php:314
+msgid "Category List"
+msgstr ""
+
+#: includes/calendar.php:451
+msgid "Date(s) saved"
+msgstr ""
+
+#: includes/calendar.php:453
+msgid "Date(s) already saved"
+msgstr ""
+
+#: includes/calendar.php:472
+msgid "Delete this series event"
+msgstr ""
+
+#: includes/calendar.php:475
+msgid "Delete this single event"
+msgstr ""
+
+#: includes/calendar.php:477
+msgid "Save Event"
+msgstr ""
+
+#: includes/calendar.php:524
+msgid "Event Title"
+msgstr ""
+
+#: includes/calendar.php:528 includes/directory.php:422
+msgid "Photo"
+msgstr ""
+
+#: includes/calendar.php:541
+msgid "Event Description"
+msgstr ""
+
+#: includes/calendar.php:546
+msgid "Event Location"
+msgstr ""
+
+#: includes/calendar.php:552
+msgid "Facility/Room"
+msgstr ""
+
+#: includes/calendar.php:567
+msgid "N/A"
+msgstr ""
+
+#: includes/calendar.php:580 includes/classes.php:216
+msgid "Please select"
+msgstr ""
+
+#: includes/calendar.php:598
+msgid "Start Date"
+msgstr ""
+
+#: includes/calendar.php:611 includes/classes.php:160
+msgid "Recurring"
+msgstr ""
+
+#: includes/calendar.php:616 includes/calendar.php:619 includes/classes.php:23
+#: includes/classes.php:164 includes/classes.php:167
+msgid "Once"
+msgstr ""
+
+#: includes/calendar.php:616 includes/calendar.php:619 includes/classes.php:24
+#: includes/classes.php:164 includes/classes.php:167
+msgid "Daily"
+msgstr ""
+
+#: includes/calendar.php:616 includes/calendar.php:619 includes/classes.php:25
+#: includes/classes.php:164 includes/classes.php:167
+msgid "Weekly"
+msgstr ""
+
+#: includes/calendar.php:616 includes/classes.php:164
+msgid "nth day eg.1st Friday"
+msgstr ""
+
+#: includes/calendar.php:616 includes/classes.php:27 includes/classes.php:164
+msgid "Monthly"
+msgstr ""
+
+#: includes/calendar.php:616 includes/calendar.php:619 includes/classes.php:28
+#: includes/classes.php:164 includes/classes.php:167
+msgid "Annually"
+msgstr ""
+
+#: includes/calendar.php:619 includes/classes.php:167
+msgid "Fortnightly"
+msgstr ""
+
+#: includes/calendar.php:619 includes/classes.php:167
+msgid "nth day (eg 1st Friday)"
+msgstr ""
+
+#: includes/calendar.php:619 includes/classes.php:167
+msgid "Monthly on same date"
+msgstr ""
+
+#: includes/calendar.php:621 includes/classes.php:170
+msgid "Recurring on"
+msgstr ""
+
+#: includes/calendar.php:624 includes/classes.php:172
+msgid "1st"
+msgstr ""
+
+#: includes/calendar.php:624 includes/classes.php:172
+msgid "2nd"
+msgstr ""
+
+#: includes/calendar.php:624 includes/classes.php:172
+msgid "3rd"
+msgstr ""
+
+#: includes/calendar.php:624 includes/classes.php:172
+msgid "4th"
+msgstr ""
+
+#: includes/calendar.php:628 includes/classes.php:207
+msgid "How many times in all?"
+msgstr ""
+
+#: includes/calendar.php:640 includes/classes.php:234
+msgid "Start Time of form HH:MM"
+msgstr ""
+
+#: includes/calendar.php:644 includes/classes.php:237
+msgid "End Time of form HH:MM"
+msgstr ""
+
+#: includes/calendar.php:648
+msgid "Appear on Year Planner?"
+msgstr ""
+
+#: includes/calendar.php:651
+msgid "Appear on General Calendar?"
+msgstr ""
+
+#: includes/calendar.php:668 includes/calendar.php:681
+msgid "Calendar Events deleted"
+msgstr ""
+
+#: includes/calendar.php:743
+msgid "Add calendar Event"
+msgstr ""
+
+#: includes/calendar.php:755
+msgid "Prev"
+msgstr ""
+
+#: includes/calendar.php:755
+msgid "Next"
+msgstr ""
+
+#: includes/calendar.php:764
+msgid "Go to date"
+msgstr ""
+
+#: includes/calendar.php:766
+msgid "Single Edit"
+msgstr ""
+
+#: includes/calendar.php:766
+msgid "Series Edit"
+msgstr ""
+
+#: includes/calendar.php:766
+msgid "Single Delete"
+msgstr ""
+
+#: includes/calendar.php:766
+msgid "Series Delete"
+msgstr ""
+
+#: includes/calendar.php:766
+msgid "Start date"
+msgstr ""
+
+#: includes/calendar.php:766
+msgid "Start Time"
+msgstr ""
+
+#: includes/calendar.php:766
+msgid "End Time"
+msgstr ""
+
+#: includes/calendar.php:766
+msgid "Event Name"
+msgstr ""
+
+#: includes/calendar.php:766 index.php:817
+msgid "Year Planner"
+msgstr ""
+
+#: includes/calendar.php:776
+msgid "Edit Series"
+msgstr ""
+
+#: includes/calendar.php:777
+msgid "Delete this one"
+msgstr ""
+
+#: includes/calendar.php:779
+msgid "Delete Series"
+msgstr ""
+
+#: includes/calendar.php:784 includes/rota_settings.php:131
+#: includes/sermon-podcast.php:437 includes/services.php:35
+msgid "Yes"
+msgstr ""
+
+#: includes/calendar_widget.php:32
+msgid "Postit Note style"
+msgstr ""
+
+#: includes/calendar_widget.php:35
+msgid "Select a Category"
+msgstr ""
+
+#: includes/calendar_widget.php:45
+msgid "All events"
+msgstr ""
+
+#: includes/calendar_widget.php:48
+msgid "How many events to show"
+msgstr ""
+
+#: includes/classes.php:7
+msgid "Add a class"
+msgstr ""
+
+#: includes/classes.php:12
+msgid "Class Name (Click to view)"
+msgstr ""
+
+#: includes/classes.php:12 includes/classes.php:151
+msgid "Next Start Date"
+msgstr ""
+
+#: includes/classes.php:12
+msgid "Repeat"
+msgstr ""
+
+#: includes/classes.php:26
+msgid "Nth Day"
+msgstr ""
+
+#: includes/classes.php:45
+msgid "Class Deleted"
+msgstr ""
+
+#: includes/classes.php:52
+msgid "Edit Class"
+msgstr ""
+
+#: includes/classes.php:145
+msgid "Class Name"
+msgstr ""
+
+#: includes/classes.php:148
+msgid "Class Description"
+msgstr ""
+
+#: includes/classes.php:210
+msgid "Show on calendar?"
+msgstr ""
+
+#: includes/classes.php:240 includes/classes.php:293
+#: includes/directory.php:1214 includes/hope-team.php:56
+#: includes/hope-team.php:104 includes/individual_attendance.php:99
+#: includes/permissions.php:221 includes/rota.php:437
+msgid "Save"
+msgstr ""
+
+#: includes/classes.php:289
+msgid "Add people on the class"
+msgstr ""
+
+#: includes/classes.php:290
+msgid "Add people who have completed it"
+msgstr ""
+
+#: includes/classes.php:302
+msgid "Completed"
+msgstr ""
+
+#: includes/classes.php:307
+msgid "No one has done that class yet"
+msgstr ""
+
+#: includes/communication_settings.php:75
+#: includes/communication_settings.php:96
+msgid "PDF Instructions for email cron setup"
+msgstr ""
+
+#: includes/communication_settings.php:95
+msgid "Settings Updated"
+msgstr ""
+
+#: includes/communication_settings.php:103
+msgid "General Settings"
+msgstr ""
+
+#: includes/communication_settings.php:104
+msgid "Directory Records per page"
+msgstr ""
+
+#: includes/communication_settings.php:106
+msgid "Calendar width in pixels"
+msgstr ""
+
+#: includes/communication_settings.php:107
+msgid "PDF Page Size"
+msgstr ""
+
+#: includes/communication_settings.php:116
+msgid "Email template header image url"
+msgstr ""
+
+#: includes/communication_settings.php:118
+msgid "Facebook page URL"
+msgstr ""
+
+#: includes/communication_settings.php:119
+msgid "Twitter Username"
+msgstr ""
+
+#: includes/communication_settings.php:120
+msgid "Feedburner uri"
+msgstr ""
+
+#: includes/communication_settings.php:149 index.php:506 index.php:528
+msgid "Permissions"
+msgstr ""
+
+#: includes/communication_settings.php:152
+msgid "Set Levels for plugin functions"
+msgstr ""
+
+#: includes/communication_settings.php:161
+msgid "Email Settings"
+msgstr ""
+
+#: includes/communication_settings.php:163
+msgid ""
+"Emails can be sent immediately or in batches. If you are on a shared host, "
+"many hosts limit how many email you are allowed to send an hour. Typically "
+"that can be as little as 100. Please choose the appropriate option for your "
+"setup."
+msgstr ""
+
+#: includes/communication_settings.php:165
+msgid "Send Emails Immediately"
+msgstr ""
+
+#: includes/communication_settings.php:167
+msgid "Or if on a share host, please setup queueing below"
+msgstr ""
+
+#: includes/communication_settings.php:168
+msgid "Max emails per hour? (required)"
+msgstr ""
+
+#: includes/communication_settings.php:170
+msgid "I want to use wp-cron:"
+msgstr ""
+
+#: includes/communication_settings.php:173
+msgid ""
+"Use wordpress email function (leave settings below blank) or set up an smtp "
+"server"
+msgstr ""
+
+#: includes/communication_settings.php:175
+msgid "SMTP host"
+msgstr ""
+
+#: includes/communication_settings.php:176
+msgid "SMTP username"
+msgstr ""
+
+#: includes/communication_settings.php:177
+msgid "SMTP password"
+msgstr ""
+
+#: includes/communication_settings.php:178
+msgid "SMTP port"
+msgstr ""
+
+#: includes/communication_settings.php:179
+msgid "SMTP ssl?"
+msgstr ""
+
+#: includes/communication_settings.php:183
+msgid "Bulk SMS Settings"
+msgstr ""
+
+#: includes/communication_settings.php:184
+msgid "Set up an account with"
+msgstr ""
+
+#: includes/communication_settings.php:184
+msgid "Prices start at 3.9p (GBP) per sms"
+msgstr ""
+
+#: includes/communication_settings.php:185
+msgid "Once you have registered fill out the form below"
+msgstr ""
+
+#: includes/communication_settings.php:191
+msgid "SMS username"
+msgstr ""
+
+#: includes/communication_settings.php:192
+msgid "SMS password"
+msgstr ""
+
+#: includes/communication_settings.php:193
+msgid "SMS reply eg:447777123456"
+msgstr ""
+
+#: includes/communication_settings.php:194
+msgid "Country code eg 44"
+msgstr ""
+
+#: includes/communication_settings.php:195
+msgid "Save Settings"
+msgstr ""
+
+#: includes/departments.php:6
+msgid "Add a ministry"
+msgstr ""
+
+#: includes/departments.php:6
+msgid "Ministries PDF"
+msgstr ""
+
+#: includes/departments.php:9
+msgid "Ministry (Click to view people)"
+msgstr ""
+
+#: includes/departments.php:9 includes/departments.php:135
+msgid "Ministry"
+msgstr ""
+
+#: includes/departments.php:13
+msgid "Can't be deleted"
+msgstr ""
+
+#: includes/departments.php:14
+msgid "View people doing that ministry"
+msgstr ""
+
+#: includes/departments.php:25
+msgid "Ministry List"
+msgstr ""
+
+#: includes/departments.php:66
+#, php-format
+msgid "Viewing who is in \"%1s\" ministry"
+msgstr ""
+
+#: includes/departments.php:69
+msgid "Remove"
+msgstr ""
+
+#: includes/departments.php:69
+msgid "Person"
+msgstr ""
+
+#: includes/departments.php:78 includes/departments.php:134
+msgid "Update"
+msgstr ""
+
+#: includes/departments.php:102
+msgid "Ministries Deleted"
+msgstr ""
+
+#: includes/departments.php:115 includes/departments.php:122
+msgid "Ministries Updated"
+msgstr ""
+
+#: includes/departments.php:126
+msgid "Ministries Unchanged"
+msgstr ""
+
+#: includes/departments.php:134 includes/facilities.php:30
+#: includes/funnel.php:36 includes/member_type.php:108
+msgid "Add"
+msgstr ""
+
+#: includes/departments.php:137
+msgid "Ministry Name"
+msgstr ""
+
+#: includes/departments.php:140
+msgid "Save Ministry"
+msgstr ""
+
+#: includes/directory.php:16
+msgid "Select different address list to view"
+msgstr ""
+
+#: includes/directory.php:68
+msgid "address list"
+msgstr ""
+
+#: includes/directory.php:75 includes/directory.php:964
+msgid "Last name"
+msgstr ""
+
+#: includes/directory.php:75 includes/directory.php:964
+msgid "First Name(s)"
+msgstr ""
+
+#: includes/directory.php:75 includes/directory.php:613
+#: includes/directory.php:964 includes/directory.php:1208
+#: includes/people_activity.php:163 includes/recent.php:12
+#: includes/services.php:6 includes/small_groups.php:197
+msgid "Address"
+msgstr ""
+
+#: includes/directory.php:75 includes/directory.php:964
+msgid "Last Update"
+msgstr ""
+
+#: includes/directory.php:89
+msgid "Add Surname"
+msgstr ""
+
+#: includes/directory.php:90
+msgid "Add Firstname"
+msgstr ""
+
+#: includes/directory.php:95
+msgid "Add Name"
+msgstr ""
+
+#: includes/directory.php:99
+msgid "Add Address"
+msgstr ""
+
+#: includes/directory.php:149
+msgid "Address saved"
+msgstr ""
+
+#: includes/directory.php:149 includes/directory.php:154
+#: includes/directory.php:397
+msgid "Back to Directory"
+msgstr ""
+
+#: includes/directory.php:153
+msgid "Household Edited"
+msgstr ""
+
+#: includes/directory.php:173 includes/front_end_register.php:91
+#: includes/people_activity.php:166 includes/recent.php:12
+msgid "Phone"
+msgstr ""
+
+#: includes/directory.php:177
+msgid "Save Address"
+msgstr ""
+
+#: includes/directory.php:194
+msgid "Household Deleted"
+msgstr ""
+
+#: includes/directory.php:396
+msgid "Person Edited"
+msgstr ""
+
+#: includes/directory.php:410 includes/directory.php:1201
+#: includes/front_end_register.php:75
+msgid "First Name"
+msgstr ""
+
+#: includes/directory.php:414 includes/front_end_register.php:76
+msgid "Prefix (e.g.van der)"
+msgstr ""
+
+#: includes/directory.php:418 includes/directory.php:1202
+#: includes/front_end_register.php:77
+msgid "Last Name"
+msgstr ""
+
+#: includes/directory.php:436 includes/directory.php:1205
+msgid "Email Address"
+msgstr ""
+
+#: includes/directory.php:440 includes/directory.php:659
+#: includes/directory.php:663 includes/directory.php:1206
+#: includes/front_end_register.php:78 includes/people_activity.php:46
+#: includes/people_activity.php:165 includes/recent.php:12
+#: includes/small_groups.php:26
+msgid "Mobile"
+msgstr ""
+
+#: includes/directory.php:445 includes/directory.php:1203
+#: includes/front_end_register.php:84
+msgid "Gender"
+msgstr ""
+
+#: includes/directory.php:449
+msgid "Age Range"
+msgstr ""
+
+#: includes/directory.php:458 includes/directory.php:1204
+msgid "Date of Birth"
+msgstr ""
+
+#: includes/directory.php:473
+msgid "Override kids work group"
+msgstr ""
+
+#: includes/directory.php:474
+msgid "Assign by age automatically"
+msgstr ""
+
+#: includes/directory.php:478
+msgid "Current Member Type"
+msgstr ""
+
+#: includes/directory.php:493
+msgid "Dates of Member Levels"
+msgstr ""
+
+#: includes/directory.php:505 includes/directory.php:659
+#: includes/directory.php:663 includes/pdf_creator.php:967
+#: includes/pdf_creator.php:980
+msgid "Ministries"
+msgstr ""
+
+#: includes/directory.php:520
+msgid "Add a new ministry"
+msgstr ""
+
+#: includes/directory.php:539 includes/directory.php:1209
+msgid "Small Group"
+msgstr ""
+
+#: includes/directory.php:553
+msgid "Small group attendance"
+msgstr ""
+
+#: includes/directory.php:553 includes/pdf_creator.php:135
+msgid "Regular"
+msgstr ""
+
+#: includes/directory.php:553 includes/pdf_creator.php:150
+msgid "Irregular"
+msgstr ""
+
+#: includes/directory.php:553 includes/pdf_creator.php:166
+msgid "Connected"
+msgstr ""
+
+#: includes/directory.php:559
+msgid "Wordpress User"
+msgstr ""
+
+#: includes/directory.php:579 includes/permissions.php:216
+msgid "Prayer Chain"
+msgstr ""
+
+#: includes/directory.php:583
+msgid "Save Details"
+msgstr ""
+
+#: includes/directory.php:594
+msgid "Person Deleted"
+msgstr ""
+
+#: includes/directory.php:605
+msgid "There were some errors marked in red"
+msgstr ""
+
+#: includes/directory.php:619 includes/small_groups.php:200
+msgid "Please click here to update map location"
+msgstr ""
+
+#: includes/directory.php:655 includes/directory.php:770
+msgid "Add someone"
+msgstr ""
+
+#: includes/directory.php:656
+msgid "You can drag and drop to sort people display order"
+msgstr ""
+
+#: includes/directory.php:659 includes/directory.php:663
+msgid "Picture"
+msgstr ""
+
+#: includes/directory.php:659 includes/directory.php:663
+msgid "Sex"
+msgstr ""
+
+#: includes/directory.php:659 includes/directory.php:663
+#: includes/front_end_register.php:79
+msgid "Person type"
+msgstr ""
+
+#: includes/directory.php:659 includes/directory.php:663
+#: includes/people_activity.php:46
+msgid "Member Level"
+msgstr ""
+
+#: includes/directory.php:659 includes/directory.php:663
+#: includes/front_end_register.php:82 includes/people_activity.php:46
+#: includes/people_activity.php:164 includes/recent.php:12
+#: includes/small_groups.php:26
+msgid "Email"
+msgstr ""
+
+#: includes/directory.php:659
+msgid "Move to different household"
+msgstr ""
+
+#: includes/directory.php:659
+msgid "WP user"
+msgstr ""
+
+#: includes/directory.php:702
+msgid "Create WP User"
+msgstr ""
+
+#: includes/directory.php:769
+msgid "There are no people stored in that household yet"
+msgstr ""
+
+#: includes/directory.php:773
+msgid "Homephone"
+msgstr ""
+
+#: includes/directory.php:774
+msgid "Edit Address"
+msgstr "Edit Address"
+
+#: includes/directory.php:779
+msgid "No Household found"
+msgstr ""
+
+#: includes/directory.php:803
+msgid "Wordpress Users migrated"
+msgstr ""
+
+#: includes/directory.php:840
+msgid "People Functions"
+msgstr ""
+
+#: includes/directory.php:879
+msgid "That people record doesn't exist"
+msgstr ""
+
+#: includes/directory.php:886
+msgid "User already created"
+msgstr ""
+
+#: includes/directory.php:892
+msgid "User updated"
+msgstr ""
+
+#: includes/directory.php:907
+msgid "The web team at"
+msgstr ""
+
+#: includes/directory.php:907
+msgid "have just created a user login for you"
+msgstr ""
+
+#: includes/directory.php:908
+msgid "Your username is"
+msgstr ""
+
+#: includes/directory.php:909
+msgid "Your password is"
+msgstr ""
+
+#: includes/directory.php:910
+msgid "User created with username"
+msgstr ""
+
+#: includes/directory.php:910
+msgid "password"
+msgstr ""
+
+#: includes/directory.php:910
+msgid "and this message was queued to them"
+msgstr ""
+
+#: includes/directory.php:916
+msgid "Email sent successfully"
+msgstr ""
+
+#: includes/directory.php:920
+msgid "Email NOT sent successfully"
+msgstr ""
+
+#: includes/directory.php:964
+msgid "Address List Results"
+msgstr ""
+
+#: includes/directory.php:985
+msgid "Delete Household"
+msgstr ""
+
+#: includes/directory.php:1086 includes/install.php:820
+msgid "Male"
+msgstr ""
+
+#: includes/directory.php:1086 includes/install.php:820
+msgid "Female"
+msgstr ""
+
+#: includes/directory.php:1195
+msgid "Your Header"
+msgstr ""
+
+#: includes/directory.php:1195
+msgid "Maps to"
+msgstr ""
+
+#: includes/directory.php:1200
+msgid "Unused"
+msgstr ""
+
+#: includes/directory.php:1207
+msgid "Home phone"
+msgstr ""
+
+#: includes/directory.php:1210 includes/member_type.php:109
+#: includes/member_type.php:110 includes/permissions.php:199
+msgid "Member Type"
+msgstr ""
+
+#: includes/email.php:12
+msgid "Email deleted"
+msgstr ""
+
+#: includes/email.php:47
+msgid "Sent Emails"
+msgstr ""
+
+#: includes/email.php:47 includes/email.php:162
+msgid "Subject"
+msgstr ""
+
+#: includes/email.php:47
+msgid "Excerpt"
+msgstr ""
+
+#: includes/email.php:47
+msgid "Resend"
+msgstr ""
+
+#: includes/email.php:102
+msgid "Processing"
+msgstr ""
+
+#: includes/email.php:112
+msgid "Step 2 check message and choose recipients"
+msgstr ""
+
+#: includes/email.php:150 includes/permissions.php:169
+msgid "Bulk Email"
+msgstr ""
+
+#: includes/email.php:152
+msgid "Step 1 Build Email Message"
+msgstr ""
+
+#: includes/email.php:164
+msgid "Reply to name"
+msgstr ""
+
+#: includes/email.php:166
+msgid "Email address for replies"
+msgstr ""
+
+#: includes/email.php:168 includes/email.php:174 includes/email.php:180
+msgid "Attachment"
+msgstr ""
+
+#: includes/email.php:190
+msgid "All emails are individually addressed"
+msgstr ""
+
+#: includes/email.php:210
+msgid "Choose Latest News posts to add"
+msgstr ""
+
+#: includes/email.php:224
+msgid "Save Email"
+msgstr ""
+
+#: includes/email.php:440
+msgid "Having trouble reading this?"
+msgstr ""
+
+#: includes/email.php:440
+msgid "view in your web browser"
+msgstr ""
+
+#: includes/email.php:494
+msgid "This is how the message will look"
+msgstr ""
+
+#: includes/email.php:496
+msgid "The email will have Dear First Name, when it is sent out"
+msgstr ""
+
+#: includes/email.php:498
+msgid "Please upgrade your browser to display the email!"
+msgstr ""
+
+#: includes/email.php:528 includes/sms.php:170
+msgid "All"
+msgstr ""
+
+#: includes/email.php:534 includes/sms.php:173
+msgid "A Small group"
+msgstr ""
+
+#: includes/email.php:538 includes/sms.php:175
+msgid "Which group"
+msgstr ""
+
+#: includes/email.php:552 includes/sms.php:182
+msgid "Choose individuals"
+msgstr ""
+
+#: includes/email.php:560 includes/sms.php:186
+msgid "Select Person"
+msgstr ""
+
+#: includes/email.php:574 includes/front_end_register.php:90
+#: includes/sms.php:193
+msgid "Add another person"
+msgstr ""
+
+#: includes/email.php:574 includes/front_end_register.php:90
+#: includes/sms.php:193
+msgid "Remove person"
+msgstr ""
+
+#: includes/email.php:580 includes/sms.php:196
+msgid "Everyone in this ministry"
+msgstr ""
+
+#: includes/email.php:588 includes/sms.php:204
+msgid "Select Ministry"
+msgstr ""
+
+#: includes/email.php:600 includes/sms.php:216
+msgid "Add another ministry"
+msgstr ""
+
+#: includes/email.php:605
+msgid "A Hope Team"
+msgstr ""
+
+#: includes/email.php:610
+msgid "Everyone in this Hope Team"
+msgstr ""
+
+#: includes/email.php:616
+msgid "Add another hope team"
+msgstr ""
+
+#: includes/email.php:618
+msgid "Send Email"
+msgstr ""
+
+#: includes/email.php:756 includes/email.php:826 includes/email.php:850
+#: includes/rota.php:105 index.php:1280
+msgid "Dear"
+msgstr ""
+
+#: includes/email.php:871
+msgid "No email address found for"
+msgstr ""
+
+#: includes/facilities.php:22
+msgid "Facility Updated"
+msgstr ""
+
+#: includes/facilities.php:39
+msgid "Save Facility"
+msgstr ""
+
+#: includes/facilities.php:50
+msgid "Facility Deleted"
+msgstr ""
+
+#: includes/front_end_register.php:63
+msgid "A new household has registered on"
+msgstr ""
+
+#: includes/front_end_register.php:63
+msgid "Please"
+msgstr ""
+
+#: includes/front_end_register.php:63
+msgid "check them out"
+msgstr ""
+
+#: includes/front_end_register.php:65
+msgid "New site registration"
+msgstr ""
+
+#: includes/front_end_register.php:67
+msgid "Thank you for registering on the site"
+msgstr ""
+
+#: includes/front_end_register.php:71
+msgid "Registration"
+msgstr ""
+
+#: includes/front_end_register.php:97
+msgid "To prevent automated registration"
+msgstr ""
+
+#: includes/front_end_register.php:98
+msgid "Register"
+msgstr ""
+
+#: includes/funnel.php:7
+msgid "Add a follow up funnel"
+msgstr ""
+
+#: includes/funnel.php:13
+msgid "Funnel"
+msgstr ""
+
+#: includes/funnel.php:13
+msgid "Applies to"
+msgstr ""
+
+#: includes/funnel.php:13
+msgid "Ministry Responsible"
+msgstr ""
+
+#: includes/funnel.php:37
+msgid "Follow Up Funnel"
+msgstr ""
+
+#: includes/funnel.php:42
+msgid "Or add a new department"
+msgstr ""
+
+#: includes/funnel.php:61
+msgid "Funnel Updated"
+msgstr ""
+
+#: includes/funnel.php:69
+msgid "Funnel Action"
+msgstr ""
+
+#: includes/funnel.php:73
+msgid "Link to Member Type"
+msgstr ""
+
+#: includes/funnel.php:74
+msgid "Please select member type"
+msgstr ""
+
+#: includes/funnel.php:82
+msgid "Ministry responsible for action"
+msgstr ""
+
+#: includes/funnel.php:89
+msgid "Or create a new ministry"
+msgstr ""
+
+#: includes/funnel.php:89
+msgid "Or add a new ministry"
+msgstr ""
+
+#: includes/funnel.php:91
+msgid "Save Follow Up Funnel"
+msgstr ""
+
+#: includes/hope-team.php:53
+msgid "Job Name?"
+msgstr ""
+
+#: includes/hope-team.php:95
+msgid "Who?"
+msgstr ""
+
+#: includes/individual_attendance.php:16
+msgid "Individual attendance"
+msgstr ""
+
+#: includes/individual_attendance.php:60
+msgid "Attendance Updated"
+msgstr ""
+
+#: includes/individual_attendance.php:87
+msgid "Which Meeting"
+msgstr ""
+
+#: includes/individual_attendance.php:98
+msgid "Comma Separated Visitors"
+msgstr ""
+
+#: includes/install.php:118
+msgid "Adult"
+msgstr ""
+
+#: includes/install.php:118
+msgid "Child"
+msgstr ""
+
+#: includes/install.php:119
+msgid "Teenager"
+msgstr ""
+
+#: includes/install.php:307
+msgid "Sunday Service"
+msgstr ""
+
+#: includes/install.php:307
+msgid "Main Venue"
+msgstr ""
+
+#: includes/install.php:733
+msgid "Small Group Leader"
+msgstr ""
+
+#: includes/install.php:733
+msgid "Elder"
+msgstr ""
+
+#: includes/json.php:32
+msgid "No small groups yet"
+msgstr ""
+
+#: includes/kidswork.php:8
+msgid "The dates will go up a year on January 1st automatically."
+msgstr ""
+
+#: includes/kidswork.php:9
+msgid "Kidswork PDF"
+msgstr ""
+
+#: includes/kidswork.php:17 includes/kidswork.php:61
+msgid "Group Name"
+msgstr ""
+
+#: includes/kidswork.php:17 includes/kidswork.php:64
+msgid "Youngest"
+msgstr ""
+
+#: includes/kidswork.php:17 includes/kidswork.php:74
+msgid "Oldest"
+msgstr ""
+
+#: includes/kidswork.php:32
+msgid "Kidswork group deleted"
+msgstr ""
+
+#: includes/kidswork.php:53
+msgid "Kidswork updated"
+msgstr ""
+
+#: includes/kidswork.php:60
+msgid "Add a kids work group"
+msgstr ""
+
+#: includes/kidswork.php:84
+msgid "Led by people from "
+msgstr ""
+
+#: includes/mailchimp.beta.php:7 includes/mailchimp.php:7
+msgid "Mailchimp Integration"
+msgstr ""
+
+#: includes/mailchimp.beta.php:173 includes/mailchimp.php:175
+msgid "Here are the errors for that mailchimp sync"
+msgstr ""
+
+#: includes/mailchimp.beta.php:187 includes/mailchimp.php:189
+msgid ""
+"Sync all your directory contacts, their ministries and member level to a "
+"given list in your Mailchimp account. You will need to enable an api key and "
+"get your list id"
+msgstr ""
+
+#: includes/mailchimp.beta.php:189 includes/mailchimp.php:191
+msgid "Mailchimp API Key"
+msgstr ""
+
+#: includes/mailchimp.beta.php:192 includes/mailchimp.php:194
+msgid "List ID"
+msgstr ""
+
+#: includes/member_type.php:12
+msgid "People reassigned"
+msgstr ""
+
+#: includes/member_type.php:16
+msgid ""
+"Member Types can be sorted by drag and drop, for use in other parts of the "
+"plugin"
+msgstr ""
+
+#: includes/member_type.php:17
+msgid "Type"
+msgstr ""
+
+#: includes/member_type.php:17
+msgid "Reassign"
+msgstr ""
+
+#: includes/member_type.php:30
+msgid "people who are"
+msgstr ""
+
+#: includes/member_type.php:31
+msgid "Reassign people to"
+msgstr ""
+
+#: includes/member_type.php:100
+msgid "Member Type Updated"
+msgstr ""
+
+#: includes/member_type.php:117
+msgid "Save Member Type"
+msgstr ""
+
+#: includes/member_type.php:128
+msgid "Member Type Deleted"
+msgstr ""
+
+#: includes/news-feed.php:20 includes/news-feed.php:30
+msgid "No feed items found to display"
+msgstr ""
+
+#: includes/pdf_creator.php:10
+msgid "How to set up Bulk Email Queuing"
+msgstr ""
+
+#: includes/pdf_creator.php:32
+msgid ""
+"Unfortunately setting up queuing for email using cron is not possible in "
+"Windows servers. Please go back to Communication settings and enable the wp-"
+"cron option for scheduling sending of queued emails"
+msgstr ""
+
+#: includes/pdf_creator.php:103 includes/pdf_creator.php:119
+msgid "Small Group List"
+msgstr ""
+
+#: includes/pdf_creator.php:103 includes/pdf_creator.php:119
+#: includes/pdf_creator.php:1094 includes/pdf_creator.php:1110
+msgid "people"
+msgstr ""
+
+#: includes/pdf_creator.php:199 includes/pdf_creator.php:225
+msgid "Address List"
+msgstr ""
+
+#: includes/pdf_creator.php:751
+#, php-format
+msgid "Who is doing what in %1$s at %2$s on %3$s at %4$s "
+msgstr ""
+
+#: includes/pdf_creator.php:1094 includes/pdf_creator.php:1110
+msgid "Kidswork Group List"
+msgstr ""
+
+#: includes/people_activity.php:14
+msgid "Email newly assigned follow-up activity"
+msgstr ""
+
+#: includes/people_activity.php:46
+msgid "Follow Up Action"
+msgstr ""
+
+#: includes/people_activity.php:46
+msgid "Last Updated"
+msgstr ""
+
+#: includes/people_activity.php:55
+#, php-format
+msgid "%1$s assigned to %2$s on %3$s"
+msgstr ""
+
+#: includes/people_activity.php:56
+#, php-format
+msgid "completed on %1$s"
+msgstr ""
+
+#: includes/people_activity.php:101
+#, php-format
+msgid "Assign %1$s to "
+msgstr ""
+
+#: includes/people_activity.php:102
+msgid "Select someone..."
+msgstr ""
+
+#: includes/people_activity.php:122
+msgid "Couldn't process data"
+msgstr ""
+
+#: includes/people_activity.php:134
+msgid "Follow Up Funnel Assigned"
+msgstr ""
+
+#: includes/people_activity.php:150
+msgid "Follow Up activities emailed to..."
+msgstr ""
+
+#: includes/people_activity.php:158
+msgid "You've been assigned some follow up actions"
+msgstr ""
+
+#: includes/people_activity.php:161
+msgid "assigned on"
+msgstr ""
+
+#: includes/people_activity.php:171
+msgid "You've been assigned some follow up tasks"
+msgstr ""
+
+#: includes/people_activity.php:176
+msgid "Follow Up activities did not need to be emailed"
+msgstr ""
+
+#: includes/permissions.php:16
+msgid ""
+"Please create or connect Wordpress User accounts for people in the directory "
+"first."
+msgstr ""
+
+#: includes/permissions.php:24 includes/permissions.php:110
+msgid "No individual user permissions are stored"
+msgstr ""
+
+#: includes/permissions.php:98
+msgid "Permissions Saved"
+msgstr ""
+
+#: includes/permissions.php:148
+msgid "Who is allowed to do what?"
+msgstr ""
+
+#: includes/permissions.php:151
+msgid "Directory"
+msgstr ""
+
+#: includes/permissions.php:163
+msgid "Bulk SMS"
+msgstr ""
+
+#: includes/permissions.php:175
+msgid "Sermons"
+msgstr ""
+
+#: includes/permissions.php:187
+msgid "Follow Up Funnels"
+msgstr ""
+
+#: includes/permissions.php:205
+msgid "Small groups"
+msgstr ""
+
+#: includes/prayer_chain.php:151
+msgid "Prayer Chain Request"
+msgstr ""
+
+#: includes/prayer_chain.php:165
+msgid "Text Message"
+msgstr ""
+
+#: includes/prayer_chain.php:166
+msgid "And/Or Email version"
+msgstr ""
+
+#: includes/prayer_chain.php:188
+msgid "Send message"
+msgstr ""
+
+#: includes/recent.php:11
+msgid "activity for last"
+msgstr ""
+
+#: includes/recent.php:11
+msgid "month(s)"
+msgstr ""
+
+#: includes/recent.php:12
+msgid "Next Action"
+msgstr ""
+
+#: includes/recent.php:12
+msgid "Assign to"
+msgstr ""
+
+#: includes/rota.php:65 index.php:1247
+msgid "Job"
+msgstr ""
+
+#: includes/rota.php:65 index.php:1247
+msgid "Who"
+msgstr ""
+
+#: includes/rota.php:112 includes/rota.php:117
+msgid "This week's service rota"
+msgstr ""
+
+#: includes/rota.php:132
+msgid ""
+"The email will contain a salutation and the service rota. Please add your "
+"own message"
+msgstr ""
+
+#: includes/rota.php:134
+msgid "Send to rota participants"
+msgstr ""
+
+#: includes/rota.php:199
+#, php-format
+msgid "Rota  for %1$s on %2$s at %3$s at %4$s"
+msgstr ""
+
+#: includes/rota.php:200
+msgid "Click a table cell to edit it"
+msgstr ""
+
+#: includes/rota.php:267
+msgid "Copy rota"
+msgstr ""
+
+#: includes/rota.php:288
+msgid "Rota for "
+msgstr ""
+
+#: includes/rota.php:291
+msgid "Add to rota"
+msgstr "Add to roster"
+
+#: includes/rota.php:297
+msgid "You need to add some rota jobs first"
+msgstr "You need to add some roster jobs first"
+
+#: includes/rota.php:366
+msgid "Rota updated"
+msgstr "Roster Updated"
+
+#: includes/rota.php:453
+msgid "Rota Deleted"
+msgstr "Roster Deleted"
+
+#: includes/rota_settings.php:85
+msgid "Set up Rotas"
+msgstr ""
+
+#: includes/rota_settings.php:85
+msgid "Edit a Rota Job"
+msgstr ""
+
+#: includes/rota_settings.php:88
+msgid "Rota Job"
+msgstr ""
+
+#: includes/rota_settings.php:91
+msgid "Use Autocomplete"
+msgstr ""
+
+#: includes/rota_settings.php:94
+msgid "Use Initials"
+msgstr ""
+
+#: includes/rota_settings.php:97
+msgid "Which Services need this task?"
+msgstr ""
+
+#: includes/rota_settings.php:110
+msgid "Save Rota Job"
+msgstr ""
+
+#: includes/rota_settings.php:125
+msgid "Rota Task"
+msgstr "Roster Task"
+
+#: includes/rota_settings.php:125
+msgid "How chosen"
+msgstr ""
+
+#: includes/rota_settings.php:125
+msgid "Which Services?"
+msgstr ""
+
+#: includes/rota_settings.php:131
+msgid "No"
+msgstr ""
+
+#: includes/sermon-podcast.php:61
+msgid "Series Deleted"
+msgstr ""
+
+#: includes/sermon-podcast.php:108
+msgid "Series Name"
+msgstr ""
+
+#: includes/sermon-podcast.php:111
+msgid "Series Description"
+msgstr ""
+
+#: includes/sermon-podcast.php:115
+msgid "Save Sermon Series"
+msgstr ""
+
+#: includes/sermon-podcast.php:329
+msgid "File Title"
+msgstr ""
+
+#: includes/sermon-podcast.php:332
+msgid "File SubTitle (a few words)"
+msgstr ""
+
+#: includes/sermon-podcast.php:335
+msgid "File Description"
+msgstr ""
+
+#: includes/sermon-podcast.php:339
+msgid "Logged in only"
+msgstr ""
+
+#: includes/sermon-podcast.php:344
+msgid "Choose a sermon series..."
+msgstr ""
+
+#: includes/sermon-podcast.php:345
+msgid "Sermon Series"
+msgstr ""
+
+#: includes/sermon-podcast.php:362
+msgid "Create a new sermon series"
+msgstr ""
+
+#: includes/sermon-podcast.php:384
+msgid "Speaker"
+msgstr ""
+
+#: includes/sermon-podcast.php:394
+msgid "Publication Date"
+msgstr ""
+
+#: includes/sermon-podcast.php:395
+msgid "Mp3 File to Upload"
+msgstr ""
+
+#: includes/sermon-podcast.php:396
+msgid "External Audio mp3 URL"
+msgstr ""
+
+#: includes/sermon-podcast.php:399
+msgid "Transcript to Upload "
+msgstr ""
+
+#: includes/sermon-podcast.php:400 includes/sermon-podcast.php:584
+msgid "Video URL"
+msgstr ""
+
+#: includes/sermon-podcast.php:402 includes/sermon-podcast.php:586
+msgid "Add [VIDEO_URL] to your sermon files template to display"
+msgstr ""
+
+#: includes/sermon-podcast.php:431
+msgid "from"
+msgstr ""
+
+#: includes/sermon-podcast.php:431
+msgid "deleted"
+msgstr ""
+
+#: includes/sermon-podcast.php:436
+#, php-format
+msgid "Are you sure you want to delete %1$s sermon form %2s?"
+msgstr ""
+
+#: includes/sermon-podcast.php:466
+msgid "Unattached Media Files"
+msgstr ""
+
+#: includes/sermon-podcast.php:466
+msgid "Filename"
+msgstr ""
+
+#: includes/sermon-podcast.php:466 includes/sermon-podcast.php:476
+msgid "Add to podcast"
+msgstr ""
+
+#: includes/sermon-podcast.php:700
+msgid "How many sermons to show"
+msgstr ""
+
+#: includes/services.php:6 includes/services.php:69
+msgid "Service Name"
+msgstr ""
+
+#: includes/services.php:6
+msgid "Day"
+msgstr ""
+
+#: includes/services.php:6 includes/small_groups.php:18
+msgid "Venue"
+msgstr ""
+
+#: includes/services.php:29
+msgid "Service deleted"
+msgstr ""
+
+#: includes/services.php:35
+msgid "Are you sure?"
+msgstr ""
+
+#: includes/services.php:61
+msgid "Service saved"
+msgstr ""
+
+#: includes/services.php:80
+msgid "Service Time"
+msgstr ""
+
+#: includes/services.php:83
+msgid "Service Venue"
+msgstr ""
+
+#: includes/services.php:90
+msgid "Save Service"
+msgstr ""
+
+#: includes/small_groups.php:13
+msgid "Who is in"
+msgstr ""
+
+#: includes/small_groups.php:13
+msgid "group"
+msgstr ""
+
+#: includes/small_groups.php:16
+msgid "Leader(s)"
+msgstr ""
+
+#: includes/small_groups.php:17
+msgid "Meeting"
+msgstr ""
+
+#: includes/small_groups.php:46
+msgid "Small Groups"
+msgstr ""
+
+#: includes/small_groups.php:48
+msgid "Add a small group"
+msgstr ""
+
+#: includes/small_groups.php:84
+msgid "Who is in this group?"
+msgstr ""
+
+#: includes/small_groups.php:143
+msgid "Small Group Deleted"
+msgstr ""
+
+#: includes/small_groups.php:174
+msgid "Small Group Edited"
+msgstr ""
+
+#: includes/small_groups.php:183
+msgid "Add/Edit Small Group"
+msgstr ""
+
+#: includes/small_groups.php:184
+msgid "Small group name"
+msgstr ""
+
+#: includes/small_groups.php:187
+msgid "When"
+msgstr ""
+
+#: includes/small_groups.php:206
+msgid "Leader"
+msgstr ""
+
+#: includes/small_groups.php:217
+msgid "Second Leader"
+msgstr ""
+
+#: includes/small_groups.php:226
+msgid "Save Small Group"
+msgstr ""
+
+#: includes/sms.php:166
+msgid "Choose a member type"
+msgstr ""
+
+#: includes/sms.php:222
+msgid "Select Hope Team Job"
+msgstr ""
+
+#: index.php:505 index.php:526
+msgid "Church Admin"
+msgstr ""
+
+#: index.php:507 index.php:527
+msgid "Settings"
+msgstr ""
+
+#: index.php:529
+msgid "Plugin Support"
+msgstr ""
+
+#: index.php:728 index.php:729 index.php:731 index.php:732
+msgid "You do not have permission to do that"
+msgstr ""
+
+#: index.php:786
+msgid "Log out of password protected posts"
+msgstr ""
+
+#: index.php:812
+msgid "Year Planner pdfs"
+msgstr ""
+
+#: index.php:812
+msgid "Choose a pdf"
+msgstr ""
+
+#: index.php:831 index.php:889
+msgid "PDF version"
+msgstr ""
+
+#: index.php:856
+msgid "Rolling Average Attendance Graph"
+msgstr ""
+
+#: index.php:866
+msgid "Monthly Attendance Graph"
+msgstr ""
+
+#: index.php:876
+msgid "Weekly Attendance Graph"
+msgstr ""
+
+#: index.php:885
+msgid "Rolling Average Graph"
+msgstr ""
+
+#~ msgid "Here is the rota for "
+#~ msgstr "Here is the roster for"
+
+#~ msgid "Download a service rota CSV"
+#~ msgstr "Download a service roster CSV"

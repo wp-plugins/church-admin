@@ -1,0 +1,88 @@
+
+.church_admin label{float:left;width:200px;font-weight:700;}
+.church_admin input{}
+.church_admin_photos{height:75px;margin-bottom:5px;}
+.church_admin_address{width:90%;border-radius:4px;-moz-border-radius:4px;border:1px solid #E3E3E3;margin:8px 0px;padding:6px;position:relative;}
+.church_admin_name_address{display:block;float:left;margin:1% 0 1% 0%;width:32.26%;}
+.church_admin_phone_email{display:block;float:left;margin:1% 0 1% 0;width:32.26%;}
+.church_admin_phone_email a{color:#000!important}
+.church_admin_address_map{display:block;float:left;text-align:right;margin:1% 0 1% 1.6%;width:32.26%;}
+.church_admin_vcard{clear:both;width:100%;}
+@media only screen and (max-width:480px){.church_admin_name_address,.church_admin_phone_email,.church_admin_address_map{width:100%;height:auto;text-align:left}}
+.church_admin_address:before,.church_admin_address:after{content:"";display:table;}
+.church_admin_address_map:after,.church_admin_address:after{clear:both;}
+.church-admin-sermons-widget .audiojs{overflow:hidden;width:90%}
+.church-map{height:550px;display:block}
+#admin_map{width:1000px;height:250px;margin-bottom:10px}
+table.church_admin_calendar{empty-cells:show;table-layout:fixed;font-size:10pt;border-collapse:collapse}
+.church_admin_calendar td{border:1px solid gray;border-collapse:collapse;font-size:10pt;padding:3px !important;vertical-align:top}
+.church_admin_calendar tr{vertical-align:top}
+.calendar-date-switcher{text-align:center;border:1px solid #D6DED5;background-color:#E4EBE3;}
+.calendar-date-switcher form{margin:0;padding:0;}
+.calendar-date-switcher input{border:1px #D6DED5 solid;font-size:10pt;}
+.calendar-date-switcher select{border:1px #D6DED5 solid;}
+
+.church-admin-calendar-widget-item{display:table;height:100%;margin-bottom:5px;}
+.ca_event_detail{display:table-cell;padding-left:10px;}
+.church-admin-calendar-widget-item img{display:table-cell;margin-right:10px;vertical-align:middle;}
+.calendar-heading{height:25px;text-align:center;border:1px solid #D6DED5;background-color:#E4EBE3;}
+.church_admin_tooltip{position:absolute;z-index:1000;background:#E4EBE3;border:3px solid gray;border-radius:3px;-moz-border-radius:3px;color:#000;padding:3px;width:250px;display:none;}
+.church_admin_cal_item{border-radius:5px;-moz-border-radius:3px;padding:3px;}
+.ca-images{float:left;width:45%;}
+.Postit{width:90%;background-color:#FFFFB3;border-right:3px solid #BBBBBB;border-bottom:3px solid #BBBBBB;border-left:1px solid #DDDDDD;border-top:1px solid #DDDDDD;color:#666666;padding:5px;margin:5px;}
+.Postit h1,.Postit h2{padding:0 0px;font-weight:bold;font-size:1.2em;}
+.Postit ul{margin:0;font-size:0.75em;list-style:none;padding:0em;}
+.Postit a{text-indent:0;padding:0;}
+.Postit li{text-indent:0;padding:0 0 10px 0;margin:0!important;list-style:none;border-bottom:none !important;}
+.church_admin_calendar td{width:14.28%}
+div.pagination{padding:3px;margin:3px;text-align:center;}
+div.pagination a{padding:2px 5px 2px 5px;margin-right:2px;border:1px solid #9aafe5;text-decoration:none;color:#2e6ab1;}
+div.pagination a:hover, div.pagination a:active{border:1px solid #2b66a5;color:#000;background-color:lightyellow;}
+div.pagination span.current{padding:2px 5px 2px 5px;margin-right:2px;border:1px solid navy;font-weight:bold;background-color:#2e6ab1;color:#FFF;}
+div.pagination span.disabled{padding:2px 5px 2px 5px;margin-right:2px;border:1px solid #929292;color:#929292;}
+#map{width:600px;height:500px;margin-right:5px;}
+
+.church_admin_main_menu h2{padding-top:0px;}
+.church_admin_left{width:45%;height:300px;border:1px solid #CCC;background:#FEB801;border-radius:5px;margin:0px 10px 10px 0px;padding:5px 10px;text-align:left;float:left;overflow:auto;}
+.church_admin_left img{max-width:90%;}
+@media only screen and (max-width:480px){.church_admin_left{width:95%; margin:0 auto;float:none;}}}
+#smallgroup{display:none;}
+ #member_type{display:none;}
+ #individuals{display:none;}
+ #roles{display:none;}
+ #hope_team{display:none}
+#church-admin .red{border:1px solid #f00!important;}
+#church-admin .roles{display:inline-block;}
+#church-admin form li {width:700px;}
+#church-admin label{width:200px; float:left;font-weight:bold;}
+#church-admin input[type="text"]{width:300px;}
+.note{display:inline-block;height: 100%;}
+   
+#church_admin_whoto {position:relative; top:55px;left:10px;width:130px;}
+.church_admin_regular{background:#E6E6E6;}
+#church_admin_message{position:relative;top:60px;left:10px; }
+.sms {width:135px; height:100px;background:transparent;border:1px solid orange;}
+#church_admin_number {position:relative;top:35px;left:10px;}
+#church_admin_number input{width:135px;background:transparent;border:1px solid orange;}
+#church_admin_submit{position:relative;top:95px;left:20px;}  
+.clonedInput {border:1px solid #CCC;border-radius:5px;margin-bottom:10px;padding:10px 5px ;}
+#formWrap { padding:10px; position:absolute; float:left; background-color:#000; background:rgba(0,0,0,.5); -moz-border-radius:10px; -webkit-border-radius:10px; border-radius:10px; }
+/*#churchAdminForm { width:326px; border:1px solid #666; background-color:#eee; }
+#churchAdminForm fieldset { padding:0; margin:0; position:relative; border:none; background-color:#eee; }
+#churchAdminForm legend { visibility:hidden; height:0; }
+#churchAdminForm span { display:block; width:326px; padding:10px 0; margin:0 0 20px; text-indent:20px; background-color:#bbb; border-bottom:1px solid #333;  color:#fff; }
+
+#churchAdminForm input, #churchAdminForm textarea,#churchAdminForm select { display:block; width:274px; padding:3px; margin:0 auto 20px; border:1px solid #aaa; }
+#churchAdminForm label { display:block; margin:20px 0 3px; text-indent:22px; font:bold 11px Verdana, Sans-serif; color:#666; }
+#churchAdminForm #toLabel { margin-top:0; }
+#churchAdminForm button { float:right; margin:0 0 20px 0; }
+#churchAdminForm #cancel { margin-right:20px; }
+*/
+.friends { width:274px; padding:3px 3px 0; margin:0 auto; border:1px solid #aaa; background-color:#fff; cursor:text; }
+.friends span{ display:block !important; width:auto!important; margin:0 3px 3px 0 !important; padding:3px 20px 4px 8px !important; position:relative !important; float:left !important; text-indent:0; background-color:#eee; border:1px solid #333; -moz-border-radius:7px; -webkit-border-radius:7px; border-radius:7px; color:#333; font:normal 11px Verdana, Sans-serif; }
+.friends span a{ position:absolute !important; right:8px !important; top:2px !important; color:#666 !important;  text-decoration:none; }
+.friends span a:hover{ color:#ff0000 !important; }
+.ui-menu .ui-menu-item { white-space:nowrap; padding:0 10px 0 0; }
+.widefat td,.widefat th{border: 1px solid #e1e1e1;}
+.widefat th{background:#e1e1e1;color:#FFF;font-weight:700;}
+#map img{max-width:none}
