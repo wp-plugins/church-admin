@@ -10,7 +10,7 @@ function church_admin_recent_people_activity()
     $items=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL);
     if($items > 0)
     {
-        echo '<h2>'.__('Recent People Activity','church-admin').'</h2>';
+        echo '<hr/><h2><a id="recent_people">'.__('Recent People Activity','church-admin').'</a></h2>';
         echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_email_follow_up_activity','email_funnels').'">'.__('Email newly assigned follow-up activity','church-admin').'</a></p>';
 	$p = new pagination;
 	$p->items($items);

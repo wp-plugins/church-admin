@@ -17,7 +17,7 @@
 table.church_admin_calendar{empty-cells:show;table-layout:fixed;font-size:10pt;border-collapse:collapse}
 .church_admin_calendar td{border:1px solid gray;border-collapse:collapse;font-size:10pt;padding:3px !important;vertical-align:top}
 .church_admin_calendar tr{vertical-align:top}
-.calendar-date-switcher{height:25px;text-align:center;border:1px solid #D6DED5;background-color:#E4EBE3;}
+.calendar-date-switcher{text-align:center;border:1px solid #D6DED5;background-color:#E4EBE3;}
 .calendar-date-switcher form{margin:0;padding:0;}
 .calendar-date-switcher input{border:1px #D6DED5 solid;font-size:10pt;}
 .calendar-date-switcher select{border:1px #D6DED5 solid;}

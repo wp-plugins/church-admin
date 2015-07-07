@@ -426,7 +426,15 @@ $wpdb->query ($sql);
 	$sql="CREATE TABLE   IF NOT EXISTS  ". $table_name ."  (date DATE NOT NULL ,people_id INT(11) NOT NULL,meeting_type TEXT, meeting_id INT(11), attendance_id INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY );";
 	$wpdb->query ($sql);
     }
-    
+ 	 //install classes table
+    $table_name = CA_CLA_TBL;
+    if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+    {
+
+	$sql="CREATE TABLE IF NOT EXISTS '.CA_CLA_TBL.' (`name` text,`description` text,`next_start_date` date DEFAULT NULL,`recurring` varchar(2) NOT NULL,`howmany` int(11) NOT NULL,`calendar` int(1) DEFAULT '1',`start_time` time NOT NULL,`end_time` time NOT NULL,`class_order` int(11) DEFAULT NULL,  `event_id` int(11) NOT NULL,`cat_id` int(11) NOT NULL,`class_id` int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`class_id`)) " ;
+
+	$wpdb->query ($sql);
+    }   
     //install email table
     $table_name = $wpdb->prefix."church_admin_email";
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) 
@@ -636,13 +644,19 @@ if($wpdb->get_var('SHOW COLUMNS FROM '.CA_PEO_TBL.' LIKE "other_hope_team"')!='o
     $wpdb->query($sql);
 	
 }
+
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "meta_type"')!='meta_type')
 {
     $sql='ALTER TABLE '.CA_MET_TBL.' ADD `meta_type` VARCHAR(255) NOT NULL DEFAULT "ministry" FIRST;';
     $wpdb->query($sql);
 	
 }
-
+if($wpdb->get_var('SHOW COLUMNS FROM '.CA_MET_TBL.' LIKE "meta_date"')!='meta_date')
+{
+    $sql='ALTER TABLE '.CA_MET_TBL.' ADD `meta_date` DATE NOT NULL;';
+    $wpdb->query($sql);
+	
+}
 if($wpdb->get_var('SHOW COLUMNS FROM '.CA_FIL_TBL.' LIKE "plays"')!='plays')
 {
     $sql='ALTER TABLE  '.CA_FIL_TBL.' ADD plays INT(11)';
@@ -800,6 +814,9 @@ foreach($services AS $service)
 //update version
 update_option('church_admin_version',$church_admin_version);
 }
+//change sex part!
 
+$gender=get_option('church_admin_gender');
+if(empty($gender))update_option('church_admin_gender',array(1=>__('Male','church-admin'),0=>__('Female','church-admin')));
  
 ?>

@@ -60,6 +60,15 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.833 =
+* Facilities section bug fixes
+= 0.832 =
+* Rota emails sent with plain text & HTML (working on rest of plugin)
+* Added Classes
+* Changed gender to a dropdown 
+* Some translation fixes
+= 0.830 =
+* Classes
 = 0.822 = 
 * Update US translation
 = 0.821 =

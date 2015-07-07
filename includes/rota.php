@@ -59,8 +59,9 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 			//fix floated images for email
 			$user_message=str_replace('class="alignleft ','style="float:left;margin-right:20px;" class="',$user_message);
 			$user_message=str_replace('class="alignright ','style="float:right;margin-left:20px;" class="',$user_message);
-			
+			$textversion=strip_tags($user_message).'\r\n for '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'\r\n';
 			$message=$user_message.'<p>for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</p>';
+			
 			$message.='<table><thead><tr><th>'.__('Job','church-admin').'</th><th>'.__('Who','church-admin').'</th></tr></thead><tbody>';
 			if(!empty($rota_jobs))
 			{
@@ -71,6 +72,7 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 					{
 						$people=maybe_unserialize($rota_jobs[$task_row->rota_id]);
 						if(!empty($people)){ $message.='<tr><td><strong>'.esc_html($task_row->rota_task).': </strong></td><td>'.esc_html(church_admin_get_people($people)).'</td></tr>';}
+						$textversion.=esc_html($task_row->rota_task).':'.esc_html(church_admin_get_people($people)).'\r\n';
 					}
 				}
 				$message.='</tbody></table>';
@@ -104,10 +106,11 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 						$whenToSend=get_option('church_admin_cron');
 						if($whenToSend=='immediate')
 						{
-							add_filter( 'wp_mail_content_type', 'set_html_content_type' );
+							//add_filter( 'wp_mail_content_type', 'set_html_content_type' );
 							$headers = 'From: '.get_option('blogname').' <'.get_option('admin_email').'>' . "\r\n";
-							if(wp_mail($row->email,__("This week's service rota",'church-admin'),$email_content,$headers)){echo'<p>Email to '.$row->name.' sent immediately</p>';}
-							remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+							
+							if(wp_mail($row->email,__("This week's service rota",'church-admin'),array('text/plain'=>$textversion,'text/html'=>$email_content),$headers)){echo'<p>Email to '.$row->name.' sent immediately</p>';}
+							//remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
 						}
 						else
 						{			      
@@ -143,26 +146,7 @@ global $church_admin_version;
     
    
     
-	$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
-	if($wpdb->num_rows>1)
-			    {
-				echo'<form action="admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_list" method="POST">';
-				echo'<table class="form-table"><tbody><tr><th scope="row">Select a service rota</th><td><select name="service_id" >';
-				echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
-			        foreach($services AS $service)
-				{
-				    echo'<option value="'.intval($service->service_id).'">'.esc_html(sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time)).'</option>';
-				}
-				echo'</select> <input type="submit" value="'.__('Select','church-admin').'"/></tr></tbody></table>';
-				echo'</form>';
-			    }
-			    else
-			    {
-				echo'<p><a href="admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_list&service_id=1">'.__('View service rota','church-admin').'</a></p>';
-			    }
-echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
-	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota_settings",'edit_rota_settings').'" >'.__('Add more rota jobs','church-admin').'</a></p>';
-	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota&tab=rota&service_id=".$service_id,'edit_rota').'">'.__('Add dates to rota','church-admin').'</a></p>';
+
 //check rota settings!
 $rota_jobs=$wpdb->get_var("SELECT COUNT(rota_id) AS rota_jobs FROM ".$wpdb->prefix."church_admin_rota_settings");
 
@@ -212,7 +196,7 @@ if(!empty($taskresult))
 	{
 		//build rota tableheader
 		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
-	    echo'<h2>Rota  for  '.$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
+	    if(!empty($service))echo'<h2>'.sprintf(__('Rota  for %1$s on %2$s at %3$s at %4$s','church-admin'),$service->service_name,$days[$service->service_day],$service->venue,$service->service_time).'</h2>';
 		echo'<p>'.__('Click a table cell to edit it','church-admin').'</p>';
 		
 	    echo '<table class="widefat">';
@@ -304,7 +288,7 @@ else
 	echo'<h2>'.__('Rota for ','church-admin').$service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue.'</h2>';
 	if($rota_list==0)
 	{
-		echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_edit_rota&service_id=".$_POST['service_id'],'edit_rota').'">'.__('Add to rota','church-admin').'</a></p>';	
+		echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&tab=calendar&amp;action=church_admin_edit_rota&service_id=".$service->service_id,'edit_rota').'">'.__('Add to rota','church-admin').'</a></p>';	
 	}
 			
 	if ($rota_jobs==0) 

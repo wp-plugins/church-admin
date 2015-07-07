@@ -14,7 +14,7 @@ function church_admin_front_admin()
 	?>
 	<!-- Create a header in the default WordPress 'wrap' container -->
     <div class="wrap">
-     <table class="form_table"><tbody><tr><th scope="row"><h1><span class="dashicons dashicons-admin-home"></span>Church Admin Plugin v<?php echo $church_admin_version;?></h1></th><td><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" class="alignright" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></td><td><a class="button-secondary" href="http://www.churchadminplugin.com">Support</a></td><td><a class="button-secondary" href="<?php echo wp_nonce_url('admin.php?page=church_admin/index.php&tab=settings&action=refresh_backup','refresh_backup');?>">Refresh DB Backup </a></td>
+     <table class="form_table"><tbody><tr><th scope="row"><h1><span class="dashicons dashicons-admin-home" ></span>Church Admin Plugin v<?php echo $church_admin_version;?></h1></th><td><a style="text-decoration:none" href="http://www.churchadminplugin.com/feed"><span class="dashicons dashicons-rss"></span></a></td><td><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" class="alignright" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></td><td><a class="button-secondary" href="http://www.churchadminplugin.com">Support</a></td><td><a class="button-secondary" href="<?php echo wp_nonce_url('admin.php?page=church_admin/index.php&tab=settings&action=refresh_backup','refresh_backup');?>">Refresh DB Backup </a></td>
 	 
 	
 	 <?php
@@ -26,11 +26,12 @@ function church_admin_front_admin()
 		
     }
 	 ?>
+	 
 	 </tr></tbody></table>
 	
         <h2 class="nav-tab-wrapper">
-			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>People</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=tracking&tab=tracking" class="nav-tab <?php echo $_GET['tab'] == 'tracking' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>Tracking</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span><?php echo __('People','church-admin');?></a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=classes&tab=classes" class="nav-tab <?php echo $_GET['tab'] == 'classes' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>Classes</a>
 			<a href="admin.php?page=church_admin/index.php&amp;action=small_groups&tab=small_groups" class="nav-tab <?php echo $_GET['tab'] == 'small_groups' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-nametag"></span>Groups</a>
 			<a href="admin.php?page=church_admin/index.php&amp;action=communication&tab=communication" class="nav-tab <?php echo $_GET['tab'] == 'communication' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-megaphone"></span>Comms</a>
 			<a href="admin.php?page=church_admin/index.php&amp;action=rota&tab=rota" class="nav-tab <?php echo $_GET['tab'] == 'rota' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar"></span><?php echo __('Rota','church-admin');?></a>
@@ -50,14 +51,11 @@ function church_admin_front_admin()
 function church_admin_tracking()
 {
 	global $wpdb,$days;	
-	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
+	
+	
 	$upload_dir = wp_upload_dir();
 	$path=$upload_dir['basedir'].'/church-admin-cache/';
-	echo'<h2>'.__('Follow Up','church-admin').'</h2>';
-	echo'<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel','edit_funnel').'">'.__('Add a follow up funnel','church-admin').'</a></p>';
-	require_once(plugin_dir_path(__FILE__).'/funnel.php');
-	church_admin_funnel_list();
-	echo'<hr/><h2>'.__('Attendance Tracking','church-admin').'</h2>';
+		echo'<hr/><h2><a id="tracking">'.__('Attendance Tracking','church-admin').'</h2>';
 	echo'<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance&tab=tracking','edit_attendance').'">'.__('Add service attendance','church-admin').'</a></p>';
 	echo'<p><a href="admin.php?page=church_admin/index.php&amp;action=individual_attendance">'.__('Individual Attendance','church-admin').'</a></p>';
     $services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
@@ -93,11 +91,7 @@ function church_admin_settings_menu()
 	echo'<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=settings&action=church_admin_edit_service','edit_service').'">'.__('Add a service','church-admin').'</a></p>';
 	require_once(plugin_dir_path(__FILE__).'/services.php');	
 	church_admin_service_list();
-	//member types
-	 echo'<h2>'.__('Member Types','church-admin').'</h2>';
-	 echo'<p><a class="button-primary" href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_member_type",'edit_member_type').'">'.__('Add a member Type','church-admin').'</a></p>';
-	require_once(plugin_dir_path(__FILE__).'/member_type.php');
-	church_admin_member_type();
+	
 
 	//backup
 	$filename=get_option('church_admin_backup_filename');
@@ -229,11 +223,32 @@ function church_admin_rota_main($service_id=NULL)
 {
 	global $days,$wpdb;
 	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
-	echo'<h2>'.__('Rota','church-admin').'</h2>';
+	
+		$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+	if($wpdb->num_rows>1)
+			    {
+				echo'<form action="admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_list" method="POST">';
+				echo'<table class="form-table"><tbody><tr><th scope="row">'.__('Select a service rota','church-admin').'</th><td><select name="service_id" >';
+				echo'<option value="">'.__('Choose a service','church-admin').'...</option>';
+			        foreach($services AS $service)
+				{
+				    echo'<option value="'.intval($service->service_id).'">'.esc_html(sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time)).'</option>';
+				}
+				echo'</select> <input type="submit" value="'.__('Select','church-admin').'"/></tr></tbody></table>';
+				echo'</form>';
+			    }
+			    else
+			    {
+				echo'<p><a href="admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_list&service_id=1">'.__('View service rota','church-admin').'</a></p>';
+			    }
+echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_rota_settings_list&tab=rota","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
+	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_edit_rota_settings",'edit_rota_settings').'" >'.__('Add more rota jobs','church-admin').'</a></p>';
+	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&tab=rota&amp;action=church_admin_edit_rota&tab=rota&service_id=".$service_id,'edit_rota').'">'.__('Add dates to rota','church-admin').'</a></p>';
+	echo'<hr/><h2>'.__('Rota','church-admin').'</h2>';
 	$email_day=get_option('church_admin_email_rota_day');
-	if(!empty($email_day)) echo'<p>This weeks rotas are automatically emailed on '.$days[$email_day+1].', when your website is first accessed that day!</p>';
+	if(!empty($email_day)) echo'<p><strong>'.sprintf(__('This weeks rotas are automatically emailed on %1$s, when your website is first accessed that day.','church-admin'),$days[$email_day+1]).'</strong></p>';
 	echo'<form action="" method="POST">';
-	echo'<p><label>Automatically email current week\'s rota</label>';
+	echo'<p><label>'. __("Automatically email current week's rota",'church-admin').'</label>';
 	echo'<select name="email_rota_day">';
 	echo'<option value="8"'.selected( $email_day, NULL ).'>'.__('No Auto Send','church-admin').'</option>';
 		echo'<option value="1"'.selected( $email_day, 1 ).'>'.__('Monday','church-admin').'</option>';
@@ -256,15 +271,27 @@ function church_admin_rota_main($service_id=NULL)
     }
     echo'</select><input type="submit" name="submit" value="'.__('Send service rota','church-admin').'"></p>';
     echo'</form>';
-    
-    /*echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_rota_settings_list&tab=rota","rota_settings_list").'">'.__('View/Edit Rota Jobs','church-admin').'</a></p>';
-	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota_settings",'edit_rota_settings').'" >'.__('Add more rota jobs','church-admin').'</a></p>';
-	echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_rota",'edit_rota').'">'.__('Add dates to rota','church-admin').'</a></p>';
-	*/
+    echo'<hr/><h2>'.__('Horizontal Rota PDF','church-admin').' </h2><form action="'.home_url().'" method="GET"><table class="form-table"><tr><th scope="row">'.__('Select Service','church-admin').'<input type="hidden" name="download" value="horizontal_rota_pdf"/></th><td><select name="service_id">';
+				
+				$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
+			    foreach($services AS $service)
+			    {	
+					echo'<option value="'.$service->service_id.'">'.sprintf( __('%1$s on %2$s at %3$s', 'church-admin'),$service->service_name,$days[$service->service_day],$service->service_time).'</option>';
+				}
+				echo'</select></td></tr>';
+				$rota_jobs=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order');
+				foreach($rota_jobs AS $rota_job)
+				{
+					echo'<tr><th scope="row">'.$rota_job->rota_task.'</th><td><input type="checkbox" name="rota_id[]" value="'.$rota_job->rota_id.'"/> '.__('Initials?','church-admin').'<input type="checkbox" name="initials[]" value="'.$rota_job->rota_id.'"/></td></tr>';
+		
+				}
+				
+				echo'<tr><td colspan="2"><input type="submit" value="'.__('Create PDF','church-admin').'"/></td></tr></table></form>';
+   echo'<hr/>';
 	require_once(plugin_dir_path(__FILE__).'/rota.php');
 	church_admin_rota_list($service_id);
 				
-				}
+}
 
 function church_admin_smallgroups_main()
 {
@@ -296,6 +323,13 @@ function church_admin_people_main()
 {
     global $member_type,$people_type;
     		global $wpdb;
+	echo'<h2>'.__('People','church-admin').'</h2>';
+	echo'<p><a  href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=csv-import&tab=people','csv_import').'">Import CSV</a></p>';
+	echo'<p><a href="#tracking">'.__('Attendance Tracking','church-admin').'</a></p>';
+	echo'<p><a href="#classes">'.__('Classes','church-admin').'</a></p>';
+	echo'<p><a href="#followup">'.__('Follow Up','church-admin').'</a></p>';
+	echo'<p><a href="#recent_people">'.__('Recent People Activity','church-admin').'</a></p>';
+	echo'<p><a href="#member_types">'.__('Member Types','church-admin').'</a></p>';
 	//check to see if directory is populated!
     $check=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL);
     if(empty($check)||$check<1)
@@ -307,18 +341,9 @@ function church_admin_people_main()
     }
     else
     {//people stored in directory
-				
-			    
-				
-			    echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a> <a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_people','edit_people').'">'.__('Add a new person in a new household','church-admin').'</a></p>';
-				echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
-				
-				require_once(plugin_dir_path( dirname(__FILE__) ).'includes/people_activity.php');
-				church_admin_recent_people_activity();
-    
-				
+			
 				//select member type address list to view.
-			    echo'<hr/><table class="form-table"><tbody><tr><th scope="row">Select address list to view</th><td><form name="address" action="admin.php?page=church_admin/index.php&amp;action=church_admin_address_list" method="POST"><select name="member_type_id" >';
+			    echo'<table class="form-table"><tbody><tr><th scope="row">'.__('Select a directory to view','chuch-admin').'</th><td><form name="address" action="admin.php?page=church_admin/index.php&amp;action=church_admin_address_list" method="POST"><select name="member_type_id" >';
 			    echo '<option value="">'.__('Choose Member Type...','church-admin').'</option>';
 			    foreach($member_type AS $key=>$value)
 			    {
@@ -326,7 +351,7 @@ function church_admin_people_main()
 					echo '<option value="'.esc_html($key).'" >'.esc_html($value).' ('.$count.' people)</option>';
 			    }
 			    echo'</select><input type="submit" value="'.__('Go','church-admin').'"/></form></td></tr></tbody></table>';
-			    echo '<hr/><table class="form-table"><tbody><tr><th scope="row">'.__('Download an address list PDF','church-admin').'</th><td>';
+			    echo '<table class="form-table"><tbody><tr><th scope="row">'.__('Download an address list PDF','church-admin').'</th><td>';
 			    if(!empty($member_type))
 			    {
 				foreach($member_type AS $key=>$value)
@@ -339,6 +364,8 @@ function church_admin_people_main()
 				}
 			    }
 			    echo'</td></tr></tbody></table>';
+				echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a> <a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_people','edit_people').'">'.__('Add a new person in a new household','church-admin').'</a></p>';
+				echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 			    echo'<hr/><table class="form-table"><tbody><th scope="row">'.__('Download an csv of people','church-admin').'</th><td>';
 			    echo'<form action="'.home_url().'" method="get">';
 				echo wp_nonce_field('people-csv','people-csv');
@@ -350,15 +377,31 @@ function church_admin_people_main()
 				{
 						echo '<input type="checkbox" name="people_type_id[]" value="'.esc_html($key).'"/> '.esc_html($value).'<br/>';
 				}
-				echo'<input type="checkbox" name="sex[]" value="1" />Male<br/>';
-				echo'<input type="checkbox" name="sex[]" value="0" />Female<br/>';
+				$gender=get_option('church_admin_gender');
+				foreach($gender AS $key=>$value)
+				{
+					echo'<input type="checkbox" name="sex[]" value="'.esc_html($key).'" />'.esc_html($value).'<br/>';
+				}
+				
 				echo'<input type="checkbox" name="address" value="1" /> Include Address<br/>';
 				echo'<input type="checkbox" name="small_group" value="1" /> Include Small Group<br/>';
 				echo'<input type="hidden" name="download" value="people-csv"/><input type="submit" value="Download"/></p>';
 			    echo'</form></td></tr></tbody></table>';
 			    echo'<hr/>';
-			    
+			    require_once(plugin_dir_path( dirname(__FILE__) ).'includes/people_activity.php');
+				church_admin_recent_people_activity();
     }//people in directory
+	//member types
+	 echo'<hr/><h2><a id="member_types">'.__('Member Types','church-admin').'</a></h2>';
+	 echo'<p><a class="button-primary" href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_member_type",'edit_member_type').'">'.__('Add a member Type','church-admin').'</a></p>';
+	require_once(plugin_dir_path(__FILE__).'/member_type.php');
+	church_admin_member_type();
+	church_admin_tracking();
+	echo'<hr/><h2><a id="followup">'.__('Follow Up','church-admin').'</h2>';
+	require_once(plugin_dir_path(__FILE__).'/funnel.php');
+	church_admin_funnel_list();
+	require_once(plugin_dir_path(__FILE__).'/classes.php');
+	church_admin_classes();
 }
 
 ?>

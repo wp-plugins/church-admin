@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_funnel_list()
 {
     global $wpdb,$member_type,$people_type;
+	echo'<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel','edit_funnel').'">'.__('Add a follow up funnel','church-admin').'</a></p>';
 	$departments=get_option('church_admin_departments');
     $result=$wpdb->get_results('SELECT * FROM '.CA_FUN_TBL .'  ORDER BY funnel_order');
     if($result)
@@ -12,12 +13,16 @@ function church_admin_funnel_list()
         echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></tfoot><tbody>';
         foreach($result AS $row)
         {
-            $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel&amp;funnel_id='.intval($row->funnel_id),'edit_funnel').'">'.__('Edit','church-admin').'</a>';
-            $delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_funnel&amp;funnel_id='.intval($row->funnel_id),'delete_funnel').'">'.__('Delete','church-admin').'</a>';
-            echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($row->action).'</td><td>';
-			if(!empty($member_type[$row->member_type_id])){echo esc_html($member_type[$row->member_type_id]);}else{echo'&nbsp;';}
-			echo '</td><td>'.$departments[$row->department_id].'</td></tr>';
+           if(!empty($row->department_id)&&!empty($departments[$row->department_id]))
+		   {
+			   $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel&amp;funnel_id='.intval($row->funnel_id),'edit_funnel').'">'.__('Edit','church-admin').'</a>';
+				$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_funnel&amp;funnel_id='.intval($row->funnel_id),'delete_funnel').'">'.__('Delete','church-admin').'</a>';
+				echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($row->action).'</td><td>';
+				if(!empty($member_type[$row->member_type_id])){echo esc_html($member_type[$row->member_type_id]);}else{echo'&nbsp;';}
+				echo '</td><td>'.$departments[$row->department_id].'</td></tr>';
+		   }
         }
+		echo'</tbody></table>';
     }
 }
 
@@ -26,7 +31,7 @@ function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
     global $wpdb,$member_type,$people_type,$departments;
     
     $wpdb->show_errors();
-    echo'<div class="church_admin wrap">';
+    
     echo'<h2>';
         if($funnel_id){echo __('Edit','church-admin');$data=$wpdb->get_row('SELECT * FROM '.CA_FUN_TBL.' WHERE funnel_id="'.esc_sql($funnel_id).'"');}else{echo __('Add','church-admin');}
         echo' '.__('Follow Up Funnel','church-admin').'</h2>';

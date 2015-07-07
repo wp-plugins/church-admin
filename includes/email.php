@@ -2,6 +2,17 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 //2014-02-24 fixed encoding error
 
+function church_admin_delete_email($email_id)
+{
+	global $wpdb;
+	$row=$wpdb->get_row('SELECT * FROM '.CA_EBU_TBL.' WHERE email_id="'.esc_sql($email_id).'"');
+	if(!empty($data->filename))$paths=maybe_unserialize($data->filename);
+	if(!empty($paths)){foreach($paths AS $key=>$value) unlink($value);}
+	$wpdb->query('DELETE FROM '.CA_EBU_TBL.' WHERE email_id="'.esc_sql($email_id).'"');
+	echo'<div class="updated fade">'.__('Email deleted','church-admin').'</div>';
+	church_admin_email_list();
+}
+
 function church_admin_email_list()
 {
 	global $wpdb;
@@ -33,15 +44,16 @@ function church_admin_email_list()
     $result=$wpdb->get_results('SELECT * FROM '.CA_EBU_TBL.' WHERE recipients!="" ORDER BY send_date DESC '.$limit );
 	if(!empty($result))
 	{
-		echo'<h2>'.__('Sent Emails','church-admin').'</h2><table class="widefat"><thead><tr><th>Date</th><th>Subject</th><th>Excerpt</th><th>Resend?</th></tr></thead><tfoot><tr><th>Date</th><th>Subject</th><th>Excerpt</th><th>Resend?</th></tr></tfoot><tbody>';
+		echo'<h2>'.__('Sent Emails','church-admin').'</h2><table class="widefat"><thead><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Subject','church-admin').'</th><th>'.__('Excerpt','church-admin').'</th><th>'.__('Resend','church-admin').'?</th></tr></thead><tfoot><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Subject','church-admin').'</th><th>'.__('Excerpt','church-admin').'</th><th>'.__('Resend','church-admin').'?</th></tr></tfoot><tbody>';
 		foreach($result AS $row)
 		{
 			$startsAt = strpos($row->message, "<!--salutation-->") + strlen("{FINDME}");
 			$endsAt = strpos($row->message, "<!--News,events-->", $startsAt);
 			$message = strip_tags(substr($row->message, $startsAt+17, $endsAt - $startsAt));
 			$message=substr($message,0,500);
+			$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=communications&action=delete_email&email_id='.intval($row->email_id),'delete_email').'">Delete</a>';
 			$resend='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=communications&action=resend_email&email_id='.intval($row->email_id),'resend_email').'">Resend</a>';
-			echo'<tr><td>'.mysql2date(get_option('date_format'),$row->send_date).'</td><td>'.$row->subject.'</td><td>'.$message.'</td><td>'.$resend.'</td></tr>';
+			echo'<tr><td>'.$delete.'</td><td>'.mysql2date(get_option('date_format'),$row->send_date).'</td><td>'.$row->subject.'</td><td>'.$message.'</td><td>'.$resend.'</td></tr>';
 		}
 	}
 	}
@@ -244,7 +256,7 @@ if  ($_FILES['userfile1']['size']>0)
 
 {
 
-    $attachments['1'] = $upload_dir['basedir'].'church-admin-cache/'.$_FILES['userfile1']['name'];
+    $attachments['1'] = $upload_dir['basedir'].'/church-admin-cache/'.$_FILES['userfile1']['name'];
 
   
 
@@ -258,7 +270,7 @@ if  ($_FILES['userfile2']['size']>0)
 
 {
 
-    $attachments[2] = $upload_dir['basedir'].'church-admin-cache/'.$_FILES['userfile2']['name'];
+    $attachments[2] = $upload_dir['basedir'].'/church-admin-cache/'.$_FILES['userfile2']['name'];
 
      
 
@@ -272,7 +284,7 @@ if  ($_FILES['userfile3']['size']>0)
 
 {
 
-    $attachments[] = $upload_dir['basedir'].'church-admin-cache/'.$_FILES['userfile3']['name'];
+    $attachments[] = $upload_dir['basedir'].'/church-admin-cache/'.$_FILES['userfile3']['name'];
 
     
 
@@ -663,7 +675,7 @@ function church_admin_send_message($email_id)
 
       foreach($_POST['role_id'] AS $key=>$value)$r[]='b.department_id='.$value;
 
-      $sql='SELECT  a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.meta_type="ministry" b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).')' ;
+      $sql='SELECT  a.email,a.first_name FROM '.CA_PEO_TBL.' a,'.CA_MET_TBL.' b WHERE b.meta_type="ministry" AND b.people_id=a.people_id AND a.email!="" AND ('.implode( " || ",$r).')' ;
 
       
 

@@ -7,14 +7,14 @@ $(document).ready(function() {
 			document.getElementById('individuals').style.display ='block';
 			document.getElementById('smallgroup').style.display ='none';
 			document.getElementById('hope_team').style.display ='none';
-			
+			document.getElementById('member_type').style.display ='none';
 			document.getElementById('roles').style.display ='none';
                 } else if($(this).val() == 'smallgroup') {
                         //do something else again
 			document.getElementById('individuals').style.display ='none';
 			document.getElementById('smallgroup').style.display ='block';
 			document.getElementById('hope_team').style.display ='none';
-			
+			document.getElementById('member_type').style.display ='none';
 			document.getElementById('roles').style.display ='none';
                 }
 		 else if($(this).val() == 'roles') {
@@ -22,14 +22,14 @@ $(document).ready(function() {
 			document.getElementById('individuals').style.display ='none';
 			document.getElementById('smallgroup').style.display ='none';
 			document.getElementById('hope_team').style.display ='none';
-			
+			document.getElementById('member_type').style.display ='none';
 			document.getElementById('roles').style.display ='block';
                 }
 				else if($(this).val() == 'hope_team') {
                         //do something else again
 			document.getElementById('individuals').style.display ='none';
 			document.getElementById('smallgroup').style.display ='none';
-			
+			document.getElementById('member_type').style.display ='none';
 			document.getElementById('hope_team').style.display ='block';
 			document.getElementById('roles').style.display ='none';
                 }
@@ -37,7 +37,7 @@ $(document).ready(function() {
                         //do something else again
 			document.getElementById('individuals').style.display ='none';
 			document.getElementById('smallgroup').style.display ='none';
-			
+			document.getElementById('member_type').style.display ='block';
 			document.getElementById('hope_team').style.display ='none';
 			document.getElementById('roles').style.display ='none';
                 }
