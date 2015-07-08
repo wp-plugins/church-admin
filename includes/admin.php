@@ -398,9 +398,9 @@ function church_admin_people_main()
 	church_admin_member_type();
 	church_admin_tracking();
 	echo'<hr/><h2><a id="followup">'.__('Follow Up','church-admin').'</h2>';
-	require_once(plugin_dir_path(__FILE__).'/funnel.php');
+	require_once(plugin_dir_path(__FILE__).'funnel.php');
 	church_admin_funnel_list();
-	require_once(plugin_dir_path(__FILE__).'/classes.php');
+	require_once(plugin_dir_path(__FILE__).'classes.php');
 	church_admin_classes();
 }
 
