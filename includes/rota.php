@@ -140,7 +140,8 @@ function church_admin_email_rota($service_id=1,$date=NULL)
 
 function church_admin_rota_list($service_id=NULL)
 {
-global$wpdb,$rota_order,$days;
+global$wpdb,$days;
+$rota_order=ca_rota_order();
 $wpdb->show_errors();
 global $church_admin_version;
     
@@ -306,9 +307,9 @@ else
 
 function church_admin_edit_rota($id=NULL,$service_id=NULL)
 {
-    global $wpdb,$days,$rota_order,$church_admin_version;
+    global $wpdb,$days,$church_admin_version;
    
-     
+     $rota_order=ca_rota_order();
     if(!$service_id)
     {
 	$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);

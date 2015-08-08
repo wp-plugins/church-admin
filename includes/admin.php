@@ -2,7 +2,19 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_front_admin()
 {
-	global $church_admin_version;
+	
+	global $church_admin_version,$wpdb;
+	//check if address list populated
+	$check=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_HOU_TBL);
+	if(empty($check))
+	{//first run situation...
+		echo'<h2>Church Admin Plugin v'.$church_admin_version.'</h2>';
+		echo '<p>'.__('Welcome to the church admin plugin. The first job is to get some people into the directory...','church-admin').'</p>';
+		echo'<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=csv-import&tab=people','csv_import').'">'.__('Import Address List CSV','church-admin').'</a></p>';
+		echo '<p><a class="primary button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a></p>';
+	}//end of first run situation
+	else
+	{//normal
 	//backup
 	$filename=get_option('church_admin_backup_filename');
 	
@@ -14,7 +26,7 @@ function church_admin_front_admin()
 	?>
 	<!-- Create a header in the default WordPress 'wrap' container -->
     <div class="wrap">
-     <table class="form_table"><tbody><tr><th scope="row"><h1><span class="dashicons dashicons-admin-home" ></span>Church Admin Plugin v<?php echo $church_admin_version;?></h1></th><td><a style="text-decoration:none" href="http://www.churchadminplugin.com/feed"><span class="dashicons dashicons-rss"></span></a></td><td><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" class="alignright" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></td><td><a class="button-secondary" href="http://www.churchadminplugin.com">Support</a></td><td><a class="button-secondary" href="<?php echo wp_nonce_url('admin.php?page=church_admin/index.php&tab=settings&action=refresh_backup','refresh_backup');?>">Refresh DB Backup </a></td>
+     <table class="form_table"><tbody><tr><th scope="row"><h1><span class="dashicons dashicons-admin-home" ></span>Church Admin Plugin v<?php echo $church_admin_version;?></h1></th><td><a style="text-decoration:none" href="http://www.churchadminplugin.com/feed"><span class="dashicons dashicons-rss"></span></a></td><td><form  action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="R7YWSEHFXEU52"><input type="image"  src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif" class="alignright" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt=""  border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form></td><td><a class="button-secondary" href="http://www.churchadminplugin.com">Support</a></td><td><a class="button-secondary" href="<?php echo wp_nonce_url('admin.php?page=church_admin/index.php&tab=people&action=refresh_backup','refresh_backup');?>">Refresh DB Backup </a></td>
 	 
 	
 	 <?php
@@ -22,7 +34,7 @@ function church_admin_front_admin()
     {
 		
 		echo'<td><a class="button-secondary"  target="_blank" href="'.$upload_dir['baseurl'].'/church-admin-cache/'.$filename.'">Download DB Backup</a></td>';
-		echo'<td><a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=settings&action=delete_backup','delete_backup').'">Delete DB Backup</a></td>';
+		echo'<td><a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=people&action=delete_backup','delete_backup').'">Delete DB Backup</a></td>';
 		
     }
 	 ?>
@@ -45,7 +57,8 @@ function church_admin_front_admin()
         
          
     </div><!-- /.wrap -->
-<?php
+<?php	}//end normal
+
 } // end sandbox_theme_display
 
 function church_admin_tracking()
@@ -295,7 +308,7 @@ echo '<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&tab=rota
 
 function church_admin_smallgroups_main()
 {
-    global $member_type;
+    $member_type=church_admin_member_type_array();
 	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	require_once(plugin_dir_path(__FILE__).'/small_groups.php');
 	church_admin_small_groups();
@@ -321,7 +334,8 @@ function church_admin_communication()
 
 function church_admin_people_main()
 {
-    global $member_type,$people_type;
+    global $people_type;
+	$member_type=church_admin_member_type_array();
     		global $wpdb;
 	echo'<h2>'.__('People','church-admin').'</h2>';
 	echo'<p><a  href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=csv-import&tab=people','csv_import').'">Import CSV</a></p>';
@@ -331,7 +345,7 @@ function church_admin_people_main()
 	echo'<p><a href="#recent_people">'.__('Recent People Activity','church-admin').'</a></p>';
 	echo'<p><a href="#member_types">'.__('Member Types','church-admin').'</a></p>';
 	//check to see if directory is populated!
-    $check=$wpdb->get_var('SELECT COUNT(people_id) FROM '.CA_PEO_TBL);
+    $check=$wpdb->get_var('SELECT COUNT(household_id) FROM '.CA_HOU_TBL);
     if(empty($check)||$check<1)
     {
 		echo '<p><a class="primary button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a></p>';

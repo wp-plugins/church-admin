@@ -4,7 +4,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.834
+Version: 0.835
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -45,40 +45,55 @@ Copyright (C) 2010 Andy Moyle
 
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+	$church_admin_version = '0.835';
+	$people_type=get_option('church_admin_people_type');
+    $departments=get_option('church_admin_departments');
+    $level=get_option('church_admin_levels');
 
-//Version Number
-define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
-$church_admin_version = '0.834';
-church_admin_constants();//setup constants first
-require_once(plugin_dir_path(__FILE__).'includes/admin.php');
-require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
+	add_action( 'plugins_loaded', 'church_admin_initialise' );
 
-if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
-{
-	church_admin_backup();
-	require_once(plugin_dir_path( __FILE__) .'/includes/install.php');
-	church_admin_install();
+function church_admin_initialise() {
+	global $level,$church_admin_version;
+	church_admin_constants();//setup constants first
+	//Version Number
+	define('OLD_CHURCH_ADMIN_VERSION',get_option('church_admin_version'));
+	$rota_order=ca_rota_order();
+	$member_type=church_admin_member_type_array();
+	if(isset($_GET['action'])&&$_GET['action']=="delete_backup"){check_admin_referer('delete_backup');church_admin_delete_backup();}
+	if(isset($_GET['action'])&&$_GET['action']=="refresh_backup")	{check_admin_referer('refresh_backup');church_admin_backup();}
+	load_plugin_textdomain( 'church-admin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+	if(OLD_CHURCH_ADMIN_VERSION!= $church_admin_version)
+	{
+		church_admin_backup();
+		require_once(plugin_dir_path( __FILE__) .'/includes/install.php');
+		church_admin_install();
+	}
+	
+    if(empty($level['Directory']))$level['Directory']='administrator';
+    if(empty($level['Small Groups']))$level['Small Groups']='administrator';
+    if(empty($level['Rota']))$level['Rota']='administrator';
+    if(empty($level['Funnel'])) $level['Funnel']='administrator';
+    if(empty($level['Bulk Email']))$level['Bulk Email']='administrator';
+    if(empty($level['Sermons']))$level['Sermons']='administrator';
+	if(empty($level['Bulk SMS']))$level['Bulk SMS']='administrator';
+    if(empty($level['Calendar']))$level['Calendar']='administrator';
+    if(empty($level['Attendance']))$level['Attendance']='administrator';
+    if(empty($level['Member Type']))$level['Member Type']='administrator';
+    if(empty($level['Service']))$level['Service']='administrator';
+	if(empty($level['Prayer Chain']))$level['Prayer Chain']='administrator';
+    update_option('church_admin_levels',$level);
+    $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
 }
 
-add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
+require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
+require_once(plugin_dir_path(__FILE__).'includes/admin.php');
+
+//add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
 add_action('activated_plugin','church_admin_save_error');
 function church_admin_save_error(){
     update_option('church_admin_plugin_error',  ob_get_contents());
 }
 add_action('load-church-admin', 'church_admin_add_screen_meta_boxes');
-
-// add localisation
-
-add_action( 'plugins_loaded', 'church_admin_load_textdomain' );
-/**
- * Load plugin textdomain.
- *
- * @since 1.0.0
- */
-function church_admin_load_textdomain() {
-  load_plugin_textdomain( 'church-admin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
-}
-//end add localisation
 
 //update_option('church_admin_roles',array(2=>'Elder',1=>'Small group Leader'));
 $oldroles=get_option('church_admin_roles');
@@ -223,26 +238,7 @@ function ca_rota_order()
     }
     
 }
-$rota_order=ca_rota_order();
-    $people_type=get_option('church_admin_people_type');
-    $member_type=church_admin_member_type_array();
-    $departments=get_option('church_admin_departments');
-    $level=get_option('church_admin_levels');
-    if(empty($level['Directory']))$level['Directory']='administrator';
-    if(empty($level['Small Groups']))$level['Small Groups']='administrator';
-    if(empty($level['Rota']))$level['Rota']='administrator';
-    if(empty($level['Funnel'])) $level['Funnel']='administrator';
-    if(empty($level['Bulk Email']))$level['Bulk Email']='administrator';
-    if(empty($level['Sermons']))$level['Sermons']='administrator';
-	if(empty($level['Bulk SMS']))$level['Bulk SMS']='administrator';
-    if(empty($level['Calendar']))$level['Calendar']='administrator';
-    if(empty($level['Attendance']))$level['Attendance']='administrator';
-    if(empty($level['Member Type']))$level['Member Type']='administrator';
-    if(empty($level['Service']))$level['Service']='administrator';
-	if(empty($level['Prayer Chain']))$level['Prayer Chain']='administrator';
-    update_option('church_admin_levels',$level);
-    
-    $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
+	
     
     
 add_filter('the_posts', 'church_admin_conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
@@ -630,9 +626,7 @@ function church_admin_main()
 		case'mailchimp_sync':if(church_admin_level_check('Directory')){require_once(plugin_dir_path(__FILE__).'includes/mailchimp.php');church_admin_mailchimp_sync();}break;
 		//premissions
 		case'permissions':require_once(plugin_dir_path(__FILE__).'includes/permissions.php');church_admin_permissions();break;
-	//backups
-	    case'refresh_backup':check_admin_referer('refresh_backup');church_admin_backup();break;
-	    case'delete_backup':check_admin_referer('delete_backup');church_admin_delete_backup();break;
+
 	//sermon podcasts
 	    case'list_speakers':require_once(plugin_dir_path(__FILE__).'includes/sermon-podcast.php');ca_podcast_list_speakers();break;
             case'edit_speaker':require_once(plugin_dir_path(__FILE__).'includes/sermon-podcast.php');ca_podcast_edit_speaker($id);break;
@@ -1052,8 +1046,7 @@ function church_admin_delete_backup()
 	$upload_dir = wp_upload_dir();
 	$path=$upload_dir['basedir']; 
 	if($filename&& file_exists($path.'/church-admin-cache/'.$filename))unlink($path.'/church-admin-cache/'.$filename);
-	echo'<div class="updated"><p>Backup deleted</p></div>';
-	church_admin_people_main();
+	update_option('church_admin_backup_filename',"");
 }
 function church_admin_backup()
 {
@@ -1090,8 +1083,7 @@ function church_admin_backup()
 		fwrite($fp, $gzdata);
 		fclose($fp);
 	}
-	//echo'<div class="updated"><p>Backup refreshed <a class="button-primary"  target="_blank" href="'.$upload_dir['baseurl'].'/church-admin-cache/'.$filename.'">Download DB Backup</a></p></div>';
-	//church_admin_people_main();
+	
 }
 function church_admin_datadump ($table) {
 
