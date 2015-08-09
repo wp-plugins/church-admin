@@ -3,7 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 //Address Directory Functions
 function church_admin_address_list($member_type_id=1)
 {
-    global $wpdb,$member_type;
+    global $wpdb;
+	$member_type=church_admin_member_type_array();
     $wpdb->show_errors();
    
     //grab address list in order
@@ -120,11 +121,10 @@ function church_admin_address_list($member_type_id=1)
 
 function church_admin_edit_household($household_id=NULL)
 {
-    global $wpdb,$member_type,$church_admin_version;
-    $wpdb->show_errors();
-    ?>
-    
-    <?php
+    global $wpdb,$church_admin_version;
+    $member_type=church_admin_member_type_array();
+	$wpdb->show_errors();
+    echo'<h2>'.__('Edit Household','church-admin').'</h2>';
     $member_type_id=$wpdb->get_var('SELECT member_type_id FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($household_id).'"  ORDER BY people_type_id ASC LIMIT 1');
     if(!empty($household_id)){$data=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($household_id).'"');}else{$data=NULL;}
     if(!empty($_POST['edit_household']))
@@ -210,7 +210,8 @@ function church_admin_edit_people($people_id=NULL,$household_id=NULL)
  * 
  */    
     
-    global $wpdb,$people_type,$member_type,$departments,$current_user,$church_admin_version;
+    global $wpdb,$people_type,$departments,$current_user,$church_admin_version;
+	$member_type=church_admin_member_type_array();
     get_currentuserinfo();
 	
     $wpdb->show_errors();
@@ -624,8 +625,8 @@ $out.= '; var beginLng =';
 
 function church_admin_display_household($household_id)
 {
-    global $wpdb,$people_type,$member_type;
-    
+    global $wpdb,$people_type;
+    $member_type=church_admin_member_type_array();
     $departments=get_option('church_admin_departments');
     $add_row=$wpdb->get_row('SELECT * FROM '.CA_HOU_TBL.' WHERE household_id="'.esc_sql($household_id).'"');
     if(empty($add_row))$add_row=new stdClass();
@@ -652,8 +653,8 @@ $out.= '; var beginLng =';
 	$people=$wpdb->get_results('SELECT * FROM '.CA_PEO_TBL.' WHERE household_id="'.esc_sql($household_id).'" ORDER BY people_order ASC,people_type_id ASC,date_of_birth ASC,sex DESC');
 	if($people)
 	{//are people
-	    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;household_id='.$household_id,'edit_people').'">'.__('Add someone','church-admin').'</a></td></tr>';
-		echo '<p>'.__('You can drag and drop to sort people display order','church-admin').'</td></tr>';
+	    echo'<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people&amp;household_id='.$household_id,'edit_people').'">'.__('Add someone','church-admin').'</a></p>';
+		echo '<p>'.__('You can drag and drop to sort people display order','church-admin').'</p>';
 	if(church_admin_level_check('Directory'))
 	{
 		echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Hope Team','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Move to different household','church-admin').'</th><th>'.__('WP user','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Picture','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Sex','church-admin').'</th><th>'.__('Person type','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Ministries','church-admin').'</th><th>'.__('Hope Team','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Move to different household','church-admin').'</th><th>'.__('WP user','church-admin').'</th></tr></tfoot><tbody  class="content">';
@@ -946,7 +947,8 @@ function church_admin_get_capabilities($id)
 
 function church_admin_search($search)
 {
-    global $wpdb,$rota_order;
+    global $wpdb;
+	$rota_order=ca_rota_order();
 	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:200px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
     $s=esc_sql(stripslashes($search));
     //try searching first name, last name, email, mobile separately
