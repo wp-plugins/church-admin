@@ -497,7 +497,10 @@ if  ($_FILES['userfile3']['size']>0)
 
     echo '<iframe width="700" border="1" height="450" src="'.content_url('/uploads/church-admin-cache/').$filename.'">'.__('Please upgrade your browser to display the email!','church-admin').'</iframe>';
 
-   
+    echo'<h3>Use these social media buttons to post the email url...</h3><div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=118790464849935&amp;xfbml=1"></script><fb:like href="'.content_url('/uploads/church-admin-cache/').$filename.'" send="false" width="450" show_faces="false" font="lucida grande"></fb:like></p>';
+
+echo '<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-text="'.$_POST['subject'].'" data-url="'.content_url('/uploads/church-admin-cache/').esc_url($filename).'">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script> '  ;
+
     
 
     if($email_id){return $email_id;}else{return FALSE;}
@@ -511,8 +514,7 @@ function church_admin_choose_recipients($email_id)
 {
 
     global $wpdb;
-	$rota_order=ca_rota_order();
-	$member_type=church_admin_member_type_array();
+	$member_type=church_admin_member_type_array();;
 
     $wpdb->show_errors;
 
@@ -628,7 +630,8 @@ function church_admin_send_message($email_id)
 
 {
 
-    global $wpdb,$member_type;
+    global $wpdb;
+	$member_type=church_admin_member_type_array();
 
     $wpdb->show_errors();
 
