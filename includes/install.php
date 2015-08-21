@@ -431,8 +431,8 @@ $wpdb->query ($sql);
     if($wpdb->get_var("show tables like '$table_name'") != $table_name)
     {
 
-	$sql="CREATE TABLE IF NOT EXISTS '.CA_CLA_TBL.' (`name` text,`description` text,`next_start_date` date DEFAULT NULL,`recurring` varchar(2) NOT NULL,`howmany` int(11) NOT NULL,`calendar` int(1) DEFAULT '1',`start_time` time NOT NULL,`end_time` time NOT NULL,`class_order` int(11) DEFAULT NULL,  `event_id` int(11) NOT NULL,`cat_id` int(11) NOT NULL,`class_id` int(11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (`class_id`)) " ;
-
+	
+	$sql='CREATE TABLE IF NOT EXISTS `'.CA_CLA_TBL.'` (  `name` text,  `description` text,  `next_start_date` date DEFAULT NULL,  `how_many` int(11) DEFAULT NULL,  `calendar` int(1) DEFAULT "1",  `class_order` int(11) DEFAULT NULL,  `class_id` int(11) NOT NULL AUTO_INCREMENT,  PRIMARY KEY (`class_id`)); ';
 	$wpdb->query ($sql);
     }   
     //install email table

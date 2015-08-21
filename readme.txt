@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.836 =
+* First install db table install
 = 0.835 =
 * Various minor bug fixes for email and sms
 = 0.834 =
