@@ -9,7 +9,7 @@ function church_admin_hope_team_jobs()
 	if(!empty($results))
 	{	
 		
-		$out.='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Job Title</th></tr></thead><tbody>';
+		$out.='<table class="widefat striped"><thead><tr><th>Edit</th><th>Delete</th><th>Job Title</th></tr></thead><tbody>';
 		foreach($results AS $row)
 		{
 		$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_hope_team_job&amp;id='.intval($row->hope_team_id),'hope_team_jobs').'">Edit</a>';

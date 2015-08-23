@@ -22,7 +22,7 @@ function church_admin_whosin($id)
 		$peopleresults = $wpdb->get_results($sql);
 		if(!empty($peopleresults))
 		{
-				$out.='<table class="widefat">';
+				$out.='<table class="widefat striped">';
 				$out.='<thead><tr><th>'.__('Name','church-admin').'</th><th>'.__('Attendance','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Name','church-admin').'</th><th>'.__('Attendance','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Mobile','church-admin').'</th></tr></tfoot><tbody>';
 				foreach($peopleresults AS $row)
 				{
@@ -58,7 +58,7 @@ function church_admin_small_groups()
 	//list
 	
 	//table of groups
-		$out.='<table  id="sortable" class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Group Name</th><th>Leaders</th><th>When</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Group Name</th><th>Leaders</th><th>When</th></tr></tfoot><tbody class="content">';
+		$out.='<table  id="sortable" class="widefat striped"><thead><tr><th>Edit</th><th>Delete</th><th>Group Name</th><th>Leaders</th><th>When</th></tr></thead><tfoot><tr><th>Edit</th><th>Delete</th><th>Group Name</th><th>Leaders</th><th>When</th></tr></tfoot><tbody class="content">';
 		//grab small group information
 		$sg_sql = 'SELECT * FROM '.CA_SMG_TBL.' ORDER BY smallgroup_order';
 		$sg_results = $wpdb->get_results($sg_sql);

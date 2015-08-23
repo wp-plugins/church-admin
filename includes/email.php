@@ -44,7 +44,7 @@ function church_admin_email_list()
     $result=$wpdb->get_results('SELECT * FROM '.CA_EBU_TBL.' WHERE recipients!="" ORDER BY send_date DESC '.$limit );
 	if(!empty($result))
 	{
-		echo'<h2>'.__('Sent Emails','church-admin').'</h2><table class="widefat"><thead><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Subject','church-admin').'</th><th>'.__('Excerpt','church-admin').'</th><th>'.__('Resend','church-admin').'?</th></tr></thead><tfoot><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Subject','church-admin').'</th><th>'.__('Excerpt','church-admin').'</th><th>'.__('Resend','church-admin').'?</th></tr></tfoot><tbody>';
+		echo'<h2>'.__('Sent Emails','church-admin').'</h2><table class="widefat striped"><thead><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Subject','church-admin').'</th><th>'.__('Excerpt','church-admin').'</th><th>'.__('Resend','church-admin').'?</th></tr></thead><tfoot><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Subject','church-admin').'</th><th>'.__('Excerpt','church-admin').'</th><th>'.__('Resend','church-admin').'?</th></tr></tfoot><tbody>';
 		foreach($result AS $row)
 		{
 			$startsAt = strpos($row->message, "<!--salutation-->") + strlen("{FINDME}");

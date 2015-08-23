@@ -14,7 +14,7 @@ function church_admin_kidswork()
 	if(!empty($results))
 	{
 		
-		$out.='<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Group Name','church-admin').'</th><th>'.__('Youngest','church-admin').'</th><th>'.__('Oldest','church-admin').'</th></tr></thead><tbody>';
+		$out.='<table class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Group Name','church-admin').'</th><th>'.__('Youngest','church-admin').'</th><th>'.__('Oldest','church-admin').'</th></tr></thead><tbody>';
 		foreach($results AS $row)
 		{
 			$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=ministries&action=edit_kidswork&id='.intval($row->id),'edit_kidswork').'">'.__('Edit','church-admin').'</a>';

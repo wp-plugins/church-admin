@@ -23,7 +23,7 @@ function ca_podcast_list_series()
     $results=$wpdb->get_results('SELECT * FROM '.CA_SERM_TBL);
     if($results)
     {//results
-        $table='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Series</th><th>Files</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Series</th><th>Files</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
+        $table='<table class="widefat striped"><thead><tr><th>Edit</th><th>Delete</th><th>Series</th><th>Files</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Series</th><th>Files</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
         foreach($results AS $row)
         {
             $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_sermon_series&amp;id='.intval($row->series_id),'edit_sermon_series').'">Edit</a>';
@@ -149,7 +149,7 @@ function ca_podcast_list_files()
     $results=$wpdb->get_results('SELECT a.* FROM '.CA_FIL_TBL.' a  ORDER BY pub_date DESC');
     if($results)
     {//results
-        $table='<table class="widefat"><thead><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>Mp3 File</th></th><th>File Okay?</th><th>Length</th><th>Media</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>File</th><th>File Okay?</th><th>Length</th><th>Media</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
+        $table='<table class="widefat striped"><thead><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>Mp3 File</th></th><th>File Okay?</th><th>Length</th><th>Media</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></thead>'."\r\n".'<tfoot><tr><th>Edit</th><th>Delete</th><th>Publ. Date</th><th>Title</th><th>Speakers</th><th>File</th><th>File Okay?</th><th>Length</th><th>Media</th><th>Transcript</th><th>Event</th><th>Shortcode</th></tr></tfoot>'."\r\n".'<tbody>';
         foreach($results AS $row)
         {
             if(file_exists(plugin_dir_path( $path.$row->file_name))){$okay='<img src="'.plugins_url('images/green.png',dirname(__FILE__) ) .'" width="32" height="32"/>';}else{$okay='<img src="'.plugins_url('images/red.png',dirname(__FILE__) ) .'" width="32" height="32"/>';}
@@ -463,7 +463,7 @@ function ca_podcast_check_files()
     $files = array_diff($files, $exclude_list);
   
     
-        $table='<h2>'.__('Unattached Media Files','church-admin').'</h2><table class="widefat"><thead><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Filename','church-admin').'</th><th>'.__('Add to podcast','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Filename','church-admin').'</th><th>'.__('Add to podcast','church-admin').'</th></tr></tfoot><tbody>';
+        $table='<h2>'.__('Unattached Media Files','church-admin').'</h2><table class="widefat striped"><thead><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Filename','church-admin').'</th><th>'.__('Add to podcast','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Delete','church-admin').'</th><th>'.__('Filename','church-admin').'</th><th>'.__('Add to podcast','church-admin').'</th></tr></tfoot><tbody>';
     
         foreach($files as $entry)
         {
@@ -635,8 +635,8 @@ function ca_podcast_xml()
         if(!empty($settings['category']))
         {
             $cat=explode("-",$settings['category']);
-            if(count($cat)==2){$output .='<itunes:category text="'.ent2ncr($cat[0]).'"><itunes:category text="'.ent2ncr($cat[1]).'"/></itunes:category>';}
-            elseif(count($cat)==1){$output .='<itunes:category text="'.ent2ncr($cat[0]).'"/>';}
+            if(count($cat)==2){$output .='<itunes:category text="'.trim(ent2ncr($cat[0])).'"><itunes:category text="'.ent2ncr($cat[1]).'"/></itunes:category>';}
+            elseif(count($cat)==1){$output .='<itunes:category text="'.trim(ent2ncr($cat[0])).'"/>';}
             
         }
        

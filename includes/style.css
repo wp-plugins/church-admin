@@ -67,22 +67,11 @@ div.pagination span.disabled{padding:2px 5px 2px 5px;margin-right:2px;border:1px
 #church_admin_submit{position:relative;top:95px;left:20px;}  
 .clonedInput {border:1px solid #CCC;border-radius:5px;margin-bottom:10px;padding:10px 5px ;}
 #formWrap { padding:10px; position:absolute; float:left; background-color:#000; background:rgba(0,0,0,.5); -moz-border-radius:10px; -webkit-border-radius:10px; border-radius:10px; }
-/*#churchAdminForm { width:326px; border:1px solid #666; background-color:#eee; }
-#churchAdminForm fieldset { padding:0; margin:0; position:relative; border:none; background-color:#eee; }
-#churchAdminForm legend { visibility:hidden; height:0; }
-#churchAdminForm span { display:block; width:326px; padding:10px 0; margin:0 0 20px; text-indent:20px; background-color:#bbb; border-bottom:1px solid #333;  color:#fff; }
 
-#churchAdminForm input, #churchAdminForm textarea,#churchAdminForm select { display:block; width:274px; padding:3px; margin:0 auto 20px; border:1px solid #aaa; }
-#churchAdminForm label { display:block; margin:20px 0 3px; text-indent:22px; font:bold 11px Verdana, Sans-serif; color:#666; }
-#churchAdminForm #toLabel { margin-top:0; }
-#churchAdminForm button { float:right; margin:0 0 20px 0; }
-#churchAdminForm #cancel { margin-right:20px; }
-*/
 .friends { width:274px; padding:3px 3px 0; margin:0 auto; border:1px solid #aaa; background-color:#fff; cursor:text; }
 .friends span{ display:block !important; width:auto!important; margin:0 3px 3px 0 !important; padding:3px 20px 4px 8px !important; position:relative !important; float:left !important; text-indent:0; background-color:#eee; border:1px solid #333; -moz-border-radius:7px; -webkit-border-radius:7px; border-radius:7px; color:#333; font:normal 11px Verdana, Sans-serif; }
 .friends span a{ position:absolute !important; right:8px !important; top:2px !important; color:#666 !important;  text-decoration:none; }
 .friends span a:hover{ color:#ff0000 !important; }
 .ui-menu .ui-menu-item { white-space:nowrap; padding:0 10px 0 0; }
-.widefat td,.widefat th{border: 1px solid #e1e1e1;}
-.widefat th{background:#e1e1e1;color:#FFF;font-weight:700;}
+
 #map img{max-width:none}

@@ -18,7 +18,7 @@ function church_admin_facilities($current=NULL,$facilities_id=1)
     if(!empty($facilities))
 	{
 		echo'<p>'.__('Facilities can be sorted by drag and drop, for use in other parts of the plugin','church-admin').'</p>';
-		echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Facility','church-admin').'</th><th>'.__('Facility Shortcode','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Facility','church-admin').'</th><th>'.__('Facility Shortcode','church-admin').'</th></tr></tfoot><tbody class="content">';
+		echo'<table id="sortable" class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Facility','church-admin').'</th><th>'.__('Facility Shortcode','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Facility','church-admin').'</th><th>'.__('Facility Shortcode','church-admin').'</th></tr></tfoot><tbody class="content">';
 		foreach($facilities AS $facility)
 		{
 			$edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=edit_facility&amp;facilities_id='.$facility->facilities_id,'edit_facility').'">'.__('Edit','church-admin').'</a>';
@@ -207,7 +207,7 @@ function church_admin_category_list()
     global $wpdb;
     //build category tableheader
         $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Category','church-admin').'</th><th>'.__('Shortcode','church-admin').'</th></tr>';
-    $table= '<table class="widefat" ><thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
+    $table= '<table class="widefat striped" ><thead>'.$thead.'</thead><tfoot>'.$thead.'</tfoot><tbody>';
         //grab categories
     $results=$wpdb->get_results('SELECT * FROM '.CA_CAT_TBL);
     foreach($results AS $row)
@@ -763,7 +763,7 @@ for($x=0;$x<12;$x++)
 }
 echo '</select><input type="submit" value="'.__('Go to date','church-admin').'"/></form></td></tr></table>';
     //initialise table
-    $table='<table class="widefat"><thead><tr><th>'.__('Single Edit','church-admin').'</th><th>'.__('Series Edit','church-admin').'</th><th>'.__('Single Delete','church-admin').'</th><th>'.__('Series Delete','church-admin').'</th><th>'.__('Start date','church-admin').'</th><th>'.__('Start Time','church-admin').'</th><th>'.__('End Time','church-admin').'</th><th>'.__('Event Name','church-admin').'</th><th>'.__('Category','church-admin').'</th><th>'.__('Year Planner','church-admin').'?</th></tr></thead><tfoot><tr><th>'.__('Single Edit','church-admin').'</th><th>'.__('Series Edit','church-admin').'</th><th>'.__('Single Delete','church-admin').'</th><th>'.__('Series Delete','church-admin').'</th><th>'.__('Start date','church-admin').'</th><th>'.__('Start Time','church-admin').'</th><th>'.__('End Time','church-admin').'</th><th>'.__('Event Name','church-admin').'</th><th>'.__('Category','church-admin').'</th><th>'.__('Year Planner','church-admin').'?</th></tr></tfoot><tbody>';
+    $table='<table class="widefat striped"><thead><tr><th>'.__('Single Edit','church-admin').'</th><th>'.__('Series Edit','church-admin').'</th><th>'.__('Single Delete','church-admin').'</th><th>'.__('Series Delete','church-admin').'</th><th>'.__('Start date','church-admin').'</th><th>'.__('Start Time','church-admin').'</th><th>'.__('End Time','church-admin').'</th><th>'.__('Event Name','church-admin').'</th><th>'.__('Category','church-admin').'</th><th>'.__('Year Planner','church-admin').'?</th></tr></thead><tfoot><tr><th>'.__('Single Edit','church-admin').'</th><th>'.__('Series Edit','church-admin').'</th><th>'.__('Single Delete','church-admin').'</th><th>'.__('Series Delete','church-admin').'</th><th>'.__('Start date','church-admin').'</th><th>'.__('Start Time','church-admin').'</th><th>'.__('End Time','church-admin').'</th><th>'.__('Event Name','church-admin').'</th><th>'.__('Category','church-admin').'</th><th>'.__('Year Planner','church-admin').'?</th></tr></tfoot><tbody>';
     
 	
 	$sql='SELECT a.*,b.category FROM '.CA_DATE_TBL.' a, '.CA_CAT_TBL.' b WHERE a.cat_id=b.cat_id AND a.start_date LIKE "'.$sqlnow.'" ORDER BY a.start_date';

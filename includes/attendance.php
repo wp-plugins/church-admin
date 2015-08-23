@@ -57,7 +57,7 @@ function church_admin_attendance_list($service_id=1)
 	  echo $p->show();  
 	  echo '</div></div>';
 	  //Pagination
-	  echo '<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Adults','church-admin').'</th><th>'.__('Children','church-admin').'</th><th>'.__('Total','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Adults','church-admin').'</th><th>'.__('Children','church-admin').'</th><th>'.__('Total','church-admin').'</th></tr></tfoot><tbody>';
+	  echo '<table class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Adults','church-admin').'</th><th>'.__('Children','church-admin').'</th><th>'.__('Total','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Date','church-admin').'</th><th>'.__('Adults','church-admin').'</th><th>'.__('Children','church-admin').'</th><th>'.__('Total','church-admin').'</th></tr></tfoot><tbody>';
 	  foreach($results AS $row)
 	  {
 	       $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_attendance&amp;attendance_id='.$row->attendance_id,'edit_attendance').'">'.__('Edit','church-admin').'</a>';
@@ -188,7 +188,7 @@ function church_admin_attendance_metrics($service_id=1)
     
      for($year=$first_year;$year<=$last_year;$year++){$thead.="<th>$year</th>";}
     
-     $aggtable=$totaltable=$adulttable=$childtable='<table class="widefat"><thead><tr><th>'.__('Month','church-admin').'</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
+     $aggtable=$totaltable=$adulttable=$childtable='<table class="widefat striped"><thead><tr><th>'.__('Month','church-admin').'</th>'.$thead.'</tr></thead><tfoot><tr><th>Month</th>'.$thead.'<tr></tfoot><tbody>';
     
 	  $results=$wpdb->get_results('SELECT ROUND( AVG( adults ) ) AS adults, ROUND( AVG( children ) ) AS children, YEAR( `date` ) AS year, MONTH( `date` ) AS month FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'" GROUP BY YEAR( `date` ) , MONTH( `date` )');
 	  

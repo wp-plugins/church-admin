@@ -2,7 +2,8 @@
 
 function church_admin_recent_people_activity()
 {
-    global $wpdb,$people_type,$member_type;
+    global $wpdb,$people_type;
+	$member_type=church_admin_member_type_array();
     $out='';
         
     // number of total rows in the database
@@ -43,7 +44,7 @@ function church_admin_recent_people_activity()
             echo  '</div></div>';
             //prepare table
             
-            echo '<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Follow Up Action','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Last Updated','church-admin').'</th></tr></thead><tfoot><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Follow Up Action','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Last Updated','church-admin').'</th></tfoot><tbody>';
+            echo '<table class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Follow Up Action','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Last Updated','church-admin').'</th></tr></thead><tfoot><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Name','church-admin').'</th><th>'.__('Member Level','church-admin').'</th><th>'.__('Follow Up Action','church-admin').'</th><th>'.__('Mobile','church-admin').'</th><th>'.__('Email','church-admin').'</th><th>'.__('Last Updated','church-admin').'</th></tfoot><tbody>';
             foreach($results AS $row)
             {
                 $fun_display='';

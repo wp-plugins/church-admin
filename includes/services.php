@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_service_list()
 {
     global $wpdb,$days;
-    echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></tfoot><tbody>';
+    echo'<table class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></tfoot><tbody>';
     
     $sql='SELECT * FROM '.CA_SER_TBL;
     $results=$wpdb->get_results($sql);

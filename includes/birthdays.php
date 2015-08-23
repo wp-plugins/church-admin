@@ -114,7 +114,8 @@ function church_admin_birthday_widget_control_form()
 
 {
 
-    global $wpdb,$member_type;
+    global $wpdb;
+	$member_type=church_admin_member_type_array();
 
     $wpdb->show_errors;
 

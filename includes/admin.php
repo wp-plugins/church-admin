@@ -338,6 +338,8 @@ function church_admin_people_main()
 	$member_type=church_admin_member_type_array();
     		global $wpdb;
 	echo'<h2>'.__('People','church-admin').'</h2>';
+	echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a> <a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_people','edit_people').'">'.__('Add a new person in a new household','church-admin').'</a></p>';
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	echo'<p><a  href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=csv-import&tab=people','csv_import').'">Import CSV</a></p>';
 	echo'<p><a href="#tracking">'.__('Attendance Tracking','church-admin').'</a></p>';
 	echo'<p><a href="#classes">'.__('Classes','church-admin').'</a></p>';
@@ -346,14 +348,8 @@ function church_admin_people_main()
 	echo'<p><a href="#member_types">'.__('Member Types','church-admin').'</a></p>';
 	//check to see if directory is populated!
     $check=$wpdb->get_var('SELECT COUNT(household_id) FROM '.CA_HOU_TBL);
-    if(empty($check)||$check<1)
-    {
-		echo '<p><a class="primary button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a></p>';
-		echo '<p><a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_people','edit_people').'">'.__('Add a new person (not connected to a current household)','church-admin').'</a></p>';
-	 
-	
-    }
-    else
+    if(!empty($check))
+  
     {//people stored in directory
 			
 				//select member type address list to view.
@@ -378,8 +374,7 @@ function church_admin_people_main()
 				}
 			    }
 			    echo'</td></tr></tbody></table>';
-				echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a> <a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_people','edit_people').'">'.__('Add a new person in a new household','church-admin').'</a></p>';
-				echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
+				
 			    echo'<hr/><table class="form-table"><tbody><th scope="row">'.__('Download an csv of people','church-admin').'</th><td>';
 			    echo'<form action="'.home_url().'" method="get">';
 				echo wp_nonce_field('people-csv','people-csv');

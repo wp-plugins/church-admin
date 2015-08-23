@@ -200,7 +200,7 @@ if(!empty($taskresult))
 	    if(!empty($service))echo'<h2>'.sprintf(__('Rota  for %1$s on %2$s at %3$s at %4$s','church-admin'),$service->service_name,$days[$service->service_day],$service->venue,$service->service_time).'</h2>';
 		echo'<p>'.__('Click a table cell to edit it','church-admin').'</p>';
 		
-	    echo '<table class="widefat">';
+	    echo '<table class="widefat striped">';
 	    $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Date','church-admin').'</th>';
 	    $job=array();
 		foreach($taskresult AS $taskrow)
@@ -344,7 +344,11 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	    foreach($task_result AS $task)
 		{
 			$services=maybe_unserialize($task->service_id);
-			if(in_array($service_id,$services))$jobs[$task->rota_id]=church_admin_get_people_id(stripslashes($_POST[urlencode($task->rota_id)]));
+			if(in_array($service_id,$services))
+			{
+				$jobs[$task->rota_id]=church_admin_get_people_id(stripslashes($_POST[urlencode($task->rota_id)]));
+				
+			}
 		}
 	    
 	    if(!$id)
@@ -378,13 +382,13 @@ function church_admin_edit_rota($id=NULL,$service_id=NULL)
 	        
 	        $next_date=$wpdb->get_var('SELECT DATE_ADD(MAX(rota_date), INTERVAL 7 DAY) FROM '.$wpdb->prefix.'church_admin_rotas LIMIT 1');
 	        if(empty($next_date))$next_date=date("Y-m-d",strtotime("next Sunday"));
-		$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
+			$service=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
 	         echo'<h2>Add to rota  for  '.esc_html($service->service_name.' on '.$days[$service->service_day].' at '.$service->service_time.' '.$service->venue).'</h2>';
-		echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#rota_date\').datepicker({dateFormat : "yy-mm-dd", changeYear: true });});</script>';
+			echo'<script type="text/javascript">jQuery(document).ready(function(){jQuery(\'#rota_date\').datepicker({dateFormat : "yy-mm-dd", changeYear: true });});</script>';
 	
-		 echo'<table class="form-table"><tbody><tr><th scope="row">Rota Date:</th><td><input type="text" id="rota_date" name="rota_date" ';
+			echo'<table class="form-table"><tbody><tr><th scope="row">Rota Date:</th><td><input type="text" id="rota_date" name="rota_date" ';
 	        if(!empty($next_date)) echo ' value="'.esc_html($next_date).'" ';
-		echo'/></td></tr></tbody></table>';
+			echo'/></td></tr></tbody></table>';
 	    
 	    }else
 	    {

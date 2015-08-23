@@ -10,7 +10,7 @@ function church_admin_funnel_list()
     if($result)
     {
         
-        echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></tfoot><tbody>';
+        echo'<table class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Funnel','church-admin').'</th><th>'.__('Applies to','church-admin').'...</th><th>'.__('Ministry Responsible','church-admin').'</th></tr></tfoot><tbody>';
         foreach($result AS $row)
         {
            if(!empty($row->department_id)&&!empty($departments[$row->department_id]))

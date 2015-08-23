@@ -9,7 +9,7 @@ function  church_admin_classes()
 	$classes=$wpdb->get_results('SELECT * FROM '.CA_CLA_TBL.' ORDER BY class_order');
 	if(!empty($classes))
 	{
-		echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Class Name (Click to view)','church-admin').'</th><th>'.__('Next Start Date','church-admin').'</th><th>'.__('Repeat','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Class Name (Click to view)','church-admin').'</th><th>'.__('Next Start Date','church-admin').'</th><th>'.__('Repeat','church-admin').'</th></tr></tfoot><tbody>';
+		echo'<table class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Class Name (Click to view)','church-admin').'</th><th>'.__('Next Start Date','church-admin').'</th><th>'.__('Repeat','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Class Name (Click to view)','church-admin').'</th><th>'.__('Next Start Date','church-admin').'</th><th>'.__('Repeat','church-admin').'</th></tr></tfoot><tbody>';
 		foreach($classes AS $row)
 		{
 			
@@ -295,7 +295,7 @@ function church_admin_view_class($id)
 	$people=$wpdb->get_results('SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name,b.meta_date FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.meta_type="class" AND b.department_id="'.esc_sql($id).'"');
 	if(!empty($people))
 	{
-		echo'<table class="widefat"><thead><tr><th>Delete</th><th>'.__('Name','church-admin').'</th><th>'.__('Date','church-admin').'</th></tr></thead><tfoot><tr><th>Delete</th><th>'.__('Name','church-admin').'</th><th>'.__('Date','church-admin').'</th></tr></tfoot><tbody>';
+		echo'<table class="widefat striped"><thead><tr><th>Delete</th><th>'.__('Name','church-admin').'</th><th>'.__('Date','church-admin').'</th></tr></thead><tfoot><tr><th>Delete</th><th>'.__('Name','church-admin').'</th><th>'.__('Date','church-admin').'</th></tr></tfoot><tbody>';
 		foreach($people AS $person)
 		{
 			echo'<tr><td>'.__('Delete','church-admin').'</td><td>'.esc_html($person->name).'</td><td>';

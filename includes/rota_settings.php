@@ -122,7 +122,7 @@ echo'<p>Rota tasks can be sorted by drag and drop, for use in other parts of the
 $rota_results=$wpdb->get_results('SELECT * FROM '.CA_RST_TBL.' ORDER BY rota_order ASC');
 if(!empty($rota_results))
 {
-       echo '<table class="widefat" id="sortable"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Rota Task','church-admin').'</th><th>'.__('How chosen','church-admin').'</th><th>'.__('Which Services?','church-admin').'</th><th>'.__('Initials?','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Rota Task','church-admin').'</th><th>'.__('How chosen','church-admin').'</th><th>'.__('Which Services?','church-admin').'</th><th>'.__('Initials?','church-admin').'</th></tr></tfoot><tbody  class="content">';
+       echo '<table class="widefat striped" id="sortable"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Rota Task','church-admin').'</th><th>'.__('How chosen','church-admin').'</th><th>'.__('Which Services?','church-admin').'</th><th>'.__('Initials?','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Rota Task','church-admin').'</th><th>'.__('How chosen','church-admin').'</th><th>'.__('Which Services?','church-admin').'</th><th>'.__('Initials?','church-admin').'</th></tr></tfoot><tbody  class="content">';
     foreach($rota_results AS $rota_row)
     {
         $rota_edit_url='admin.php?page=church_admin/index.php&action=church_admin_edit_rota_settings&id='.$rota_row->rota_id;

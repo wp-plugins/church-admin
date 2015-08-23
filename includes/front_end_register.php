@@ -81,10 +81,11 @@ function church_admin_front_end_register($email_verify=TRUE,$admin_email=TRUE,$m
         $out.='</select></p>';
         $out.='<p><label>'.__('Email','church-admin').'</label><input type="text" class="email" id="email1" name="email[]"/></p>';
         $gender=get_option('church_admin_gender');
-		$out.='<p><label>'.__('Gender','church-admin').'</label><select name="sex">';
-		foreach($gender AS $key=>$value){echo '<option value="'.esc_html($value).'" '.selected($data->sex,$key,FALSE).'>'.esc_html($value).'</option>';}
-		echo'</select></p>';
-		//$out.='<p><label>'.__('Sex','church-admin').'</label><input type="radio" name="sex1" class="male" id="male1" value="male"/>'.__('Male','church-admin').' <input type="radio" name="sex1" class="female" id="female1" value="female"/>'.__('Female','church-admin').'</p>';
+		$out.='<p><label>'.__('Gender','church-admin').'</label><select name="sex[]" class="sex1" id="sex1">';
+		
+		foreach($gender AS $key=>$value){$out.= '<option value="'.esc_html($value).'">'.esc_html($value).'</option>';}
+		$out.='</select></p>';
+		
         $out.='</div>';
         
         $out.='<p id="jquerybuttons"><input type="button" id="btnAdd" value="'.__('Add another person','church-admin').'" /><input type="button" id="btnDel" value="'.__('Remove person','church-admin').'" /></p>';;

@@ -14,7 +14,7 @@ function  church_admin_member_type()
    
     
     echo'<p>'.__('Member Types can be sorted by drag and drop, for use in other parts of the plugin','church-admin').'</p>';
-    echo'<table id="sortable" class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Type','church-admin').'</th><th>'.__('Reassign','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Type','church-admin').'</th><th>'.__('Reassign','church-admin').'</th></tr></tfoot><tbody class="content">';
+    echo'<table id="sortable" class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Type','church-admin').'</th><th>'.__('Reassign','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Type','church-admin').'</th><th>'.__('Reassign','church-admin').'</th></tr></tfoot><tbody class="content">';
     
     foreach($member_type AS $id=>$membertype)
     {

@@ -6,7 +6,7 @@ function church_admin_department_list()
     echo'<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department&tab=ministries','edit_department').'">'.__('Add a ministry','church-admin').'</a> <a class="button-secondary" href="'.wp_nonce_url(site_url().'/?download=ministries_pdf','ministries_pdf').'">'.__('Ministries PDF','church-admin').'</a></p>';
     if(!empty($departments))
     {
-        echo'<table class="widefat"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Ministry (Click to view people)','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Ministry','church-admin').'</th></tr></tr></tfoot><tbody>';
+        echo'<table class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Ministry (Click to view people)','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Ministry','church-admin').'</th></tr></tr></tfoot><tbody>';
         foreach($departments AS $id=>$department)
         {
             $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_department&amp;department_id='.$id,'edit_department').'">'.__('Edit','church-admin').'</a>';
@@ -66,7 +66,7 @@ function church_admin_view_department($id)
 			echo '<h2>'.sprintf(__('Viewing who is in "%1s" ministry','church-admin'),esc_html($departments[$id])).'</h2><form action="" method="POST">';
 			if(!empty($results))
 			{//department contains people
-				echo'<table class="widefat" ><thead><tr><th>'.__('Remove','church-admin').'</th><th>'.__('Person','church-admin').'</th></tr></thead><tbody>';
+				echo'<table class="widefat striped" ><thead><tr><th>'.__('Remove','church-admin').'</th><th>'.__('Person','church-admin').'</th></tr></thead><tbody>';
 				foreach($results AS $row)
 				{
 					$delete='<input type="checkbox" name="'.esc_html($row->people_id).'" value="x"/>';
