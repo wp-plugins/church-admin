@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wordpress Church Admin Plugin\n"
-"POT-Creation-Date: 2015-07-07 13:23+0100\n"
+"POT-Creation-Date: 2015-08-26 11:16+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andy Moyle <clients@themoyles.co.uk>\n"
 "Language-Team: \n"
@@ -17,16 +17,20 @@ msgstr ""
 "X-Poedit-SearchPath-1: ./includes\n"
 "X-Poedit-SearchPath-2: ./display\n"
 
-#: display/address-list.php:9 includes/admin.php:80 includes/admin.php:189
-#: includes/admin.php:202 includes/admin.php:225 includes/admin.php:299
-#: includes/admin.php:313 includes/admin.php:368 includes/directory.php:950
+#: display/address-list.php:9 includes/admin.php:96 includes/admin.php:205
+#: includes/admin.php:216 includes/admin.php:228 includes/admin.php:249
+#: includes/admin.php:323 includes/admin.php:337 includes/admin.php:356
+#: includes/directory.old.php:998 includes/directory.old.php:999
+#: includes/directory.php:954
 msgid "Search"
 msgstr "Cerca"
 
-#: display/address-list.php:9 includes/admin.php:80 includes/admin.php:189
-#: includes/admin.php:202 includes/admin.php:225 includes/admin.php:299
-#: includes/admin.php:313 includes/admin.php:353 includes/admin.php:368
-#: includes/directory.php:23 includes/directory.php:950
+#: display/address-list.php:9 includes/admin.php:96 includes/admin.php:205
+#: includes/admin.php:216 includes/admin.php:228 includes/admin.php:249
+#: includes/admin.php:323 includes/admin.php:337 includes/admin.php:356
+#: includes/admin.php:373 includes/directory.old.php:23
+#: includes/directory.old.php:999 includes/directory.php:24
+#: includes/directory.php:954
 msgid "Go"
 msgstr "Vai"
 
@@ -39,7 +43,7 @@ msgstr "Modifica evento"
 msgid "Download Vcard"
 msgstr "Scarica vCard"
 
-#: display/calendar-list.php:34 includes/services.php:6
+#: display/calendar-list.php:34 includes/services.php:7
 msgid "Time"
 msgstr "Volta"
 
@@ -59,50 +63,85 @@ msgstr "Anno"
 msgid "Submit"
 msgstr "Invia"
 
-#: display/calendar.php:68 includes/admin.php:260 includes/calendar.php:134
-#: includes/calendar.php:624 includes/calendar.php:823
-#: includes/classes.php:172 index.php:245
+#: display/calendar.php:68 includes/admin.php:68 includes/admin.php:95
+#: includes/admin.php:248 includes/admin.php:284 includes/attendance.php:13
+#: includes/attendance.php:76 includes/attendance.php:184
+#: includes/calendar.php:134 includes/calendar.php:624
+#: includes/calendar.php:823 includes/classes.php:172
+#: includes/individual_attendance.php:16 includes/json.php:127
+#: includes/pdf_creator.php:725 includes/rota.php:40 includes/rota.php:145
+#: includes/rota.php:313 includes/services.php:6 includes/services.php:43
 msgid "Sunday"
 msgstr "Domenica"
 
-#: display/calendar.php:69 includes/admin.php:254 includes/calendar.php:135
-#: includes/calendar.php:624 includes/calendar.php:823
-#: includes/classes.php:172 index.php:245
+#: display/calendar.php:69 includes/admin.php:68 includes/admin.php:95
+#: includes/admin.php:248 includes/admin.php:278 includes/attendance.php:13
+#: includes/attendance.php:76 includes/attendance.php:184
+#: includes/calendar.php:135 includes/calendar.php:624
+#: includes/calendar.php:823 includes/classes.php:172
+#: includes/individual_attendance.php:16 includes/json.php:127
+#: includes/pdf_creator.php:725 includes/rota.php:40 includes/rota.php:145
+#: includes/rota.php:313 includes/services.php:6 includes/services.php:43
 msgid "Monday"
 msgstr "Lunedi"
 
-#: display/calendar.php:70 includes/admin.php:255 includes/calendar.php:136
-#: includes/calendar.php:624 includes/calendar.php:823
-#: includes/classes.php:172 index.php:245
+#: display/calendar.php:70 includes/admin.php:68 includes/admin.php:95
+#: includes/admin.php:248 includes/admin.php:279 includes/attendance.php:13
+#: includes/attendance.php:76 includes/attendance.php:184
+#: includes/calendar.php:136 includes/calendar.php:624
+#: includes/calendar.php:823 includes/classes.php:172
+#: includes/individual_attendance.php:16 includes/json.php:127
+#: includes/pdf_creator.php:725 includes/rota.php:40 includes/rota.php:145
+#: includes/rota.php:313 includes/services.php:6 includes/services.php:43
 msgid "Tuesday"
 msgstr "Martedì"
 
-#: display/calendar.php:71 includes/admin.php:256 includes/calendar.php:137
-#: includes/calendar.php:624 includes/calendar.php:823
-#: includes/classes.php:172 index.php:245
+#: display/calendar.php:71 includes/admin.php:68 includes/admin.php:95
+#: includes/admin.php:248 includes/admin.php:280 includes/attendance.php:13
+#: includes/attendance.php:76 includes/attendance.php:184
+#: includes/calendar.php:137 includes/calendar.php:624
+#: includes/calendar.php:823 includes/classes.php:172
+#: includes/individual_attendance.php:16 includes/json.php:127
+#: includes/pdf_creator.php:725 includes/rota.php:40 includes/rota.php:145
+#: includes/rota.php:313 includes/services.php:6 includes/services.php:43
 msgid "Wednesday"
 msgstr "Mercoledì"
 
-#: display/calendar.php:72 includes/admin.php:257 includes/calendar.php:138
-#: includes/calendar.php:624 includes/calendar.php:823
-#: includes/classes.php:172 index.php:245
+#: display/calendar.php:72 includes/admin.php:68 includes/admin.php:95
+#: includes/admin.php:248 includes/admin.php:281 includes/attendance.php:13
+#: includes/attendance.php:76 includes/attendance.php:184
+#: includes/calendar.php:138 includes/calendar.php:624
+#: includes/calendar.php:823 includes/classes.php:172
+#: includes/individual_attendance.php:16 includes/json.php:127
+#: includes/pdf_creator.php:725 includes/rota.php:40 includes/rota.php:145
+#: includes/rota.php:313 includes/services.php:6 includes/services.php:43
 msgid "Thursday"
 msgstr "Giovedi"
 
-#: display/calendar.php:73 includes/admin.php:258 includes/calendar.php:139
-#: includes/calendar.php:624 includes/calendar.php:823
-#: includes/classes.php:172 index.php:245
+#: display/calendar.php:73 includes/admin.php:68 includes/admin.php:95
+#: includes/admin.php:248 includes/admin.php:282 includes/attendance.php:13
+#: includes/attendance.php:76 includes/attendance.php:184
+#: includes/calendar.php:139 includes/calendar.php:624
+#: includes/calendar.php:823 includes/classes.php:172
+#: includes/individual_attendance.php:16 includes/json.php:127
+#: includes/pdf_creator.php:725 includes/rota.php:40 includes/rota.php:145
+#: includes/rota.php:313 includes/services.php:6 includes/services.php:43
 msgid "Friday"
 msgstr "Venerdì"
 
-#: display/calendar.php:74 includes/admin.php:259 includes/calendar.php:140
-#: includes/calendar.php:624 includes/calendar.php:823
-#: includes/classes.php:172 index.php:245
+#: display/calendar.php:74 includes/admin.php:68 includes/admin.php:95
+#: includes/admin.php:248 includes/admin.php:283 includes/attendance.php:13
+#: includes/attendance.php:76 includes/attendance.php:184
+#: includes/calendar.php:140 includes/calendar.php:624
+#: includes/calendar.php:823 includes/classes.php:172
+#: includes/individual_attendance.php:16 includes/json.php:127
+#: includes/pdf_creator.php:725 includes/rota.php:40 includes/rota.php:145
+#: includes/rota.php:313 includes/services.php:6 includes/services.php:43
 msgid "Saturday"
 msgstr "Sabato"
 
-#: display/rota.php:16 includes/rota.php:173 includes/rota.php:321
-#: includes/rota.php:483
+#: display/rota.php:16 includes/rota.php:176 includes/rota.php:325
+#: includes/rota.php:487
 msgid "Which Service?"
 msgstr "Quale servizio?"
 
@@ -114,8 +153,8 @@ msgstr "su"
 msgid "at"
 msgstr "a"
 
-#: display/rota.php:22 includes/rota.php:179 includes/rota.php:327
-#: includes/rota.php:489
+#: display/rota.php:22 includes/rota.php:182 includes/rota.php:331
+#: includes/rota.php:493
 msgid "Choose service"
 msgstr "Scegli il servizio"
 
@@ -132,8 +171,8 @@ msgstr "Versione PDF della Rota per i prossimi 3 mesi"
 msgid "Spreadsheet Version of the rota for next 3 months"
 msgstr "Foglio di calcolo versione della Rota per i prossimi tre mesi"
 
-#: display/rota.php:55 includes/json.php:140 includes/json.php:171
-#: includes/rota.php:259
+#: display/rota.php:55 includes/json.php:141 includes/json.php:172
+#: includes/rota.php:262
 msgid "No one is doing anything yet"
 msgstr "Nessuno sta facendo niente ancora"
 
@@ -151,343 +190,353 @@ msgstr ""
 msgid "Filter by series"
 msgstr "Cancella Series"
 
-#: includes/admin.php:33 includes/admin.php:326
+#: includes/admin.php:12
+msgid ""
+"Welcome to the church admin plugin. The first job is to get some people into "
+"the directory..."
+msgstr ""
+
+#: includes/admin.php:13
+msgid "Import Address List CSV"
+msgstr ""
+
+#: includes/admin.php:14 includes/admin.php:355 includes/email.php:88
+#: includes/sms.php:15
+msgid "Add a Household"
+msgstr "Aggiungere una famiglia"
+
+#: includes/admin.php:45 includes/admin.php:354
 msgid "People"
 msgstr ""
 
-#: includes/admin.php:37 includes/admin.php:247 includes/permissions.php:157
+#: includes/admin.php:46 includes/attendance.php:61
+#: includes/attendance.php:162
+msgid "Children"
+msgstr "Bambini"
+
+#: includes/admin.php:50 includes/admin.php:271 includes/permissions.php:157
 msgid "Rota"
 msgstr "Rota"
 
-#: includes/admin.php:58 includes/admin.php:328
+#: includes/admin.php:73 includes/admin.php:358
 msgid "Attendance Tracking"
 msgstr ""
 
-#: includes/admin.php:59
+#: includes/admin.php:74
 msgid "Add service attendance"
 msgstr ""
 
-#: includes/admin.php:60
+#: includes/admin.php:75
 msgid "Individual Attendance"
 msgstr ""
 
-#: includes/admin.php:62
+#: includes/admin.php:77
 #, fuzzy, php-format
 msgid "Attendance list for %1$s on %2$s at %3$s"
 msgstr "Elenco delle presenze"
 
-#: includes/admin.php:87
+#: includes/admin.php:103
 #, fuzzy
 msgid "Clear activation errors log"
 msgstr "Hai avuto un errore di attivazione"
 
-#: includes/admin.php:90
+#: includes/admin.php:106
 msgid "Services"
 msgstr "Servizi"
 
-#: includes/admin.php:91
+#: includes/admin.php:107
 msgid "Add a service"
 msgstr "Aggiungere un servizio"
 
-#: includes/admin.php:98
+#: includes/admin.php:114
 msgid "Backup"
 msgstr "Backup"
 
-#: includes/admin.php:182
+#: includes/admin.php:198
 msgid "Birthdays"
 msgstr "Compleanni"
 
-#: includes/admin.php:193
+#: includes/admin.php:209
 msgid "List Sermon Series"
 msgstr "Lista Sermon Series"
 
-#: includes/admin.php:194
+#: includes/admin.php:210
 msgid "iTunes Compatible RSS Settings"
 msgstr "iTunes Impostazioni RSS compatibili"
 
-#: includes/admin.php:207
+#: includes/admin.php:219
 msgid "Kids Work"
 msgstr ""
 
-#: includes/admin.php:211 includes/directory.php:522
-#: includes/directory.php:659 includes/directory.php:663
-#: includes/pdf_creator.php:1022 includes/sms.php:220
+#: includes/admin.php:234 includes/directory.old.php:523
+#: includes/directory.old.php:660 includes/directory.old.php:664
+#: includes/directory.php:525 includes/directory.php:663
+#: includes/directory.php:667 includes/pdf_creator.php:1024
+#: includes/sms.php:222
 msgid "Hope Team"
 msgstr ""
 
-#: includes/admin.php:231
+#: includes/admin.php:255
 msgid "Select a service rota"
 msgstr ""
 
-#: includes/admin.php:232 includes/admin.php:267
+#: includes/admin.php:256 includes/admin.php:291
 msgid "Choose a service"
 msgstr "Scegli un servizio"
 
-#: includes/admin.php:235 includes/admin.php:279 includes/attendance.php:52
-#: includes/attendance.php:243 includes/rota.php:324
+#: includes/admin.php:259 includes/admin.php:303 includes/attendance.php:53
+#: includes/attendance.php:246 includes/rota.php:328
 #, php-format
 msgid "%1$s on %2$s at %3$s"
 msgstr ""
 
-#: includes/admin.php:237
+#: includes/admin.php:261
 msgid "Select"
 msgstr ""
 
-#: includes/admin.php:242
+#: includes/admin.php:266
 msgid "View service rota"
 msgstr ""
 
-#: includes/admin.php:244
+#: includes/admin.php:268
 msgid "View/Edit Rota Jobs"
 msgstr "Visualizza / Modifica Rota Jobs"
 
-#: includes/admin.php:245
+#: includes/admin.php:269
 msgid "Add more rota jobs"
 msgstr "Aggiungere più posti di lavoro rota"
 
-#: includes/admin.php:246
+#: includes/admin.php:270
 msgid "Add dates to rota"
 msgstr ""
 
-#: includes/admin.php:249
+#: includes/admin.php:273
 #, php-format
 msgid ""
 "This weeks rotas are automatically emailed on %1$s, when your website is "
 "first accessed that day."
 msgstr ""
 
-#: includes/admin.php:251
+#: includes/admin.php:275
 msgid "Automatically email current week's rota"
 msgstr ""
 
-#: includes/admin.php:253
+#: includes/admin.php:277
 msgid "No Auto Send"
 msgstr ""
 
-#: includes/admin.php:266
+#: includes/admin.php:290
 #, fuzzy
 msgid "Email out service rota"
 msgstr "Email service rota"
 
-#: includes/admin.php:270
+#: includes/admin.php:294
 #, php-format
 msgid "%1$s on %2$s at %3$s "
 msgstr ""
 
-#: includes/admin.php:272
+#: includes/admin.php:296
 msgid "Send service rota"
 msgstr ""
 
-#: includes/admin.php:274
+#: includes/admin.php:298
 msgid "Horizontal Rota PDF"
 msgstr ""
 
-#: includes/admin.php:274
+#: includes/admin.php:298
 msgid "Select Service"
 msgstr ""
 
-#: includes/admin.php:285 includes/rota_settings.php:125
+#: includes/admin.php:309 includes/rota_settings.php:125
 msgid "Initials?"
 msgstr ""
 
-#: includes/admin.php:289
+#: includes/admin.php:313
 msgid "Create PDF"
 msgstr ""
 
-#: includes/admin.php:302
+#: includes/admin.php:326
 msgid "Download a small group PDF"
 msgstr "Scarica un PDF piccolo gruppo"
 
-#: includes/admin.php:308
+#: includes/admin.php:332
 msgid "Download"
 msgstr "Scarica"
 
-#: includes/admin.php:314
+#: includes/admin.php:338
 msgid "Send Bulk SMS"
 msgstr "Invia SMS Bulk"
 
-#: includes/admin.php:315
+#: includes/admin.php:339
 msgid "Send Bulk Email"
 msgstr "Invia Bulk Email"
 
-#: includes/admin.php:316
+#: includes/admin.php:340
 msgid "Sync Mailchimp Account"
 msgstr ""
 
-#: includes/admin.php:329 includes/classes.php:6
+#: includes/admin.php:359 includes/classes.php:6
 msgid "Classes"
 msgstr ""
 
-#: includes/admin.php:330 includes/admin.php:400
+#: includes/admin.php:360 includes/admin.php:419
 msgid "Follow Up"
 msgstr "Follow Up"
 
-#: includes/admin.php:331 includes/people_activity.php:13
+#: includes/admin.php:361 includes/people_activity.php:14
 msgid "Recent People Activity"
 msgstr "Persone Attività recente"
 
-#: includes/admin.php:332 includes/admin.php:395
+#: includes/admin.php:362 includes/admin.php:414
 msgid "Member Types"
 msgstr "Tipi di Stati"
 
-#: includes/admin.php:337 includes/admin.php:367 includes/email.php:88
-#: includes/sms.php:14
-msgid "Add a Household"
-msgstr "Aggiungere una famiglia"
-
-#: includes/admin.php:338
-msgid "Add a new person (not connected to a current household)"
-msgstr ""
-"Aggiungere una nuova persona (non collegato a una famiglia di corrente)"
-
-#: includes/admin.php:346
+#: includes/admin.php:366
 msgid "Select a directory to view"
 msgstr ""
 
-#: includes/admin.php:347 includes/directory.php:17
+#: includes/admin.php:367 includes/directory.old.php:17
+#: includes/directory.php:18
 msgid "Choose Member Type..."
 msgstr "Scegli tipo di membri ..."
 
-#: includes/admin.php:354
+#: includes/admin.php:374
 msgid "Download an address list PDF"
 msgstr "Scarica un elenco di indirizzi PDF"
 
-#: includes/admin.php:363
+#: includes/admin.php:383
 msgid "Address List PDF"
 msgstr "Elenco indirizzi PDF"
 
-#: includes/admin.php:367
-msgid "Add a new person in a new household"
-msgstr ""
-
-#: includes/admin.php:369
+#: includes/admin.php:388
 #, fuzzy
 msgid "Download an csv of people"
 msgstr "Scarica un PDF piccolo gruppo"
 
-#: includes/admin.php:396
+#: includes/admin.php:415
 msgid "Add a member Type"
 msgstr "Aggiungere un tipo di membro"
 
-#: includes/attendance.php:53
+#: includes/attendance.php:54
 msgid "Attendance List for"
 msgstr "Elenco delle presenze"
 
-#: includes/attendance.php:54 includes/attendance.php:234
+#: includes/attendance.php:55 includes/attendance.php:237
 msgid "Add attendance"
 msgstr "Aggiungi presenze"
 
-#: includes/attendance.php:60 includes/attendance.php:63
+#: includes/attendance.php:61 includes/attendance.php:64
 #: includes/calendar.php:21 includes/calendar.php:24 includes/calendar.php:209
 #: includes/calendar.php:215 includes/calendar.php:775 includes/classes.php:12
 #: includes/classes.php:16 includes/departments.php:9
-#: includes/departments.php:12 includes/directory.php:659
-#: includes/directory.php:663 includes/directory.php:713
-#: includes/directory.php:1006 includes/directory.php:1023
-#: includes/facilities.php:30 includes/funnel.php:13 includes/funnel.php:18
-#: includes/funnel.php:36 includes/kidswork.php:17 includes/kidswork.php:20
+#: includes/departments.php:12 includes/directory.old.php:660
+#: includes/directory.old.php:664 includes/directory.old.php:716
+#: includes/directory.php:663 includes/directory.php:667
+#: includes/directory.php:717 includes/directory.php:1010
+#: includes/directory.php:1027 includes/facilities.php:30
+#: includes/funnel.php:14 includes/funnel.php:19 includes/funnel.php:38
+#: includes/kidswork.php:17 includes/kidswork.php:20
 #: includes/member_type.php:17 includes/member_type.php:21
-#: includes/member_type.php:108 includes/people_activity.php:46
-#: includes/people_activity.php:64 includes/rota.php:203 includes/rota.php:235
-#: includes/rota_settings.php:125 includes/services.php:6
+#: includes/member_type.php:108 includes/people_activity.php:47
+#: includes/people_activity.php:65 includes/rota.php:206 includes/rota.php:238
+#: includes/rota_settings.php:125 includes/services.php:7
 msgid "Edit"
 msgstr "Modifica"
 
-#: includes/attendance.php:60 includes/attendance.php:64
+#: includes/attendance.php:61 includes/attendance.php:65
 #: includes/calendar.php:21 includes/calendar.php:26 includes/calendar.php:209
 #: includes/calendar.php:216 includes/classes.php:12 includes/classes.php:17
 #: includes/classes.php:301 includes/departments.php:9
-#: includes/departments.php:13 includes/directory.php:75
-#: includes/directory.php:98 includes/directory.php:659
-#: includes/directory.php:663 includes/directory.php:713
-#: includes/directory.php:964 includes/directory.php:1006
-#: includes/directory.php:1023 includes/email.php:47 includes/funnel.php:13
-#: includes/funnel.php:19 includes/kidswork.php:17 includes/kidswork.php:21
+#: includes/departments.php:13 includes/directory.old.php:75
+#: includes/directory.old.php:98 includes/directory.old.php:660
+#: includes/directory.old.php:664 includes/directory.old.php:716
+#: includes/directory.old.php:966 includes/directory.php:76
+#: includes/directory.php:99 includes/directory.php:663
+#: includes/directory.php:667 includes/directory.php:717
+#: includes/directory.php:968 includes/directory.php:1010
+#: includes/directory.php:1027 includes/email.php:47 includes/funnel.php:14
+#: includes/funnel.php:20 includes/kidswork.php:17 includes/kidswork.php:21
 #: includes/member_type.php:17 includes/member_type.php:25
-#: includes/people_activity.php:46 includes/people_activity.php:65
-#: includes/rota.php:203 includes/rota.php:235 includes/rota_settings.php:125
+#: includes/people_activity.php:47 includes/people_activity.php:66
+#: includes/rota.php:206 includes/rota.php:238 includes/rota_settings.php:125
 #: includes/sermon-podcast.php:466 includes/sermon-podcast.php:475
-#: includes/services.php:6
+#: includes/services.php:7
 msgid "Delete"
 msgstr "Cancella"
 
-#: includes/attendance.php:60 includes/attendance.php:145
+#: includes/attendance.php:61 includes/attendance.php:147
 #: includes/birthdays.php:47 includes/classes.php:298
-#: includes/directory.php:1006 includes/email.php:47
-#: includes/individual_attendance.php:86 includes/pdf_creator.php:681
-#: includes/recent.php:12 includes/rota.php:203 includes/rota.php:514
+#: includes/directory.php:1010 includes/email.php:47
+#: includes/individual_attendance.php:87 includes/pdf_creator.php:682
+#: includes/recent.php:13 includes/rota.php:206 includes/rota.php:518
 msgid "Date"
 msgstr "Data"
 
-#: includes/attendance.php:60 includes/attendance.php:156
+#: includes/attendance.php:61 includes/attendance.php:158
 msgid "Adults"
 msgstr "Adulti"
 
-#: includes/attendance.php:60 includes/attendance.php:160
-msgid "Children"
-msgstr "Bambini"
-
-#: includes/attendance.php:60
+#: includes/attendance.php:61
 msgid "Total"
 msgstr "Totale"
 
-#: includes/attendance.php:110
+#: includes/attendance.php:112
 msgid "Attendance added"
 msgstr "La frequenza di inserimento"
 
-#: includes/attendance.php:121 includes/permissions.php:193
+#: includes/attendance.php:123 includes/permissions.php:193
 #: includes/small_groups.php:26
 msgid "Attendance"
 msgstr "Partecipazione"
 
-#: includes/attendance.php:125 includes/permissions.php:211
+#: includes/attendance.php:127 includes/permissions.php:211
 #: includes/sermon-podcast.php:368
 msgid "Service"
 msgstr "Servizio"
 
-#: includes/attendance.php:163
+#: includes/attendance.php:165
 msgid "Add attendance for that date"
 msgstr "Aggiungi presenza per quella data"
 
-#: includes/attendance.php:175
+#: includes/attendance.php:177
 msgid "Attendance record deleted"
 msgstr "Record di presenze cancellato"
 
-#: includes/attendance.php:191 includes/calendar.php:98
+#: includes/attendance.php:194 includes/calendar.php:98
 msgid "Month"
 msgstr "Mese"
 
-#: includes/attendance.php:230
+#: includes/attendance.php:233
 msgid "No attendance recorded yet"
 msgstr "No presenze registrate ancora"
 
-#: includes/attendance.php:233
+#: includes/attendance.php:236
 msgid "Attendance Figures"
 msgstr "Dati di affluenza"
 
-#: includes/attendance.php:244
+#: includes/attendance.php:247
 #, php-format
 msgid "View attendance table for %1$s  %2$s"
 msgstr ""
 
-#: includes/attendance.php:244
+#: includes/attendance.php:247
 #, fuzzy, php-format
 msgid "Edit week by week attendance for %1$s %2$s"
 msgstr "Modifica di settimana in settimana di presenza per"
 
-#: includes/attendance.php:247
+#: includes/attendance.php:250
 msgid "Attendance Adults,Children (Total)"
 msgstr "Presenza di adulti, bambini (Totale)"
 
-#: includes/attendance.php:248
+#: includes/attendance.php:251
 msgid "Total Attendance for"
 msgstr "La partecipazione totale per"
 
-#: includes/attendance.php:249
+#: includes/attendance.php:252
 msgid "Adults Attendance for"
 msgstr "Adulti frequenza per"
 
-#: includes/attendance.php:250
+#: includes/attendance.php:253
 msgid "Children Attendance for"
 msgstr "Bambini Assistenza per"
 
@@ -497,23 +546,24 @@ msgid "Birthdays within the next %1$s  days"
 msgstr ""
 
 #: includes/birthdays.php:47 includes/classes.php:298
-#: includes/directory.php:659 includes/directory.php:663
-#: includes/people_activity.php:46 includes/recent.php:12
+#: includes/directory.old.php:660 includes/directory.old.php:664
+#: includes/directory.php:663 includes/directory.php:667
+#: includes/people_activity.php:47 includes/recent.php:13
 #: includes/small_groups.php:26
 msgid "Name"
 msgstr "Nome"
 
-#: includes/birthdays.php:125 includes/calendar_widget.php:29
+#: includes/birthdays.php:126 includes/calendar_widget.php:29
 #: includes/sermon-podcast.php:698
 msgid "Title"
 msgstr "Titolo"
 
-#: includes/birthdays.php:127
+#: includes/birthdays.php:128
 #, fuzzy
 msgid "Which Member Types?"
 msgstr "Tipi di Stati"
 
-#: includes/birthdays.php:145
+#: includes/birthdays.php:146
 #, fuzzy
 msgid "How many days to show"
 msgstr "Quanti eventi per mostrare"
@@ -636,7 +686,8 @@ msgstr "Avvenimento"
 msgid "Event Title"
 msgstr "Titolo Evento"
 
-#: includes/calendar.php:528 includes/directory.php:422
+#: includes/calendar.php:528 includes/directory.old.php:422
+#: includes/directory.php:425
 msgid "Photo"
 msgstr "Foto"
 
@@ -800,7 +851,7 @@ msgstr "Ora fine"
 msgid "Event Name"
 msgstr "Nome Evento"
 
-#: includes/calendar.php:766 index.php:817
+#: includes/calendar.php:766 index.php:820
 msgid "Year Planner"
 msgstr "Anno Planner"
 
@@ -817,7 +868,7 @@ msgid "Delete Series"
 msgstr "Cancella Series"
 
 #: includes/calendar.php:784 includes/rota_settings.php:131
-#: includes/sermon-podcast.php:437 includes/services.php:35
+#: includes/sermon-podcast.php:437 includes/services.php:36
 msgid "Yes"
 msgstr "Sì"
 
@@ -878,9 +929,10 @@ msgid "Show on calendar?"
 msgstr ""
 
 #: includes/classes.php:240 includes/classes.php:293
-#: includes/directory.php:1214 includes/hope-team.php:56
-#: includes/hope-team.php:104 includes/individual_attendance.php:99
-#: includes/permissions.php:221 includes/rota.php:437
+#: includes/directory.php:1218 includes/directory.php:1302
+#: includes/hope-team.php:56 includes/hope-team.php:104
+#: includes/individual_attendance.php:100 includes/permissions.php:221
+#: includes/rota.php:441
 msgid "Save"
 msgstr "Salva"
 
@@ -941,7 +993,7 @@ msgstr "Twitter Username"
 msgid "Feedburner uri"
 msgstr ""
 
-#: includes/communication_settings.php:149 index.php:506 index.php:528
+#: includes/communication_settings.php:149 index.php:509 index.php:531
 #, fuzzy
 msgid "Permissions"
 msgstr "Versione PDF"
@@ -1058,7 +1110,7 @@ msgstr "Ministeri"
 msgid "Ministry (Click to view people)"
 msgstr ""
 
-#: includes/departments.php:9 includes/departments.php:135
+#: includes/departments.php:9 includes/departments.php:136
 msgid "Ministry"
 msgstr "Ministero"
 
@@ -1085,377 +1137,448 @@ msgstr ""
 msgid "Remove"
 msgstr "Allontanare la persona"
 
-#: includes/departments.php:69
+#: includes/departments.php:69 includes/directory.php:1278
 #, fuzzy
 msgid "Person"
 msgstr "Tipo di persona"
 
-#: includes/departments.php:78 includes/departments.php:134
+#: includes/departments.php:78 includes/departments.php:135
 msgid "Update"
 msgstr "Aggiornare"
 
-#: includes/departments.php:102
+#: includes/departments.php:103
 msgid "Ministries Deleted"
 msgstr "Ministeri Deleted"
 
-#: includes/departments.php:115 includes/departments.php:122
+#: includes/departments.php:116 includes/departments.php:123
 msgid "Ministries Updated"
 msgstr "Ministeri Aggiornato"
 
-#: includes/departments.php:126
+#: includes/departments.php:127
 msgid "Ministries Unchanged"
 msgstr "Ministeri Invariato"
 
-#: includes/departments.php:134 includes/facilities.php:30
-#: includes/funnel.php:36 includes/member_type.php:108
+#: includes/departments.php:135 includes/facilities.php:30
+#: includes/funnel.php:38 includes/member_type.php:108
 msgid "Add"
 msgstr "Aggiungi"
 
-#: includes/departments.php:137
+#: includes/departments.php:138
 msgid "Ministry Name"
 msgstr "Ministero Nome"
 
-#: includes/departments.php:140
+#: includes/departments.php:141
 msgid "Save Ministry"
 msgstr "Salva Ministero"
 
-#: includes/directory.php:16
+#: includes/directory.old.php:16 includes/directory.php:17
 msgid "Select different address list to view"
 msgstr ""
 
-#: includes/directory.php:68
+#: includes/directory.old.php:68 includes/directory.php:69
 msgid "address list"
 msgstr "elenco di indirizzi"
 
-#: includes/directory.php:75 includes/directory.php:964
+#: includes/directory.old.php:75 includes/directory.old.php:966
+#: includes/directory.php:76 includes/directory.php:968
 msgid "Last name"
 msgstr "Cognome"
 
-#: includes/directory.php:75 includes/directory.php:964
+#: includes/directory.old.php:75 includes/directory.old.php:966
+#: includes/directory.php:76 includes/directory.php:968
 msgid "First Name(s)"
 msgstr "Nome (s)"
 
-#: includes/directory.php:75 includes/directory.php:613
-#: includes/directory.php:964 includes/directory.php:1208
-#: includes/people_activity.php:163 includes/recent.php:12
-#: includes/services.php:6 includes/small_groups.php:197
+#: includes/directory.old.php:75 includes/directory.old.php:614
+#: includes/directory.old.php:966 includes/directory.php:76
+#: includes/directory.php:616 includes/directory.php:968
+#: includes/directory.php:1212 includes/people_activity.php:164
+#: includes/recent.php:13 includes/services.php:7
+#: includes/small_groups.php:197
 msgid "Address"
 msgstr "Indirizzo"
 
-#: includes/directory.php:75 includes/directory.php:964
+#: includes/directory.old.php:75 includes/directory.old.php:966
+#: includes/directory.php:76 includes/directory.php:968
 msgid "Last Update"
 msgstr "Ultimo aggiornamento"
 
-#: includes/directory.php:89
+#: includes/directory.old.php:89 includes/directory.php:90
 msgid "Add Surname"
 msgstr "Aggiungi Cognome"
 
-#: includes/directory.php:90
+#: includes/directory.old.php:90 includes/directory.php:91
 msgid "Add Firstname"
 msgstr "Aggiungi Cognome"
 
-#: includes/directory.php:95
+#: includes/directory.old.php:95 includes/directory.php:96
 msgid "Add Name"
 msgstr "Aggiungi nome"
 
-#: includes/directory.php:99
+#: includes/directory.old.php:99 includes/directory.php:100
 msgid "Add Address"
 msgstr "Aggiungi Indirizzo"
 
-#: includes/directory.php:149
+#: includes/directory.old.php:149 includes/directory.php:151
 msgid "Address saved"
 msgstr "Indirizzo salvato"
 
-#: includes/directory.php:149 includes/directory.php:154
-#: includes/directory.php:397
+#: includes/directory.old.php:149 includes/directory.old.php:154
+#: includes/directory.old.php:397 includes/directory.php:151
+#: includes/directory.php:156 includes/directory.php:400
 msgid "Back to Directory"
 msgstr "Torna alla directory"
 
-#: includes/directory.php:153
+#: includes/directory.old.php:153 includes/directory.php:155
 #, fuzzy
 msgid "Household Edited"
 msgstr "Household Deleted"
 
-#: includes/directory.php:173 includes/front_end_register.php:91
-#: includes/people_activity.php:166 includes/recent.php:12
+#: includes/directory.old.php:173 includes/directory.php:175
+#: includes/directory.php:1299 includes/front_end_register.php:92
+#: includes/people_activity.php:167 includes/recent.php:13
 msgid "Phone"
 msgstr "Telefono"
 
-#: includes/directory.php:177
+#: includes/directory.old.php:177 includes/directory.php:179
 msgid "Save Address"
 msgstr "Salva Indirizzo"
 
-#: includes/directory.php:194
+#: includes/directory.old.php:194 includes/directory.php:196
 msgid "Household Deleted"
 msgstr "Household Deleted"
 
-#: includes/directory.php:396
+#: includes/directory.old.php:396 includes/directory.php:399
 msgid "Person Edited"
 msgstr "Persona Edited"
 
-#: includes/directory.php:410 includes/directory.php:1201
+#: includes/directory.old.php:410 includes/directory.php:413
+#: includes/directory.php:1205 includes/directory.php:1279
 #: includes/front_end_register.php:75
 msgid "First Name"
 msgstr "Nome"
 
-#: includes/directory.php:414 includes/front_end_register.php:76
+#: includes/directory.old.php:414 includes/directory.php:417
+#: includes/directory.php:1280 includes/front_end_register.php:76
 msgid "Prefix (e.g.van der)"
 msgstr "Prefisso (e.g.van der)"
 
-#: includes/directory.php:418 includes/directory.php:1202
+#: includes/directory.old.php:418 includes/directory.php:421
+#: includes/directory.php:1206 includes/directory.php:1281
 #: includes/front_end_register.php:77
 msgid "Last Name"
 msgstr "Cognome"
 
-#: includes/directory.php:436 includes/directory.php:1205
+#: includes/directory.old.php:436 includes/directory.php:439
+#: includes/directory.php:1209
 msgid "Email Address"
 msgstr "Indirizzo e-mail"
 
-#: includes/directory.php:440 includes/directory.php:659
-#: includes/directory.php:663 includes/directory.php:1206
-#: includes/front_end_register.php:78 includes/people_activity.php:46
-#: includes/people_activity.php:165 includes/recent.php:12
+#: includes/directory.old.php:440 includes/directory.old.php:660
+#: includes/directory.old.php:664 includes/directory.php:443
+#: includes/directory.php:663 includes/directory.php:667
+#: includes/directory.php:1210 includes/directory.php:1282
+#: includes/front_end_register.php:78 includes/people_activity.php:47
+#: includes/people_activity.php:166 includes/recent.php:13
 #: includes/small_groups.php:26
 msgid "Mobile"
 msgstr "Cellulare"
 
-#: includes/directory.php:445 includes/directory.php:1203
-#: includes/front_end_register.php:84
-msgid "Gender"
-msgstr ""
+#: includes/directory.old.php:444 includes/directory.old.php:672
+#: includes/directory.php:1090 includes/install.php:820
+msgid "Male"
+msgstr "Maschio"
 
-#: includes/directory.php:449
-msgid "Age Range"
-msgstr ""
+#: includes/directory.old.php:446 includes/directory.old.php:671
+#: includes/directory.php:1090 includes/install.php:820
+msgid "Female"
+msgstr "Femminile"
 
-#: includes/directory.php:458 includes/directory.php:1204
+#: includes/directory.old.php:450
+msgid "People Type"
+msgstr "Persone Tipo"
+
+#: includes/directory.old.php:459 includes/directory.php:461
+#: includes/directory.php:1208
 msgid "Date of Birth"
 msgstr "Data di nascita"
 
-#: includes/directory.php:473
+#: includes/directory.old.php:474 includes/directory.php:476
 msgid "Override kids work group"
 msgstr ""
 
-#: includes/directory.php:474
+#: includes/directory.old.php:475 includes/directory.php:477
 msgid "Assign by age automatically"
 msgstr ""
 
-#: includes/directory.php:478
+#: includes/directory.old.php:479 includes/directory.php:481
 msgid "Current Member Type"
 msgstr "Corrente Tipo di membro"
 
-#: includes/directory.php:493
+#: includes/directory.old.php:494 includes/directory.php:496
 msgid "Dates of Member Levels"
 msgstr "Date degli Stati Livelli"
 
-#: includes/directory.php:505 includes/directory.php:659
-#: includes/directory.php:663 includes/pdf_creator.php:967
-#: includes/pdf_creator.php:980
+#: includes/directory.old.php:506 includes/directory.old.php:660
+#: includes/directory.old.php:664 includes/directory.php:508
+#: includes/directory.php:663 includes/directory.php:667
+#: includes/pdf_creator.php:969 includes/pdf_creator.php:982
 msgid "Ministries"
 msgstr "Ministeri"
 
-#: includes/directory.php:520
+#: includes/directory.old.php:521 includes/directory.php:523
 msgid "Add a new ministry"
 msgstr "Aggiungi un nuovo ministero"
 
-#: includes/directory.php:539 includes/directory.php:1209
+#: includes/directory.old.php:540 includes/directory.php:542
+#: includes/directory.php:1213
 msgid "Small Group"
 msgstr "Piccolo gruppo"
 
-#: includes/directory.php:553
+#: includes/directory.old.php:554 includes/directory.php:556
 msgid "Small group attendance"
 msgstr ""
 
-#: includes/directory.php:553 includes/pdf_creator.php:135
+#: includes/directory.old.php:554 includes/directory.php:556
+#: includes/pdf_creator.php:136
 msgid "Regular"
 msgstr ""
 
-#: includes/directory.php:553 includes/pdf_creator.php:150
+#: includes/directory.old.php:554 includes/directory.php:556
+#: includes/pdf_creator.php:151
 msgid "Irregular"
 msgstr ""
 
-#: includes/directory.php:553 includes/pdf_creator.php:166
+#: includes/directory.old.php:554 includes/directory.php:556
+#: includes/pdf_creator.php:167
 msgid "Connected"
 msgstr ""
 
-#: includes/directory.php:559
+#: includes/directory.old.php:560 includes/directory.php:562
 msgid "Wordpress User"
 msgstr "Wordpress utente"
 
-#: includes/directory.php:579 includes/permissions.php:216
+#: includes/directory.old.php:580 includes/directory.php:582
+#: includes/permissions.php:216
 msgid "Prayer Chain"
 msgstr ""
 
-#: includes/directory.php:583
+#: includes/directory.old.php:584 includes/directory.php:586
 msgid "Save Details"
 msgstr "Salva Dettagli"
 
-#: includes/directory.php:594
+#: includes/directory.old.php:595 includes/directory.php:597
 msgid "Person Deleted"
 msgstr "Deleted Person"
 
-#: includes/directory.php:605
+#: includes/directory.old.php:606 includes/directory.php:608
 msgid "There were some errors marked in red"
 msgstr "Ci sono stati alcuni errori in rosso"
 
-#: includes/directory.php:619 includes/small_groups.php:200
+#: includes/directory.old.php:620 includes/directory.php:622
+#: includes/small_groups.php:200
 msgid "Please click here to update map location"
 msgstr "Si prega di cliccare qui per aggiornare una posizione sulla mappa"
 
-#: includes/directory.php:655 includes/directory.php:770
+#: includes/directory.old.php:656 includes/directory.old.php:773
+#: includes/directory.php:659 includes/directory.php:774
 msgid "Add someone"
 msgstr "Aggiungere qualcuno"
 
-#: includes/directory.php:656
+#: includes/directory.old.php:657 includes/directory.php:660
 msgid "You can drag and drop to sort people display order"
 msgstr ""
 
-#: includes/directory.php:659 includes/directory.php:663
+#: includes/directory.old.php:660 includes/directory.old.php:664
+#: includes/directory.php:663 includes/directory.php:667
 msgid "Picture"
 msgstr "Immagine"
 
-#: includes/directory.php:659 includes/directory.php:663
+#: includes/directory.old.php:660 includes/directory.old.php:664
+#: includes/directory.php:663 includes/directory.php:667
 msgid "Sex"
 msgstr "Sesso"
 
-#: includes/directory.php:659 includes/directory.php:663
-#: includes/front_end_register.php:79
+#: includes/directory.old.php:660 includes/directory.old.php:664
+#: includes/directory.php:663 includes/directory.php:667
+#: includes/directory.php:1283 includes/front_end_register.php:79
 msgid "Person type"
 msgstr "Tipo di persona"
 
-#: includes/directory.php:659 includes/directory.php:663
-#: includes/people_activity.php:46
+#: includes/directory.old.php:660 includes/directory.old.php:664
+#: includes/directory.php:663 includes/directory.php:667
+#: includes/people_activity.php:47
 msgid "Member Level"
 msgstr "Membro del livello"
 
-#: includes/directory.php:659 includes/directory.php:663
-#: includes/front_end_register.php:82 includes/people_activity.php:46
-#: includes/people_activity.php:164 includes/recent.php:12
-#: includes/small_groups.php:26
+#: includes/directory.old.php:660 includes/directory.old.php:664
+#: includes/directory.php:663 includes/directory.php:667
+#: includes/directory.php:1289 includes/front_end_register.php:82
+#: includes/people_activity.php:47 includes/people_activity.php:165
+#: includes/recent.php:13 includes/small_groups.php:26
 msgid "Email"
 msgstr "Email"
 
-#: includes/directory.php:659
+#: includes/directory.old.php:660 includes/directory.php:663
 msgid "Move to different household"
 msgstr "Sposta in diverse famiglie"
 
-#: includes/directory.php:659
+#: includes/directory.old.php:660 includes/directory.php:663
 msgid "WP user"
 msgstr "Utente WP"
 
-#: includes/directory.php:702
+#: includes/directory.old.php:705 includes/directory.php:706
 msgid "Create WP User"
 msgstr "Create WP utente"
 
-#: includes/directory.php:769
+#: includes/directory.old.php:772 includes/directory.php:773
 msgid "There are no people stored in that household yet"
 msgstr "Non ci sono ancora persone archiviati in quella famiglia"
 
-#: includes/directory.php:773
+#: includes/directory.old.php:776 includes/directory.php:777
 msgid "Homephone"
 msgstr ""
 
-#: includes/directory.php:774
+#: includes/directory.old.php:777 includes/directory.php:778
 #, fuzzy
 msgid "Edit Address"
 msgstr "Indirizzo e-mail"
 
-#: includes/directory.php:779
+#: includes/directory.old.php:782 includes/directory.php:783
 msgid "No Household found"
 msgstr "No Household trovato"
 
-#: includes/directory.php:803
+#: includes/directory.old.php:806 includes/directory.php:807
 msgid "Wordpress Users migrated"
 msgstr "Wordpress utenti migrati"
 
-#: includes/directory.php:840
+#: includes/directory.old.php:843 includes/directory.php:844
 msgid "People Functions"
 msgstr "Persone Funzioni"
 
-#: includes/directory.php:879
+#: includes/directory.old.php:882 includes/directory.php:883
 msgid "That people record doesn't exist"
 msgstr "Quel disco la gente non esiste"
 
-#: includes/directory.php:886
+#: includes/directory.old.php:889 includes/directory.php:890
 msgid "User already created"
 msgstr "Utente già creato"
 
-#: includes/directory.php:892
+#: includes/directory.old.php:895 includes/directory.php:896
 msgid "User updated"
 msgstr "Utente aggiornata"
 
-#: includes/directory.php:907
+#: includes/directory.old.php:910 includes/directory.php:911
 msgid "The web team at"
 msgstr "Il team di web all'indirizzo"
 
-#: includes/directory.php:907
+#: includes/directory.old.php:910 includes/directory.php:911
 msgid "have just created a user login for you"
 msgstr "hanno appena creato un account di accesso utente per voi"
 
-#: includes/directory.php:908
+#: includes/directory.old.php:911 includes/directory.php:912
 msgid "Your username is"
 msgstr "Il tuo nome utente è"
 
-#: includes/directory.php:909
+#: includes/directory.old.php:912 includes/directory.php:913
 msgid "Your password is"
 msgstr "La tua password è"
 
-#: includes/directory.php:910
+#: includes/directory.old.php:913 includes/directory.php:914
 msgid "User created with username"
 msgstr "Utente creato con username"
 
-#: includes/directory.php:910
+#: includes/directory.old.php:913 includes/directory.php:914
 msgid "password"
 msgstr "parola d'ordine"
 
-#: includes/directory.php:910
+#: includes/directory.old.php:913 includes/directory.php:914
 msgid "and this message was queued to them"
 msgstr "e questo messaggio è stato messo in coda a loro"
 
-#: includes/directory.php:916
+#: includes/directory.old.php:919 includes/directory.php:920
 msgid "Email sent successfully"
 msgstr "Email inviata correttamente"
 
-#: includes/directory.php:920
+#: includes/directory.old.php:923 includes/directory.php:924
 msgid "Email NOT sent successfully"
 msgstr "Email NON inviata correttamente"
 
-#: includes/directory.php:964
+#: includes/directory.old.php:965 includes/pdf_creator.php:200
+#: includes/pdf_creator.php:226
+msgid "Address List"
+msgstr "Elenco indirizzi"
+
+#: includes/directory.old.php:965
+#, php-format
+msgid "Your search for %1$s yielded %2$s results"
+msgstr ""
+
+#: includes/directory.old.php:998
+msgid "not found"
+msgstr "non trovata"
+
+#: includes/directory.php:448 includes/directory.php:1207
+#: includes/directory.php:1291 includes/front_end_register.php:84
+msgid "Gender"
+msgstr ""
+
+#: includes/directory.php:452
+msgid "Age Range"
+msgstr ""
+
+#: includes/directory.php:968
 msgid "Address List Results"
 msgstr ""
 
-#: includes/directory.php:985
+#: includes/directory.php:989
 msgid "Delete Household"
 msgstr ""
 
-#: includes/directory.php:1086 includes/install.php:820
-msgid "Male"
-msgstr "Maschio"
-
-#: includes/directory.php:1086 includes/install.php:820
-msgid "Female"
-msgstr "Femminile"
-
-#: includes/directory.php:1195
+#: includes/directory.php:1199
 msgid "Your Header"
 msgstr ""
 
-#: includes/directory.php:1195
+#: includes/directory.php:1199
 msgid "Maps to"
 msgstr ""
 
-#: includes/directory.php:1200
+#: includes/directory.php:1204
 msgid "Unused"
 msgstr ""
 
-#: includes/directory.php:1207
+#: includes/directory.php:1211
 msgid "Home phone"
 msgstr ""
 
-#: includes/directory.php:1210 includes/member_type.php:109
+#: includes/directory.php:1214 includes/member_type.php:109
 #: includes/member_type.php:110 includes/permissions.php:199
 msgid "Member Type"
 msgstr "Tipo di membro"
+
+#: includes/directory.php:1274
+msgid "Add new household"
+msgstr ""
+
+#: includes/directory.php:1275
+msgid ""
+"This section is now much simpler. You can edit individual people later with "
+"more details like small group, ministries and date of birth"
+msgstr ""
+
+#: includes/directory.php:1286
+msgid "Member type"
+msgstr ""
+
+#: includes/directory.php:1298 includes/email.php:575
+#: includes/front_end_register.php:91 includes/sms.php:195
+msgid "Add another person"
+msgstr "Aggiungere un'altra persona"
+
+#: includes/directory.php:1298 includes/email.php:575
+#: includes/front_end_register.php:91 includes/sms.php:195
+msgid "Remove person"
+msgstr "Allontanare la persona"
 
 #: includes/email.php:12
 msgid "Email deleted"
@@ -1537,70 +1660,60 @@ msgstr "L'e-mail dovrà Caro Nome, quando viene inviato"
 msgid "Please upgrade your browser to display the email!"
 msgstr "Si prega di aggiornare il browser per visualizzare l'e-mail!"
 
-#: includes/email.php:528 includes/sms.php:170
+#: includes/email.php:529 includes/sms.php:172
 msgid "All"
 msgstr "Tutti"
 
-#: includes/email.php:534 includes/sms.php:173
+#: includes/email.php:535 includes/sms.php:175
 msgid "A Small group"
 msgstr "Un piccolo gruppo"
 
-#: includes/email.php:538 includes/sms.php:175
+#: includes/email.php:539 includes/sms.php:177
 msgid "Which group"
 msgstr "Quale gruppo"
 
-#: includes/email.php:552 includes/sms.php:182
+#: includes/email.php:553 includes/sms.php:184
 msgid "Choose individuals"
 msgstr "Scegli individui"
 
-#: includes/email.php:560 includes/sms.php:186
+#: includes/email.php:561 includes/sms.php:188
 msgid "Select Person"
 msgstr "Selezionare Persona"
 
-#: includes/email.php:574 includes/front_end_register.php:90
-#: includes/sms.php:193
-msgid "Add another person"
-msgstr "Aggiungere un'altra persona"
-
-#: includes/email.php:574 includes/front_end_register.php:90
-#: includes/sms.php:193
-msgid "Remove person"
-msgstr "Allontanare la persona"
-
-#: includes/email.php:580 includes/sms.php:196
+#: includes/email.php:581 includes/sms.php:198
 msgid "Everyone in this ministry"
 msgstr "Tutti in questo ministero"
 
-#: includes/email.php:588 includes/sms.php:204
+#: includes/email.php:589 includes/sms.php:206
 msgid "Select Ministry"
 msgstr "Selezionare Ministero"
 
-#: includes/email.php:600 includes/sms.php:216
+#: includes/email.php:601 includes/sms.php:218
 msgid "Add another ministry"
 msgstr "Aggiungi un altro ministero"
 
-#: includes/email.php:605
+#: includes/email.php:606
 msgid "A Hope Team"
 msgstr ""
 
-#: includes/email.php:610
+#: includes/email.php:611
 msgid "Everyone in this Hope Team"
 msgstr ""
 
-#: includes/email.php:616
+#: includes/email.php:617
 msgid "Add another hope team"
 msgstr ""
 
-#: includes/email.php:618
+#: includes/email.php:619
 msgid "Send Email"
 msgstr "Invia Email"
 
-#: includes/email.php:756 includes/email.php:826 includes/email.php:850
-#: includes/rota.php:105 index.php:1280
+#: includes/email.php:758 includes/email.php:828 includes/email.php:852
+#: includes/rota.php:106 index.php:1281
 msgid "Dear"
 msgstr "Caro"
 
-#: includes/email.php:871
+#: includes/email.php:873
 msgid "No email address found for"
 msgstr "Nessun indirizzo di posta elettronica trovati per"
 
@@ -1640,67 +1753,67 @@ msgstr "Grazie per esserti registrato sul sito"
 msgid "Registration"
 msgstr "Registrazione"
 
-#: includes/front_end_register.php:97
+#: includes/front_end_register.php:98
 msgid "To prevent automated registration"
 msgstr ""
 
-#: includes/front_end_register.php:98
+#: includes/front_end_register.php:99
 msgid "Register"
 msgstr "Registrati"
 
-#: includes/funnel.php:7
+#: includes/funnel.php:8
 msgid "Add a follow up funnel"
 msgstr "Aggiungere un follow up imbuto"
 
-#: includes/funnel.php:13
+#: includes/funnel.php:14
 msgid "Funnel"
 msgstr "Imbuto"
 
-#: includes/funnel.php:13
+#: includes/funnel.php:14
 msgid "Applies to"
 msgstr "Si applica a"
 
-#: includes/funnel.php:13
+#: includes/funnel.php:14
 msgid "Ministry Responsible"
 msgstr "Ministero responsabile"
 
-#: includes/funnel.php:37
+#: includes/funnel.php:39
 msgid "Follow Up Funnel"
 msgstr "Follow Up Funnel"
 
-#: includes/funnel.php:42
+#: includes/funnel.php:44
 msgid "Or add a new department"
 msgstr "Oppure aggiungi un nuovo reparto"
 
-#: includes/funnel.php:61
+#: includes/funnel.php:63
 msgid "Funnel Updated"
 msgstr "Imbuto Aggiornato"
 
-#: includes/funnel.php:69
+#: includes/funnel.php:71
 msgid "Funnel Action"
 msgstr "Imbuto Azione"
 
-#: includes/funnel.php:73
+#: includes/funnel.php:75
 msgid "Link to Member Type"
 msgstr "Link verso Tipo di membro"
 
-#: includes/funnel.php:74
+#: includes/funnel.php:76
 msgid "Please select member type"
 msgstr "Si prega di selezionare il tipo di utente"
 
-#: includes/funnel.php:82
+#: includes/funnel.php:84
 msgid "Ministry responsible for action"
 msgstr "Ministero responsabile per l'azione"
 
-#: includes/funnel.php:89
+#: includes/funnel.php:91
 msgid "Or create a new ministry"
 msgstr ""
 
-#: includes/funnel.php:89
+#: includes/funnel.php:91
 msgid "Or add a new ministry"
 msgstr ""
 
-#: includes/funnel.php:91
+#: includes/funnel.php:93
 msgid "Save Follow Up Funnel"
 msgstr "Salva Follow Up Imbuto"
 
@@ -1713,19 +1826,19 @@ msgstr "Nome"
 msgid "Who?"
 msgstr ""
 
-#: includes/individual_attendance.php:16
+#: includes/individual_attendance.php:17
 msgid "Individual attendance"
 msgstr ""
 
-#: includes/individual_attendance.php:60
+#: includes/individual_attendance.php:61
 msgid "Attendance Updated"
 msgstr ""
 
-#: includes/individual_attendance.php:87
+#: includes/individual_attendance.php:88
 msgid "Which Meeting"
 msgstr ""
 
-#: includes/individual_attendance.php:98
+#: includes/individual_attendance.php:99
 msgid "Comma Separated Visitors"
 msgstr ""
 
@@ -1875,86 +1988,82 @@ msgid ""
 "cron option for scheduling sending of queued emails"
 msgstr ""
 
-#: includes/pdf_creator.php:103 includes/pdf_creator.php:119
+#: includes/pdf_creator.php:104 includes/pdf_creator.php:120
 msgid "Small Group List"
 msgstr "Piccolo List Group"
 
-#: includes/pdf_creator.php:103 includes/pdf_creator.php:119
-#: includes/pdf_creator.php:1094 includes/pdf_creator.php:1110
+#: includes/pdf_creator.php:104 includes/pdf_creator.php:120
+#: includes/pdf_creator.php:1097 includes/pdf_creator.php:1113
 #, fuzzy
 msgid "people"
 msgstr "le persone che sono"
 
-#: includes/pdf_creator.php:199 includes/pdf_creator.php:225
-msgid "Address List"
-msgstr "Elenco indirizzi"
-
-#: includes/pdf_creator.php:751
+#: includes/pdf_creator.php:753
 #, fuzzy, php-format
 msgid "Who is doing what in %1$s at %2$s on %3$s at %4$s "
 msgstr "Chi sta facendo quello che in occasione della prossima"
 
-#: includes/pdf_creator.php:1094 includes/pdf_creator.php:1110
+#: includes/pdf_creator.php:1097 includes/pdf_creator.php:1113
 msgid "Kidswork Group List"
 msgstr ""
 
-#: includes/people_activity.php:14
+#: includes/people_activity.php:15
 msgid "Email newly assigned follow-up activity"
 msgstr "Mail appena assegnato l'attività di follow-up"
 
-#: includes/people_activity.php:46
+#: includes/people_activity.php:47
 msgid "Follow Up Action"
 msgstr "Follow Up Azione"
 
-#: includes/people_activity.php:46
+#: includes/people_activity.php:47
 msgid "Last Updated"
 msgstr "Ultimo aggiornamento"
 
-#: includes/people_activity.php:55
+#: includes/people_activity.php:56
 #, php-format
 msgid "%1$s assigned to %2$s on %3$s"
 msgstr ""
 
-#: includes/people_activity.php:56
+#: includes/people_activity.php:57
 #, fuzzy, php-format
 msgid "completed on %1$s"
 msgstr "completato il"
 
-#: includes/people_activity.php:101
+#: includes/people_activity.php:102
 #, fuzzy, php-format
 msgid "Assign %1$s to "
 msgstr "Assegna a"
 
-#: includes/people_activity.php:102
+#: includes/people_activity.php:103
 #, fuzzy
 msgid "Select someone..."
 msgstr "Selezionare Persona"
 
-#: includes/people_activity.php:122
+#: includes/people_activity.php:123
 msgid "Couldn't process data"
 msgstr "Impossibile elaborare i dati"
 
-#: includes/people_activity.php:134
+#: includes/people_activity.php:135
 msgid "Follow Up Funnel Assigned"
 msgstr "Follow Up Imbuto Assegnato"
 
-#: includes/people_activity.php:150
+#: includes/people_activity.php:151
 msgid "Follow Up activities emailed to..."
 msgstr "Follow Up attività tramite email ..."
 
-#: includes/people_activity.php:158
+#: includes/people_activity.php:159
 msgid "You've been assigned some follow up actions"
 msgstr "Sei stato assegnato alcune azioni di follow-up"
 
-#: includes/people_activity.php:161
+#: includes/people_activity.php:162
 msgid "assigned on"
 msgstr "assegnato il"
 
-#: includes/people_activity.php:171
+#: includes/people_activity.php:172
 msgid "You've been assigned some follow up tasks"
 msgstr "Sei stato assegnato alcuni compiti di follow-up"
 
-#: includes/people_activity.php:176
+#: includes/people_activity.php:177
 msgid "Follow Up activities did not need to be emailed"
 msgstr "Follow Up attività non aveva bisogno di essere inviato via email"
 
@@ -2014,74 +2123,74 @@ msgstr ""
 msgid "Send message"
 msgstr ""
 
-#: includes/recent.php:11
+#: includes/recent.php:12
 msgid "activity for last"
 msgstr "attività per ultimo"
 
-#: includes/recent.php:11
+#: includes/recent.php:12
 msgid "month(s)"
 msgstr "mese (s)"
 
-#: includes/recent.php:12
+#: includes/recent.php:13
 msgid "Next Action"
 msgstr "Prossimo Azione"
 
-#: includes/recent.php:12
+#: includes/recent.php:13
 msgid "Assign to"
 msgstr "Assegna a"
 
-#: includes/rota.php:65 index.php:1247
+#: includes/rota.php:66 index.php:1248
 msgid "Job"
 msgstr ""
 
-#: includes/rota.php:65 index.php:1247
+#: includes/rota.php:66 index.php:1248
 msgid "Who"
 msgstr ""
 
-#: includes/rota.php:112 includes/rota.php:117
+#: includes/rota.php:113 includes/rota.php:118
 msgid "This week's service rota"
 msgstr ""
 
-#: includes/rota.php:132
+#: includes/rota.php:133
 msgid ""
 "The email will contain a salutation and the service rota. Please add your "
 "own message"
 msgstr ""
 
-#: includes/rota.php:134
+#: includes/rota.php:135
 msgid "Send to rota participants"
 msgstr ""
 
-#: includes/rota.php:199
+#: includes/rota.php:202
 #, php-format
 msgid "Rota  for %1$s on %2$s at %3$s at %4$s"
 msgstr ""
 
-#: includes/rota.php:200
+#: includes/rota.php:203
 msgid "Click a table cell to edit it"
 msgstr ""
 
-#: includes/rota.php:267
+#: includes/rota.php:270
 msgid "Copy rota"
 msgstr ""
 
-#: includes/rota.php:288
+#: includes/rota.php:291
 msgid "Rota for "
 msgstr ""
 
-#: includes/rota.php:291
+#: includes/rota.php:294
 msgid "Add to rota"
 msgstr "Aggiungi a rota"
 
-#: includes/rota.php:297
+#: includes/rota.php:300
 msgid "You need to add some rota jobs first"
 msgstr "È necessario aggiungere un po 'di lavori di Rota prima"
 
-#: includes/rota.php:366
+#: includes/rota.php:370
 msgid "Rota updated"
 msgstr "Rota aggiornato"
 
-#: includes/rota.php:453
+#: includes/rota.php:457
 msgid "Rota Deleted"
 msgstr "Rota Deleted"
 
@@ -2231,46 +2340,46 @@ msgstr "Aggiungi ai Podcast"
 msgid "How many sermons to show"
 msgstr "Quanti eventi per mostrare"
 
-#: includes/services.php:6 includes/services.php:69
+#: includes/services.php:7 includes/services.php:71
 #, fuzzy
 msgid "Service Name"
 msgstr "Nome della serie"
 
-#: includes/services.php:6
+#: includes/services.php:7
 #, fuzzy
 msgid "Day"
 msgstr "Quotidiano"
 
-#: includes/services.php:6 includes/small_groups.php:18
+#: includes/services.php:7 includes/small_groups.php:18
 #, fuzzy
 msgid "Venue"
 msgstr "Sede principale"
 
-#: includes/services.php:29
+#: includes/services.php:30
 #, fuzzy
 msgid "Service deleted"
 msgstr "Serie Cancella"
 
-#: includes/services.php:35
+#: includes/services.php:36
 msgid "Are you sure?"
 msgstr ""
 
-#: includes/services.php:61
+#: includes/services.php:63
 #, fuzzy
 msgid "Service saved"
 msgstr "Servizi"
 
-#: includes/services.php:80
+#: includes/services.php:82
 #, fuzzy
 msgid "Service Time"
 msgstr "Elenco dei servizi"
 
-#: includes/services.php:83
+#: includes/services.php:85
 #, fuzzy
 msgid "Service Venue"
 msgstr "Servizio"
 
-#: includes/services.php:90
+#: includes/services.php:92
 #, fuzzy
 msgid "Save Service"
 msgstr "Domenica Servizio"
@@ -2335,71 +2444,69 @@ msgstr "Secondo capo"
 msgid "Save Small Group"
 msgstr "Salva Piccolo gruppo"
 
-#: includes/sms.php:166
+#: includes/sms.php:168
 #, fuzzy
 msgid "Choose a member type"
 msgstr "Scegli tipo di membri ..."
 
-#: includes/sms.php:222
+#: includes/sms.php:224
 msgid "Select Hope Team Job"
 msgstr ""
 
-#: index.php:505 index.php:526
+#: index.php:508 index.php:529
 msgid "Church Admin"
 msgstr "Chiesa Admin"
 
-#: index.php:507 index.php:527
+#: index.php:510 index.php:530
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: index.php:529
+#: index.php:532
 msgid "Plugin Support"
 msgstr "Supporto Plugin"
 
-#: index.php:728 index.php:729 index.php:731 index.php:732
+#: index.php:730 index.php:731 index.php:732 index.php:734 index.php:735
 msgid "You do not have permission to do that"
 msgstr ""
 
-#: index.php:786
+#: index.php:789
 msgid "Log out of password protected posts"
 msgstr "Esci di messaggi protetti da password"
 
-#: index.php:812
+#: index.php:815
 msgid "Year Planner pdfs"
 msgstr "Anno PDF Planner"
 
-#: index.php:812
+#: index.php:815
 msgid "Choose a pdf"
 msgstr "Scegli un pdf"
 
-#: index.php:831 index.php:889
+#: index.php:834 index.php:892
 msgid "PDF version"
 msgstr "Versione PDF"
 
-#: index.php:856
+#: index.php:859
 #, fuzzy
 msgid "Rolling Average Attendance Graph"
 msgstr "Grafico presenza media"
 
-#: index.php:866
+#: index.php:869
 #, fuzzy
 msgid "Monthly Attendance Graph"
 msgstr "La partecipazione totale per"
 
-#: index.php:876
+#: index.php:879
 #, fuzzy
 msgid "Weekly Attendance Graph"
 msgstr "Grafico presenza media"
 
-#: index.php:885
+#: index.php:888
 msgid "Rolling Average Graph"
 msgstr ""
 
-#~ msgid "People Type"
-#~ msgstr "Persone Tipo"
-
-#~ msgid "not found"
-#~ msgstr "non trovata"
+#~ msgid "Add a new person (not connected to a current household)"
+#~ msgstr ""
+#~ "Aggiungere una nuova persona (non collegato a una famiglia di corrente)"
 
 #, fuzzy
 #~ msgid "Who is doing what at the next %1$s on %2$s at %3$s"
