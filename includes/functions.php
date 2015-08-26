@@ -120,16 +120,16 @@ function church_admin_autocomplete($name='people',$first_id='friends',$second_id
 			}
 		}else$current=$current_data;
     }
-    $out= '<input id="'.$first_id.'" class="to" type="text" name="'.esc_html($name).'" value="'.esc_html($current).'"/> ';
+    $out= '<input id="'.sanitize_title_with_dashes($first_id).'" class="to" type="text" name="'.esc_html($name).'" value="'.esc_html($current).'"/> ';
     $out.='<script type="text/javascript">
 
 	jQuery(document).ready(function ($){
-	$("#'.$first_id.'").blur(function(){
+	$("#'.sanitize_title_with_dashes($first_id).'").blur(function(){
     // Using disable and close after destroy is redundant; just use destroy
     $(this).autocomplete("destroy");
 });
 
-	$("#'.$first_id.'").autocomplete({
+	$("#'.sanitize_title_with_dashes($first_id).'").autocomplete({
 		source: function(req, add){
 			$.getJSON("'.site_url().'/wp-admin/admin.php?page=church_admin/index.php&action=get_people&callback=?", req,  function(data) {  
                               
@@ -147,17 +147,17 @@ function church_admin_autocomplete($name='people',$first_id='friends',$second_id
 
 		},
 		select: function (event, ui) {
-                var terms = $("#'.$first_id.'").val().split(", ");
+                var terms = $("#'.sanitize_title_with_dashes($first_id).'").val().split(", ");
 		// remove the current input
                 terms.pop();
                 console.log(terms);
 		// add the selected item
                 terms.push(ui.item.value);
-		console.log(terms);
+		
                 // add placeholder to get the comma-and-space at the end
                 terms.push("");
                 this.value = terms.join(", ");
-                $("#'.$first_id.'").val(this.value);
+                $("#'.sanitize_title_with_dashes($first_id).'").val(this.value);
                 return false;
             },
 		minLength: 3,

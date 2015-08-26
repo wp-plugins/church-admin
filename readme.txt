@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.839 =
+* Fix autocomplete bug where title has whitespace in it
 = 0.838 =
 * Simplified add new household form and screen
 * Bug fixes for follow up funnels
