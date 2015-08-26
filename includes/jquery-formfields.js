@@ -24,11 +24,11 @@ jQuery(document).ready(function($) {
 				
 				
 				// enable the "remove" button
-				$('#btnDel').attr('disabled','');
+				$('#btnDel').prop( "disabled", false );
 
 				// business rule: you can only add 50 names
 				if (newNum == 50)
-					$('#btnAdd').attr('disabled','disabled');
+					$('#btnAdd').prop( "disabled", true );
 			});
 
 			$('#btnDel').click(function() {
@@ -36,14 +36,14 @@ jQuery(document).ready(function($) {
 				$('#input' + num).remove();		// remove the last element
 
 				// enable the "add" button
-				$('#btnAdd').attr('disabled','');
+				$('#btnAdd').prop( "disabled", false );
 
 				// if only one element remains, disable the "remove" button
 				if (num-1 == 1)
-					$('#btnDel').attr('disabled','disabled');
+					$('#btnDel').prop( "disabled", true);
 			});
 
-			$('#btnDel').attr('disabled','disabled');
+			$('#btnDel').prop( "disabled", "disabled" );
 		});
 });
 

@@ -202,7 +202,7 @@ if(!empty($taskresult))
 	    if(!empty($service))echo'<h2>'.sprintf(__('Rota  for %1$s on %2$s at %3$s at %4$s','church-admin'),$service->service_name,$days[$service->service_day],$service->venue,$service->service_time).'</h2>';
 		echo'<p>'.__('Click a table cell to edit it','church-admin').'</p>';
 		
-	    echo '<table class="widefat">';
+	    echo '<table class="widefat striped">';
 	    $thead='<tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th width="100">'.__('Date','church-admin').'</th>';
 	    $job=array();
 		foreach($taskresult AS $taskrow)
