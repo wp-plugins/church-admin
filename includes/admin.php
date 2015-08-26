@@ -6,12 +6,12 @@ function church_admin_front_admin()
 	global $church_admin_version,$wpdb;
 	//check if address list populated
 	$check=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_HOU_TBL);
-	if(empty($check))
+	if(empty($check)&&empty($_GET['action']))
 	{//first run situation...
 		echo'<h2>Church Admin Plugin v'.$church_admin_version.'</h2>';
 		echo '<p>'.__('Welcome to the church admin plugin. The first job is to get some people into the directory...','church-admin').'</p>';
 		echo'<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=csv-import&tab=people','csv_import').'">'.__('Import Address List CSV','church-admin').'</a></p>';
-		echo '<p><a class="primary button" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a></p>';
+		echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_new_household','new_household').'">'.__('Add a Household','church-admin').'</a> </p>';
 	}//end of first run situation
 	else
 	{//normal
@@ -42,17 +42,18 @@ function church_admin_front_admin()
 	 </tr></tbody></table>
 	
         <h2 class="nav-tab-wrapper">
-			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php echo $_GET['tab'] == 'people' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span><?php echo __('People','church-admin');?></a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=classes&tab=classes" class="nav-tab <?php echo $_GET['tab'] == 'classes' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-users"></span>Classes</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=small_groups&tab=small_groups" class="nav-tab <?php echo $_GET['tab'] == 'small_groups' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-nametag"></span>Groups</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=communication&tab=communication" class="nav-tab <?php echo $_GET['tab'] == 'communication' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-megaphone"></span>Comms</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=rota&tab=rota" class="nav-tab <?php echo $_GET['tab'] == 'rota' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar"></span><?php echo __('Rota','church-admin');?></a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=calendar&tab=calendar" class="nav-tab <?php echo $_GET['tab'] == 'calendar' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar-alt"></span>Calendar</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=facilities&tab=facilities" class="nav-tab <?php echo $_GET['tab'] == 'facilities' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-calendar"></span>Facilities</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=ministries&tab=ministries" class="nav-tab <?php echo $_GET['tab'] == 'ministries' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-clipboard"></span>Ministries</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=people&tab=people" class="nav-tab <?php if(isset( $_GET['tab'])&& $_GET['tab'] == 'people' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-admin-users"></span><?php echo __('People','church-admin');?></a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=children&tab=children" class="nav-tab <?php if(isset( $_GET['tab'])&& $_GET['tab'] == 'children' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-admin-users"></span><?php echo __('Children','church-admin');?></a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=classes&tab=classes" class="nav-tab <?php if(isset( $_GET['tab'])&& $_GET['tab'] == 'classes' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-admin-users"></span>Classes</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=small_groups&tab=small_groups" class="nav-tab <?php if(isset( $_GET['tab'])&& $_GET['tab'] == 'small_groups' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-nametag"></span>Groups</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=communication&tab=communication" class="nav-tab <?php if(isset($_GET['tab'])&& $_GET['tab'] == 'communications' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-megaphone"></span>Comms</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=rota&tab=rota" class="nav-tab <?php if(isset($_GET['tab'])&& $_GET['tab'] == 'rota' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-calendar"></span><?php echo __('Rota','church-admin');?></a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=calendar&tab=calendar" class="nav-tab <?php if(isset($_GET['tab'])&& $_GET['tab'] == 'calendar' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-calendar-alt"></span>Calendar</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=facilities&tab=facilities" class="nav-tab <?php if(isset($_GET['tab'])&& $_GET['tab'] == 'facilities' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-calendar"></span>Facilities</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=ministries&tab=ministries" class="nav-tab <?php if(isset($_GET['tab'])&& $_GET['tab'] == 'ministries' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-clipboard"></span>Ministries</a>
 			
-			<a href="admin.php?page=church_admin/index.php&amp;action=podcast&tab=podcast" class="nav-tab <?php echo $_GET['tab'] == 'podcast' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-playlist-audio"></span>Media</a>
-			<a href="admin.php?page=church_admin/index.php&amp;action=settings&tab=settings" class="nav-tab <?php echo $_GET['tab'] == 'settings' ? 'nav-tab-active' : ''; ?>"><span class="dashicons dashicons-admin-generic"></span>Settings</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=podcast&tab=podcast" class="nav-tab <?php if(isset($_GET['tab'])&& $_GET['tab'] == 'podcast' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-playlist-audio"></span>Media</a>
+			<a href="admin.php?page=church_admin/index.php&amp;action=settings&tab=settings" class="nav-tab <?php if(isset($_GET['tab'])&& $_GET['tab'] == 'settings' )echo 'nav-tab-active' ; ?>"><span class="dashicons dashicons-admin-generic"></span>Settings</a>
 	</h2> 
         
          
@@ -63,7 +64,8 @@ function church_admin_front_admin()
 
 function church_admin_tracking()
 {
-	global $wpdb,$days;	
+	global $wpdb;
+	$days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
 	
 	
 	$upload_dir = wp_upload_dir();
@@ -89,7 +91,8 @@ function church_admin_tracking()
 
 function church_admin_settings_menu()
 {
-	global $wpdb,$days;
+	global $wpdb;
+	$days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
 	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	//errors
 	$error=get_option('church_admin_plugin_error');
@@ -208,6 +211,16 @@ function church_admin_podcast()
 	ca_podcast_list_files();
 	
 }
+function church_admin_children()
+{
+	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
+	
+	//kidswork
+	echo'<h2>'.__('Kids Work','church-admin').'</h2>';
+	require_once(plugin_dir_path(__FILE__).'/kidswork.php');
+	church_admin_kidswork();
+	
+}
 function church_admin_ministries()
 {
 
@@ -216,10 +229,7 @@ function church_admin_ministries()
 	echo'<h2>Ministries</h2>';
 	require_once(plugin_dir_path(__FILE__).'/departments.php');
 	church_admin_department_list();
-	//kidswork
-	echo'<hr/><h2>'.__('Kids Work','church-admin').'</h2>';
-	require_once(plugin_dir_path(__FILE__).'/kidswork.php');
-	church_admin_kidswork();
+	
 	//hope team
 	echo'<hr/><h2>'.__('Hope Team','church-admin').'</h2>';
 	echo'<p><a  class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=ministries&action=edit_hope_team_job','hope_team_jobs').'">Add a hope team job</a> <a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=ministries&action=edit_hope_team','edit_hope_team').'">Edit who is in Hope Team</a></p>';
@@ -235,6 +245,7 @@ function church_admin_ministries()
 function church_admin_rota_main($service_id=NULL)
 {
 	global $days,$wpdb;
+	$days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
 	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
 	
 		$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
@@ -337,20 +348,19 @@ function church_admin_people_main()
     global $people_type;
 	$member_type=church_admin_member_type_array();
     		global $wpdb;
-	echo'<h2>'.__('People','church-admin').'</h2>';
-	echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_household','edit_household').'">'.__('Add a Household','church-admin').'</a> <a class="button-secondary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_edit_people','edit_people').'">'.__('Add a new person in a new household','church-admin').'</a></p>';
-	echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
-	echo'<p><a  href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=csv-import&tab=people','csv_import').'">Import CSV</a></p>';
-	echo'<p><a href="#tracking">'.__('Attendance Tracking','church-admin').'</a></p>';
-	echo'<p><a href="#classes">'.__('Classes','church-admin').'</a></p>';
-	echo'<p><a href="#followup">'.__('Follow Up','church-admin').'</a></p>';
-	echo'<p><a href="#recent_people">'.__('Recent People Activity','church-admin').'</a></p>';
-	echo'<p><a href="#member_types">'.__('Member Types','church-admin').'</a></p>';
-	//check to see if directory is populated!
-    $check=$wpdb->get_var('SELECT COUNT(household_id) FROM '.CA_HOU_TBL);
-    if(!empty($check))
-  
-    {//people stored in directory
+	$check=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_HOU_TBL);
+	if(!empty($check))
+	{
+		echo'<h2>'.__('People','church-admin').'</h2>';
+		echo '<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&tab=address&action=church_admin_new_household','new_household').'">'.__('Add a Household','church-admin').'</a> </p>';
+		echo'<form name="ca_search" action="admin.php?page=church_admin/index.php&tab=address" method="POST"><table class="form-table"><tbody><tr><th scope="row">'.__('Search','church-admin').'</th><td><input name="church_admin_search" style="width:100px;" type="text"/><input type="submit" value="'.__('Go','church-admin').'"/></td></tr></table></form>';
+		echo'<p><a  href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=csv-import&tab=people','csv_import').'">Import CSV</a></p>';
+		echo'<p><a href="#tracking">'.__('Attendance Tracking','church-admin').'</a></p>';
+		echo'<p><a href="#classes">'.__('Classes','church-admin').'</a></p>';
+		echo'<p><a href="#followup">'.__('Follow Up','church-admin').'</a></p>';
+		echo'<p><a href="#recent_people">'.__('Recent People Activity','church-admin').'</a></p>';
+		echo'<p><a href="#member_types">'.__('Member Types','church-admin').'</a></p>';
+	
 			
 				//select member type address list to view.
 			    echo'<table class="form-table"><tbody><tr><th scope="row">'.__('Select a directory to view','chuch-admin').'</th><td><form name="address" action="admin.php?page=church_admin/index.php&amp;action=church_admin_address_list" method="POST"><select name="member_type_id" >';
@@ -399,7 +409,7 @@ function church_admin_people_main()
 			    echo'<hr/>';
 			    require_once(plugin_dir_path( dirname(__FILE__) ).'includes/people_activity.php');
 				church_admin_recent_people_activity();
-    }//people in directory
+    //people in directory
 	//member types
 	 echo'<hr/><h2><a id="member_types">'.__('Member Types','church-admin').'</a></h2>';
 	 echo'<p><a class="button-primary" href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_edit_member_type",'edit_member_type').'">'.__('Add a member Type','church-admin').'</a></p>';
@@ -411,6 +421,7 @@ function church_admin_people_main()
 	church_admin_funnel_list();
 	require_once(plugin_dir_path(__FILE__).'classes.php');
 	church_admin_classes();
+	}
 }
 
 ?>

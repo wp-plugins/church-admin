@@ -2,7 +2,8 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_service_list()
 {
-    global $wpdb,$days;
+    global $wpdb;
+	$days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
     echo'<table class="widefat striped"><thead><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></thead><tfoot><tr><th>'.__('Edit','church-admin').'</th><th>'.__('Delete','church-admin').'</th><th>'.__('Service Name','church-admin').'</th><th>'.__('Day','church-admin').'</th><th>'.__('Time','church-admin').'</th><th>'.__('Venue','church-admin').'</th><th>'.__('Address','church-admin').'</th></tr></tfoot><tbody>';
     
     $sql='SELECT * FROM '.CA_SER_TBL;
@@ -38,7 +39,8 @@ function church_admin_delete_service($id)
 }
 function church_admin_edit_service($id)
 {
-    global $wpdb,$days;
+    global $wpdb;
+	$days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
     if($id)$data=$wpdb->get_row('SELECT * FROM '.CA_SER_TBL.' WHERE service_id="'.esc_sql(intval($id)).'"');
     if(isset($_POST['service']))
     {

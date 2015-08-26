@@ -39,7 +39,8 @@ function church_admin_cron_pdf()
 
 function church_admin_smallgroup_pdf($member_type_id)
 {
-    global $wpdb,$member_type;
+    global $wpdb;
+	$member_type=church_admin_member_type_array();
 require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
 //cache small group pdf
 $wpdb->show_errors();
@@ -720,7 +721,8 @@ function church_admin_horiz_pdf($service_id)
 function church_admin_rota_pdf($service_id=1)
 {
     
-    global $wpdb,$days;
+    global $wpdb;
+	$days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
     $wpdb->show_errors();
 	$percent=array();
 	$headers=array();
@@ -1047,7 +1049,8 @@ function church_admin_kidswork_pdf()
 	global $wpdb;
 	$kidsworkGroups=$wpdb->get_results('SELECT * FROM '.CA_KID_TBL.' ORDER BY youngest DESC');
 	
-    global $wpdb,$member_type;
+    global $wpdb;
+	$member_type=church_admin_member_type_array();
 	require_once(plugin_dir_path(dirname(__FILE__)).'includes/fpdf.php');
 	//cache small group pdf
 	$wpdb->show_errors();
@@ -1057,14 +1060,14 @@ function church_admin_kidswork_pdf()
 	
 	$count=$noofgroups=0;
 	//get groups
-	$results=$wpdb->get_results('SELECT * FROM '.CA_KID_TBL);
-	if(!empty($results))
+
+	if(!empty($kidsworkGroups))
 	{
-		foreach($results AS $row)
+		foreach($kidsworkGroups AS $row)
 		{
 			$noofgroups++;
 			$groupname[$row->id]=iconv('UTF-8', 'ISO-8859-1',$row->group_name);//title first
-			$sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name,kidswork_override FROM '.CA_PEO_TBL.' WHERE date_of_birth<"'.$row->youngest.'" AND date_of_birth>"'.$row->oldest.'" AND date_of_birth!="0000-00-00" ORDER BY date_of_birth,last_name ';
+			$sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name,kidswork_override FROM '.CA_PEO_TBL.' WHERE date_of_birth<"'.$row->youngest.'" AND date_of_birth>"'.$row->oldest.'" AND date_of_birth!="0000-00-00" ORDER BY last_name ';
 			$peopleresults = $wpdb->get_results($sql);
 			if(!empty($peopleresults))
 			{

@@ -1,7 +1,8 @@
 <?php
 function church_admin_recent_display($month)
 {
-    global $wpdb,$member_type;
+    global $wpdb;
+	$member_type=church_admin_member_type_array();
     foreach($member_type AS $type_id=>$type)
     {
         $sql='SELECT a.*,b.* FROM '.CA_PEO_TBL.' a, '.CA_HOU_TBL.' b WHERE a.household_id=b.household_id AND a.last_update>DATE_SUB(NOW(), INTERVAL '.esc_sql($month).' MONTH) AND a.member_type_id ="'.esc_sql($type_id).'"';

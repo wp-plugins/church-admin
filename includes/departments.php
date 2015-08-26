@@ -23,7 +23,7 @@ function church_admin_department_list()
 function church_admin_view_department($id)
 {
 		echo'<p><a href="'.wp_nonce_url("admin.php?page=church_admin/index.php&amp;action=church_admin_department_list",'department_list').'">'.__('Ministry List','church-admin').'</a></p>';
-		global $wpdb;$departments;
+		global $wpdb;
 		$departments=get_option('church_admin_departments');
 		$sql='SELECT CONCAT_WS(" ",a.first_name,a.last_name) AS name, a.people_id FROM '.CA_PEO_TBL.' a, '.CA_MET_TBL.' b WHERE a.people_id=b.people_id AND b.department_id="'.esc_sql($id).'" AND b.meta_type="ministry" ORDER BY a.last_name ASC';
 		
@@ -82,7 +82,8 @@ function church_admin_view_department($id)
 }
 function church_admin_delete_department($id)
 {
-    global $departments,$wpdb;
+    global $wpdb;
+	$departments=get_option('church_admin_departments');
     $wpdb->show_errors();
     //delete department from db
     unset($departments[$id]);
@@ -104,7 +105,7 @@ function church_admin_delete_department($id)
 }
 function church_admin_edit_department($id)
 {
-    global $departments;
+   $departments=get_option('church_admin_departments');
     if(isset($_POST['edit_department']))
     {//process
         $dep_name=sanitize_text_field(stripslashes($_POST['department_name']));

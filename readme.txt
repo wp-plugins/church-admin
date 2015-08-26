@@ -60,6 +60,11 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.838 =
+* Simplified add new household form and screen
+* Bug fixes for follow up funnels
+* Kids work groups sorted by youngest age
+* Rota/Schedule CSV export bug fix
 = 0.837 =
 * Fix admin css table borders
 * Fix front end register gender dropdown

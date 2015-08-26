@@ -165,8 +165,8 @@ function counterUpdate(opt_countedTextBox, opt_countBody, opt_maxSize) {
 ';
 if ( function_exists('wp_nonce_field') )wp_nonce_field('church admin send sms');
 	echo'<h2>Choose recipients...</h2>';
-	echo'<p><label><strong>'.__('Choose a member type','church-admin').'</strong></label></p>';
-	echo'<fieldset>';
+	echo'<p><label><strong>'.__('Choose a member type','church-admin').'</strong></label><input type="radio" name="type" value="member_type"  /></p>';
+	echo'<fieldset id="member_type">';
 	foreach($member_type AS $key=>$value)
 	{
 		echo'<p><label><strong>'.__('All','church-admin').' '.$value.'</strong></label><input type="checkbox" name="member_type[]" value="'.$key.'"/></p>';

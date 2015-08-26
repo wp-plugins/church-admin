@@ -4,7 +4,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.837
+Version: 0.838
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -45,7 +45,7 @@ Copyright (C) 2010 Andy Moyle
 
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-	$church_admin_version = '0.837';
+	$church_admin_version = '0.835';
 	$people_type=get_option('church_admin_people_type');
     $departments=get_option('church_admin_departments');
     $level=get_option('church_admin_levels');
@@ -82,7 +82,7 @@ function church_admin_initialise() {
     if(empty($level['Service']))$level['Service']='administrator';
 	if(empty($level['Prayer Chain']))$level['Prayer Chain']='administrator';
     update_option('church_admin_levels',$level);
-    $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
+    
 }
 
 require_once(plugin_dir_path(__FILE__) .'includes/functions.php');
@@ -362,6 +362,13 @@ function church_admin_init()
         wp_register_script('ca_editable',  plugins_url('church-admin/includes/jquery.jeditable.mini.js',dirname(__FILE__) ), array('jquery'), NULL,TRUE);
         wp_enqueue_script('ca_editable');
     }
+	
+	if(!empty($_GET['action']) && ($_GET['action']=='church_admin_new_household'))
+	{ 
+		wp_enqueue_script('form-clone',plugins_url('church-admin/includes/jquery-formfields.js',dirname(__FILE__) ),'',NULL);
+			wp_enqueue_script('google_map','http://maps.google.com/maps/api/js?sensor=false','',NULL);
+        wp_enqueue_script('js_map', plugins_url('church-admin/includes/maps.js',dirname(__FILE__) ),'',NULL);
+	}
     if(!empty($_GET['action']) && ($_GET['action']=='church_admin_edit_household'||$_GET['action']=='church_admin_edit_service'||$_GET['action']=='edit_small_group'))
     {
         wp_enqueue_script('google_map','http://maps.google.com/maps/api/js?sensor=false','',NULL);
@@ -593,6 +600,7 @@ function church_admin_main()
 		case'small_groups':if(church_admin_level_check('Small Groups')){church_admin_smallgroups_main();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		case'ministries':if(church_admin_level_check('Directory')){church_admin_ministries();break;}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		case'people':if(church_admin_level_check('Directory')){church_admin_people_main();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
+		case'children':if(church_admin_level_check('Directory')){church_admin_children();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		case'communication':if(church_admin_level_check('Prayer Chain')){church_admin_communication();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		case'rota':if(church_admin_level_check('Rota')){church_admin_rota_main($service_id);}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
 		case'tracking':if(church_admin_level_check('Attendance')){church_admin_tracking();}else{echo'<div class="error"><p>You don\'t have permissions</p></div>';}break;
@@ -720,6 +728,7 @@ function church_admin_main()
 	    case 'church_admin_create_user':check_admin_referer('create_user');if(church_admin_level_check('Directory')){require_once(plugin_dir_path(__FILE__).'includes/directory.php');church_admin_create_user($people_id,$household_id);}break;      
 	    case 'church_admin_migrate_users':check_admin_referer('migrate_users');if(church_admin_level_check('Directory')){require_once(plugin_dir_path(__FILE__).'includes/directory.php');church_admin_migrate_users();}break;
 	    case 'church_admin_display_household':if(church_admin_level_check('Directory')||$self_edit){require_once(plugin_dir_path(__FILE__).'includes/directory.php');church_admin_display_household($household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
+		case 'church_admin_new_household':if(church_admin_level_check('Directory')||$self_edit){require_once(plugin_dir_path(__FILE__).'includes/directory.php');church_admin_new_household();}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
 	    case 'church_admin_edit_household':if(church_admin_level_check('Directory')||$self_edit){require_once(plugin_dir_path(__FILE__).'includes/directory.php');church_admin_edit_household($household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;
 	    case 'church_admin_delete_household':check_admin_referer('delete_household');if(church_admin_level_check('Directory')){require_once(plugin_dir_path(__FILE__).'includes/directory.php');church_admin_delete_household($household_id);}break;
 	    case 'church_admin_edit_people':if(church_admin_level_check('Directory')||$self_edit){require_once(plugin_dir_path(__FILE__).'includes/directory.php');church_admin_edit_people($people_id,$household_id);}else{echo'<p>'.__('You do not have permission to do that','church-admin').'</p>';}break;

@@ -12,7 +12,8 @@ function church_admin_individual_attendance()
  * @date 		2015-02-01
  */
 
-	global $wpdb,$days;
+	global $wpdb;
+	$days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
 	echo'<div class="wrap church_admin"><h2>'.__('Individual attendance','church-admin').'</h2>';
 	if (!empty($_POST['save_attendance']))
 	{//process form

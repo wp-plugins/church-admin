@@ -123,7 +123,8 @@ return json_encode($output);
 
 function church_admin_json_services()
 {
-	global $wpdb, $days;
+	global $wpdb;
+	$days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
 	$services=$wpdb->get_results('SELECT * FROM '.CA_SER_TBL);
 	$output=array();
 	

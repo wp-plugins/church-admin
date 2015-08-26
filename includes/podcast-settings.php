@@ -152,9 +152,9 @@ $language_codes = array(
 		'zh' => 'Chinese' , 
 		'zu' => 'Zulu' , 
 		);
-    $cats = array( 'Religion & Spirituality -Christianity',
+    $cats = array( 'Religion &amp; Spirituality -Christianity',
                   'Arts - Design',
-            'Arts - Fashion & Beauty',
+            'Arts - Fashion &amp; Beauty',
             'Arts - Food',
             'Arts - Literature',
             'Arts - Performing Arts',
@@ -162,7 +162,7 @@ $language_codes = array(
             'Business - Business News',
             'Business - Careers',
             'Business - Investing',
-            'Business - Management & Marketing',
+            'Business - Management &amp; Marketing',
             'Business - Shopping',
             'Comedy',
             'Education - Education Technology',
@@ -170,45 +170,45 @@ $language_codes = array(
             'Education - K-12',
             'Education - Language Courses',
             'Education - Training',
-            'Games & Hobbies - Automotive',
-            'Games & Hobbies - Aviation',
-            'Games & Hobbies - Hobbies',
-            'Games & Hobbies - Other Games',
-            'Games & Hobbies - Video Games',
-            'Government & Organizations - Local',
-            'Government & Organizations - National',
-            'Government & Organizations - Non-Profit',
-            'Government & Organizations - Regional',
+            'Games &amp; Hobbies - Automotive',
+            'Games &amp; Hobbies - Aviation',
+            'Games &amp; Hobbies - Hobbies',
+            'Games &amp; Hobbies - Other Games',
+            'Games &amp; Hobbies - Video Games',
+            'Government &amp; Organizations - Local',
+            'Government &amp; Organizations - National',
+            'Government &amp; Organizations - Non-Profit',
+            'Government &amp; Organizations - Regional',
             'Health - Alternative Health',
-            'Health - Fitness & Nutrition',
+            'Health - Fitness &amp; Nutrition',
             'Health - Self-Help',
             'Health - Sexuality',
-            'Kids & Family',
+            'Kids &amp; Family',
             'Music',
-            'News & Politics',
-            'Religion & Spirituality -Buddhism',
-            'Religion & Spirituality -Christianity',
-            'Religion & Spirituality -Hinduism',
-	    'Religion & Spirituality -Islam',
-            'Religion & Spirituality -Judaism',
-            'Religion & Spirituality -Other',
-            'Religion & Spirituality -Spirituality',
-            'Science & Medicine - Medicine',
-            'Science & Medicine -Natural Sciences',
-            'Science & Medicine -Social Sciences',
-            'Society & Culture - History',
-            'Society & Culture - Personal Journals',
-            'Society & Culture - Philosophy',
-            'Society & Culture - Places & Travel',
-            'Sports & Recreation - Amateur',
-            'Sports & Recreation - College & High School',
-            'Sports & Recreation - Outdoor',
-            'Sports & Recreation - Professional',
+            'News &amp; Politics',
+            'Religion &amp; Spirituality -Buddhism',
+            'Religion &amp; Spirituality -Christianity',
+            'Religion &amp; Spirituality -Hinduism',
+	    'Religion &amp; Spirituality -Islam',
+            'Religion &amp; Spirituality -Judaism',
+            'Religion &amp; Spirituality -Other',
+            'Religion &amp; Spirituality -Spirituality',
+            'Science &amp; Medicine - Medicine',
+            'Science &amp; Medicine -Natural Sciences',
+            'Science &amp; Medicine -Social Sciences',
+            'Society &amp; Culture - History',
+            'Society &amp; Culture - Personal Journals',
+            'Society &amp; Culture - Philosophy',
+            'Society &amp; Culture - Places &amp; Travel',
+            'Sports &amp; Recreation - Amateur',
+            'Sports &amp; Recreation - College &amp; High School',
+            'Sports &amp; Recreation - Outdoor',
+            'Sports &amp; Recreation - Professional',
             'Technology - Gadgets',
             'Technology - Tech News',
             'Technology - Podcasting',
             'Technology - Software How-To',
-            'TV & Film');
+            'TV &amp; Film');
             
 
     if(current_user_can('manage_options'))
@@ -247,7 +247,7 @@ $language_codes = array(
                 default:$xml['explicit']='no';
             }
             //only allow valid category
-            if(in_array($_POST['category'],$cats)){$xml['category']=xmlentities(stripslashes($_POST['category']));}else{$xml['category']='Religion & Spirituality -Christianity';}
+            if(in_array($_POST['category'],$cats)){$xml['category']=xmlentities(stripslashes($_POST['category']));}else{$xml['category']='Religion &amp; Spirituality -Christianity';}
             if(!array_key_exists($xml['language'],$language_codes))$xml['language']='en';
             $new_settings=array('itunes_link'=>$xml['itunes_link'],
                 'title'=>$xml['title'],  
@@ -295,7 +295,7 @@ $language_codes = array(
             echo'<p><label for="summary">Summary</label><textarea id="summary"  name="summary">'.esc_html($settings['summary']).'</textarea></p>';
             echo'<p><label for="description">Description</label><textarea  id="description"  name="description">'.esc_html($settings['title']).'</textarea></p>';
             echo'<p><label for="explicit">Explicit content</label><select name="explicit">';
-            if(!empty($settings['explicit']))echo'<option value="'.$settings['excplicit'].'" selected="selected">'.$settings['explicit'].'</option>';
+            if(!empty($settings['explicit']))echo'<option value="'.$settings['explicit'].'" selected="selected">'.$settings['explicit'].'</option>';
             echo'<option value="clean">clean</option><option value="no">no</option><option value="yes">yes</option></select></p>';
             
             echo'<p><label for="owner_name">Owner Name</label><input id="owner_name" type="text" name="owner_name" value="'.esc_html($settings['owner_name']).'"/></p>';

@@ -9,7 +9,8 @@ church_admin_add_attendance()
 */
 function church_admin_attendance_list($service_id=1)
 {
-     global $wpdb,$days;
+     global $wpdb;
+	 $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
      $wpdb->show_errors();
     //grab address list in order
     $items = $wpdb->get_var('SELECT COUNT(*) FROM '.CA_ATT_TBL.' WHERE service_id="'.esc_sql($service_id).'"');
@@ -71,7 +72,8 @@ function church_admin_attendance_list($service_id=1)
 
 
 function church_admin_edit_attendance($attendance_id){
-  global $wpdb,$days;
+  global $wpdb;
+  $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
   
   $wpdb->show_errors();
   $data=$wpdb->get_row('SELECT * FROM '.CA_ATT_TBL.' WHERE attendance_id="'.esc_sql($attendance_id).'"');
@@ -178,7 +180,8 @@ function church_admin_delete_attendance($attendance_id)
 
 function church_admin_attendance_metrics($service_id=1)
 {
-     global $wpdb,$days;
+     global $wpdb;
+	 $days=array(1=>__('Sunday','church-admin'),2=>__('Monday','church-admin'),3=>__('Tuesday','church-admin'),4=>__('Wednesday','church-admin'),5=>__('Thursday','church-admin'),6=>__('Friday','church-admin'),7=>__('Saturday','church-admin'));
      $wpdb->show_errors;
      $thead='';
      if(empty($service_id))$service_id=1;

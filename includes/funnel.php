@@ -3,7 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 function church_admin_funnel_list()
 {
-    global $wpdb,$member_type,$people_type;
+    global $wpdb,$people_type;
+	$member_type=church_admin_member_type_array();
 	echo'<p><a class="button-primary" href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel','edit_funnel').'">'.__('Add a follow up funnel','church-admin').'</a></p>';
 	$departments=get_option('church_admin_departments');
     $result=$wpdb->get_results('SELECT * FROM '.CA_FUN_TBL .'  ORDER BY funnel_order');
@@ -28,9 +29,10 @@ function church_admin_funnel_list()
 
 function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
 {
-    global $wpdb,$member_type,$people_type,$departments;
+    global $wpdb,$people_type;
+	$departments=get_option('church_admin_departments');
+    $member_type=church_admin_member_type_array();
     
-    $wpdb->show_errors();
     
     echo'<h2>';
         if($funnel_id){echo __('Edit','church-admin');$data=$wpdb->get_row('SELECT * FROM '.CA_FUN_TBL.' WHERE funnel_id="'.esc_sql($funnel_id).'"');}else{echo __('Add','church-admin');}
