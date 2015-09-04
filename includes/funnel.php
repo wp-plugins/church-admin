@@ -16,8 +16,8 @@ function church_admin_funnel_list()
         {
            if(!empty($row->department_id)&&!empty($departments[$row->department_id]))
 		   {
-			   $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_edit_funnel&amp;funnel_id='.intval($row->funnel_id),'edit_funnel').'">'.__('Edit','church-admin').'</a>';
-				$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;action=church_admin_delete_funnel&amp;funnel_id='.intval($row->funnel_id),'delete_funnel').'">'.__('Delete','church-admin').'</a>';
+			   $edit='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;tab=people&amp;action=edit_funnel&amp;funnel_id='.intval($row->funnel_id),'edit_funnel').'">'.__('Edit','church-admin').'</a>';
+				$delete='<a href="'.wp_nonce_url('admin.php?page=church_admin/index.php&amp;tab=people&amp;action=delete_funnel&amp;funnel_id='.intval($row->funnel_id),'delete_funnel').'">'.__('Delete','church-admin').'</a>';
 				echo'<tr><td>'.$edit.'</td><td>'.$delete.'</td><td>'.esc_html($row->action).'</td><td>';
 				if(!empty($member_type[$row->member_type_id])){echo esc_html($member_type[$row->member_type_id]);}else{echo'&nbsp;';}
 				echo '</td><td>'.$departments[$row->department_id].'</td></tr>';
@@ -26,7 +26,17 @@ function church_admin_funnel_list()
 		echo'</tbody></table>';
     }
 }
-
+function church_admin_delete_funnel($funnel_id=NULL)
+{
+	global $wpdb;
+	if(!empty($funnel_id)&&ctype_digit($funnel_id))
+	{
+		$wpdb->query('DELETE FROM '.CA_FUN_TBL.' WHERE funnel_id="'.esc_sql($funnel_id).'"');
+		$wpdb->query('DELETE FROM '.CA_FP_TBL.' WHERE funnel_id="'.esc_sql($funnel_id).'"');
+		echo'<div class="updated fade"><p><strong>'.__('Follow Up Funnel Deleted','church-admin').'</strong></p></div>';
+		church_admin_funnel_list();
+	}
+}
 function church_admin_edit_funnel($funnel_id=NULL,$people_type_id=1)
 {
     global $wpdb,$people_type;

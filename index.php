@@ -4,7 +4,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.839
+Version: 0.840
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -45,7 +45,7 @@ Copyright (C) 2010 Andy Moyle
 
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-	$church_admin_version = '0.839';
+	$church_admin_version = '0.840';
 	$people_type=get_option('church_admin_people_type');
     $departments=get_option('church_admin_departments');
     $level=get_option('church_admin_levels');
@@ -679,7 +679,8 @@ function church_admin_main()
        case 'church_admin_view_department':check_admin_referer('view_department');require_once(plugin_dir_path(__FILE__).'includes/departments.php');church_admin_view_department($department_id);break;
 	    //funnel
 	    case 'church_admin_funnel_list':require_once(plugin_dir_path(__FILE__).'includes/funnel.php');church_admin_funnel_list();break;         
-	    case 'church_admin_edit_funnel':check_admin_referer('edit_funnel');require_once(plugin_dir_path(__FILE__).'includes/funnel.php');church_admin_edit_funnel($funnel_id,$people_type_id);break;
+	    case 'edit_funnel':check_admin_referer('edit_funnel');require_once(plugin_dir_path(__FILE__).'includes/funnel.php');church_admin_edit_funnel($funnel_id,$people_type_id);break;
+		case 'delete_funnel':check_admin_referer('delete_funnel');require_once(plugin_dir_path(__FILE__).'includes/funnel.php');church_admin_delete_funnel($funnel_id);break;
 	    case 'church_admin_assign_funnel':require_once(plugin_dir_path(__FILE__).'includes/people_activity.php');church_admin_assign_funnel();break;
 	    case 'church_admin_email_follow_up_activity':check_admin_referer('email_funnels');require_once(plugin_dir_path(__FILE__).'includes/people_activity.php');church_admin_email_follow_up_activity();break;
 	    //member_type

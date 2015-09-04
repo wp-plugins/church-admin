@@ -4,7 +4,7 @@ Donate link: http://www.churchadminplugin.com/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
 Tested up to: 4.2
-Stable tag: 0.837
+Stable tag: 0.840
 
 A church admin plugin with address book, attendance tracking, small group management, sunday rota/schedules, sermon audio and video podcasting (iTunes compatable), bulk sms and mailshot facilities. 
 
@@ -60,6 +60,8 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.840 =
+* Added delete follow up funnel
 = 0.839 =
 * Fix autocomplete bug where title has whitespace in it
 = 0.838 =
