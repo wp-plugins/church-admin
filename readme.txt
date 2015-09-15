@@ -60,6 +60,9 @@ http://www.churchadminplugin.com/support/
 
 
 == Changelog ==
+= 0.841 =
+* Bug fix to Media admin page
+* Jquery formfields update
 = 0.840 =
 * Added delete follow up funnel
 = 0.839 =

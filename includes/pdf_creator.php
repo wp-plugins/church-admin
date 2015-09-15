@@ -1067,13 +1067,14 @@ function church_admin_kidswork_pdf()
 		{
 			$noofgroups++;
 			$groupname[$row->id]=iconv('UTF-8', 'ISO-8859-1',$row->group_name);//title first
-			$sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name,kidswork_override FROM '.CA_PEO_TBL.' WHERE date_of_birth<"'.$row->youngest.'" AND date_of_birth>"'.$row->oldest.'" AND date_of_birth!="0000-00-00" ORDER BY last_name ';
+			$sql='SELECT CONCAT_WS(" ",first_name,last_name) AS name,kidswork_override FROM '.CA_PEO_TBL.' WHERE (date_of_birth<"'.$row->youngest.'" AND date_of_birth>"'.$row->oldest.'") OR kidswork_override="'.esc_sql($row->id).'" ORDER BY last_name ';
 			$peopleresults = $wpdb->get_results($sql);
 			if(!empty($peopleresults))
 			{
 				foreach($peopleresults AS $people) 
 				{
-					if(empty($people->kidswork_override)){$kidsworkgroups[$row->id][]=$people->name;$count++;}else{$kidsworkgroups[$people->kidswork_override][]=$people->name;$count++;}
+					$kidsworkgroups[$row->id][]=$people->name;
+					$count++;
 				}
 			}
 		}

@@ -4,7 +4,7 @@
 Plugin Name: church_admin
 Plugin URI: http://www.churchadminplugin.com/
 Description: A  admin system with address book, small groups, rotas, bulk email  and sms
-Version: 0.840
+Version: 0.841
 Author: Andy Moyle
 Text Domain: church-admin
 
@@ -45,7 +45,7 @@ Copyright (C) 2010 Andy Moyle
 
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-	$church_admin_version = '0.840';
+	$church_admin_version = '0.841';
 	$people_type=get_option('church_admin_people_type');
     $departments=get_option('church_admin_departments');
     $level=get_option('church_admin_levels');
@@ -1301,4 +1301,7 @@ function church_admin_debug($message)
     fwrite($fp, $message);
     fclose($fp);
 } 
+
+
+ 
 ?>

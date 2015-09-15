@@ -3,7 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 function church_admin_front_admin()
 {
 	
-	global $church_admin_version,$wpdb;
+	global $church_admin_version,$wpdb, $current_user;
+	$user_id = $current_user->ID;
 	//check if address list populated
 	$check=$wpdb->get_var('SELECT COUNT(*) FROM '.CA_HOU_TBL);
 	if(empty($check)&&empty($_GET['action']))
