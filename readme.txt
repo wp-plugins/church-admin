@@ -3,8 +3,8 @@ Contributors: andymoyle
 Donate link: http://www.churchadminplugin.com/
 Tags: church admin, sms, smallgroups, rota, email, address list, calendar
 Requires at least: 2.7.0
-Tested up to: 4.2
-Stable tag: 0.840
+Tested up to: 4.3
+Stable tag: 0.841
 
 A church admin plugin with address book, attendance tracking, small group management, sunday rota/schedules, sermon audio and video podcasting (iTunes compatable), bulk sms and mailshot facilities. 
 
